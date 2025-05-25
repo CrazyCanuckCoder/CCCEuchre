@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Euchre.Console\**" />
+    <Compile Remove="Euchre.Logic\**" />
+    <EmbeddedResource Remove="Euchre.Console\**" />
+    <EmbeddedResource Remove="Euchre.Logic\**" />
+    <None Remove="Euchre.Console\**" />
+    <None Remove="Euchre.Logic\**" />
+    <Page Remove="Euchre.Console\**" />
+    <Page Remove="Euchre.Logic\**" />
+  </ItemGroup>
+
+</Project>
