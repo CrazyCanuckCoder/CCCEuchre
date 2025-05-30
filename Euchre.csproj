@@ -11,12 +11,16 @@
   <ItemGroup>
     <Compile Remove="Euchre.Console\**" />
     <Compile Remove="Euchre.Logic\**" />
+    <Compile Remove="Euchre.Tests\**" />
     <EmbeddedResource Remove="Euchre.Console\**" />
     <EmbeddedResource Remove="Euchre.Logic\**" />
+    <EmbeddedResource Remove="Euchre.Tests\**" />
     <None Remove="Euchre.Console\**" />
     <None Remove="Euchre.Logic\**" />
+    <None Remove="Euchre.Tests\**" />
     <Page Remove="Euchre.Console\**" />
     <Page Remove="Euchre.Logic\**" />
+    <Page Remove="Euchre.Tests\**" />
   </ItemGroup>
 
 </Project>
