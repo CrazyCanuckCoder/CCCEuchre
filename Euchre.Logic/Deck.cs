@@ -23,6 +23,7 @@ public class Deck
         }
     }
 
+    // TODO: How efficient is this shuffle? Is it sufficient for a card game?
     public void Shuffle()
     {
         for (int i = cards.Count - 1; i > 0; i--)
@@ -32,6 +33,8 @@ public class Deck
         }
     }
 
+    // TODO: Consider adding a method to reset the deck to its initial state.
+    // TODO: Instead of removing cards from the deck, use a flag to mark cards as dealt.
     public Card Deal()
     {
         if (cards.Count == 0) throw new InvalidOperationException("Cannot deal from empty deck");

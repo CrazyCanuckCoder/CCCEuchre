@@ -117,6 +117,7 @@ public class EuchreGame
 
     private void DealCards()
     {
+        // TODO: Creating a new deck each time is inefficient, consider reusing the deck.
         deck = new Deck();
         deck.Shuffle();
         

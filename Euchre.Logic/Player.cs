@@ -26,8 +26,10 @@ public class Player
     public Card PlayCard(int index)
     {
         if (index < 0 || index >= Hand.Count)
+        {
             throw new ArgumentOutOfRangeException(nameof(index));
-        
+        }
+
         var card = Hand[index];
         Hand.RemoveAt(index);
         return card;
@@ -41,6 +43,8 @@ public class Player
         return leadCards.Count > 0 ? leadCards : [.. Hand];
     }
 
+    // TODO: Add more complex logic to determine if the player should order up the kitty or not.
+    //       For example, add logic to consider the strength of the kitty card.
     public bool OrderUp(Card kitty, Suit trump, int round, bool isDealer)
     {
         if (IsHuman) return false; // For AI, implement simple strategy
@@ -48,17 +52,18 @@ public class Player
         var trumpCards = Hand.Count(c => c.EffectiveSuit(trump) == trump || c.IsBower(trump));
         var bowers = Hand.Count(c => c.IsBower(trump));
         var aces = Hand.Count(c => c.Rank == Rank.Ace);
-        
-        if (round == 1) // First round - consider kitty suit
+
+        // First round - consider kitty suit.
+
+        if (round == 1)
         {
             return trumpCards >= 3 || (trumpCards >= 2 && bowers >= 1) || (isDealer && trumpCards >= 2);
         }
-        else // Second round - different suit
-        {
-            return trumpCards >= 3 || bowers >= 1;
-        }
+
+        return false; // In round 2, we can't order up the kitty suit.
     }
 
+    // TODO: Implement a stronger strategy for AI to call trump based on strength of each suit.
     public Suit? CallTrump(Card kitty)
     {
         if (IsHuman) return null; // For AI, implement simple strategy

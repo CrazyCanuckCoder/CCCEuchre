@@ -8,7 +8,7 @@ public class Trick
 
     public Trick(Suit trump)
     {
-        Cards = new List<(Player, Card)>();
+        Cards = [];
         Trump = trump;
     }
 
@@ -25,8 +25,9 @@ public class Trick
     {
         if (Cards.Count == 0) return null;
         
-        var winner = Cards.OrderByDescending(c => c.Card.GetTrickValue(Trump, LeadSuit)).First();
-        return winner.Player;
+        return Cards.OrderByDescending(c => c.Card.GetTrickValue(Trump, LeadSuit))
+                    .First()
+                    .Player;
     }
 
     public bool IsComplete => Cards.Count == 4;
