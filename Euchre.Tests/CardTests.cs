@@ -73,4 +73,29 @@ public class CardTests
         var card = new Card(cardSuit, rank);
         Assert.That(card.EffectiveSuit(trump), Is.EqualTo(expected));
     }
+
+    // Behaviour: The GetTrickValue method should return the correct value for a card based on its rank, suit,
+    //            the current trump, and the suit that was lead for the trick.
+
+    private static IEnumerable<TestCaseData> GetTestCaseDataForGetTrickValue()
+    {
+        yield return new TestCaseData(Suit.Hearts, Suit.Hearts,   new Card(Suit.Hearts,   Rank.Jack),  1000);
+        yield return new TestCaseData(Suit.Clubs,  Suit.Clubs,    new Card(Suit.Clubs,    Rank.Jack),  1000);
+        yield return new TestCaseData(Suit.Hearts, Suit.Diamonds, new Card(Suit.Diamonds, Rank.Jack),  999);
+        yield return new TestCaseData(Suit.Clubs,  Suit.Spades,   new Card(Suit.Spades,   Rank.Jack),  999);
+        yield return new TestCaseData(Suit.Hearts, Suit.Hearts,   new Card(Suit.Hearts,   Rank.Queen), 12);
+        yield return new TestCaseData(Suit.Clubs,  Suit.Clubs,    new Card(Suit.Clubs,    Rank.Ten),   10);
+        yield return new TestCaseData(Suit.Hearts, Suit.Diamonds, new Card(Suit.Diamonds, Rank.Queen), 12);
+        yield return new TestCaseData(Suit.Clubs,  Suit.Spades,   new Card(Suit.Spades,   Rank.Ten),   10);
+        yield return new TestCaseData(Suit.Hearts, Suit.Hearts,   new Card(Suit.Hearts,   Rank.King),  13);
+        yield return new TestCaseData(Suit.Clubs,  Suit.Clubs,    new Card(Suit.Clubs,    Rank.Ace),   14);
+        yield return new TestCaseData(Suit.Hearts, Suit.Diamonds, new Card(Suit.Spades,   Rank.Nine),  0);
+    }
+
+    [Test, TestCaseSource(nameof(GetTestCaseDataForGetTrickValue))]
+    public void GetTrickValue_ShouldReturnCorrectValue(Suit trump, Suit leadSuit, Card playedCard, int expectedValue)
+    {
+        Assert.That(playedCard.GetTrickValue(trump, leadSuit), Is.EqualTo(expectedValue));
+    }
+
 }
