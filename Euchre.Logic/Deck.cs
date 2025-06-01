@@ -31,10 +31,9 @@ public class Deck
 
     public void Shuffle()
     {
-        // Create a new shuffle value for every card in the deck.  Reset the card's IsDealt indicator for
-        //  deck shuffles occurring after the first shuffle.
+        // Create a new shuffle value for every card in the deck.
 
-        foreach (var card in Cards)
+        foreach (Card card in Cards)
         {
             card.ShuffleValue = _randomizer.Next(MAX_RANDOM_VALUE);
         }
