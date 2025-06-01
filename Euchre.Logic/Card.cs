@@ -13,6 +13,8 @@ public class Card
 
     public bool IsJack => Rank == Rank.Jack;
 
+    public int ShuffleValue { get; internal set; }
+
     public bool IsRightBower(Suit trump) => IsJack && Suit == trump;
 
     public bool IsLeftBower(Suit trump)
@@ -36,18 +38,13 @@ public class Card
         return Suit;
     }
 
-    // TODO: Write a unit test for this method that validates or refutes the need for the call to EffectiveSuit.
-    //       It looks like the call to EffectiveSuit is not needed in this method.
     public int GetTrickValue(Suit trump, Suit leadSuit)
     {
         if (IsRightBower(trump)) return 1000;
         if (IsLeftBower(trump)) return 999;
-        
-        var effectiveSuit = EffectiveSuit(trump);
 
-        // Is the code "trump != leadSuit" necessary here?
-        if (effectiveSuit == trump && trump != leadSuit) return 500 + (int)Rank;
-        if (effectiveSuit == leadSuit) return (int)Rank;
+        if (Suit == trump) return 500 + (int)Rank;
+        if (Suit == leadSuit) return (int)Rank;
         
         return 0; // Can't win if not trump or lead suit
     }
