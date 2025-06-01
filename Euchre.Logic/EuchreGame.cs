@@ -4,8 +4,9 @@ public class EuchreGame
 {
     public EuchreGame(string[] playerNames)
     {
+        // TODO: Create custom exceptions for this game.
         if (playerNames.Length != NUMBER_OF_PLAYERS)
-            throw new ArgumentException($"Euchre requires exactly {NUMBER_OF_PLAYERS} players");
+            throw new ArgumentException($"Euchre requires exactly {NUMBER_OF_PLAYERS} players.");
         
         players = new Player[NUMBER_OF_PLAYERS];
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
@@ -15,26 +16,27 @@ public class EuchreGame
         
         deck = new Deck();
         teamScores = new int[NUMBER_OF_TEAMS];
-        currentHandTricks = new List<Trick>();
+        currentHandTricks = [];
         dealer = players[0];
     }
 
+    // TODO: Move these constants to a class.
     public const int NUMBER_OF_PLAYERS = 4;
     public const int CARDS_PER_PLAYER = 5;
     public const int NUMBER_OF_TEAMS = 2;
     public const int MAX_NUMBER_OF_TRICKS = 5;
     public const int WINNING_SCORE = 10;
 
-    private Player[] players;
+    private readonly Player[] players;
     private Deck deck;
     private Card kitty;
     private Suit? trump;
     private Player dealer;
-    private Player trumpCaller;
-    private int[] teamScores; // [Team 0 (Players 0,2), Team 1 (Players 1,3)]
+    private Player? trumpCaller;
+    private readonly int[] teamScores; // [Team 0 (Players 0,2), Team 1 (Players 1,3)]
     private List<Trick> currentHandTricks;
     private bool goingAlone;
-    private Player alonePlayer;
+    private Player? alonePlayer;
 
     public void PlayGame()
     {
@@ -64,7 +66,7 @@ public class EuchreGame
 
     private void PlayHand()
     {
-        // Reset for new hand
+        // Reset for new hand.
 
         currentHandTricks.Clear();
         trump = null;
@@ -72,7 +74,7 @@ public class EuchreGame
         goingAlone = false;
         alonePlayer = null;
         
-        // Deal cards
+        // Deal cards.
 
         DealCards();
         
@@ -80,7 +82,7 @@ public class EuchreGame
         Console.WriteLine($"Kitty: {kitty}");
         Console.ReadLine();
 
-        // Bidding phase
+        // Bidding phase.
 
         if (!BiddingPhase())
         {
@@ -96,7 +98,8 @@ public class EuchreGame
             Console.WriteLine($"{alonePlayer.Name} is going alone!");
         Console.ReadLine();
 
-        // Play 5 tricks
+        // Play 5 tricks.
+
         Player leader = GetPlayerAfterDealer();
         for (int trickNum = 0; trickNum < MAX_NUMBER_OF_TRICKS; trickNum++)
         {
@@ -108,10 +111,12 @@ public class EuchreGame
             Console.ReadLine();
         }
 
-        // Score the hand
+        // Score the hand.
+
         ScoreHand();
         
-        // Advance dealer
+        // Determine next dealer.
+
         AdvanceDealer();
     }
 
@@ -126,7 +131,8 @@ public class EuchreGame
         {
             player.ClearHand();
         }
-        
+
+        // TODO: Deal cards to players a single card at a time instead of in bulk.
         // Deal 5 cards to each player (3-2 or 2-3 pattern)
         for (int round = 0; round < 2; round++)
         {
