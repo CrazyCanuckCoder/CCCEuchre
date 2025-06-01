@@ -2,46 +2,53 @@ namespace Euchre.Logic;
 
 public class Deck
 {
-    private List<Card> cards;
-    private readonly Random random;
-
     public Deck()
     {
-        random = new Random();
+        _randomizer = new Random();
         InitializeDeck();
     }
 
+    private readonly Random _randomizer;
+    private Stack<Card> _cardStack = new();
+
+    /// <summary>
+    /// The maximum number that the randomizer can create.
+    /// </summary>
+    private const int MAX_RANDOM_VALUE = 10000;
+
+    public List<Card> Cards { get; private set; } = [];
+
     private void InitializeDeck()
     {
-        cards = [];
         foreach (Suit suit in Enum.GetValues<Suit>())
         {
             foreach (Rank rank in Enum.GetValues<Rank>())
             {
-                cards.Add(new Card(suit, rank));
+                Cards.Add(new Card(suit, rank));
             }
         }
     }
 
-    // TODO: How efficient is this shuffle? Is it sufficient for a card game?
     public void Shuffle()
     {
-        for (int i = cards.Count - 1; i > 0; i--)
+        // Create a new shuffle value for every card in the deck.  Reset the card's IsDealt indicator for
+        //  deck shuffles occurring after the first shuffle.
+
+        foreach (var card in Cards)
         {
-            int j = random.Next(i + 1);
-            (cards[i], cards[j]) = (cards[j], cards[i]);
+            card.ShuffleValue = _randomizer.Next(MAX_RANDOM_VALUE);
         }
+
+        // Sort the cards in the deck based on the random value and create the stack used for dealing the
+        //  cards to the players.
+
+        _cardStack = new Stack<Card>(Cards.OrderBy(c => c.ShuffleValue));
     }
 
-    // TODO: Consider adding a method to reset the deck to its initial state.
-    // TODO: Instead of removing cards from the deck, use a flag to mark cards as dealt.
     public Card Deal()
     {
-        if (cards.Count == 0) throw new InvalidOperationException("Cannot deal from empty deck");
-        var card = cards[0];
-        cards.RemoveAt(0);
-        return card;
+        if (_cardStack.Count == 0) throw new InvalidOperationException("Cannot deal from empty deck.");
+        
+        return _cardStack.Pop();
     }
-
-    public int Count => cards.Count;
 }
