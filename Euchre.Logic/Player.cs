@@ -2,10 +2,6 @@ namespace Euchre.Logic;
 
 public class Player
 {
-    public string Name { get; }
-    public List<Card> Hand { get; }
-    public bool IsHuman { get; }
-
     public Player(string name, bool isHuman = false)
     {
         Name = name;
@@ -13,8 +9,22 @@ public class Player
         IsHuman = isHuman;
     }
 
+    public string Name { get; }
+    public List<Card> Hand { get; }
+    public bool IsHuman { get; }
+
     public void AddCard(Card card)
     {
+        if (Hand.Count >= 5)
+        {
+            throw new InvalidOperationException("Cannot add more than 5 cards to hand.");
+        }
+
+        if (Hand.Contains(card))
+        {
+            throw new ArgumentException("Card already exists in hand.");
+        }
+
         Hand.Add(card);
     }
 
@@ -112,11 +122,6 @@ public class Player
         }
     }
 
-    private Card GetTrickWinner(List<Card> trick, Suit trump, Suit leadSuit)
-    {
-        return trick.OrderByDescending(c => c.GetTrickValue(trump, leadSuit)).First();
-    }
-
     public void DiscardForKitty(Card kitty, Suit trump)
     {
         if (IsHuman) return; // Human players need UI
@@ -136,5 +141,10 @@ public class Player
         }
         
         Hand.Add(kitty);
+    }
+
+    private Card GetTrickWinner(List<Card> trick, Suit trump, Suit leadSuit)
+    {
+        return trick.OrderByDescending(c => c.GetTrickValue(trump, leadSuit)).First();
     }
 }
