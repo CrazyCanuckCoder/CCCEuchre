@@ -95,4 +95,22 @@ public class PlayerTests
                 "Index is out of range for the hand.");
         });
     }
+
+    // Behaviour: Getting valid cards for a lead suit returns cards that match the lead suit when the player
+    //            has cards in hand of the lead suit.
+
+    [Test]
+    public void GetValidCards_ReturnsCardsMatchingLeadSuit()
+    {
+        var leadSuit = Suit.Hearts;
+        _player?.AddCard(new Card(Suit.Hearts, Rank.Ace));
+        _player?.AddCard(new Card(Suit.Diamonds, Rank.King));
+        
+        var validCards = _player?.GetValidCards(leadSuit, Suit.Spades);
+        
+        Assert.That(validCards?.Count, Is.EqualTo(1), "Should return one card matching the lead suit.");
+        Assert.That(validCards?[0].Suit, Is.EqualTo(leadSuit), "The valid card should match the lead suit.");
+    }
+
+    // Behaviour: Getting valid cards returns all cards when the player has no cards matching the lead suit.
 }
