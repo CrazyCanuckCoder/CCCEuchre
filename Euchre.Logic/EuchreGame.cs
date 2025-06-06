@@ -228,7 +228,8 @@ public class EuchreGame
                 currentPlayer = GetNextPlayer(currentPlayer);
                 continue;
             }
-            
+
+            // TODO: The call to GetValidCards should be moved to the Player class and into the SelectCardToPlay method.
             Suit? leadSuit = trick.Cards.Count > 0 ? trick.LeadSuit : null;
             var validCards = currentPlayer.GetValidCards(leadSuit ?? trump.Value, trump.Value);
             
