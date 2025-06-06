@@ -113,4 +113,28 @@ public class PlayerTests
     }
 
     // Behaviour: Getting valid cards returns all cards when the player has no cards matching the lead suit.
+
+    [Test]
+    public void GetValidCards_ReturnsAllCards_WhenNoMatchingLeadSuit()
+    {
+        _player?.AddCard(new Card(Suit.Diamonds, Rank.Ace));
+        _player?.AddCard(new Card(Suit.Clubs, Rank.King));
+        _player?.AddCard(new Card(Suit.Clubs, Rank.Queen));
+        _player?.AddCard(new Card(Suit.Diamonds, Rank.Queen));
+
+        var validCards = _player?.GetValidCards(Suit.Hearts, Suit.Spades);
+        
+        Assert.That(validCards?.Count, Is.EqualTo(_player?.Hand.Count), 
+            "Should return all cards when no matching lead suit.");
+    }
+
+    // Behaviour: Getting valid cards should return an empty list when the hand is empty.
+
+    [Test]
+    public void GetValidCards_ReturnsEmpty_WhenHandIsEmpty()
+    {
+        var validCards = _player?.GetValidCards(Suit.Hearts, Suit.Spades);
+        
+        Assert.That(validCards?.Count, Is.EqualTo(0), "Should return an empty list when hand is empty.");
+    }
 }
