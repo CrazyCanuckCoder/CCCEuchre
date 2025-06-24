@@ -1,8 +1,10 @@
+using Euchre.Logic.Interfaces;
+
 namespace Euchre.Logic;
 
 public class Trick
 {
-    public List<(Player Player, Card Card)> Cards { get; }
+    public List<(IPlayer Player, Card Card)> Cards { get; }
     public Suit LeadSuit { get; private set; }
     public Suit Trump { get; }
 
@@ -12,7 +14,7 @@ public class Trick
         Trump = trump;
     }
 
-    public void AddCard(Player player, Card card)
+    public void AddCard(IPlayer player, Card card)
     {
         if (Cards.Count == 0)
         {
@@ -21,8 +23,9 @@ public class Trick
         Cards.Add((player, card));
     }
 
-    public Player GetWinner()
+    public IPlayer GetWinner()
     {
+        // TODO: Change this to throw an exception when there are no cards.
         if (Cards.Count == 0) return null;
         
         return Cards.OrderByDescending(c => c.Card.GetTrickValue(Trump, LeadSuit))

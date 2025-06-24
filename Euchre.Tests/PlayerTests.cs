@@ -5,12 +5,12 @@ namespace Euchre.Tests;
 [TestFixture]
 public class PlayerTests
 {
-    private Player? _player;
+    private AutomatedPlayer? _player;
 
     [SetUp]
     public void Setup()
     {
-        _player = new Player("TestPlayer");
+        _player = new AutomatedPlayer("TestPlayer");
     }
 
     [TearDown]

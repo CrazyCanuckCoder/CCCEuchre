@@ -1,3 +1,5 @@
+using Euchre.Logic.Interfaces;
+
 namespace Euchre.Logic;
 
 public class EuchreGame
@@ -8,10 +10,10 @@ public class EuchreGame
         if (playerNames.Length != NUMBER_OF_PLAYERS)
             throw new ArgumentException($"Euchre requires exactly {NUMBER_OF_PLAYERS} players.");
         
-        players = new Player[NUMBER_OF_PLAYERS];
+        players = new IPlayer[NUMBER_OF_PLAYERS];
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
-            players[i] = new Player(playerNames[i], false); // All AI for now
+            players[i] = new AutomatedPlayer(playerNames[i]); // All AI for now
         }
         
         deck = new Deck();
@@ -27,16 +29,16 @@ public class EuchreGame
     public const int MAX_NUMBER_OF_TRICKS = 5;
     public const int WINNING_SCORE = 10;
 
-    private readonly Player[] players;
+    private readonly IPlayer[] players;
     private Deck deck;
     private Card kitty;
     private Suit? trump;
-    private Player dealer;
-    private Player? trumpCaller;
+    private IPlayer dealer;
+    private IPlayer? trumpCaller;
     private readonly int[] teamScores; // [Team 0 (Players 0,2), Team 1 (Players 1,3)]
     private List<Trick> currentHandTricks;
     private bool goingAlone;
-    private Player? alonePlayer;
+    private IPlayer? alonePlayer;
 
     public void PlayGame()
     {
@@ -100,7 +102,7 @@ public class EuchreGame
 
         // Play 5 tricks.
 
-        Player leader = GetPlayerAfterDealer();
+        IPlayer leader = GetPlayerAfterDealer();
         for (int trickNum = 0; trickNum < MAX_NUMBER_OF_TRICKS; trickNum++)
         {
             var trick = PlayTrick(leader, trickNum + 1);
@@ -175,7 +177,7 @@ public class EuchreGame
             
             if (round == 1 && forcedSuit.HasValue)
             {
-                if (player.OrderUp(kitty, forcedSuit.Value, round, isDealer))
+                if (player.OrderUp(kitty, isDealer))
                 {
                     trump = forcedSuit.Value;
                     trumpCaller = player;
@@ -211,14 +213,14 @@ public class EuchreGame
         return false;
     }
 
-    private Trick PlayTrick(Player leader, int trickNumber)
+    private Trick PlayTrick(IPlayer leader, int trickNumber)
     {
         var trick = new Trick(trump.Value);
         
         Console.WriteLine($"\n--- Trick {trickNumber} ---");
         Console.WriteLine($"Leader: {leader.Name}");
         
-        Player currentPlayer = leader;
+        IPlayer currentPlayer = leader;
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
             // Skip partner if going alone
@@ -231,7 +233,6 @@ public class EuchreGame
 
             // TODO: The call to GetValidCards should be moved to the Player class and into the SelectCardToPlay method.
             Suit? leadSuit = trick.Cards.Count > 0 ? trick.LeadSuit : null;
-            var validCards = currentPlayer.GetValidCards(leadSuit ?? trump.Value, trump.Value);
             
             Console.WriteLine($"\n{currentPlayer.Name}'s turn");
             Console.WriteLine($"Hand: {string.Join(", ", currentPlayer.Hand.Select((c, idx) => $"{idx}: {c}"))}");
@@ -306,13 +307,13 @@ public class EuchreGame
         Console.ReadLine();
     }
 
-    private Player GetPlayerAfterDealer()
+    private IPlayer GetPlayerAfterDealer()
     {
         int dealerIndex = Array.IndexOf(players, dealer);
         return players[(dealerIndex + 1) % NUMBER_OF_PLAYERS];
     }
 
-    private Player GetNextPlayer(Player current)
+    private IPlayer GetNextPlayer(IPlayer current)
     {
         int currentIndex = Array.IndexOf(players, current);
         return players[(currentIndex + 1) % NUMBER_OF_PLAYERS];
@@ -323,13 +324,13 @@ public class EuchreGame
         dealer = GetNextPlayer(dealer);
     }
 
-    private int GetPlayerTeam(Player player)
+    private int GetPlayerTeam(IPlayer player)
     {
         int index = Array.IndexOf(players, player);
         return index % NUMBER_OF_PLAYERS; // Players 0,2 are team 0; Players 1,3 are team 1
     }
 
-    private bool IsPartner(Player player1, Player player2)
+    private bool IsPartner(IPlayer player1, IPlayer player2)
     {
         return GetPlayerTeam(player1) == GetPlayerTeam(player2) && player1 != player2;
     }
