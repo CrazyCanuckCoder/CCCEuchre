@@ -1,4 +1,5 @@
 using Euchre.Logic.Interfaces;
+using static Euchre.Logic.Constants;
 
 namespace Euchre.Logic;
 
@@ -33,5 +34,5 @@ public class Trick
                     .Player;
     }
 
-    public bool IsComplete => Cards.Count == 4;
+    public bool IsComplete => Cards.Count == MAX_NUMBER_OF_TRICK_CARDS;
 }

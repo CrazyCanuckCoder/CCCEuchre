@@ -1,4 +1,5 @@
 namespace Euchre.Logic;
+using static Euchre.Logic.Constants;
 
 public class Deck
 {
@@ -10,11 +11,6 @@ public class Deck
 
     private readonly Random _randomizer;
     private Stack<Card> _cardStack = new();
-
-    /// <summary>
-    /// The maximum number that the randomizer can create.
-    /// </summary>
-    private const int MAX_RANDOM_VALUE = 10000;
 
     public List<Card> Cards { get; private set; } = [];
 

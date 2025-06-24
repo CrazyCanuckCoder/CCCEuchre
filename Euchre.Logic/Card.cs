@@ -1,3 +1,5 @@
+using static Euchre.Logic.Constants;
+
 namespace Euchre.Logic;
 
 public class Card
@@ -40,10 +42,10 @@ public class Card
 
     public int GetTrickValue(Suit trump, Suit leadSuit)
     {
-        if (IsRightBower(trump)) return 1000;
-        if (IsLeftBower(trump)) return 999;
+        if (IsRightBower(trump)) return RIGHT_BOWER_VALUE;
+        if (IsLeftBower(trump)) return LEFT_BOWER_VALUE;
 
-        if (Suit == trump) return 500 + (int)Rank;
+        if (Suit == trump) return TRUMP_VALUE_ADD + (int)Rank;
         if (Suit == leadSuit) return (int)Rank;
         
         return 0; // Can't win if not trump or lead suit

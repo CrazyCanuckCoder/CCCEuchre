@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic.Interfaces;
+using static Euchre.Logic.Constants;
 
 namespace Euchre.Logic;
 
@@ -19,9 +20,9 @@ public abstract class Player : IPlayer
 
     public void AddCard(Card card)
     {
-        if (Hand.Count >= 5)
+        if (Hand.Count >= CARDS_PER_PLAYER)
         {
-            throw new InvalidOperationException("Cannot add more than 5 cards to hand.");
+            throw new InvalidOperationException($"Cannot add more than {CARDS_PER_PLAYER} cards to hand.");
         }
 
         if (Hand.Contains(card))

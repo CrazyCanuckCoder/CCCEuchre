@@ -1,4 +1,5 @@
 using Euchre.Logic.Interfaces;
+using static Euchre.Logic.Constants;
 
 namespace Euchre.Logic;
 
@@ -22,12 +23,6 @@ public class EuchreGame
         dealer = players[0];
     }
 
-    // TODO: Move these constants to a class.
-    public const int NUMBER_OF_PLAYERS = 4;
-    public const int CARDS_PER_PLAYER = 5;
-    public const int NUMBER_OF_TEAMS = 2;
-    public const int MAX_NUMBER_OF_TRICKS = 5;
-    public const int WINNING_SCORE = 10;
 
     private readonly IPlayer[] players;
     private Deck deck;
@@ -124,34 +119,28 @@ public class EuchreGame
 
     private void DealCards()
     {
-        // TODO: Creating a new deck each time is inefficient, consider reusing the deck.
-        deck = new Deck();
         deck.Shuffle();
         
-        // Clear hands
+        // Clear hands.
+
         foreach (var player in players)
         {
             player.ClearHand();
         }
 
-        // TODO: Deal cards to players a single card at a time instead of in bulk.
-        // Deal 5 cards to each player (3-2 or 2-3 pattern)
-        for (int round = 0; round < 2; round++)
+        // Deal 5 cards to each player.
+
+        for (int round = 0; round < CARDS_PER_PLAYER; round++)
         {
-            for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
+            for (int playerCount = 0; playerCount < NUMBER_OF_PLAYERS; playerCount++)
             {
-                int cardsToDeal = (round == 0) ? 3 : 2;
-                if (i % 2 == 1) cardsToDeal = CARDS_PER_PLAYER - cardsToDeal; // Alternate pattern
-                
-                var playerIndex = (Array.IndexOf(players, dealer) + 1 + i) % 4;
-                for (int j = 0; j < cardsToDeal; j++)
-                {
-                    players[playerIndex].AddCard(deck.Deal());
-                }
+                var playerIndex = (Array.IndexOf(players, dealer) + 1 + playerCount) % NUMBER_OF_PLAYERS;
+                players[playerIndex].AddCard(deck.Deal());
             }
         }
         
-        // Set kitty
+        // Set turned up card.
+
         kitty = deck.Deal();
     }
 

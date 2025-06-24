@@ -1,4 +1,5 @@
 using Euchre.Logic;
+using static Euchre.Logic.Constants;
 
 namespace Euchre.Tests;
 
@@ -79,10 +80,10 @@ public class CardTests
 
     private static IEnumerable<TestCaseData> GetTestCaseDataForGetTrickValue()
     {
-        yield return new TestCaseData(Suit.Hearts, Suit.Hearts,   new Card(Suit.Hearts,   Rank.Jack),  1000);
-        yield return new TestCaseData(Suit.Clubs,  Suit.Clubs,    new Card(Suit.Clubs,    Rank.Jack),  1000);
-        yield return new TestCaseData(Suit.Hearts, Suit.Diamonds, new Card(Suit.Diamonds, Rank.Jack),  999);
-        yield return new TestCaseData(Suit.Clubs,  Suit.Spades,   new Card(Suit.Spades,   Rank.Jack),  999);
+        yield return new TestCaseData(Suit.Hearts, Suit.Hearts,   new Card(Suit.Hearts,   Rank.Jack),  RIGHT_BOWER_VALUE);
+        yield return new TestCaseData(Suit.Clubs,  Suit.Clubs,    new Card(Suit.Clubs,    Rank.Jack),  RIGHT_BOWER_VALUE);
+        yield return new TestCaseData(Suit.Hearts, Suit.Diamonds, new Card(Suit.Diamonds, Rank.Jack),  LEFT_BOWER_VALUE);
+        yield return new TestCaseData(Suit.Clubs,  Suit.Spades,   new Card(Suit.Spades,   Rank.Jack),  LEFT_BOWER_VALUE);
         yield return new TestCaseData(Suit.Hearts, Suit.Hearts,   new Card(Suit.Hearts,   Rank.Queen), 512);
         yield return new TestCaseData(Suit.Clubs,  Suit.Clubs,    new Card(Suit.Clubs,    Rank.Ten),   510);
         yield return new TestCaseData(Suit.Hearts, Suit.Diamonds, new Card(Suit.Diamonds, Rank.Queen), 12);
