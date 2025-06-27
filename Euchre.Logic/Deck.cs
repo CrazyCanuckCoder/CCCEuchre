@@ -1,5 +1,7 @@
-namespace Euchre.Logic;
+using Euchre.Logic.Exceptions;
 using static Euchre.Logic.Constants;
+
+namespace Euchre.Logic;
 
 public class Deck
 {
@@ -40,9 +42,14 @@ public class Deck
         _cardStack = new Stack<Card>(Cards.OrderBy(c => c.ShuffleValue));
     }
 
+    /// <summary>
+    /// Deals the top card from the deck.
+    /// </summary>
+    /// <returns>The top card from the deck.</returns>
+    /// <exception cref="EmptyDeckException" />
     public Card Deal()
     {
-        if (_cardStack.Count == 0) throw new InvalidOperationException("Cannot deal from empty deck.");
+        if (_cardStack.Count == 0) throw new EmptyDeckException();
         
         return _cardStack.Pop();
     }

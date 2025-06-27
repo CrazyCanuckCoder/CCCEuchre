@@ -6,6 +6,7 @@ public class Constants
     public const int NUMBER_OF_TEAMS = 2;
     public const int MAX_NUMBER_OF_TRICKS = 5;
     public const int WINNING_SCORE = 10;
+    public const int MAX_NUMBER_OF_TRICK_CARDS = 4;
 
     /// <summary>
     /// The maximum number that the randomizer for the Deck can create.

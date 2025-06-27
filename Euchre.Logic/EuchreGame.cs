@@ -1,3 +1,4 @@
+using Euchre.Logic.Exceptions;
 using Euchre.Logic.Interfaces;
 using static Euchre.Logic.Constants;
 
@@ -7,10 +8,11 @@ public class EuchreGame
 {
     public EuchreGame(string[] playerNames)
     {
-        // TODO: Create custom exceptions for this game.
         if (playerNames.Length != NUMBER_OF_PLAYERS)
-            throw new ArgumentException($"Euchre requires exactly {NUMBER_OF_PLAYERS} players.");
-        
+        {
+            throw new InvalidNumberOfPlayersException();
+        }
+
         players = new IPlayer[NUMBER_OF_PLAYERS];
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {

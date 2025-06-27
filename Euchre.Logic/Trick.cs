@@ -27,7 +27,7 @@ public class Trick
     public IPlayer GetWinner()
     {
         // TODO: Change this to throw an exception when there are no cards.
-        if (Cards.Count == 0) return null;
+        if (!IsComplete) return null;
         
         return Cards.OrderByDescending(c => c.Card.GetTrickValue(Trump, LeadSuit))
                     .First()
