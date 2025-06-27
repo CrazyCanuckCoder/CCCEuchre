@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic;
+using Euchre.Logic.Exceptions;
 
 namespace Euchre.Tests;
 
@@ -38,7 +39,7 @@ public class DeckTests
     [Test]
     public void Deal_ShouldThrowInvalidOperationException_WhenCalledBeforeShuffle()
     {
-        Assert.Throws<InvalidOperationException>(() => _deck?.Deal(), "Cannot deal from empty deck.");
+        Assert.Throws<EmptyDeckException>(() => _deck?.Deal(), "Cannot deal from empty deck.");
     }
 
     // Behaviour: After initialization, all of the cards in the deck should have a ShuffleValue of 0.

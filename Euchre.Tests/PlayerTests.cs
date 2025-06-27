@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic;
+using Euchre.Logic.Exceptions;
 
 namespace Euchre.Tests;
 
@@ -37,7 +38,7 @@ public class PlayerTests
         var card = new Card(Suit.Hearts, Rank.Ace);
         _player?.AddCard(card);
 
-        Assert.Throws<ArgumentException>(() => _player?.AddCard(card), "Card already exists in hand.");
+        Assert.Throws<CardAlreadyExistsException>(() => _player?.AddCard(card), "Card already exists in hand.");
     }
 
     // Behaviour: Adding a card that exceeds the maximum hand size should throw an exception.
@@ -50,7 +51,7 @@ public class PlayerTests
             _player?.AddCard(new Card(Suit.Hearts, (Rank)rank));
         }
         var newCard = new Card(Suit.Diamonds, Rank.Ace);
-        Assert.Throws<InvalidOperationException>(() => _player?.AddCard(newCard), 
+        Assert.Throws<TooManyCardsException>(() => _player?.AddCard(newCard), 
             "Cannot add more than 5 cards to hand.");
     }
 
