@@ -84,7 +84,7 @@ public class DeckTests
         var dealtCards = new List<Card>();
         for (int i = 0; i < 24; i++)
         {
-            dealtCards.Add(_deck?.Deal() ?? throw new InvalidOperationException("Deck is empty."));
+            dealtCards.Add(_deck?.Deal() ?? throw new EmptyDeckException());
         }
         
         Assert.Multiple(() =>

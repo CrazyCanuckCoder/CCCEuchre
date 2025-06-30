@@ -231,7 +231,7 @@ public class EuchreGame
                 Console.WriteLine($"Must follow {leadSuit}");
             
             var playedCard = currentPlayer.SelectCardToPlay(
-                trick.Cards.Select(c => c.Card).ToList(), 
+                trick, 
                 trump.Value, 
                 leadSuit);
             

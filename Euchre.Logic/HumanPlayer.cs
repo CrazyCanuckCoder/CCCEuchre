@@ -21,7 +21,7 @@ public class HumanPlayer : Player
         // Human players will need UI to select trump suit.
         return null;
     }
-    public override Card SelectCardToPlay(List<Card> trick, Suit trump, Suit? leadSuit)
+    public override Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit)
     {
         // Human players will need UI to select card to play.
         return null;

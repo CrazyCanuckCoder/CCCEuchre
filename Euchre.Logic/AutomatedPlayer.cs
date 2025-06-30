@@ -43,12 +43,12 @@ public class AutomatedPlayer : Player
         return bestSuit.Value >= 3 ? bestSuit.Key : null;
     }
 
-    public override Card SelectCardToPlay(List<Card> trick, Suit trump, Suit? leadSuit)
+    public override Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit)
     {
         var validCards = GetValidCards(leadSuit ?? trump, trump);
         if (validCards.Count == 0) return Hand[0];
 
-        if (trick.Count == 0) // Leading
+        if (trick.Cards.Count == 0) // Leading
         {
             // Lead with highest trump if available, otherwise highest card
             var trumps = validCards.Where(c => c.EffectiveSuit(trump) == trump).ToList();
@@ -59,7 +59,7 @@ public class AutomatedPlayer : Player
         }
         else // Following
         {
-            var currentWinner = GetTrickWinner(trick, trump, leadSuit.Value);
+            var currentWinner = trick.GetCurrentLeadingCard();
             var winningValue = currentWinner.GetTrickValue(trump, leadSuit.Value);
 
             // Try to win the trick
@@ -89,10 +89,5 @@ public class AutomatedPlayer : Player
         }
 
         Hand.Add(kitty);
-    }
-
-    private Card GetTrickWinner(List<Card> trick, Suit trump, Suit leadSuit)
-    {
-        return trick.OrderByDescending(c => c.GetTrickValue(trump, leadSuit)).First();
     }
 }

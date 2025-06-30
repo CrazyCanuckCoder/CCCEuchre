@@ -65,5 +65,5 @@ public abstract class Player : IPlayer
 
     public abstract bool OrderUp(Card kitty, bool isDealer);
 
-    public abstract Card SelectCardToPlay(List<Card> trick, Suit trump, Suit? leadSuit);
+    public abstract Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit);
 }

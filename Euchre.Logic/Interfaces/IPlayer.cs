@@ -13,5 +13,5 @@ public interface IPlayer
     List<Card> GetValidCards(Suit leadSuit, Suit trump);
     bool OrderUp(Card kitty, bool isDealer);
     Card PlayCard(int index);
-    Card SelectCardToPlay(List<Card> trick, Suit trump, Suit? leadSuit);
+    Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit);
 }
