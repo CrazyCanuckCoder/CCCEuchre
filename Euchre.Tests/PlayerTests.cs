@@ -96,46 +96,4 @@ public class PlayerTests
                 "Index is out of range for the hand.");
         });
     }
-
-    // Behaviour: Getting valid cards for a lead suit returns cards that match the lead suit when the player
-    //            has cards in hand of the lead suit.
-
-    [Test]
-    public void GetValidCards_ReturnsCardsMatchingLeadSuit()
-    {
-        var leadSuit = Suit.Hearts;
-        _player?.AddCard(new Card(Suit.Hearts, Rank.Ace));
-        _player?.AddCard(new Card(Suit.Diamonds, Rank.King));
-        
-        var validCards = _player?.GetValidCards(leadSuit, Suit.Spades);
-        
-        Assert.That(validCards?.Count, Is.EqualTo(1), "Should return one card matching the lead suit.");
-        Assert.That(validCards?[0].Suit, Is.EqualTo(leadSuit), "The valid card should match the lead suit.");
-    }
-
-    // Behaviour: Getting valid cards returns all cards when the player has no cards matching the lead suit.
-
-    [Test]
-    public void GetValidCards_ReturnsAllCards_WhenNoMatchingLeadSuit()
-    {
-        _player?.AddCard(new Card(Suit.Diamonds, Rank.Ace));
-        _player?.AddCard(new Card(Suit.Clubs, Rank.King));
-        _player?.AddCard(new Card(Suit.Clubs, Rank.Queen));
-        _player?.AddCard(new Card(Suit.Diamonds, Rank.Queen));
-
-        var validCards = _player?.GetValidCards(Suit.Hearts, Suit.Spades);
-        
-        Assert.That(validCards?.Count, Is.EqualTo(_player?.Hand.Count), 
-            "Should return all cards when no matching lead suit.");
-    }
-
-    // Behaviour: Getting valid cards should return an empty list when the hand is empty.
-
-    [Test]
-    public void GetValidCards_ReturnsEmpty_WhenHandIsEmpty()
-    {
-        var validCards = _player?.GetValidCards(Suit.Hearts, Suit.Spades);
-        
-        Assert.That(validCards?.Count, Is.EqualTo(0), "Should return an empty list when hand is empty.");
-    }
 }

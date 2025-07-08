@@ -11,7 +11,17 @@ public class PlayManager : IPlayManager
 
     private readonly List<Card> _playerHand;
 
-    private List<Card> GetValidCards(Suit leadSuit, Suit trump)
+
+    /// <summary>
+    /// Determines the valid cards that can be played based on the lead suit and trump suit.
+    /// </summary>
+    /// <remarks>This method enforces the rule that players must follow the lead suit if they have cards of
+    /// that suit. If no cards match the lead suit, the player may play any card from their hand.</remarks>
+    /// <param name="leadSuit">The suit of the card that was led in the current trick.</param>
+    /// <param name="trump">The trump suit for the game, which may affect card behaviour.</param>
+    /// <returns>A list of valid cards from the player's hand. If the hand contains cards matching the lead 
+    /// suit, those cards are returned. Otherwise, all cards in the hand are considered valid.</returns>
+    public List<Card> GetValidCards(Suit leadSuit, Suit trump)
     {
         if (_playerHand.Count == 0) return [];
 

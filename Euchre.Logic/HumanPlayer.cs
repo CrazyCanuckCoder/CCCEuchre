@@ -6,11 +6,6 @@ public class HumanPlayer : Player
     { 
     }
 
-    public override List<Card> GetValidCards(Suit leadSuit, Suit trump)
-    {
-        // Human players will need UI to select cards.
-        return Hand;
-    }
     public override bool OrderUp(Card kitty, bool isDealer)
     {
         // Human players will need UI to decide whether to order up.

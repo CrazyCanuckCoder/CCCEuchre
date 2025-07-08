@@ -10,7 +10,6 @@ public interface IPlayer
     Suit? CallTrump(Card kitty);
     void ClearHand();
     void DiscardForKitty(Card kitty, Suit trump);
-    List<Card> GetValidCards(Suit leadSuit, Suit trump);
     bool OrderUp(Card kitty, bool isDealer);
     Card PlayCard(int index);
     Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit);

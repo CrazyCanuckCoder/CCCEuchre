@@ -61,8 +61,6 @@ public abstract class Player : IPlayer
 
     public abstract void DiscardForKitty(Card kitty, Suit trump);
 
-    public abstract List<Card> GetValidCards(Suit leadSuit, Suit trump);
-
     public abstract bool OrderUp(Card kitty, bool isDealer);
 
     public abstract Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit);
