@@ -83,20 +83,33 @@ public class Card : ICard
     }
 
     /// <summary>
-    /// Determines the value of the card in the context of a trick, based on the trump suit and the lead suit.
+    /// Determines the value of the current card in the context of a trick, based on the trump suit and the
+    /// lead suit.
     /// </summary>
     /// <remarks>This method evaluates the card's trick value based on its relationship to the trump and lead
     /// suits. Cards that are neither trump nor lead suit are assigned a value of 0, as they cannot win the
     /// trick.</remarks>
     /// <param name="trump">The suit designated as trump for the current round.</param>
     /// <param name="leadSuit">The suit that was led in the current trick.</param>
-    /// <returns>The value of the card for the trick: <list type="bullet"> <item><description><see langword="RIGHT_BOWER_VALUE"/>
-    /// if the card is the right bower of the trump suit.</description></item> <item><description><see
-    /// langword="LEFT_BOWER_VALUE"/> if the card is the left bower of the trump suit.</description></item>
-    /// <item><description>The trump value plus the rank of the card if the card matches the trump
-    /// suit.</description></item> <item><description>The rank of the card if the card matches the lead
-    /// suit.</description></item> <item><description><see langword="0"/> if the card does not match the trump suit or
-    /// the lead suit.</description></item> </list></returns>
+    /// <returns>The value of the card for the trick: 
+    /// <list type="bullet"> 
+    ///     <item><description>
+    ///         <see langword="RIGHT_BOWER_VALUE"/> if the card is the right bower of the trump suit.
+    ///     </description></item> 
+    ///     <item><description>
+    ///         <see langword="LEFT_BOWER_VALUE"/> if the card is the left bower of the trump suit.
+    ///     </description></item>
+    ///     <item><description>
+    ///         The trump value plus the rank of the card if the card matches the trump suit.
+    ///     </description></item> 
+    ///     <item><description>
+    ///         The rank of the card if the card matches the lead suit.
+    ///     </description></item> 
+    ///     <item><description>
+    ///         0 if the card does not match the trump suit or the lead suit.
+    ///     </description></item> 
+    /// </list>
+    /// </returns>
     public int GetTrickValue(Suit trump, Suit leadSuit)
     {
         if (IsRightBower(trump)) return RIGHT_BOWER_VALUE;
