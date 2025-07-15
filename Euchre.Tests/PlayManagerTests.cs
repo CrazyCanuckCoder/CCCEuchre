@@ -1,9 +1,4 @@
 ﻿using Euchre.Logic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Euchre.Tests;
 
@@ -25,8 +20,12 @@ public class PlayManagerTests
 
         var validCards = new PlayManager(playerHand).GetValidCards(leadSuit, Suit.Spades);
 
-        Assert.That(validCards?.Count, Is.EqualTo(1), "Should return one card matching the lead suit.");
-        Assert.That(validCards?[0].Suit, Is.EqualTo(leadSuit), "The valid card should match the lead suit.");
+        Assert.Multiple(() =>
+            {
+                Assert.That(validCards?.Count, Is.EqualTo(1), "Should return one card matching the lead suit.");
+                Assert.That(validCards?[0].Suit, Is.EqualTo(leadSuit), "The valid card should match the lead suit.");
+            }
+        );
     }
 
     // Behaviour: Getting valid cards returns all cards when the player has no cards matching the lead suit.
