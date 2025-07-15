@@ -12,22 +12,22 @@ public class HumanPlayer : Player
     /// <summary>
     /// Fired when to determine if the user wants to order up the kitty card.
     /// </summary>
-    public event EventHandler<PromptToOrderUpEventArgs> PromptToOrderUp;
+    public event EventHandler<PromptToOrderUpEventArgs>? PromptToOrderUp;
 
     /// <summary>
     /// Fired to determine if the user wants to call trump.
     /// </summary>
-    public event EventHandler<PromptForTrumpSuitEventArgs> PromptForTrumpSuit;
+    public event EventHandler<PromptForTrumpSuitEventArgs>? PromptForTrumpSuit;
 
     /// <summary>
     /// Fired to prompt the user to discard a card from their hand in exchange for the kitty card.
     /// </summary>
-    public event EventHandler<PromptForDiscardEventArgs> PromptForDiscard;
+    public event EventHandler<PromptForDiscardEventArgs>? PromptForDiscard;
 
     /// <summary>
     /// Fired to prompt the user to select a card to play in the current trick.
     /// </summary>
-    public event EventHandler<PromptForCardToPlayEventArgs> PromptForCardToPlay;
+    public event EventHandler<PromptForCardToPlayEventArgs>? PromptForCardToPlay;
 
     /// <summary>
     /// Prompts the user on whether to order up the given card during the bidding phase.
