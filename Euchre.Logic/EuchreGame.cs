@@ -8,93 +8,87 @@ public class EuchreGame
 {
     public EuchreGame(string[] playerNames)
     {
+        InitializeGame(playerNames);
+    }
+
+    public GameDataManager GameInfo { get; private set; }
+
+    private void InitializeGame(string[] playerNames)
+    {
         if (playerNames.Length != NUMBER_OF_PLAYERS)
         {
             throw new InvalidNumberOfPlayersException();
         }
 
-        players = new IPlayer[NUMBER_OF_PLAYERS];
+        GameInfo = new GameDataManager();
+        var players = new IPlayer[NUMBER_OF_PLAYERS];
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
-            players[i] = new AutomatedPlayer(playerNames[i]); // All AI for now
+            players[i] = new AutomatedPlayer(playerNames[i], GameInfo); // All AI for now
         }
-        
-        deck = new Deck();
-        teamScores = new int[NUMBER_OF_TEAMS];
-        currentHandTricks = [];
-        dealer = players[0];
+
+        GameInfo.Players = players;
+        GameInfo.Dealer = players[0];
     }
-
-
-    private readonly IPlayer[] players;
-    private Deck deck;
-    private Card kitty;
-    private Suit? trump;
-    private IPlayer dealer;
-    private IPlayer? trumpCaller;
-    private readonly int[] teamScores; // [Team 0 (Players 0,2), Team 1 (Players 1,3)]
-    private List<Trick> currentHandTricks;
-    private bool goingAlone;
-    private IPlayer? alonePlayer;
 
     public void PlayGame()
     {
         Console.WriteLine("Starting Euchre Game!");
         PrintTeams();
         
-        while (teamScores[0] < WINNING_SCORE && teamScores[1] < WINNING_SCORE)
+        while (GameInfo.TeamScores[0] < WINNING_SCORE && GameInfo.TeamScores[1] < WINNING_SCORE)
         {
-            PlayHand();
+            PlayRound();
             
-            Console.WriteLine($"\nScores - Team 1: {teamScores[0]}, Team 2: {teamScores[1]}");
+            Console.WriteLine($"\nScores - Team 1: {GameInfo.TeamScores[0]}, Team 2: {GameInfo.TeamScores[1]}");
             Console.WriteLine(new string('=', 50));
             Console.ReadLine();
         }
         
-        int winningTeam = teamScores[0] >= WINNING_SCORE ? 0 : 1;
+        int winningTeam = GameInfo.TeamScores[0] >= WINNING_SCORE ? 0 : 1;
         Console.WriteLine($"\nGame Over! Team {winningTeam + 1} wins!");
-        Console.WriteLine($"Final Score - Team 1: {teamScores[0]}, Team 2: {teamScores[1]}");
+        Console.WriteLine($"Final Score - Team 1: {GameInfo.TeamScores[0]}, Team 2: {GameInfo.TeamScores[1]}");
     }
 
     private void PrintTeams()
     {
-        Console.WriteLine($"Team 1: {players[0].Name} & {players[2].Name}");
-        Console.WriteLine($"Team 2: {players[1].Name} & {players[3].Name}");
+        Console.WriteLine($"Team 1: {GameInfo.Players[0].Name} & {GameInfo.Players[2].Name}");
+        Console.WriteLine($"Team 2: {GameInfo.Players[1].Name} & {GameInfo.Players[3].Name}");
         Console.ReadLine();
     }
 
-    private void PlayHand()
+    private void PlayRound()
     {
-        // Reset for new hand.
+        // Reset for new round.
 
-        currentHandTricks.Clear();
-        trump = null;
-        trumpCaller = null;
-        goingAlone = false;
-        alonePlayer = null;
+        GameInfo.CurrentRoundTricks.Clear();
+        GameInfo.Trump = null;
+        GameInfo.TrumpCaller = null;
+        GameInfo.GoingAlone = false;
+        GameInfo.AlonePlayer = null;
         
         // Deal cards.
 
         DealCards();
         
-        Console.WriteLine($"\nDealer: {dealer.Name}");
-        Console.WriteLine($"Kitty: {kitty}");
+        Console.WriteLine($"\nDealer: {GameInfo.Dealer.Name}");
+        Console.WriteLine($"Kitty: {GameInfo.Kitty}");
         Console.ReadLine();
 
         // Bidding phase.
 
         if (!BiddingPhase())
         {
-            Console.WriteLine("No one ordered up. Dealing new hand.");
+            Console.WriteLine("No one ordered up. Dealing new round.");
             AdvanceDealer();
             Console.ReadLine();
             return;
         }
         
-        Console.WriteLine($"\nTrump: {trump}");
-        Console.WriteLine($"Called by: {trumpCaller.Name}");
-        if (goingAlone)
-            Console.WriteLine($"{alonePlayer.Name} is going alone!");
+        Console.WriteLine($"\nTrump: {GameInfo.Trump}");
+        Console.WriteLine($"Called by: {GameInfo.TrumpCaller?.Name}");
+        if (GameInfo.GoingAlone)
+            Console.WriteLine($"{GameInfo.AlonePlayer?.Name} is going alone!");
         Console.ReadLine();
 
         // Play 5 tricks.
@@ -103,7 +97,7 @@ public class EuchreGame
         for (int trickNum = 0; trickNum < MAX_NUMBER_OF_TRICKS; trickNum++)
         {
             var trick = PlayTrick(leader, trickNum + 1);
-            currentHandTricks.Add(trick);
+            GameInfo.CurrentRoundTricks.Add(trick);
             leader = trick.GetWinner();
             
             Console.WriteLine($"Trick {trickNum + 1} won by: {leader.Name}");
@@ -112,7 +106,7 @@ public class EuchreGame
 
         // Score the hand.
 
-        ScoreHand();
+        ScoreRound();
         
         // Determine next dealer.
 
@@ -121,11 +115,11 @@ public class EuchreGame
 
     private void DealCards()
     {
-        deck.Shuffle();
+        GameInfo.Deck.Shuffle();
         
         // Clear hands.
 
-        foreach (var player in players)
+        foreach (var player in GameInfo.Players)
         {
             player.ClearHand();
         }
@@ -136,20 +130,21 @@ public class EuchreGame
         {
             for (int playerCount = 0; playerCount < NUMBER_OF_PLAYERS; playerCount++)
             {
-                var playerIndex = (Array.IndexOf(players, dealer) + 1 + playerCount) % NUMBER_OF_PLAYERS;
-                players[playerIndex].AddCard(deck.Deal());
+                var playerIndex = (Array.IndexOf(GameInfo.Players, GameInfo.Dealer) + 1 + playerCount)
+                    % NUMBER_OF_PLAYERS;
+                GameInfo.Players[playerIndex].AddCard(GameInfo.Deck.Deal());
             }
         }
-        
+
         // Set turned up card.
 
-        kitty = deck.Deal();
+        GameInfo.Kitty = GameInfo.Deck.Deal();
     }
 
     private bool BiddingPhase()
     {
         // Round 1 - Kitty suit
-        if (BiddingRound(1, kitty.Suit))
+        if (BiddingRound(1, GameInfo.Kitty.Suit))
             return true;
         
         // Round 2 - Other suits
@@ -158,25 +153,25 @@ public class EuchreGame
 
     private bool BiddingRound(int round, Suit? forcedSuit)
     {
-        int startPlayerIndex = (Array.IndexOf(players, dealer) + 1) % NUMBER_OF_PLAYERS;
+        int startPlayerIndex = (Array.IndexOf(GameInfo.Players, GameInfo.Dealer) + 1) % NUMBER_OF_PLAYERS;
         
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
             var playerIndex = (startPlayerIndex + i) % NUMBER_OF_PLAYERS;
-            var player = players[playerIndex];
-            bool isDealer = player == dealer;
+            var player = GameInfo.Players[playerIndex];
+            bool isDealer = player == GameInfo.Dealer;
             
             if (round == 1 && forcedSuit.HasValue)
             {
-                if (player.OrderUp(kitty, isDealer))
+                if (player.OrderUp(GameInfo.Kitty, isDealer))
                 {
-                    trump = forcedSuit.Value;
-                    trumpCaller = player;
-                    
+                    GameInfo.Trump = forcedSuit.Value;
+                    GameInfo.TrumpCaller = player;
+
                     // Dealer picks up kitty
-                    dealer.DiscardForKitty(kitty, trump.Value);
+                    GameInfo.Dealer.DiscardForKitty(GameInfo.Kitty, GameInfo.Trump.Value);
                     
-                    Console.WriteLine($"{player.Name} ordered up {trump}");
+                    Console.WriteLine($"{player.Name} ordered up {GameInfo.Trump}");
                     return true;
                 }
                 else
@@ -186,12 +181,12 @@ public class EuchreGame
             }
             else if (round == 2)
             {
-                var calledSuit = player.CallTrump(kitty);
+                var calledSuit = player.CallTrump(GameInfo.Kitty);
                 if (calledSuit.HasValue)
                 {
-                    trump = calledSuit.Value;
-                    trumpCaller = player;
-                    Console.WriteLine($"{player.Name} calls {trump}");
+                    GameInfo.Trump = calledSuit.Value;
+                    GameInfo.TrumpCaller = player;
+                    Console.WriteLine($"{player.Name} calls {GameInfo.Trump}");
                     return true;
                 }
                 else
@@ -206,7 +201,7 @@ public class EuchreGame
 
     private Trick PlayTrick(IPlayer leader, int trickNumber)
     {
-        var trick = new Trick(trump.Value);
+        var trick = new Trick(GameInfo.Trump.Value);
         
         Console.WriteLine($"\n--- Trick {trickNumber} ---");
         Console.WriteLine($"Leader: {leader.Name}");
@@ -215,7 +210,7 @@ public class EuchreGame
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
             // Skip partner if going alone
-            if (goingAlone && IsPartner(alonePlayer, currentPlayer) && currentPlayer != alonePlayer)
+            if (GameInfo.GoingAlone && IsPartner(GameInfo.AlonePlayer, currentPlayer) && currentPlayer != GameInfo.AlonePlayer)
             {
                 Console.WriteLine($"{currentPlayer.Name} sits out (partner going alone)");
                 currentPlayer = GetNextPlayer(currentPlayer);
@@ -232,7 +227,7 @@ public class EuchreGame
             
             var playedCard = currentPlayer.SelectCardToPlay(
                 trick, 
-                trump.Value, 
+                GameInfo.Trump.Value, 
                 leadSuit);
             
             // For AI, find the card in hand and play it
@@ -249,12 +244,12 @@ public class EuchreGame
         return trick;
     }
 
-    private void ScoreHand()
+    private void ScoreRound()
     {
         int team0Tricks = 0;
         int team1Tricks = 0;
         
-        foreach (var trick in currentHandTricks)
+        foreach (var trick in GameInfo.CurrentRoundTricks)
         {
             var winner = trick.GetWinner();
             int team = GetPlayerTeam(winner);
@@ -262,7 +257,7 @@ public class EuchreGame
             else team1Tricks++;
         }
         
-        int callerTeam = GetPlayerTeam(trumpCaller);
+        int callerTeam = GetPlayerTeam(GameInfo.TrumpCaller);
         int callerTricks = callerTeam == 0 ? team0Tricks : team1Tricks;
         
         Console.WriteLine($"\nTricks won - Team 1: {team0Tricks}, Team 2: {team1Tricks}");
@@ -271,27 +266,27 @@ public class EuchreGame
         {
             if (callerTricks == MAX_NUMBER_OF_TRICKS)
             {
-                if (goingAlone)
+                if (GameInfo.GoingAlone)
                 {
-                    teamScores[callerTeam] += 4; // Lone march
+                    GameInfo.TeamScores[callerTeam] += 4; // Lone march
                     Console.WriteLine($"Lone march! Team {callerTeam + 1} scores 4 points");
                 }
                 else
                 {
-                    teamScores[callerTeam] += 2; // March
+                    GameInfo.TeamScores[callerTeam] += 2; // March
                     Console.WriteLine($"March! Team {callerTeam + 1} scores 2 points");
                 }
             }
             else
             {
-                teamScores[callerTeam] += 1; // Made it
+                GameInfo.TeamScores[callerTeam] += 1; // Made it
                 Console.WriteLine($"Team {callerTeam + 1} makes it and scores 1 point");
             }
         }
         else
         {
             int opposingTeam = 1 - callerTeam;
-            teamScores[opposingTeam] += 2; // Euchred
+            GameInfo.TeamScores[opposingTeam] += 2; // Euchred
             Console.WriteLine($"Euchred! Team {opposingTeam + 1} scores 2 points");
         }
 
@@ -300,24 +295,24 @@ public class EuchreGame
 
     private IPlayer GetPlayerAfterDealer()
     {
-        int dealerIndex = Array.IndexOf(players, dealer);
-        return players[(dealerIndex + 1) % NUMBER_OF_PLAYERS];
+        int dealerIndex = Array.IndexOf(GameInfo.Players, GameInfo.Dealer);
+        return GameInfo.Players[(dealerIndex + 1) % NUMBER_OF_PLAYERS];
     }
 
     private IPlayer GetNextPlayer(IPlayer current)
     {
-        int currentIndex = Array.IndexOf(players, current);
-        return players[(currentIndex + 1) % NUMBER_OF_PLAYERS];
+        int currentIndex = Array.IndexOf(GameInfo.Players, current);
+        return GameInfo.Players[(currentIndex + 1) % NUMBER_OF_PLAYERS];
     }
 
     private void AdvanceDealer()
     {
-        dealer = GetNextPlayer(dealer);
+        GameInfo.Dealer = GetNextPlayer(GameInfo.Dealer);
     }
 
     private int GetPlayerTeam(IPlayer player)
     {
-        int index = Array.IndexOf(players, player);
+        int index = Array.IndexOf(GameInfo.Players, player);
         return index % NUMBER_OF_PLAYERS; // Players 0,2 are team 0; Players 1,3 are team 1
     }
 
