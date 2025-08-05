@@ -3,6 +3,14 @@ using Euchre.Logic.Exceptions;
 
 namespace Euchre.Logic;
 
+/// <summary>
+/// Represents a human-controlled player in the game, allowing user interaction for decision-making during 
+/// game play.
+/// </summary>
+/// <remarks>The <see cref="HumanPlayer"/> class provides mechanisms for user interaction by raising events 
+/// that prompt the user to make decisions, such as ordering up a card, calling trump, discarding a card, or 
+/// selecting a card to play. These events must be handled by the consuming application to provide the 
+/// necessary user interface for input.</remarks>
 public class HumanPlayer : Player
 {
     public HumanPlayer(string name) : base(name, true) 
