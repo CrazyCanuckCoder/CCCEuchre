@@ -1,7 +1,7 @@
 using Euchre.Logic.Exceptions;
-using static Euchre.Logic.Constants;
+using static Euchre.Logic.Helpers.Constants;
 
-namespace Euchre.Logic;
+namespace Euchre.Logic.Components;
 
 /// <summary>
 /// Represents a standard deck of playing cards, providing functionality for shuffling and dealing cards.

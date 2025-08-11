@@ -1,6 +1,7 @@
+using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 
-namespace Euchre.Logic;
+namespace Euchre.Logic.Components;
 
 /// <summary>
 /// Represents the non human players in this game.

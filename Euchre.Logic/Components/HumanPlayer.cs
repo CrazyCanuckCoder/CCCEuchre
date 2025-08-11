@@ -1,7 +1,7 @@
 ﻿using Euchre.Logic.EventArgs;
 using Euchre.Logic.Exceptions;
 
-namespace Euchre.Logic;
+namespace Euchre.Logic.Components;
 
 /// <summary>
 /// Represents a human-controlled player in the game, allowing user interaction for decision-making during 

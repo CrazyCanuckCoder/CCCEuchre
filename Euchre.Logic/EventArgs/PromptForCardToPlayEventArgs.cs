@@ -1,4 +1,6 @@
-﻿namespace Euchre.Logic.EventArgs;
+﻿using Euchre.Logic.Components;
+
+namespace Euchre.Logic.EventArgs;
 
 public class PromptForCardToPlayEventArgs : System.EventArgs
 {

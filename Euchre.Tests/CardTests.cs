@@ -1,5 +1,5 @@
-using Euchre.Logic;
-using static Euchre.Logic.Constants;
+using Euchre.Logic.Components;
+using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Tests;
 

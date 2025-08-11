@@ -1,4 +1,4 @@
-﻿using static Euchre.Logic.Constants;
+﻿using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Exceptions;
 

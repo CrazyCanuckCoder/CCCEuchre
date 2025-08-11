@@ -1,4 +1,4 @@
-﻿using Euchre.Logic;
+﻿using Euchre.Logic.Components;
 using Euchre.Logic.Exceptions;
 
 namespace Euchre.Tests;

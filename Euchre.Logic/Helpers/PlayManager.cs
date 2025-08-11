@@ -1,7 +1,8 @@
-﻿using Euchre.Logic.Interfaces;
-using static Euchre.Logic.Constants;
+﻿using Euchre.Logic.Components;
+using Euchre.Logic.Interfaces;
+using static Euchre.Logic.Helpers.Constants;
 
-namespace Euchre.Logic;
+namespace Euchre.Logic.Helpers;
 
 /// <summary>
 /// Manages the logic for playing cards by an automated player.

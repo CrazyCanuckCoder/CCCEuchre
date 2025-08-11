@@ -1,4 +1,4 @@
-﻿namespace Euchre.Logic;
+﻿namespace Euchre.Logic.Helpers;
 public class Constants
 {
     public const int NUMBER_OF_PLAYERS = 4;

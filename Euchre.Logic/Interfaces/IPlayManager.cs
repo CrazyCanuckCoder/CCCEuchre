@@ -1,4 +1,6 @@
-﻿namespace Euchre.Logic.Interfaces;
+﻿using Euchre.Logic.Components;
+
+namespace Euchre.Logic.Interfaces;
 
 public interface IPlayManager
 {

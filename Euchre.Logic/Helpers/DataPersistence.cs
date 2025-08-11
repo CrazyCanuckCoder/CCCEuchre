@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
 
-namespace Euchre.Logic;
+namespace Euchre.Logic.Helpers;
 
 public class DataPersistence
 {

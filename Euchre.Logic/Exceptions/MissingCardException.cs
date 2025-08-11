@@ -1,4 +1,6 @@
-﻿namespace Euchre.Logic.Exceptions;
+﻿using Euchre.Logic.Components;
+
+namespace Euchre.Logic.Exceptions;
 
 [Serializable]
 internal class MissingCardException : Exception

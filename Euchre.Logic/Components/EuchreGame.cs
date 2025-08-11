@@ -1,8 +1,9 @@
 using Euchre.Logic.Exceptions;
+using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
-using static Euchre.Logic.Constants;
+using static Euchre.Logic.Helpers.Constants;
 
-namespace Euchre.Logic;
+namespace Euchre.Logic.Components;
 
 public class EuchreGame
 {

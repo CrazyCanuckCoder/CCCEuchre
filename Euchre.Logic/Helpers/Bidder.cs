@@ -1,6 +1,7 @@
-﻿using Euchre.Logic.Interfaces;
+﻿using Euchre.Logic.Components;
+using Euchre.Logic.Interfaces;
 
-namespace Euchre.Logic;
+namespace Euchre.Logic.Helpers;
 
 /// <summary>
 /// Contains logic for bidding in a game of Euchre.
@@ -25,7 +26,7 @@ public class Bidder : IBidder
         var bowers = _playerHand.Count(c => c.IsBower(kitty.Suit));
         var aces = _playerHand.Count(c => c.Rank == Rank.Ace);
 
-        return trumpCards >= 3 || (trumpCards >= 2 && bowers >= 1) || (isDealer && trumpCards >= 2);
+        return trumpCards >= 3 || trumpCards >= 2 && bowers >= 1 || isDealer && trumpCards >= 2;
     }
 
     public Suit? DetermineTrump(Card kitty)
