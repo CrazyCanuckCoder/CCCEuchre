@@ -13,11 +13,13 @@ public abstract class Player : IPlayer
     /// Creates a new player with the specified name and whether they are human or not.
     /// </summary>
     /// <param name="name">The name of the player.</param>
+    /// <param name="teamIndex"> The index of the team this player is associated with, starting from 0.</param>
     /// <param name="isHuman">True if the player is a human and false for automated players.</param>
-    public Player(string name, bool isHuman)
+    public Player(string name, int teamIndex, bool isHuman)
     {
         Name = name;
         Hand = [];
+        TeamIndex = teamIndex;
         IsHuman = isHuman;
     }
 
@@ -35,6 +37,11 @@ public abstract class Player : IPlayer
     /// The name of the player.
     /// </summary>
     public string Name { get; protected set; }
+
+    /// <summary>
+    /// Gets the index of the team associated with this player.
+    /// </summary>
+    public int TeamIndex { get; protected set; }
 
     /// <summary>
     /// Adds a card to the player's hand.

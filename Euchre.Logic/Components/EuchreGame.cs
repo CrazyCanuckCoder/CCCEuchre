@@ -1,6 +1,7 @@
 using Euchre.Logic.Exceptions;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
+using System;
 using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Components;
@@ -25,7 +26,7 @@ public class EuchreGame
         var players = new IPlayer[NUMBER_OF_PLAYERS];
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
-            players[i] = new AutomatedPlayer(playerNames[i], GameInfo); // All AI for now
+            players[i] = new AutomatedPlayer(playerNames[i], i % NUMBER_OF_PLAYERS, GameInfo); // All AI for now
         }
 
         GameInfo.Players = players;

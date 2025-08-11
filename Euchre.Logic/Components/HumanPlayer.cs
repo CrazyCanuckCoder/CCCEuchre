@@ -13,7 +13,7 @@ namespace Euchre.Logic.Components;
 /// necessary user interface for input.</remarks>
 public class HumanPlayer : Player
 {
-    public HumanPlayer(string name) : base(name, true) 
+    public HumanPlayer(string name, int teamIndex) : base(name, teamIndex, true) 
     { 
     }
 
