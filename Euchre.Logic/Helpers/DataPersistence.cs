@@ -11,7 +11,7 @@ public class DataPersistence
     /// <typeparam name="T">The type of the instance to save.</typeparam>
     /// <param name="objectToSave">The instance of the class to save.</param>
     /// <param name="filePath">The full path to the file to save the object to.</param>
-    public static void SaveToFile<T>(T objectToSave, string filePath) where T : new()
+    public static void SaveToJSONFile<T>(T objectToSave, string filePath) where T : new()
     {
         // Serialize the object to JSON format.
 
@@ -29,7 +29,7 @@ public class DataPersistence
     /// <param name="filePath">The full path to the file to load the object from.</param>
     /// <returns>An instance of the object</returns>
     /// <exception cref="FileNotFoundException">Thrown when the specified file does not exist.</exception>
-    public static T LoadFromFile<T>(string filePath) where T : new()
+    public static T LoadFromJSONFile<T>(string filePath) where T : new()
     {
         // Check if the file exists.
 
