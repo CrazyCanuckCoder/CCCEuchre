@@ -22,4 +22,9 @@ public class PromptForTrumpSuitEventArgs : System.EventArgs
     /// Gets or sets the suit that the player has chosen as trump.
     /// </summary>
     public Suit? TrumpSuit { get; set; }
+
+    /// <summary>
+    /// Indicates whether the player is going alone.
+    /// </summary>
+    public bool GoAlone { get; set; } = false;
 }

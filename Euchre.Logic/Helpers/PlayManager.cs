@@ -1,6 +1,6 @@
 ﻿using Euchre.Logic.Components;
+using Euchre.Logic.Exceptions;
 using Euchre.Logic.Interfaces;
-using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Helpers;
 
@@ -48,32 +48,46 @@ public class PlayManager : IPlayManager
         return leadCards.Count > 0 ? leadCards : [.. _playerHand];
     }
 
+    /// <summary>
+    /// Determines the card to play for the current trick based on the lead suit, trump suit, and the cards
+    /// in the player's hand.
+    /// </summary>
+    /// <param name="trick">The current trick, containing the cards already played in this round.</param>
+    /// <param name="trump">The trump suit for the game, which may influence card selection.</param>
+    /// <param name="leadSuit">The suit that was led in the current trick, or <see langword="null"/> if no
+    /// suit has been led yet.</param>
+    /// <returns>The card to play for the current trick. If no valid cards can be played, the first card in
+    /// the player's hand is returned.</returns>
     public Card DetermineCardToPlay(Trick trick, Suit trump, Suit? leadSuit)
     {
-        // Get which cards can be played based on the lead suit and trump suit.  Return the first card if no
-        //   valid cards are found.
+        if (_playerHand.Count == 0)
+        {
+            throw new InvalidGameConditionException("Cannot play a card when the player's hand is empty.");
+        }
 
-        var validCards = GetValidCards(leadSuit ?? trump, trump);
-        if (validCards.Count == 0)
+        // If there is only one card left in the player's hand, choose it.
+
+        if (_playerHand.Count == 1) 
         {
             return _playerHand[0];
         }
         else
         {
+            // Which card to play depends on whether the player is leading the trick or following suit.
+
             return trick.Cards.Count == 0
-                ? DetermineWhichCardWhenLeading(trump, validCards)
-                : DetermineWhichCardWhenFollowing(trick, trump, leadSuit, validCards);
+                ? DetermineWhichCardWhenLeadingACard(trump)
+                : DetermineWhichCardWhenFollowingSuit(trick, trump, leadSuit);
         }
     }
 
-    // Information needed to determine which card to play when leading or following in a trick.
-    // All tricks played so far.
-    // Which players are partners.
-    // Which team called trump.
-    // Which player is the caller.
-    // If the player is the caller, are they going alone?
-
-    private Card DetermineWhichCardWhenLeading(Suit trump, List<Card> validCards)
+    /// <summary>
+    /// Determines the card to lead at the start of a trick based on the player's role, the trump suit, and 
+    /// the valid cards available to play.
+    /// </summary>
+    /// <param name="trump">The trump suit for the current round.</param>
+    /// <returns>The card that the player should lead with.</returns>
+    private Card DetermineWhichCardWhenLeadingACard(Suit trump)
     {
         Card cardToLead;
 
@@ -88,51 +102,54 @@ public class PlayManager : IPlayManager
 
         if (isTrumpCaller)
         {
-            if (!hasTrumpBeenLed)
+            if (_dataManager.GoingAlone)
             {
-                var trumps = validCards.Where(c => c.EffectiveSuit(trump) == trump).ToList();
+                // If the player is going alone, lead the highest trump card until trump is exhausted.
+                //   When no trumps are available, lead with the highest card of any suit.
 
-                // If no trumps are available, lead with the highest card of any suit.
+                cardToLead = CardFinder.HasTrump(_playerHand, trump)
+                    ? CardFinder.GetHighestTrumpCard(_playerHand, trump)
+                    : CardFinder.GetHighestOffSuitCard(_playerHand, trump);
+            }
+            else if (!hasTrumpBeenLed)
+            {
+                // Lead the highest trump. If no trumps are available, lead with the highest card of any suit.
 
-                cardToLead = trumps.Count > 0 ?
-                    trumps.OrderByDescending(c => c.GetTrickValue(trump, trump)).First() :
-                    validCards.OrderByDescending(c => (int)c.Rank).First();
+                cardToLead = CardFinder.HasTrump(_playerHand, trump)
+                    ? CardFinder.GetHighestTrumpCard(_playerHand, trump)
+                    : CardFinder.GetHighestOffSuitCard(_playerHand, trump);
             }
             else
             {
                 // If the player is the caller, lead the highest card of any suit that is not trump.
 
-                cardToLead = GetHighestOffsuitCard(trump, validCards);
+                cardToLead = CardFinder.HasOffSuit(_playerHand, trump)
+                    ? CardFinder.GetHighestOffSuitCard(_playerHand, trump)
+                    : CardFinder.GetHighestTrumpCard(_playerHand, trump);
             }
         }
         else
         {
-            bool isPartnerOfCaller = GetPlayerTeam(_player) == GetPlayerTeam(_dataManager.TrumpCaller);
-            if (isPartnerOfCaller)
+            if (_player.TeamIndex == _dataManager.TrumpCaller?.TeamIndex)
             {
                 // If the player is the partner of the caller, if the caller has not led with a trump card,
                 //  and the player has the left or right bower, lead it.
 
                 bool partnerHasLedWithTrump = HasPlayerLedTrump(_dataManager.CurrentRoundTricks, 
                                                                 _dataManager.TrumpCaller);
-                bool hasBower = validCards.Any(c => c.IsBower(trump));
+                bool hasBower = _playerHand.Any(c => c.IsBower(trump));
                 if (!partnerHasLedWithTrump)
                 {
-                    if ( hasBower)
-                    {
-                        cardToLead = validCards.Where(c => c.IsBower(trump)).First();
-                    }
-                    else
-                    {
-                        cardToLead = GetHighestOffsuitCard(trump, validCards);
-                    }
+                    cardToLead = hasBower
+                        ? _playerHand.Where(c => c.IsBower(trump)).First()
+                        : CardFinder.GetHighestOffSuitCard(_playerHand, trump);
                 }
                 else
                 {
                     // If the player is the partner of the caller, if the caller has led with a trump card,
-                    //  lead the  highest card of any suit that is not trump.
+                    //  lead the highest card of any suit that is not trump.
 
-                    cardToLead = GetHighestOffsuitCard(trump, validCards);
+                    cardToLead = CardFinder.GetHighestOffSuitCard(_playerHand, trump);
                 }
             }
             else
@@ -140,19 +157,11 @@ public class PlayManager : IPlayManager
                 // If the player is not a member of the calling team, lead the highest card of any suit that
                 //  is not trump.
 
-                cardToLead = GetHighestOffsuitCard(trump, validCards);
+                cardToLead = CardFinder.GetHighestOffSuitCard(_playerHand, trump);
             }
         }
 
         return cardToLead;
-    }
-
-    private static Card GetHighestOffsuitCard(Suit trump, List<Card> validCards)
-    {
-        return validCards
-            .Where(c => c.EffectiveSuit(trump) != trump)
-            .OrderByDescending(c => (int)c.Rank)
-            .FirstOrDefault() ?? validCards[0];
     }
 
     /// <summary>
@@ -161,7 +170,7 @@ public class PlayManager : IPlayManager
     /// <param name="trick">The list of tricks to check for a trump lead.</param>
     /// <param name="player">The player that has lead the trump suit.</param>
     /// <returns>True if the player led the trump suit; otherwise, false.</returns>
-    public static bool HasPlayerLedTrump(List<Trick> tricks, IPlayer player)
+    private static bool HasPlayerLedTrump(List<Trick> tricks, IPlayer player)
     {
         foreach (var trick in tricks)
         {
@@ -180,31 +189,75 @@ public class PlayManager : IPlayManager
         return false;
     }
 
-    private int GetPlayerTeam(IPlayer player)
-    {
-        int index = Array.IndexOf(_dataManager.Players ?? [], player);
-        return index % NUMBER_OF_PLAYERS; // Players 0,2 are team 0; Players 1,3 are team 1
-    }
 
 
-    private static Card DetermineWhichCardWhenFollowing(Trick trick, Suit trump, Suit? leadSuit, List<Card> validCards)
+    private Card DetermineWhichCardWhenFollowingSuit(Trick trick, Suit trump, Suit? leadSuit)
     {
         Card cardToPlay;
 
-        #region Original Code
-        
-        var currentWinner = trick.GetCurrentLeadingCard();
-        var winningValue = currentWinner.GetTrickValue(trump, leadSuit.Value);
+        // If the lead suit is null, it means the player is following a trick that has not been led yet.
+        //   Throw an exception if this is the case.
 
-        // Try to win the trick
-        var canWin = validCards.Where(c => c.GetTrickValue(trump, leadSuit.Value) > winningValue).ToList();
-        if (canWin.Count > 0)
-            cardToPlay = canWin.OrderBy(c => c.GetTrickValue(trump, leadSuit.Value)).First();
+        if (leadSuit == null)
+        {
+            throw new InvalidGameConditionException("Lead suit cannot be null when following a trick.");
+        }
 
-        // Can't win, play lowest card
-        cardToPlay = validCards.OrderBy(c => c.GetTrickValue(trump, leadSuit.Value)).First();
+        // Determine who is winning the current trick, whether the player has trump, and whether the player
+        //   has off suit.
 
-        #endregion Original Code
+        (IPlayer winningPlayer, ICard _) = trick.GetHighestCardInTrick();
+        bool hasTrump = CardFinder.HasTrump(_playerHand, trump);
+        bool hasOffSuit = CardFinder.HasOffSuit(_playerHand, trump);
+
+        // If the lead suit is trump, determine which trump card to play.
+
+        if (leadSuit == trump)
+        {
+            if (hasTrump)
+            {
+                // If the player's partner is winning the current trick, play the lowest trump card.
+                //   Else, if the player has a trump card, play the highest trump card in their hand.
+
+                cardToPlay = winningPlayer.TeamIndex == _player.TeamIndex
+                    ? CardFinder.GetLowestTrumpCard(_playerHand, trump)
+                    : CardFinder.GetHighestTrumpCard(_playerHand, trump);
+            }
+            else
+            {
+                // If the player does not have a trump card, play the lowest off suit card.
+
+                cardToPlay = CardFinder.GetLowestOffSuitCard(_playerHand, trump);
+            }
+        }
+        else if (CardFinder.HasACardOfSuit(_playerHand, leadSuit.Value))
+        {
+            // If the player has a card of the lead suit, play the highest card of that suit.
+
+            cardToPlay = CardFinder.GetHighestCardOfSuit(_playerHand, leadSuit);
+        }
+        else
+        {
+            // If the player does not have a card of the lead suit, determine if the player's partner has the
+            //   lead of the current trick. If they do, play the lowest off-suit card.  If not, play the
+            //   lowest trump card in the player's hand.
+
+            if (winningPlayer.TeamIndex == _player.TeamIndex)
+            {
+                cardToPlay = hasOffSuit 
+                    ? CardFinder.GetLowestOffSuitCard(_playerHand, trump) 
+                    : CardFinder.GetLowestTrumpCard(_playerHand, trump);
+            }
+            else
+            {
+                // If the player's partner is not winning the current trick, see if the trick can be trumped.
+                //   If not, play the lowest off suit card.
+
+                cardToPlay = hasTrump 
+                    ? CardFinder.GetHighestTrumpCard(_playerHand, trump) 
+                    : CardFinder.GetLowestOffSuitCard(_playerHand, trump);
+            }
+        }
 
         return cardToPlay;
     }

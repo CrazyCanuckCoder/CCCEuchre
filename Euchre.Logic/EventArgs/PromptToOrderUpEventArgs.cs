@@ -22,4 +22,9 @@ public class PromptToOrderUpEventArgs : System.EventArgs
     /// Indicates whether the player has ordered up the card.
     /// </summary>
     public bool OrderedUp { get; set; } = false;
+
+    /// <summary>
+    /// Indicates whether the player is going alone.
+    /// </summary>
+    public bool GoAlone { get; set; } = false;
 }

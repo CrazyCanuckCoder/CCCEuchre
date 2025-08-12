@@ -43,7 +43,7 @@ public class Trick
         return GetHighestCardInTrick().Card;
     }
 
-    private (IPlayer Player, Card Card) GetHighestCardInTrick()
+    public (IPlayer Player, Card Card) GetHighestCardInTrick()
     {
         return Cards.OrderByDescending(c => c.Card.GetTrickValue(Trump, LeadSuit))
                     .First();
