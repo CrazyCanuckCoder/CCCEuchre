@@ -81,7 +81,7 @@ public class GameDataManager
     /// </summary>
     public void SaveGameData()
     {
-        DataPersistence.SaveToFile(this, FILE_NAME);
+        DataPersistence.SaveToJSONFile(this, FILE_NAME);
     }
 
     /// <summary>
@@ -90,6 +90,6 @@ public class GameDataManager
     /// <returns>An instance of this class with the loaded data.</returns>
     public static GameDataManager LoadGameData()
     {
-        return DataPersistence.LoadFromFile<GameDataManager>(FILE_NAME);
+        return DataPersistence.LoadFromJSONFile<GameDataManager>(FILE_NAME);
     }
 }
