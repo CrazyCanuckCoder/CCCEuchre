@@ -68,4 +68,35 @@ public static class CardFinder
                 .OrderByDescending(c => c.GetTrickValue(trump, trump))
                 .FirstOrNull();
     }
+
+    public static int CountCardsOfSuit(List<Card> cards, Suit suit)
+    {
+        return cards.Count(c => c.EffectiveSuit(suit) == suit);
+    }
+
+    public static int CountCardsOfRank(List<Card> cards, Rank rank)
+    {
+        return cards.Count(c => c.Rank == rank);
+    }
+
+    public static int CountBowers(List<Card> cards, Suit trump)
+    {
+        return cards.Count(c => c.IsBower(trump));
+    }
+
+    public static List<Card> GetBowers(List<Card> cards, Suit suit)
+    {
+        return cards
+                .Where(c => c.IsBower(suit))
+                .OrderByDescending(c => c.GetTrickValue(suit, suit))
+                .ToList();
+    }
+
+    public static List<Card> GetNonBowers(List<Card> cards, Suit suit)
+    {
+        return cards
+                .Where(c => !c.IsBower(suit))
+                .OrderByDescending(c => c.GetTrickValue(suit, suit))
+                .ToList();
+    }
 }

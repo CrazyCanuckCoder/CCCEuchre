@@ -49,6 +49,16 @@ public class AutomatedPlayer : Player
     private readonly IPlayManager _playManager;
 
     /// <summary>
+    /// True to indicate the individual is going alone; otherwise, false.
+    /// </summary>
+    private bool _goAlone;
+
+    /// <summary>
+    /// Gets a value indicating whether the individual is going alone.
+    /// </summary>
+    public bool IsGoingAlone => _goAlone;
+
+    /// <summary>
     /// Determines whether to order up the given card during the bidding phase.
     /// </summary>
     /// <param name="kitty">The card being considered for ordering up.</param>
@@ -57,7 +67,7 @@ public class AutomatedPlayer : Player
     /// <see langword="false"/>.</returns>
     public override bool OrderUp(Card kitty, bool isDealer)
     {
-        return _bidder.DetermineWhetherToOrderUp(kitty, isDealer);
+        return _bidder.DetermineWhetherToOrderUp(kitty, isDealer, out _goAlone);
     }
 
     /// <summary>
@@ -68,7 +78,7 @@ public class AutomatedPlayer : Player
     /// determined which indicates the automated player will pass.</returns>
     public override Suit? CallTrump(Card kitty)
     {
-        return _bidder.DetermineTrump(kitty);
+        return _bidder.DetermineTrump(kitty, out _goAlone);
     }
 
     /// <summary>

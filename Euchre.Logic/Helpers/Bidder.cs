@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic.Components;
+using Euchre.Logic.Exceptions;
 using Euchre.Logic.Interfaces;
 
 namespace Euchre.Logic.Helpers;
@@ -16,52 +17,111 @@ public class Bidder : IBidder
 
     private readonly List<Card> _playerHand;
 
-    // TODO: Add more complex logic to determine if the player should order up the kitty or not.
-    //       For example, add logic to consider the strength of the kitty card.
-    // TODO: Move the logic for determining if the player should order up the kitty to a separate method.
-    //       Set it up to determine if any suit can be called as trump based on the player's hand.
-    public bool DetermineWhetherToOrderUp(Card kitty, bool isDealer)
+    public bool DetermineWhetherToOrderUp(Card kitty, bool isDealer, out bool goAlone)
     {
-        var trumpCards = _playerHand.Count(c => c.EffectiveSuit(kitty.Suit) == kitty.Suit);
-        var bowers = _playerHand.Count(c => c.IsBower(kitty.Suit));
-        var aces = _playerHand.Count(c => c.Rank == Rank.Ace);
+        var copyOfHand = new List<Card>(_playerHand);
 
-        return trumpCards >= 3 || trumpCards >= 2 && bowers >= 1 || isDealer && trumpCards >= 2;
+        // If the player is the dealer, they can consider the kitty card as part of their hand.
+
+        if (isDealer)
+        {
+            copyOfHand.Add(kitty);
+        }
+
+        return ShouldCallSuit(copyOfHand, kitty.Suit, out goAlone);
     }
 
-    public Suit? DetermineTrump(Card kitty)
+    public Suit? DetermineTrump(Card kitty, out bool goAlone)
     {
         var suitCounts = new Dictionary<Suit, int>();
 
-        // Can't call kitty suit in round 2.
+        // Determine how many cards for each suit. Can't call kitty suit in round 2.
 
         foreach (Suit suit in Enum.GetValues<Suit>().Where(s => s != kitty.Suit))
         {
-            suitCounts[suit] = _playerHand.Count(c => c.EffectiveSuit(suit) == suit);
+            suitCounts[suit] = CardFinder.CountCardsOfSuit(_playerHand, suit);
         }
 
-        var bestSuit = suitCounts.OrderByDescending(kvp => kvp.Value).First();
-        return bestSuit.Value >= 3 ? bestSuit.Key : null;
+        // Determine the order of suits based on the number of cards.
+
+        var suitsByNumber = suitCounts.OrderByDescending(kvp => kvp.Value);
+
+        // Determine if we should call any suit based on the player's hand.
+
+        foreach (var suit in suitsByNumber)
+        {
+            if (ShouldCallSuit(_playerHand, suit.Key, out goAlone))
+            {
+                return suit.Key;
+            }
+        }
+
+        goAlone = false;
+
+        return null;
     }
 
     public void DiscardForKitty(Card kitty, Suit trump)
     {
-        // Discard lowest non-trump card.
+        // Discard lowest non-trump card. If all trumps, discard lowest.
 
-        var nonTrumps = _playerHand.Where(c => c.EffectiveSuit(trump) != trump && !c.IsBower(trump)).ToList();
-        if (nonTrumps.Count > 0)
-        {
-            var discard = nonTrumps.OrderBy(c => (int)c.Rank).First();
-            _playerHand.Remove(discard);
-        }
-        else
-        {
-            // If all trumps, discard lowest.
+        var discard = (CardFinder.HasOffSuit(_playerHand, trump)
+            ? CardFinder.GetLowestOffSuitCard(_playerHand, trump)
+            : CardFinder.GetLowestTrumpCard(_playerHand, trump)) 
+              ?? throw new InvalidGameConditionException("No valid card to discard for the kitty.");
 
-            var discard = _playerHand.OrderBy(c => c.GetTrickValue(trump, trump)).First();
-            _playerHand.Remove(discard);
-        }
-
+        _playerHand.Remove(discard);
         _playerHand.Add(kitty);
+    }
+
+    private bool ShouldCallSuit(List<Card> cards, Suit suit, out bool goAlone)
+    {
+        bool callSuit = false;
+
+        var numTrumpCards = CardFinder.CountCardsOfSuit(cards, suit);
+        var numBowers = CardFinder.CountBowers(cards, suit);
+        var aces = CardFinder.CountCardsOfRank(cards, Rank.Ace);
+        var otherTrump = CardFinder.GetNonBowers(cards, suit);
+
+        // If we have two bowers and another trump, we can order up.
+
+        if (numBowers == 2 && otherTrump.Count >= 1)
+        {
+            callSuit = true;
+        }
+        else if (numBowers == 1 && otherTrump.Count >= 2)
+        {
+            // If we have one bower and at least two trump cards, we can order up.
+
+            callSuit = true;
+        }
+        else if (aces >= 2 && numTrumpCards >= 2)
+        {
+            // If we have two aces and at least 2 trump cards, we can order up.
+
+            callSuit = true;
+        }
+        else if (aces >= 3 && numTrumpCards >= 1)
+        {
+            // If we have three aces and at least trump card, we can order up.
+
+            callSuit = true;
+        }
+
+        goAlone = callSuit && CanGoAlone(suit);
+
+        return callSuit;
+    }
+
+    private bool CanGoAlone(Suit trump)
+    {
+        // Check if the player has a strong hand to go alone.
+
+        var numBowers = CardFinder.CountBowers(_playerHand, trump);
+        var numTrumpCards = CardFinder.CountCardsOfSuit(_playerHand, trump);
+        var numAces = CardFinder.CountCardsOfRank(_playerHand, Rank.Ace);
+
+        return (numBowers >= 1 && numTrumpCards >= 4) 
+            || (numBowers == 2 && numTrumpCards > 2 && numAces >= 1);
     }
 }
