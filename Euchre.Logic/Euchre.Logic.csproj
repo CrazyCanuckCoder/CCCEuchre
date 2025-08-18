@@ -11,4 +11,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="CrazyCanuckCoder.Library.Common">
+      <HintPath>..\..\CrazyCanuckCoder\Library.Common\bin\Debug\net8.0-windows\CrazyCanuckCoder.Library.Common.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
