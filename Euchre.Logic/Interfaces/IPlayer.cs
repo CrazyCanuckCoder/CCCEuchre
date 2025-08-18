@@ -7,7 +7,9 @@ public interface IPlayer
     List<Card> Hand { get; }
     bool IsHuman { get; }
     string Name { get; }
+    bool IsGoingAlone { get; }
     int TeamIndex { get; }
+
 
     void AddCard(Card card);
     Suit? CallTrump(Card kitty);

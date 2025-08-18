@@ -56,7 +56,7 @@ public class AutomatedPlayer : Player
     /// <summary>
     /// Gets a value indicating whether the individual is going alone.
     /// </summary>
-    public bool IsGoingAlone => _goAlone;
+    public override bool IsGoingAlone => _goAlone;
 
     /// <summary>
     /// Determines whether to order up the given card during the bidding phase.
@@ -88,7 +88,7 @@ public class AutomatedPlayer : Player
     /// <param name="trump">The trump suit for the current round.</param>
     public override void DiscardForKitty(Card kitty, Suit trump)
     {
-        _bidder.DiscardForKitty(kitty, trump);
+        _bidder.DiscardForKitty(kitty);
     }
 
     /// <summary>

@@ -18,6 +18,16 @@ public class HumanPlayer : Player
     }
 
     /// <summary>
+    /// True to indicate the individual is going alone; otherwise, false.
+    /// </summary>
+    private bool _goAlone;
+
+    /// <summary>
+    /// Gets a value indicating whether the individual is going alone.
+    /// </summary>
+    public override bool IsGoingAlone => _goAlone;
+
+    /// <summary>
     /// Fired when to determine if the user wants to order up the kitty card.
     /// </summary>
     public event EventHandler<PromptToOrderUpEventArgs>? PromptToOrderUp;
@@ -48,6 +58,8 @@ public class HumanPlayer : Player
     {
         PromptToOrderUpEventArgs args = new(kitty);
         PromptToOrderUp?.Invoke(this, args);
+
+        _goAlone = args.GoAlone;
 
         return args.OrderedUp;
     }
@@ -88,6 +100,8 @@ public class HumanPlayer : Player
     {
         PromptForTrumpSuitEventArgs args = new(kitty);
         PromptForTrumpSuit?.Invoke(this, args);
+
+        _goAlone = args.GoAlone;
 
         return args.TrumpSuit;
     }

@@ -44,6 +44,11 @@ public abstract class Player : IPlayer
     public int TeamIndex { get; protected set; }
 
     /// <summary>
+    /// Gets a value indicating whether the individual is going alone.
+    /// </summary>
+    public abstract bool IsGoingAlone { get; }
+
+    /// <summary>
     /// Adds a card to the player's hand.
     /// </summary>
     /// <param name="card">The card to add to the player's hand. Must not already exist in the hand.</param>

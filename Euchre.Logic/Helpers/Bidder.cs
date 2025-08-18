@@ -15,13 +15,23 @@ public class Bidder : IBidder
             throw new ArgumentNullException(nameof(playerHand), "Player's hand cannot be null.");
     }
 
+    /// <summary>
+    /// The list of cards in the player's hand.
+    /// </summary>
     private readonly List<Card> _playerHand;
 
+    /// <summary>
+    /// Determines whether the player should order up the given card as the trump suit.
+    /// </summary>
+    /// <param name="kitty">The card in the kitty being considered for trump.</param>
+    /// <param name="isDealer">A value indicating whether the player is the dealer.</param>
+    /// <param name="goAlone">Indicates whether the player should go alone when ordering up the card.</param>
+    /// <returns><see langword="true"/> if the player decides to order up the card as the trump suit.</returns>
     public bool DetermineWhetherToOrderUp(Card kitty, bool isDealer, out bool goAlone)
     {
         var copyOfHand = new List<Card>(_playerHand);
 
-        // If the player is the dealer, they can consider the kitty card as part of their hand.
+        // If the player is the dealer, consider the kitty card as part of their hand.
 
         if (isDealer)
         {
@@ -31,6 +41,13 @@ public class Bidder : IBidder
         return ShouldCallSuit(copyOfHand, kitty.Suit, out goAlone);
     }
 
+    /// <summary>
+    /// When no one orders up the kitty, determines if the trump suit can be called based on the player's
+    /// hand.
+    /// </summary>
+    /// <param name="kitty">The card that was the kitty to ensure that suit cannot be called.</param>
+    /// <param name="goAlone">Indicates whether the player should go alone when calling trump.</param>
+    /// <returns>The suit to be used for trump, or null to indicate the player wants to pass.</returns>
     public Suit? DetermineTrump(Card kitty, out bool goAlone)
     {
         var suitCounts = new Dictionary<Suit, int>();
@@ -61,26 +78,38 @@ public class Bidder : IBidder
         return null;
     }
 
-    public void DiscardForKitty(Card kitty, Suit trump)
+    /// <summary>
+    /// Determines which card in the player's hand will be replaced by the kitty's upturned card.
+    /// </summary>
+    /// <param name="kitty">The card from the kitty to add to the user's hand.</param>
+    /// <exception cref="InvalidGameConditionException"></exception>
+    public void DiscardForKitty(Card kitty)
     {
         // Discard lowest non-trump card. If all trumps, discard lowest.
 
-        var discard = (CardFinder.HasOffSuit(_playerHand, trump)
-            ? CardFinder.GetLowestOffSuitCard(_playerHand, trump)
-            : CardFinder.GetLowestTrumpCard(_playerHand, trump)) 
+        var discard = (CardFinder.HasOffSuit(_playerHand, kitty.Suit)
+            ? CardFinder.GetLowestOffSuitCard(_playerHand, kitty.Suit)
+            : CardFinder.GetLowestTrumpCard(_playerHand, kitty.Suit)) 
               ?? throw new InvalidGameConditionException("No valid card to discard for the kitty.");
 
         _playerHand.Remove(discard);
         _playerHand.Add(kitty);
     }
 
+    /// <summary>
+    /// Determines whether the player should call a specific suit as trump based on their hand.
+    /// </summary>
+    /// <param name="cards">The player's hand.</param>
+    /// <param name="suit">The suit to consider for trump.</param>
+    /// <param name="goAlone">Indicates whether the player should go alone when calling trump.</param>
+    /// <returns>True to indicate the user should call the specified suit as trump.</returns>
     private bool ShouldCallSuit(List<Card> cards, Suit suit, out bool goAlone)
     {
         bool callSuit = false;
 
         var numTrumpCards = CardFinder.CountCardsOfSuit(cards, suit);
         var numBowers = CardFinder.CountBowers(cards, suit);
-        var aces = CardFinder.CountCardsOfRank(cards, Rank.Ace);
+        var numAces = CardFinder.CountCardsOfRank(cards, Rank.Ace);
         var otherTrump = CardFinder.GetNonBowers(cards, suit);
 
         // If we have two bowers and another trump, we can order up.
@@ -95,13 +124,13 @@ public class Bidder : IBidder
 
             callSuit = true;
         }
-        else if (aces >= 2 && numTrumpCards >= 2)
+        else if (numAces >= 2 && numTrumpCards >= 2)
         {
             // If we have two aces and at least 2 trump cards, we can order up.
 
             callSuit = true;
         }
-        else if (aces >= 3 && numTrumpCards >= 1)
+        else if (numAces >= 3 && numTrumpCards >= 1)
         {
             // If we have three aces and at least trump card, we can order up.
 
@@ -113,6 +142,11 @@ public class Bidder : IBidder
         return callSuit;
     }
 
+    /// <summary>
+    /// Determines if the player has a strong enough hand to go alone with the given trump suit.
+    /// </summary>
+    /// <param name="trump">The suit considered trump.</param>
+    /// <returns>True to indicate the user should go alone in the specified trump suit.</returns>
     private bool CanGoAlone(Suit trump)
     {
         // Check if the player has a strong hand to go alone.

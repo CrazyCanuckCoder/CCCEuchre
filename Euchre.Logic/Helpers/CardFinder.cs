@@ -71,7 +71,7 @@ public static class CardFinder
 
     public static int CountCardsOfSuit(List<Card> cards, Suit suit)
     {
-        return cards.Count(c => c.EffectiveSuit(suit) == suit);
+        return cards.Count(c => c.Suit == suit);
     }
 
     public static int CountCardsOfRank(List<Card> cards, Rank rank)
@@ -84,19 +84,19 @@ public static class CardFinder
         return cards.Count(c => c.IsBower(trump));
     }
 
-    public static List<Card> GetBowers(List<Card> cards, Suit suit)
+    public static List<Card> GetBowers(List<Card> cards, Suit trump)
     {
         return cards
-                .Where(c => c.IsBower(suit))
-                .OrderByDescending(c => c.GetTrickValue(suit, suit))
+                .Where(c => c.IsBower(trump))
+                .OrderByDescending(c => c.GetTrickValue(trump, trump))
                 .ToList();
     }
 
-    public static List<Card> GetNonBowers(List<Card> cards, Suit suit)
+    public static List<Card> GetNonBowers(List<Card> cards, Suit trump)
     {
         return cards
-                .Where(c => !c.IsBower(suit))
-                .OrderByDescending(c => c.GetTrickValue(suit, suit))
+                .Where(c => !c.IsBower(trump))
+                .OrderByDescending(c => c.GetTrickValue(trump, trump))
                 .ToList();
     }
 }
