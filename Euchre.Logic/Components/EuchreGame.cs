@@ -95,7 +95,7 @@ public class EuchreGame
 
         // Play 5 tricks.
 
-        IPlayer leader = GetPlayerAfterDealer();
+        IPlayer leader = GetNextPlayer(GameInfo.Dealer);
         for (int trickNum = 0; trickNum < MAX_NUMBER_OF_TRICKS; trickNum++)
         {
             var trick = PlayTrick(leader, trickNum + 1);
@@ -219,7 +219,6 @@ public class EuchreGame
                 continue;
             }
 
-            // TODO: The call to GetValidCards should be moved to the Player class and into the SelectCardToPlay method.
             Suit? leadSuit = trick.Cards.Count > 0 ? trick.LeadSuit : null;
             
             Console.WriteLine($"\n{currentPlayer.Name}'s turn");
@@ -254,12 +253,12 @@ public class EuchreGame
         foreach (var trick in GameInfo.CurrentRoundTricks)
         {
             var winner = trick.GetWinner();
-            int team = GetPlayerTeam(winner);
+            int team = winner.TeamIndex;
             if (team == 0) team0Tricks++;
             else team1Tricks++;
         }
         
-        int callerTeam = GetPlayerTeam(GameInfo.TrumpCaller);
+        int callerTeam = GameInfo.TrumpCaller?.TeamIndex ?? -1;
         int callerTricks = callerTeam == 0 ? team0Tricks : team1Tricks;
         
         Console.WriteLine($"\nTricks won - Team 1: {team0Tricks}, Team 2: {team1Tricks}");
@@ -295,12 +294,6 @@ public class EuchreGame
         Console.ReadLine();
     }
 
-    private IPlayer GetPlayerAfterDealer()
-    {
-        int dealerIndex = Array.IndexOf(GameInfo.Players, GameInfo.Dealer);
-        return GameInfo.Players[(dealerIndex + 1) % NUMBER_OF_PLAYERS];
-    }
-
     private IPlayer GetNextPlayer(IPlayer current)
     {
         int currentIndex = Array.IndexOf(GameInfo.Players, current);
@@ -312,14 +305,8 @@ public class EuchreGame
         GameInfo.Dealer = GetNextPlayer(GameInfo.Dealer);
     }
 
-    private int GetPlayerTeam(IPlayer player)
-    {
-        int index = Array.IndexOf(GameInfo.Players, player);
-        return index % NUMBER_OF_PLAYERS; // Players 0,2 are team 0; Players 1,3 are team 1
-    }
-
     private bool IsPartner(IPlayer player1, IPlayer player2)
     {
-        return GetPlayerTeam(player1) == GetPlayerTeam(player2) && player1 != player2;
+        return player1.TeamIndex == player2.TeamIndex && player1 != player2;
     }
 }

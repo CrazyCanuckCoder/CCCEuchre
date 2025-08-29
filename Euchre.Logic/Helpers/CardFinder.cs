@@ -1,6 +1,5 @@
 ﻿using CrazyCanuckCoder.Library.Common;
 using Euchre.Logic.Components;
-using Euchre.Logic.Interfaces;
 
 namespace Euchre.Logic.Helpers;
 

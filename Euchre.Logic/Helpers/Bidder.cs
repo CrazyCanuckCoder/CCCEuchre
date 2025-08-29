@@ -112,29 +112,34 @@ public class Bidder : IBidder
         var numAces = CardFinder.CountCardsOfRank(cards, Rank.Ace);
         var otherTrump = CardFinder.GetNonBowers(cards, suit);
 
-        // If we have two bowers and another trump, we can order up.
-
-        if (numBowers == 2 && otherTrump.Count >= 1)
+        switch (numBowers)
         {
-            callSuit = true;
-        }
-        else if (numBowers == 1 && otherTrump.Count >= 2)
-        {
-            // If we have one bower and at least two trump cards, we can order up.
+            // If the player has two bowers and another trump, can call the suit.
 
-            callSuit = true;
-        }
-        else if (numAces >= 2 && numTrumpCards >= 2)
-        {
-            // If we have two aces and at least 2 trump cards, we can order up.
+            case 2 when otherTrump.Count >= 1:
+                callSuit = true;
+                break;
 
-            callSuit = true;
-        }
-        else if (numAces >= 3 && numTrumpCards >= 1)
-        {
-            // If we have three aces and at least trump card, we can order up.
+            // If the player has one bower and at least two trump cards, can call the suit.
 
-            callSuit = true;
+            case 1 when otherTrump.Count >= 2:
+                callSuit = true;
+                break;
+
+            default:
+                if (numAces >= 2 && numTrumpCards >= 2)
+                {
+                    // If the player has two aces and at least 2 trump cards, can call the suit.
+
+                    callSuit = true;
+                }
+                else if (numAces >= 3 && numTrumpCards >= 1)
+                {
+                    // If the player has three aces and at least trump card, can call the suit.
+
+                    callSuit = true;
+                }
+                break;
         }
 
         goAlone = callSuit && CanGoAlone(suit);

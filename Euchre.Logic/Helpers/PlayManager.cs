@@ -139,7 +139,7 @@ public class PlayManager : IPlayManager
             // See if trump has been led in the current round.
 
             bool hasTrumpBeenLed = _dataManager.CurrentRoundTricks
-                                          .Any(t => t.Cards.First().Card.EffectiveSuit(trump) == trump);
+                                          .Any(t => t.Cards.First().Value.EffectiveSuit(trump) == trump);
             if (!hasTrumpBeenLed)
             {
                 // Lead the highest trump. If no trumps are available, lead with the highest card of any suit.
@@ -317,11 +317,11 @@ public class PlayManager : IPlayManager
         {
             // The first card in the trick is the lead card, and its player is the leader.
 
-            var (leader, leadCard) = trick.Cards[0];
+            KeyValuePair<IPlayer, Card> leadCard = trick.Cards.First();
 
             // Check if the specified player is the leader and if the lead card's effective suit is trump.
 
-            if (leader == player && leadCard.EffectiveSuit(trick.Trump) == trick.Trump)
+            if (leadCard.Key == player && leadCard.Value.EffectiveSuit(trick.Trump) == trick.Trump)
             {
                 return true;
             }

@@ -82,7 +82,8 @@ public class AutomatedPlayer : Player
     }
 
     /// <summary>
-    /// Determines which card in the player's hand will be replaced by the kitty's upturned card.
+    /// Determines which card in the player's hand will be replaced by the kitty's upturned card and replaces
+    /// it in the player's hand.
     /// </summary>
     /// <param name="kitty">The upturned card from the kitty.</param>
     /// <param name="trump">The trump suit for the current round.</param>
