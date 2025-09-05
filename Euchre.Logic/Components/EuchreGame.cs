@@ -35,28 +35,12 @@ public class EuchreGame
 
     public void PlayGame()
     {
-        Console.WriteLine("Starting Euchre Game!");
-        PrintTeams();
-        
         while (GameInfo.TeamScores[0] < WINNING_SCORE && GameInfo.TeamScores[1] < WINNING_SCORE)
         {
             PlayRound();
-            
-            Console.WriteLine($"\nScores - Team 1: {GameInfo.TeamScores[0]}, Team 2: {GameInfo.TeamScores[1]}");
-            Console.WriteLine(new string('=', 50));
-            Console.ReadLine();
         }
         
         int winningTeam = GameInfo.TeamScores[0] >= WINNING_SCORE ? 0 : 1;
-        Console.WriteLine($"\nGame Over! Team {winningTeam + 1} wins!");
-        Console.WriteLine($"Final Score - Team 1: {GameInfo.TeamScores[0]}, Team 2: {GameInfo.TeamScores[1]}");
-    }
-
-    private void PrintTeams()
-    {
-        Console.WriteLine($"Team 1: {GameInfo.Players[0].Name} & {GameInfo.Players[2].Name}");
-        Console.WriteLine($"Team 2: {GameInfo.Players[1].Name} & {GameInfo.Players[3].Name}");
-        Console.ReadLine();
     }
 
     private void PlayRound()
@@ -72,28 +56,18 @@ public class EuchreGame
         // Deal cards.
 
         DealCards();
-        
-        Console.WriteLine($"\nDealer: {GameInfo.Dealer.Name}");
-        Console.WriteLine($"Kitty: {GameInfo.Kitty}");
-        Console.ReadLine();
 
         // Bidding phase.
 
         if (!BiddingPhase())
         {
-            Console.WriteLine("No one ordered up. Dealing new round.");
+            // No one ordered up. Dealing new round.
+
             AdvanceDealer();
-            Console.ReadLine();
             return;
         }
-        
-        Console.WriteLine($"\nTrump: {GameInfo.Trump}");
-        Console.WriteLine($"Called by: {GameInfo.TrumpCaller?.Name}");
-        if (GameInfo.GoingAlone)
-            Console.WriteLine($"{GameInfo.AlonePlayer?.Name} is going alone!");
-        Console.ReadLine();
 
-        // Play 5 tricks.
+        // Play up to 5 tricks.
 
         IPlayer leader = GetNextPlayer(GameInfo.Dealer);
         for (int trickNum = 0; trickNum < MAX_NUMBER_OF_TRICKS; trickNum++)
@@ -101,9 +75,9 @@ public class EuchreGame
             var trick = PlayTrick(leader, trickNum + 1);
             GameInfo.CurrentRoundTricks.Add(trick);
             leader = trick.GetWinner();
-            
-            Console.WriteLine($"Trick {trickNum + 1} won by: {leader.Name}");
-            Console.ReadLine();
+
+            // TODO: Add logic to see if the round should end early if one team has already won 3 tricks and
+            //       couldn't win any other tricks or be caught.
         }
 
         // Score the hand.
@@ -145,11 +119,13 @@ public class EuchreGame
 
     private bool BiddingPhase()
     {
-        // Round 1 - Kitty suit
+        // Round 1 - Bid for Kitty suit.
+
         if (BiddingRound(1, GameInfo.Kitty.Suit))
             return true;
         
-        // Round 2 - Other suits
+        // Round 2 - Bid the other suits.
+
         return BiddingRound(2, null);
     }
 
@@ -169,16 +145,22 @@ public class EuchreGame
                 {
                     GameInfo.Trump = forcedSuit.Value;
                     GameInfo.TrumpCaller = player;
+                    if (player.IsGoingAlone)
+                    {
+                        GameInfo.GoingAlone = true;
+                        GameInfo.AlonePlayer = player;
+                    }
 
-                    // Dealer picks up kitty
+                    // TODO: Inform UI of the order up and if the player is going alone.
+
+                    // Dealer picks up kitty.
+
                     GameInfo.Dealer.DiscardForKitty(GameInfo.Kitty, GameInfo.Trump.Value);
-                    
-                    Console.WriteLine($"{player.Name} ordered up {GameInfo.Trump}");
                     return true;
                 }
                 else
                 {
-                    Console.WriteLine($"{player.Name} passes");
+                    // TODO: Inform UI that the player is passing.
                 }
             }
             else if (round == 2)
@@ -188,12 +170,19 @@ public class EuchreGame
                 {
                     GameInfo.Trump = calledSuit.Value;
                     GameInfo.TrumpCaller = player;
-                    Console.WriteLine($"{player.Name} calls {GameInfo.Trump}");
+                    if (player.IsGoingAlone)
+                    {
+                        GameInfo.GoingAlone = true;
+                        GameInfo.AlonePlayer = player;
+                    }
+
+                    // TODO: Inform UI of the order up and if the player is going alone.
+
                     return true;
                 }
                 else
                 {
-                    Console.WriteLine($"{player.Name} passes");
+                    // TODO: Inform UI that the player is passing.
                 }
             }
         }
@@ -205,13 +194,11 @@ public class EuchreGame
     {
         var trick = new Trick(GameInfo.Trump.Value);
         
-        Console.WriteLine($"\n--- Trick {trickNumber} ---");
-        Console.WriteLine($"Leader: {leader.Name}");
-        
         IPlayer currentPlayer = leader;
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
-            // Skip partner if going alone
+            // Skip partner if going alone.
+
             if (GameInfo.GoingAlone && IsPartner(GameInfo.AlonePlayer, currentPlayer) && currentPlayer != GameInfo.AlonePlayer)
             {
                 Console.WriteLine($"{currentPlayer.Name} sits out (partner going alone)");
@@ -221,23 +208,17 @@ public class EuchreGame
 
             Suit? leadSuit = trick.Cards.Count > 0 ? trick.LeadSuit : null;
             
-            Console.WriteLine($"\n{currentPlayer.Name}'s turn");
-            Console.WriteLine($"Hand: {string.Join(", ", currentPlayer.Hand.Select((c, idx) => $"{idx}: {c}"))}");
-            if (leadSuit.HasValue)
-                Console.WriteLine($"Must follow {leadSuit}");
-            
             var playedCard = currentPlayer.SelectCardToPlay(
                 trick, 
                 GameInfo.Trump.Value, 
                 leadSuit);
             
-            // For AI, find the card in hand and play it
+            // Find the card in hand and play it.
+
             var cardIndex = currentPlayer.Hand.IndexOf(playedCard);
             playedCard = currentPlayer.PlayCard(cardIndex);
             
             trick.AddCard(currentPlayer, playedCard);
-            Console.WriteLine($"{currentPlayer.Name} plays: {playedCard}");
-            Console.ReadLine();
 
             currentPlayer = GetNextPlayer(currentPlayer);
         }
@@ -261,8 +242,6 @@ public class EuchreGame
         int callerTeam = GameInfo.TrumpCaller?.TeamIndex ?? -1;
         int callerTricks = callerTeam == 0 ? team0Tricks : team1Tricks;
         
-        Console.WriteLine($"\nTricks won - Team 1: {team0Tricks}, Team 2: {team1Tricks}");
-        
         if (callerTricks >= 3)
         {
             if (callerTricks == MAX_NUMBER_OF_TRICKS)
@@ -270,25 +249,21 @@ public class EuchreGame
                 if (GameInfo.GoingAlone)
                 {
                     GameInfo.TeamScores[callerTeam] += 4; // Lone march
-                    Console.WriteLine($"Lone march! Team {callerTeam + 1} scores 4 points");
                 }
                 else
                 {
                     GameInfo.TeamScores[callerTeam] += 2; // March
-                    Console.WriteLine($"March! Team {callerTeam + 1} scores 2 points");
                 }
             }
             else
             {
                 GameInfo.TeamScores[callerTeam] += 1; // Made it
-                Console.WriteLine($"Team {callerTeam + 1} makes it and scores 1 point");
             }
         }
         else
         {
             int opposingTeam = 1 - callerTeam;
             GameInfo.TeamScores[opposingTeam] += 2; // Euchred
-            Console.WriteLine($"Euchred! Team {opposingTeam + 1} scores 2 points");
         }
 
         Console.ReadLine();
