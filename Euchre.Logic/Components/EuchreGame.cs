@@ -10,13 +10,6 @@ public class EuchreGame
 {
     public EuchreGame(string[] playerNames)
     {
-        InitializeGame(playerNames);
-    }
-
-    public GameDataManager GameInfo { get; private set; }
-
-    private void InitializeGame(string[] playerNames)
-    {
         if (playerNames.Length != NUMBER_OF_PLAYERS)
         {
             throw new InvalidNumberOfPlayersException();
@@ -24,26 +17,60 @@ public class EuchreGame
 
         GameInfo = new GameDataManager();
         var players = new IPlayer[NUMBER_OF_PLAYERS];
-        for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
+
+        // Add the human player as the first player.
+
+        players[0] = new HumanPlayer(playerNames[0], 0);
+
+        // Add automated players.
+
+        for (int i = 1; i < NUMBER_OF_PLAYERS; i++)
         {
-            players[i] = new AutomatedPlayer(playerNames[i], i % NUMBER_OF_PLAYERS, GameInfo); // All AI for now
+            players[i] = new AutomatedPlayer(playerNames[i], i % NUMBER_OF_PLAYERS, GameInfo);
         }
 
         GameInfo.Players = players;
         GameInfo.Dealer = players[0];
+        GameInfo.SaveGameData();
     }
 
-    public void PlayGame()
+    public GameDataManager GameInfo { get; private set; }
+
+    public async Task PlayGameAsync()
     {
+        // The main game loop is synchronous, but this method is now asynchronous for future UI or I/O
+        //   integration.
+        
         while (GameInfo.TeamScores[0] < WINNING_SCORE && GameInfo.TeamScores[1] < WINNING_SCORE)
         {
-            PlayRound();
+            await Task.Run(PlayRound);
         }
-        
-        int winningTeam = GameInfo.TeamScores[0] >= WINNING_SCORE ? 0 : 1;
+    }
+
+    public async Task RestartGameAsync()
+    {
+        GameInfo = GameDataManager.LoadGameData();
+        GameInfo.RestartGame = true;
+        await PlayGameAsync();
     }
 
     private void PlayRound()
+    {
+        // TODO: Add logic to check if the game is restarted and determine where to resume from saved state.
+
+        ResetRound();
+        DealCards();
+
+        if (PlayersChoseTrump())
+        {
+            PlayTricksForRound();
+            ScoreRound();
+        }
+
+        AdvanceDealer();
+    }
+
+    private void ResetRound()
     {
         // Reset for new round.
 
@@ -52,45 +79,17 @@ public class EuchreGame
         GameInfo.TrumpCaller = null;
         GameInfo.GoingAlone = false;
         GameInfo.AlonePlayer = null;
-        
-        // Deal cards.
-
-        DealCards();
-
-        // Bidding phase.
-
-        if (!BiddingPhase())
-        {
-            // No one ordered up. Dealing new round.
-
-            AdvanceDealer();
-            return;
-        }
-
-        // Play up to 5 tricks.
-
-        IPlayer leader = GetNextPlayer(GameInfo.Dealer);
-        for (int trickNum = 0; trickNum < MAX_NUMBER_OF_TRICKS; trickNum++)
-        {
-            var trick = PlayTrick(leader, trickNum + 1);
-            GameInfo.CurrentRoundTricks.Add(trick);
-            leader = trick.GetWinner();
-
-            // TODO: Add logic to see if the round should end early if one team has already won 3 tricks and
-            //       couldn't win any other tricks or be caught.
-        }
-
-        // Score the hand.
-
-        ScoreRound();
-        
-        // Determine next dealer.
-
-        AdvanceDealer();
+        GameInfo.Kitty = null;
+        GameInfo.SaveGameData();
     }
 
     private void DealCards()
     {
+        if (GameInfo.Players == null)
+        {
+            throw new InvalidGameConditionException("Players must be initialized before dealing cards.");
+        }
+
         GameInfo.Deck.Shuffle();
         
         // Clear hands.
@@ -115,10 +114,16 @@ public class EuchreGame
         // Set turned up card.
 
         GameInfo.Kitty = GameInfo.Deck.Deal();
+        GameInfo.SaveGameData();
     }
 
-    private bool BiddingPhase()
+    private bool PlayersChoseTrump()
     {
+        if (GameInfo.Kitty == null)
+        {
+            throw new InvalidGameConditionException("The Kitty card must be selected before bidding round.");
+        }
+
         // Round 1 - Bid for Kitty suit.
 
         if (BiddingRound(1, GameInfo.Kitty.Suit))
@@ -131,6 +136,19 @@ public class EuchreGame
 
     private bool BiddingRound(int round, Suit? forcedSuit)
     {
+        if (GameInfo.Players == null)
+        {
+            throw new InvalidGameConditionException("Players must be initialized before dealing cards.");
+        }
+        if (GameInfo.Kitty == null)
+        {
+            throw new InvalidGameConditionException("The Kitty card must be selected before bidding round.");
+        }
+        if (GameInfo.Dealer == null)
+        {
+            throw new InvalidGameConditionException("The dealer must be set before bidding round.");
+        }
+
         int startPlayerIndex = (Array.IndexOf(GameInfo.Players, GameInfo.Dealer) + 1) % NUMBER_OF_PLAYERS;
         
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
@@ -156,6 +174,8 @@ public class EuchreGame
                     // Dealer picks up kitty.
 
                     GameInfo.Dealer.DiscardForKitty(GameInfo.Kitty, GameInfo.Trump.Value);
+                    GameInfo.SaveGameData();
+
                     return true;
                 }
                 else
@@ -176,6 +196,8 @@ public class EuchreGame
                         GameInfo.AlonePlayer = player;
                     }
 
+                    GameInfo.SaveGameData();
+
                     // TODO: Inform UI of the order up and if the player is going alone.
 
                     return true;
@@ -190,37 +212,67 @@ public class EuchreGame
         return false;
     }
 
-    private Trick PlayTrick(IPlayer leader, int trickNumber)
+    private void PlayTricksForRound()
     {
+        if (GameInfo.Dealer == null)
+        {
+            throw new InvalidGameConditionException("The dealer must be set before playing the round.");
+        }
+
+        // Play up to 5 tricks.
+
+        GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.Dealer);
+        for (int trickNum = 0; trickNum < MAX_NUMBER_OF_TRICKS; trickNum++)
+        {
+            var trick = PlayTrick(trickNum + 1);
+            GameInfo.CurrentRoundTricks.Add(trick);
+            GameInfo.NextTrickPlayer = trick.GetWinner();
+            GameInfo.SaveGameData();
+
+            // TODO: Add logic to see if the round should end early if one team has already won 3 tricks and
+            //       couldn't win any other tricks or be caught.
+        }
+    }
+
+    private Trick PlayTrick(int trickNumber)
+    {
+        if (GameInfo.Trump == null)
+        {
+            throw new InvalidGameConditionException("The trump suit must be set before playing a trick.");
+        }
+
         var trick = new Trick(GameInfo.Trump.Value);
         
-        IPlayer currentPlayer = leader;
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
             // Skip partner if going alone.
 
-            if (GameInfo.GoingAlone && IsPartner(GameInfo.AlonePlayer, currentPlayer) && currentPlayer != GameInfo.AlonePlayer)
+            if (GameInfo.GoingAlone 
+                && GameInfo.AlonePlayer != null 
+                && IsPartner(GameInfo.AlonePlayer, GameInfo.NextTrickPlayer) 
+                && GameInfo.NextTrickPlayer != GameInfo.AlonePlayer)
             {
-                Console.WriteLine($"{currentPlayer.Name} sits out (partner going alone)");
-                currentPlayer = GetNextPlayer(currentPlayer);
+                GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.NextTrickPlayer);
+                GameInfo.SaveGameData();
                 continue;
             }
 
             Suit? leadSuit = trick.Cards.Count > 0 ? trick.LeadSuit : null;
             
-            var playedCard = currentPlayer.SelectCardToPlay(
+            var playedCard = GameInfo.NextTrickPlayer.SelectCardToPlay(
                 trick, 
                 GameInfo.Trump.Value, 
                 leadSuit);
             
             // Find the card in hand and play it.
 
-            var cardIndex = currentPlayer.Hand.IndexOf(playedCard);
-            playedCard = currentPlayer.PlayCard(cardIndex);
+            var cardIndex = GameInfo.NextTrickPlayer.Hand.IndexOf(playedCard);
+            playedCard = GameInfo.NextTrickPlayer.PlayCard(cardIndex);
             
-            trick.AddCard(currentPlayer, playedCard);
+            trick.AddCard(GameInfo.NextTrickPlayer, playedCard);
 
-            currentPlayer = GetNextPlayer(currentPlayer);
+            GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.NextTrickPlayer);
+            GameInfo.SaveGameData();
         }
         
         return trick;
@@ -235,8 +287,14 @@ public class EuchreGame
         {
             var winner = trick.GetWinner();
             int team = winner.TeamIndex;
-            if (team == 0) team0Tricks++;
-            else team1Tricks++;
+            if (team == 0)
+            {
+                team0Tricks++;
+            }
+            else
+            {
+                team1Tricks++;
+            }
         }
         
         int callerTeam = GameInfo.TrumpCaller?.TeamIndex ?? -1;
@@ -262,21 +320,30 @@ public class EuchreGame
         }
         else
         {
-            int opposingTeam = 1 - callerTeam;
+            int opposingTeam = callerTeam == 0 ? 1 : 0;
             GameInfo.TeamScores[opposingTeam] += 2; // Euchred
         }
 
-        Console.ReadLine();
+        GameInfo.SaveGameData();
     }
 
     private IPlayer GetNextPlayer(IPlayer current)
     {
+        if (GameInfo.Players == null)
+        {
+            throw new InvalidGameConditionException(
+                "The list of players must be set before finding the next player.");
+        }
         int currentIndex = Array.IndexOf(GameInfo.Players, current);
         return GameInfo.Players[(currentIndex + 1) % NUMBER_OF_PLAYERS];
     }
 
     private void AdvanceDealer()
     {
+        if (GameInfo.Dealer == null)
+        {
+            throw new InvalidGameConditionException("The dealer must be set before determining next dealer.");
+        }
         GameInfo.Dealer = GetNextPlayer(GameInfo.Dealer);
     }
 
