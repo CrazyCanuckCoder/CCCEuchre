@@ -79,7 +79,7 @@ public class GameDataManager
     /// <summary>
     /// Indicates the player who is to play the next card in the current trick.
     /// </summary>
-    public IPlayer NextTrickPlayer { get; internal set; }
+    public IPlayer? NextTrickPlayer { get; internal set; }
 
     /// <summary>
     /// True to indicate the game should be restarted, which can be used to reset the game state.

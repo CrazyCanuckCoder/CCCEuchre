@@ -240,6 +240,11 @@ public class EuchreGame
         {
             throw new InvalidGameConditionException("The trump suit must be set before playing a trick.");
         }
+        if (GameInfo.NextTrickPlayer == null)
+        {
+            throw new InvalidGameConditionException(
+                "The next trick player must be set before playing a trick.");
+        }
 
         var trick = new Trick(GameInfo.Trump.Value);
         
@@ -320,7 +325,7 @@ public class EuchreGame
         }
         else
         {
-            int opposingTeam = callerTeam == 0 ? 1 : 0;
+            int opposingTeam = callerTeam ^= 1;
             GameInfo.TeamScores[opposingTeam] += 2; // Euchred
         }
 
