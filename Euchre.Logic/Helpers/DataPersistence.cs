@@ -49,6 +49,11 @@ public class DataPersistence
         return deserializedObject;
     }
 
+    /// <summary>
+    /// Checks if a game data file exists and returns true if it does; otherwise, false.
+    /// </summary>
+    /// <param name="filePath">The path and name to the game file.</param>
+    /// <returns>True indicating the specified file exists; otherwise, false.</returns>
     public static bool JSONFileExists(string filePath)
     {
         return File.Exists(filePath);
