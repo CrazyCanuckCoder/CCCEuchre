@@ -44,8 +44,8 @@ public class EuchreGame
 
         GameInfo.Players = players;
         GameInfo.Dealer = players[0];
-        GameInfo.ResetRoundCheckpoint();           // <-- fresh round, checkpoint set
-        GameInfo.SaveGameData();                   // ? checkpoint
+        GameInfo.ResetRoundCheckpoint();
+        GameInfo.SaveGameData();
     }
 
     public GameDataManager? GameInfo { get; private set; }
@@ -74,13 +74,16 @@ public class EuchreGame
     public async Task RestartGameAsync()
     {
         // Load persisted state.
+
         GameInfo = GameDataManager.LoadGameData()
                      ?? throw new InvalidGameConditionException("No saved game found.");
 
         // Flag that we are resuming – the UI can react accordingly.
+
         GameInfo.RestartGame = true;
 
         // Continue the normal loop; PlayRound will inspect the checkpoint.
+
         await PlayGameAsync();
     }
 
@@ -90,14 +93,17 @@ public class EuchreGame
         
         switch (GameInfo!.LastCompletedStage)
         {
+            // Fresh round – run everything from the top.
+
             case RoundStage.None:
-                // Fresh round – run everything from the top.
                 ResetRound();
                 DealCards();
-                if (!PlayersChoseTrump()) return;   // round ends early if nobody calls trump
-                PlayTricksForRound();
-                ScoreRound();
-                AdvanceDealer();
+                if (PlayersChoseTrump())
+                {
+                    PlayTricksForRound();
+                    ScoreRound();
+                    AdvanceDealer();
+                }
                 break;
 
             case RoundStage.ResetRoundDone:
@@ -132,14 +138,9 @@ public class EuchreGame
 
     private void ResetRound()
     {
-        if (GameInfo == null)
-        {
-            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
-        }
-
         // Reset for new round.
 
-        GameInfo.CurrentRoundTricks.Clear();
+        GameInfo!.CurrentRoundTricks.Clear();
         GameInfo.Trump = null;
         GameInfo.TrumpCaller = null;
         GameInfo.GoingAlone = false;
@@ -148,26 +149,17 @@ public class EuchreGame
 
         // Reset checkpoint for a brand-new round.
 
-        GameInfo.ResetRoundCheckpoint();          // ? checkpoint = ResetRoundDone
-        GameInfo.SaveGameData();                  // ? checkpoint
+        GameInfo.ResetRoundCheckpoint();
+        GameInfo.SaveGameData();
     }
 
     private void DealCards()
     {
-        if (GameInfo == null)
-        {
-            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
-        }
-        if (GameInfo.Players == null)
-        {
-            throw new InvalidGameConditionException("Players must be initialized before dealing cards.");
-        }
-
-        GameInfo.Deck.Shuffle();
+        GameInfo!.Deck.Shuffle();
         
         // Clear hands.
 
-        foreach (var player in GameInfo.Players)
+        foreach (var player in GameInfo.Players!)
         {
             player.ClearHand();
         }
@@ -190,74 +182,50 @@ public class EuchreGame
 
         // Record that dealing is done.
 
-        GameInfo.LastCompletedStage = RoundStage.CardsDealt; // ? checkpoint
-        GameInfo.SaveGameData();                             // ? checkpoint
+        GameInfo.LastCompletedStage = RoundStage.CardsDealt;
+        GameInfo.SaveGameData();
     }
 
     private bool PlayersChoseTrump()
     {
-        if (GameInfo == null)
-        {
-            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
-        }
-        if (GameInfo.Kitty == null)
-        {
-            throw new InvalidGameConditionException("The Kitty card must be selected before bidding round.");
-        }
-
         // Round 1 - Bid for Kitty suit.
 
-        if (BiddingRound(1, GameInfo.Kitty.Suit))
+        if (BiddingRound(1, GameInfo!.Kitty!.Suit))
         {
-            GameInfo.LastCompletedStage = RoundStage.TrumpChosen; // ? checkpoint
+            GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
             GameInfo.SaveGameData();
             return true;
         }
 
         // Second round – bid any other suit.
+
         if (BiddingRound(2, null))
         {
-            GameInfo.LastCompletedStage = RoundStage.TrumpChosen; // ? checkpoint
+            GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
             GameInfo.SaveGameData();
             return true;
         }
 
         // Nobody called trump – round ends, dealer advances.
-        GameInfo.LastCompletedStage = RoundStage.DealerAdvanced; // ? checkpoint
+
+        GameInfo.LastCompletedStage = RoundStage.DealerAdvanced;
         GameInfo.SaveGameData();
         return false;
     }
 
     private bool BiddingRound(int round, Suit? forcedSuit)
     {
-        if (GameInfo == null)
-        {
-            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
-        }
-        if (GameInfo.Players == null)
-        {
-            throw new InvalidGameConditionException("Players must be initialized before dealing cards.");
-        }
-        if (GameInfo.Kitty == null)
-        {
-            throw new InvalidGameConditionException("The Kitty card must be selected before bidding round.");
-        }
-        if (GameInfo.Dealer == null)
-        {
-            throw new InvalidGameConditionException("The dealer must be set before bidding round.");
-        }
-
-        int startPlayerIndex = (Array.IndexOf(GameInfo.Players, GameInfo.Dealer) + 1) % NUMBER_OF_PLAYERS;
+        int startPlayerIndex = (Array.IndexOf(GameInfo!.Players!, GameInfo.Dealer) + 1) % NUMBER_OF_PLAYERS;
         
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
             var playerIndex = (startPlayerIndex + i) % NUMBER_OF_PLAYERS;
-            var player = GameInfo.Players[playerIndex];
+            var player = GameInfo.Players![playerIndex];
             bool isDealer = player == GameInfo.Dealer;
             
             if (round == 1 && forcedSuit.HasValue)
             {
-                if (player.OrderUp(GameInfo.Kitty, isDealer))
+                if (player.OrderUp(GameInfo.Kitty!, isDealer))
                 {
                     SetGameToPlayersBid(forcedSuit.Value, player);
 
@@ -268,7 +236,7 @@ public class EuchreGame
 
                     // Dealer picks up kitty.
 
-                    GameInfo.Dealer.DiscardForKitty(GameInfo.Kitty);
+                    GameInfo.Dealer!.DiscardForKitty(GameInfo.Kitty!);
                     GameInfo.SaveGameData();
 
                     return true;
@@ -282,7 +250,7 @@ public class EuchreGame
             }
             else if (round == 2)
             {
-                var calledSuit = player.CallTrump(GameInfo.Kitty);
+                var calledSuit = player.CallTrump(GameInfo.Kitty!);
                 if (calledSuit.HasValue)
                 {
                     SetGameToPlayersBid(calledSuit.Value, player);
@@ -310,12 +278,7 @@ public class EuchreGame
 
     private void SetGameToPlayersBid(Suit bidSuit, IPlayer player)
     {
-        if (GameInfo == null)
-        {
-            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
-        }
-
-        GameInfo.Trump = bidSuit;
+        GameInfo!.Trump = bidSuit;
         GameInfo.TrumpCaller = player;
         GameInfo.GoingAlone = player.IsGoingAlone;
         GameInfo.AlonePlayer = player.IsGoingAlone ? player : null;
@@ -325,21 +288,25 @@ public class EuchreGame
     /// Plays all tricks for the current round.
     /// </summary>
     /// <param name="resumeFrom">
-    /// If >0, we start at that trick number (1-based) – used when resuming after a crash.
+    /// If > 0, we start at that trick number (1-based) – used when resuming after a crash.
     /// </param>
     private void PlayTricksForRound(int resumeFrom = 0)
     {
         // Determine who leads the first trick.
+
         GameInfo!.NextTrickPlayer = GetNextPlayer(GameInfo.Dealer!);
 
         // If we are resuming, fast-forward the trick counter and the leader.
+
         if (resumeFrom > 0)
         {
             // Replay already-finished tricks to restore state.
+
             for (int t = 1; t <= resumeFrom; t++)
             {
                 // The trick objects are already stored in CurrentRoundTricks,
                 // so we just need to set the correct next player.
+
                 GameInfo.NextTrickPlayer = GameInfo.CurrentRoundTricks[t - 1].GetWinner();
             }
         }
@@ -351,32 +318,20 @@ public class EuchreGame
             GameInfo.NextTrickPlayer = trick.GetWinner();
 
             // Update checkpoint after each trick – this allows us to resume mid-round.
+
             GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
             GameInfo.CurrentTrickNumber = trickNum; // remember where we stopped
-            GameInfo.SaveGameData();                // ? checkpoint
+            GameInfo.SaveGameData();
         }
 
         // All tricks done – reset the per-round trick counter.
+
         GameInfo.CurrentTrickNumber = 0;
     }
 
     private Trick PlayTrick(int trickNumber)
     {
-        if (GameInfo == null)
-        {
-            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
-        }
-        if (GameInfo.Trump == null)
-        {
-            throw new InvalidGameConditionException("The trump suit must be set before playing a trick.");
-        }
-        if (GameInfo.NextTrickPlayer == null)
-        {
-            throw new InvalidGameConditionException(
-                "The next trick player must be set before playing a trick.");
-        }
-
-        var trick = new Trick(GameInfo.Trump.Value);
+        var trick = new Trick(GameInfo!.Trump!.Value);
         
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
@@ -384,16 +339,16 @@ public class EuchreGame
 
             if (GameInfo.GoingAlone 
                 && GameInfo.AlonePlayer != null 
-                && IsPartner(GameInfo.AlonePlayer, GameInfo.NextTrickPlayer) 
+                && IsPartner(GameInfo.AlonePlayer, GameInfo.NextTrickPlayer!) 
                 && GameInfo.NextTrickPlayer != GameInfo.AlonePlayer)
             {
-                GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.NextTrickPlayer);
+                GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.NextTrickPlayer!);
                 continue;
             }
 
             Suit? leadSuit = trick.Cards.Count > 0 ? trick.LeadSuit : null;
             
-            var playedCard = GameInfo.NextTrickPlayer.SelectCardToPlay(
+            var playedCard = GameInfo.NextTrickPlayer!.SelectCardToPlay(
                 trick, 
                 GameInfo.Trump.Value, 
                 leadSuit);
@@ -413,15 +368,10 @@ public class EuchreGame
 
     private void ScoreRound()
     {
-        if (GameInfo == null)
-        {
-            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
-        }
-
         int team0Tricks = 0;
         int team1Tricks = 0;
         
-        foreach (var trick in GameInfo.CurrentRoundTricks)
+        foreach (var trick in GameInfo!.CurrentRoundTricks)
         {
             var winner = trick.GetWinner();
             if (winner.TeamIndex == 0)
@@ -455,39 +405,22 @@ public class EuchreGame
         }
 
         // Record that scoring is done.
-        GameInfo.LastCompletedStage = RoundStage.Scored; // ? checkpoint
-        GameInfo.SaveGameData();                                      // ? checkpoint
+
+        GameInfo.LastCompletedStage = RoundStage.Scored;
+        GameInfo.SaveGameData();
     }
 
     private IPlayer GetNextPlayer(IPlayer current)
     {
-        if (GameInfo == null)
-        {
-            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
-        }
-        if (GameInfo.Players == null)
-        {
-            throw new InvalidGameConditionException(
-                "The list of players must be set before finding the next player.");
-        }
-        int currentIndex = Array.IndexOf(GameInfo.Players, current);
-        return GameInfo.Players[(currentIndex + 1) % NUMBER_OF_PLAYERS];
+        int currentIndex = Array.IndexOf(GameInfo!.Players!, current);
+        return GameInfo.Players![(currentIndex + 1) % NUMBER_OF_PLAYERS];
     }
 
     private void AdvanceDealer()
     {
-        if (GameInfo == null)
-        {
-            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
-        }
-        if (GameInfo.Dealer == null)
-        {
-            throw new InvalidGameConditionException("The dealer must be set before determining next dealer.");
-        }
-
-        GameInfo.Dealer = GetNextPlayer(GameInfo.Dealer!);
-        GameInfo.LastCompletedStage = RoundStage.DealerAdvanced; // ? checkpoint
-        GameInfo.SaveGameData();                                 // ? checkpoint
+        GameInfo!.Dealer = GetNextPlayer(GameInfo.Dealer!);
+        GameInfo.LastCompletedStage = RoundStage.DealerAdvanced;
+        GameInfo.SaveGameData();
     }
 
     private bool IsPartner(IPlayer player1, IPlayer player2)
