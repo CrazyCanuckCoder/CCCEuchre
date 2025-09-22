@@ -1,3 +1,4 @@
+using Euchre.Logic.Enums;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Exceptions;
 using Euchre.Logic.Helpers;
@@ -43,7 +44,8 @@ public class EuchreGame
 
         GameInfo.Players = players;
         GameInfo.Dealer = players[0];
-        GameInfo.SaveGameData();
+        GameInfo.ResetRoundCheckpoint();           // <-- fresh round, checkpoint set
+        GameInfo.SaveGameData();                   // ? checkpoint
     }
 
     public GameDataManager? GameInfo { get; private set; }
@@ -71,25 +73,61 @@ public class EuchreGame
 
     public async Task RestartGameAsync()
     {
-        GameInfo = GameDataManager.LoadGameData();
+        // Load persisted state.
+        GameInfo = GameDataManager.LoadGameData()
+                     ?? throw new InvalidGameConditionException("No saved game found.");
+
+        // Flag that we are resuming – the UI can react accordingly.
         GameInfo.RestartGame = true;
+
+        // Continue the normal loop; PlayRound will inspect the checkpoint.
         await PlayGameAsync();
     }
 
     private void PlayRound()
     {
-        // TODO: Add logic to check if the game is restarted and determine where to resume from saved state.
-
-        ResetRound();
-        DealCards();
-
-        if (PlayersChoseTrump())
+        //  Determine where we left off and jump to the next step.
+        
+        switch (GameInfo!.LastCompletedStage)
         {
-            PlayTricksForRound();
-            ScoreRound();
-        }
+            case RoundStage.None:
+                // Fresh round – run everything from the top.
+                ResetRound();
+                DealCards();
+                if (!PlayersChoseTrump()) return;   // round ends early if nobody calls trump
+                PlayTricksForRound();
+                ScoreRound();
+                AdvanceDealer();
+                break;
 
-        AdvanceDealer();
+            case RoundStage.ResetRoundDone:
+                DealCards();
+                goto case RoundStage.CardsDealt;
+
+            case RoundStage.CardsDealt:
+                if (!PlayersChoseTrump()) return;
+                goto case RoundStage.TrumpChosen;
+
+            case RoundStage.TrumpChosen:
+                // We may have been stopped in the middle of playing tricks.
+                PlayTricksForRound(GameInfo.CurrentTrickNumber);
+                goto case RoundStage.TricksPlayed;
+
+            case RoundStage.TricksPlayed:
+                ScoreRound();
+                goto case RoundStage.Scored;
+
+            case RoundStage.Scored:
+                AdvanceDealer();
+                break;
+
+            case RoundStage.DealerAdvanced:
+                // All stages completed – nothing to do; the outer loop will start a new round.
+                break;
+
+            default:
+                throw new InvalidGameConditionException("Unknown round checkpoint.");
+        }
     }
 
     private void ResetRound()
@@ -107,7 +145,11 @@ public class EuchreGame
         GameInfo.GoingAlone = false;
         GameInfo.AlonePlayer = null;
         GameInfo.Kitty = null;
-        GameInfo.SaveGameData();
+
+        // Reset checkpoint for a brand-new round.
+
+        GameInfo.ResetRoundCheckpoint();          // ? checkpoint = ResetRoundDone
+        GameInfo.SaveGameData();                  // ? checkpoint
     }
 
     private void DealCards()
@@ -145,7 +187,11 @@ public class EuchreGame
         // Set turned up card.
 
         GameInfo.Kitty = GameInfo.Deck.Deal();
-        GameInfo.SaveGameData();
+
+        // Record that dealing is done.
+
+        GameInfo.LastCompletedStage = RoundStage.CardsDealt; // ? checkpoint
+        GameInfo.SaveGameData();                             // ? checkpoint
     }
 
     private bool PlayersChoseTrump()
@@ -162,11 +208,24 @@ public class EuchreGame
         // Round 1 - Bid for Kitty suit.
 
         if (BiddingRound(1, GameInfo.Kitty.Suit))
+        {
+            GameInfo.LastCompletedStage = RoundStage.TrumpChosen; // ? checkpoint
+            GameInfo.SaveGameData();
             return true;
-        
-        // Round 2 - Bid the other suits.
+        }
 
-        return BiddingRound(2, null);
+        // Second round – bid any other suit.
+        if (BiddingRound(2, null))
+        {
+            GameInfo.LastCompletedStage = RoundStage.TrumpChosen; // ? checkpoint
+            GameInfo.SaveGameData();
+            return true;
+        }
+
+        // Nobody called trump – round ends, dealer advances.
+        GameInfo.LastCompletedStage = RoundStage.DealerAdvanced; // ? checkpoint
+        GameInfo.SaveGameData();
+        return false;
     }
 
     private bool BiddingRound(int round, Suit? forcedSuit)
@@ -262,30 +321,43 @@ public class EuchreGame
         GameInfo.AlonePlayer = player.IsGoingAlone ? player : null;
     }
 
-    private void PlayTricksForRound()
+    /// <summary>
+    /// Plays all tricks for the current round.
+    /// </summary>
+    /// <param name="resumeFrom">
+    /// If >0, we start at that trick number (1-based) – used when resuming after a crash.
+    /// </param>
+    private void PlayTricksForRound(int resumeFrom = 0)
     {
-        if (GameInfo == null)
+        // Determine who leads the first trick.
+        GameInfo!.NextTrickPlayer = GetNextPlayer(GameInfo.Dealer!);
+
+        // If we are resuming, fast-forward the trick counter and the leader.
+        if (resumeFrom > 0)
         {
-            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
-        }
-        if (GameInfo.Dealer == null)
-        {
-            throw new InvalidGameConditionException("The dealer must be set before playing the round.");
+            // Replay already-finished tricks to restore state.
+            for (int t = 1; t <= resumeFrom; t++)
+            {
+                // The trick objects are already stored in CurrentRoundTricks,
+                // so we just need to set the correct next player.
+                GameInfo.NextTrickPlayer = GameInfo.CurrentRoundTricks[t - 1].GetWinner();
+            }
         }
 
-        // Play up to 5 tricks.
-
-        GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.Dealer);
-        for (int trickNum = 0; trickNum < MAX_NUMBER_OF_TRICKS; trickNum++)
+        for (int trickNum = resumeFrom + 1; trickNum <= MAX_NUMBER_OF_TRICKS; trickNum++)
         {
-            var trick = PlayTrick(trickNum + 1);
+            var trick = PlayTrick(trickNum);
             GameInfo.CurrentRoundTricks.Add(trick);
             GameInfo.NextTrickPlayer = trick.GetWinner();
-            GameInfo.SaveGameData();
 
-            // TODO: Add logic to see if the round should end early if one team has already won 3 tricks and
-            //       couldn't win any other tricks or be caught.
+            // Update checkpoint after each trick – this allows us to resume mid-round.
+            GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
+            GameInfo.CurrentTrickNumber = trickNum; // remember where we stopped
+            GameInfo.SaveGameData();                // ? checkpoint
         }
+
+        // All tricks done – reset the per-round trick counter.
+        GameInfo.CurrentTrickNumber = 0;
     }
 
     private Trick PlayTrick(int trickNumber)
@@ -316,7 +388,6 @@ public class EuchreGame
                 && GameInfo.NextTrickPlayer != GameInfo.AlonePlayer)
             {
                 GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.NextTrickPlayer);
-                GameInfo.SaveGameData();
                 continue;
             }
 
@@ -335,7 +406,6 @@ public class EuchreGame
             trick.AddCard(GameInfo.NextTrickPlayer, playedCard);
 
             GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.NextTrickPlayer);
-            GameInfo.SaveGameData();
         }
         
         return trick;
@@ -384,7 +454,9 @@ public class EuchreGame
             GameInfo.TeamScores[opposingTeam] += 2; // Euchred
         }
 
-        GameInfo.SaveGameData();
+        // Record that scoring is done.
+        GameInfo.LastCompletedStage = RoundStage.Scored; // ? checkpoint
+        GameInfo.SaveGameData();                                      // ? checkpoint
     }
 
     private IPlayer GetNextPlayer(IPlayer current)
@@ -413,7 +485,9 @@ public class EuchreGame
             throw new InvalidGameConditionException("The dealer must be set before determining next dealer.");
         }
 
-        GameInfo.Dealer = GetNextPlayer(GameInfo.Dealer);
+        GameInfo.Dealer = GetNextPlayer(GameInfo.Dealer!);
+        GameInfo.LastCompletedStage = RoundStage.DealerAdvanced; // ? checkpoint
+        GameInfo.SaveGameData();                                 // ? checkpoint
     }
 
     private bool IsPartner(IPlayer player1, IPlayer player2)
