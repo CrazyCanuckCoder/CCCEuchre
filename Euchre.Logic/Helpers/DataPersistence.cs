@@ -48,4 +48,9 @@ public class DataPersistence
 
         return deserializedObject;
     }
+
+    public static bool JSONFileExists(string filePath)
+    {
+        return File.Exists(filePath);
+    }
 }

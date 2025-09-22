@@ -68,10 +68,9 @@ public class HumanPlayer : Player
     /// Prompts the user to discard a card from their hand in exchange for the kitty card.
     /// </summary>
     /// <param name="kitty">The card facing up on top of the kitty.</param>
-    /// <param name="trump">The suit designated as trump.</param>
     /// <exception cref="MissingCardException"></exception>
     /// <exception cref="CardWasNotSelectedException"></exception>
-    public override void DiscardForKitty(Card kitty, Suit trump)
+    public override void DiscardForKitty(Card kitty)
     {
         PromptForDiscardEventArgs args = new(kitty);
         PromptForDiscard?.Invoke(this, args);

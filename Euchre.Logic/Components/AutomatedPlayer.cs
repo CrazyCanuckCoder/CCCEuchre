@@ -86,8 +86,7 @@ public class AutomatedPlayer : Player
     /// it in the player's hand.
     /// </summary>
     /// <param name="kitty">The upturned card from the kitty.</param>
-    /// <param name="trump">The trump suit for the current round.</param>
-    public override void DiscardForKitty(Card kitty, Suit trump)
+    public override void DiscardForKitty(Card kitty)
     {
         _bidder.DiscardForKitty(kitty);
     }

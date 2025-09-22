@@ -107,8 +107,7 @@ public abstract class Player : IPlayer
     /// Determines which card in the player's hand will be replaced by the kitty's upturned card.
     /// </summary>
     /// <param name="kitty">The upturned card from the kitty.</param>
-    /// <param name="trump">The trump suit for the current round.</param>
-    public abstract void DiscardForKitty(Card kitty, Suit trump);
+    public abstract void DiscardForKitty(Card kitty);
 
     /// <summary>
     /// Determines whether to order up the given card during the bidding phase.

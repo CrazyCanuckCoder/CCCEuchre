@@ -14,7 +14,7 @@ public interface IPlayer
     void AddCard(Card card);
     Suit? CallTrump(Card kitty);
     void ClearHand();
-    void DiscardForKitty(Card kitty, Suit trump);
+    void DiscardForKitty(Card kitty);
     bool OrderUp(Card kitty, bool isDealer);
     Card PlayCard(int index);
     Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit);

@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic.Components;
+using Euchre.Logic.Enums;
 using Euchre.Logic.Interfaces;
 using static Euchre.Logic.Helpers.Constants;
 
@@ -87,11 +88,39 @@ public class GameDataManager
     public bool RestartGame { get; internal set; }
 
     /// <summary>
+    /// The stage we were in when the app last saved.
+    /// </summary>
+    public RoundStage LastCompletedStage { get; set; } = RoundStage.None;
+
+    /// <summary>
+    /// If we stopped mid‑trick, remember which trick number we were on.
+    /// </summary>
+    public int CurrentTrickNumber { get; set; } = 0;
+
+    /// <summary>
+    /// Helper to reset checkpoint info when a brand‑new round begins.
+    /// </summary>
+    public void ResetRoundCheckpoint()
+    {
+        LastCompletedStage = RoundStage.ResetRoundDone;
+        CurrentTrickNumber = 0;
+    }
+
+    /// <summary>
     /// Saves the current game data to a file.
     /// </summary>
     public void SaveGameData()
     {
         DataPersistence.SaveToJSONFile(this, FILE_NAME);
+    }
+
+    /// <summary>
+    /// Returns true if saved game data exists; otherwise, false.
+    /// </summary>
+    /// <returns>A boolean indicating whether saved game data exists.</returns>
+    public static bool DataExists()
+    {
+        return DataPersistence.JSONFileExists(FILE_NAME);
     }
 
     /// <summary>

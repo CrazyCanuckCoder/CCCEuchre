@@ -1,16 +1,28 @@
+using Euchre.Logic.EventArgs;
 using Euchre.Logic.Exceptions;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
-using System;
 using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Components;
 
 public class EuchreGame
 {
-    public EuchreGame(string[] playerNames)
+    /// <summary>
+    /// Use this constructor when loading a saved game.
+    /// </summary>
+    public EuchreGame()
     {
-        if (playerNames.Length != NUMBER_OF_PLAYERS)
+    }
+
+    /// <summary>
+    /// Use this constructor to start a new game.
+    /// </summary>
+    /// <param name="playerNames">The list of names for the players where the first name is a human.</param>
+    /// <exception cref="InvalidNumberOfPlayersException" />
+    public EuchreGame(List<string> playerNames) : this()
+    {
+        if (playerNames.Count != NUMBER_OF_PLAYERS)
         {
             throw new InvalidNumberOfPlayersException();
         }
@@ -34,13 +46,23 @@ public class EuchreGame
         GameInfo.SaveGameData();
     }
 
-    public GameDataManager GameInfo { get; private set; }
+    public GameDataManager? GameInfo { get; private set; }
+
+    /// <summary>
+    /// The event that is raised after a player makes a bid during the bidding round.  This event is raised
+    /// whether or not the user passes.
+    /// </summary>
+    public event EventHandler<PlayerBidEventArgs>? PlayerBidResult;
 
     public async Task PlayGameAsync()
     {
-        // The main game loop is synchronous, but this method is now asynchronous for future UI or I/O
-        //   integration.
-        
+        if (GameInfo == null)
+        {
+            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
+        }
+
+        // The main game loop is synchronous, but this method is asynchronous for UI integration.
+
         while (GameInfo.TeamScores[0] < WINNING_SCORE && GameInfo.TeamScores[1] < WINNING_SCORE)
         {
             await Task.Run(PlayRound);
@@ -72,6 +94,11 @@ public class EuchreGame
 
     private void ResetRound()
     {
+        if (GameInfo == null)
+        {
+            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
+        }
+
         // Reset for new round.
 
         GameInfo.CurrentRoundTricks.Clear();
@@ -85,6 +112,10 @@ public class EuchreGame
 
     private void DealCards()
     {
+        if (GameInfo == null)
+        {
+            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
+        }
         if (GameInfo.Players == null)
         {
             throw new InvalidGameConditionException("Players must be initialized before dealing cards.");
@@ -119,6 +150,10 @@ public class EuchreGame
 
     private bool PlayersChoseTrump()
     {
+        if (GameInfo == null)
+        {
+            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
+        }
         if (GameInfo.Kitty == null)
         {
             throw new InvalidGameConditionException("The Kitty card must be selected before bidding round.");
@@ -136,6 +171,10 @@ public class EuchreGame
 
     private bool BiddingRound(int round, Suit? forcedSuit)
     {
+        if (GameInfo == null)
+        {
+            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
+        }
         if (GameInfo.Players == null)
         {
             throw new InvalidGameConditionException("Players must be initialized before dealing cards.");
@@ -161,26 +200,25 @@ public class EuchreGame
             {
                 if (player.OrderUp(GameInfo.Kitty, isDealer))
                 {
-                    GameInfo.Trump = forcedSuit.Value;
-                    GameInfo.TrumpCaller = player;
-                    if (player.IsGoingAlone)
-                    {
-                        GameInfo.GoingAlone = true;
-                        GameInfo.AlonePlayer = player;
-                    }
+                    SetGameToPlayersBid(forcedSuit.Value, player);
 
-                    // TODO: Inform UI of the order up and if the player is going alone.
+                    // Inform UI of the order up and if the player is going alone.
+
+                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, true, GameInfo.Trump,
+                        player.IsGoingAlone));
 
                     // Dealer picks up kitty.
 
-                    GameInfo.Dealer.DiscardForKitty(GameInfo.Kitty, GameInfo.Trump.Value);
+                    GameInfo.Dealer.DiscardForKitty(GameInfo.Kitty);
                     GameInfo.SaveGameData();
 
                     return true;
                 }
                 else
                 {
-                    // TODO: Inform UI that the player is passing.
+                    // Inform UI that the player is passing.
+
+                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false));
                 }
             }
             else if (round == 2)
@@ -188,23 +226,22 @@ public class EuchreGame
                 var calledSuit = player.CallTrump(GameInfo.Kitty);
                 if (calledSuit.HasValue)
                 {
-                    GameInfo.Trump = calledSuit.Value;
-                    GameInfo.TrumpCaller = player;
-                    if (player.IsGoingAlone)
-                    {
-                        GameInfo.GoingAlone = true;
-                        GameInfo.AlonePlayer = player;
-                    }
+                    SetGameToPlayersBid(calledSuit.Value, player);
+
+                    // Inform UI of the order up and if the player is going alone.
+
+                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, true, GameInfo.Trump,
+                        player.IsGoingAlone));
 
                     GameInfo.SaveGameData();
-
-                    // TODO: Inform UI of the order up and if the player is going alone.
 
                     return true;
                 }
                 else
                 {
-                    // TODO: Inform UI that the player is passing.
+                    // Inform UI that the player is passing.
+
+                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false));
                 }
             }
         }
@@ -212,8 +249,25 @@ public class EuchreGame
         return false;
     }
 
+    private void SetGameToPlayersBid(Suit bidSuit, IPlayer player)
+    {
+        if (GameInfo == null)
+        {
+            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
+        }
+
+        GameInfo.Trump = bidSuit;
+        GameInfo.TrumpCaller = player;
+        GameInfo.GoingAlone = player.IsGoingAlone;
+        GameInfo.AlonePlayer = player.IsGoingAlone ? player : null;
+    }
+
     private void PlayTricksForRound()
     {
+        if (GameInfo == null)
+        {
+            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
+        }
         if (GameInfo.Dealer == null)
         {
             throw new InvalidGameConditionException("The dealer must be set before playing the round.");
@@ -236,6 +290,10 @@ public class EuchreGame
 
     private Trick PlayTrick(int trickNumber)
     {
+        if (GameInfo == null)
+        {
+            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
+        }
         if (GameInfo.Trump == null)
         {
             throw new InvalidGameConditionException("The trump suit must be set before playing a trick.");
@@ -285,14 +343,18 @@ public class EuchreGame
 
     private void ScoreRound()
     {
+        if (GameInfo == null)
+        {
+            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
+        }
+
         int team0Tricks = 0;
         int team1Tricks = 0;
         
         foreach (var trick in GameInfo.CurrentRoundTricks)
         {
             var winner = trick.GetWinner();
-            int team = winner.TeamIndex;
-            if (team == 0)
+            if (winner.TeamIndex == 0)
             {
                 team0Tricks++;
             }
@@ -309,14 +371,7 @@ public class EuchreGame
         {
             if (callerTricks == MAX_NUMBER_OF_TRICKS)
             {
-                if (GameInfo.GoingAlone)
-                {
-                    GameInfo.TeamScores[callerTeam] += 4; // Lone march
-                }
-                else
-                {
-                    GameInfo.TeamScores[callerTeam] += 2; // March
-                }
+                GameInfo.TeamScores[callerTeam] += GameInfo.GoingAlone ? 4 : 2;
             }
             else
             {
@@ -334,6 +389,10 @@ public class EuchreGame
 
     private IPlayer GetNextPlayer(IPlayer current)
     {
+        if (GameInfo == null)
+        {
+            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
+        }
         if (GameInfo.Players == null)
         {
             throw new InvalidGameConditionException(
@@ -345,10 +404,15 @@ public class EuchreGame
 
     private void AdvanceDealer()
     {
+        if (GameInfo == null)
+        {
+            throw new InvalidGameConditionException("GameInfo must be initialized before starting the game.");
+        }
         if (GameInfo.Dealer == null)
         {
             throw new InvalidGameConditionException("The dealer must be set before determining next dealer.");
         }
+
         GameInfo.Dealer = GetNextPlayer(GameInfo.Dealer);
     }
 
