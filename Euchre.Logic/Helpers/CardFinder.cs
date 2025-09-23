@@ -155,6 +155,18 @@ public static class CardFinder
         return cards.Count(c => c.Rank == rank);
     }
 
+    /// <summary>
+    /// Counts the number of cards in the specified list that match the given rank and are not trump.
+    /// </summary>
+    /// <param name="cards">The list of cards to evaluate. Cannot be null.</param>
+    /// <param name="rank">The rank of cards to count.</param>
+    /// <param name="trump">The suit that is trump for the current round.</param>
+    /// <returns>The number of cards found for the specified rank.</returns>
+    public static int CountNonTrumpCardsOfRank(List<Card> cards, Rank rank, Suit trump)
+    {
+        return cards.Count(c => c.Rank == rank && c.Suit != trump);
+    }
+
     public static int CountBowers(List<Card> cards, Suit trump)
     {
         return cards.Count(c => c.IsBower(trump));

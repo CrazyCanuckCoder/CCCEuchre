@@ -6,6 +6,24 @@ namespace Euchre.Logic.Helpers;
 public class DataPersistence
 {
     /// <summary>
+    /// Gets the JsonSerializerSettings configured with custom converters
+    /// </summary>
+    private static JsonSerializerSettings GetJsonSettings()
+    {
+        return new JsonSerializerSettings
+        {
+            Formatting = Formatting.Indented,
+            //Converters = { new IPlayerJsonConverter() },
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            // Optional: Handle null values gracefully
+            NullValueHandling = NullValueHandling.Include,
+            // Optional: Handle missing members gracefully
+            MissingMemberHandling = MissingMemberHandling.Ignore
+        };
+    }
+
+    /// <summary>
     /// Method to save an object to a file using JSON serialization.
     /// </summary>
     /// <typeparam name="T">The type of the instance to save.</typeparam>
@@ -15,7 +33,7 @@ public class DataPersistence
     {
         // Serialize the object to JSON format.
 
-        string jsonText = JsonConvert.SerializeObject(objectToSave, Formatting.Indented);
+        string jsonText = JsonConvert.SerializeObject(objectToSave, GetJsonSettings());
 
         // Write the JSON to the file.
 
@@ -44,9 +62,9 @@ public class DataPersistence
 
         // Deserialize the JSON back to the object.
 
-        T deserializedObject = JsonConvert.DeserializeObject<T>(json) ?? new();
+        T? deserializedObject = JsonConvert.DeserializeObject<T>(json, GetJsonSettings());
 
-        return deserializedObject;
+        return deserializedObject ?? new();
     }
 
     /// <summary>

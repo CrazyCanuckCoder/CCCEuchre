@@ -33,13 +33,13 @@ public class EuchreGame
 
         // Add the human player as the first player.
 
-        players[0] = new HumanPlayer(playerNames[0], 0);
+        //players[0] = new HumanPlayer(playerNames[0], 0);
 
         // Add automated players.
 
-        for (int i = 1; i < NUMBER_OF_PLAYERS; i++)
+        for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
-            players[i] = new AutomatedPlayer(playerNames[i], i % NUMBER_OF_PLAYERS, GameInfo);
+            players[i] = new AutomatedPlayer(playerNames[i], i % NUMBER_OF_TEAMS, GameInfo);
         }
 
         GameInfo.Players = players;

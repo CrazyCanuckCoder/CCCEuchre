@@ -90,12 +90,12 @@ public class GameDataManager
     /// <summary>
     /// The stage we were in when the app last saved.
     /// </summary>
-    public RoundStage LastCompletedStage { get; set; } = RoundStage.None;
+    public RoundStage LastCompletedStage { get; internal set; } = RoundStage.None;
 
     /// <summary>
     /// If we stopped mid‑trick, remember which trick number we were on.
     /// </summary>
-    public int CurrentTrickNumber { get; set; } = 0;
+    public int CurrentTrickNumber { get; internal set; } = 0;
 
     /// <summary>
     /// Helper to reset checkpoint info when a brand‑new round begins.

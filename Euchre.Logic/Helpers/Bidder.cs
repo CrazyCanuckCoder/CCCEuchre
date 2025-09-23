@@ -109,7 +109,7 @@ public class Bidder : IBidder
 
         var numTrumpCards = CardFinder.CountCardsOfSuit(cards, suit);
         var numBowers = CardFinder.CountBowers(cards, suit);
-        var numAces = CardFinder.CountCardsOfRank(cards, Rank.Ace);
+        var numAces = CardFinder.CountNonTrumpCardsOfRank(cards, Rank.Ace, suit);
         var otherTrump = CardFinder.GetNonBowers(cards, suit);
 
         switch (numBowers)
