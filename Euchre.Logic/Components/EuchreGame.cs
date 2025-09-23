@@ -28,7 +28,7 @@ public class EuchreGame
             throw new InvalidNumberOfPlayersException();
         }
 
-        GameInfo = new GameDataManager();
+        GameInfo = new GameStateManager();
         var players = new IPlayer[NUMBER_OF_PLAYERS];
 
         // Add the human player as the first player.
@@ -48,7 +48,7 @@ public class EuchreGame
         GameInfo.SaveGameData();
     }
 
-    public GameDataManager? GameInfo { get; private set; }
+    public GameStateManager? GameInfo { get; private set; }
 
     /// <summary>
     /// The event that is raised after a player makes a bid during the bidding round.  This event is raised
@@ -75,7 +75,7 @@ public class EuchreGame
     {
         // Load persisted state.
 
-        GameInfo = GameDataManager.LoadGameData()
+        GameInfo = GameStateManager.LoadGameData()
                      ?? throw new InvalidGameConditionException("No saved game found.");
 
         // Flag that we are resuming – the UI can react accordingly.

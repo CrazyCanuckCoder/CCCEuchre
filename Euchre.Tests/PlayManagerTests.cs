@@ -19,7 +19,7 @@ public class PlayManagerTests
             new(Suit.Diamonds, Rank.King)
         };
 
-        var gameDataManager = new GameDataManager();
+        var gameDataManager = new GameStateManager();
 
         var validCards = new PlayManager(playerHand, gameDataManager, 
             new AutomatedPlayer("TestPlayer", 0, gameDataManager)).GetValidCards(leadSuit, Suit.Spades);
@@ -45,7 +45,7 @@ public class PlayManagerTests
             new(Suit.Diamonds, Rank.Queen)
         };
 
-        var gameDataManager = new GameDataManager();
+        var gameDataManager = new GameStateManager();
 
         var validCards = new PlayManager(playerHand, gameDataManager, 
             new AutomatedPlayer("TestPlayer", 0, gameDataManager)).GetValidCards(Suit.Hearts, Suit.Spades);
@@ -59,7 +59,7 @@ public class PlayManagerTests
     [Test]
     public void GetValidCards_ReturnsEmpty_WhenHandIsEmpty()
     {
-        var gameDataManager = new GameDataManager();
+        var gameDataManager = new GameStateManager();
 
         var playerManager = new PlayManager([], gameDataManager, 
             new AutomatedPlayer("TestPlayer", 0, gameDataManager));

@@ -1,27 +1,24 @@
 ﻿using Euchre.Logic.Components;
+using Euchre.Logic.Data;
 using Euchre.Logic.Enums;
 using Euchre.Logic.Interfaces;
+using System.IO;
 using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Helpers;
 
 /// <summary>
-/// Manages the game data, including player information, deck, scores, and current hand tricks.
+/// Manages the game state, including player information, deck, scores, and current hand tricks.
 /// </summary>
 [Serializable]
-public class GameDataManager
+public class GameStateManager
 {
-    public GameDataManager()
+    public GameStateManager()
     {
         Deck = new Deck();
         TeamScores = new int[NUMBER_OF_TEAMS];
         CurrentRoundTricks = [];
     }
-
-    /// <summary>
-    /// The name of the file where game data is saved and loaded from.
-    /// </summary>
-    private const string FILE_NAME = "GameData.json";
 
     /// <summary>
     /// The list of players in the game. The first two players are on one team, and the last two players are 
@@ -111,7 +108,7 @@ public class GameDataManager
     /// </summary>
     public void SaveGameData()
     {
-        DataPersistence.SaveToJSONFile(this, FILE_NAME);
+        DataManager.SaveGameState(this);
     }
 
     /// <summary>
@@ -120,15 +117,15 @@ public class GameDataManager
     /// <returns>A boolean indicating whether saved game data exists.</returns>
     public static bool DataExists()
     {
-        return DataPersistence.JSONFileExists(FILE_NAME);
+        return File.Exists(DataManager.FILE_NAME);
     }
 
     /// <summary>
     /// Loads the game data from a file.
     /// </summary>
     /// <returns>An instance of this class with the loaded data.</returns>
-    public static GameDataManager LoadGameData()
+    public static GameStateManager LoadGameData()
     {
-        return DataPersistence.LoadFromJSONFile<GameDataManager>(FILE_NAME);
+        return DataManager.LoadGameState();
     }
 }

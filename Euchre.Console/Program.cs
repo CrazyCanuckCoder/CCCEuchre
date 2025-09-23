@@ -7,7 +7,7 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        if (GameDataManager.DataExists())
+        if (GameStateManager.DataExists())
         {
             // If so, load the saved game.
 

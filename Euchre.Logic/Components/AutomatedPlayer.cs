@@ -12,9 +12,9 @@ public class AutomatedPlayer : Player
     /// Initializes a new instance of the <see cref="AutomatedPlayer"/> class with the specified name.
     /// </summary>
     /// <param name="name">The name of the automated player. This value cannot be null or empty.</param>
-    /// <param name="dataManager">The <see cref="GameDataManager"/> instance that provides access to the 
+    /// <param name="dataManager">The <see cref="GameStateManager"/> instance that provides access to the 
     /// game's state.</param>
-    public AutomatedPlayer(string name, int teamIndex, GameDataManager dataManager) : base(name, teamIndex, false) 
+    public AutomatedPlayer(string name, int teamIndex, GameStateManager dataManager) : base(name, teamIndex, false) 
     {
         _bidder = new Bidder(Hand);
         _playManager = new PlayManager(Hand, dataManager, this);
@@ -29,10 +29,10 @@ public class AutomatedPlayer : Player
     /// null, a default bidder is created using the player's hand.</param>
     /// <param name="playManager">The <see cref="IPlayManager"/> implementation used by the player to manage
     /// plays. If null, a default play manager is created using the player's hand.</param>
-    /// <param name="dataManager">The <see cref="GameDataManager"/> instance that provides access to the 
+    /// <param name="dataManager">The <see cref="GameStateManager"/> instance that provides access to the 
     /// game's state.</param>
     public AutomatedPlayer(string name, int teamIndex, IBidder bidder, IPlayManager playManager,
-        GameDataManager dataManager) : base(name, teamIndex, false)
+        GameStateManager dataManager) : base(name, teamIndex, false)
     {
         _bidder = bidder ?? new Bidder(Hand);
         _playManager = playManager ?? new PlayManager(Hand, dataManager, this);

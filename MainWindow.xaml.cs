@@ -19,7 +19,7 @@ public partial class MainWindow : Window
     {
         // Check if there is a game saved that the user wants to continue.
 
-        if (GameDataManager.DataExists())
+        if (GameStateManager.DataExists())
         {
             // If so, load the saved game.
 
