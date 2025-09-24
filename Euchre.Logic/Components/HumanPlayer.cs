@@ -25,7 +25,11 @@ public class HumanPlayer : Player
     /// <summary>
     /// Gets a value indicating whether the individual is going alone.
     /// </summary>
-    public override bool IsGoingAlone => _goAlone;
+    public override bool IsGoingAlone
+    {
+        get => _goAlone;
+        set => _goAlone = value;
+    }
 
     /// <summary>
     /// Fired when to determine if the user wants to order up the kitty card.

@@ -46,7 +46,7 @@ public abstract class Player : IPlayer
     /// <summary>
     /// Gets a value indicating whether the individual is going alone.
     /// </summary>
-    public abstract bool IsGoingAlone { get; }
+    public abstract bool IsGoingAlone { get; set; }
 
     /// <summary>
     /// Adds a card to the player's hand.

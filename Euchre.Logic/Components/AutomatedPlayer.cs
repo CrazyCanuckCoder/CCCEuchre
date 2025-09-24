@@ -56,7 +56,11 @@ public class AutomatedPlayer : Player
     /// <summary>
     /// Gets a value indicating whether the individual is going alone.
     /// </summary>
-    public override bool IsGoingAlone => _goAlone;
+    public override bool IsGoingAlone
+    {
+        get => _goAlone; 
+        set => _goAlone = value;
+    }
 
     /// <summary>
     /// Determines whether to order up the given card during the bidding phase.

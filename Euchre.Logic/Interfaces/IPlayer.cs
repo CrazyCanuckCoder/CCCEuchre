@@ -7,7 +7,7 @@ public interface IPlayer
     List<Card> Hand { get; }
     bool IsHuman { get; }
     string Name { get; }
-    bool IsGoingAlone { get; }
+    bool IsGoingAlone { get; set; }
     int TeamIndex { get; }
 
 
