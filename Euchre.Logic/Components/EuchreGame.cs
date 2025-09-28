@@ -60,6 +60,31 @@ public class EuchreGame
     public event EventHandler<PlayerBidEventArgs>? PlayerBidResult;
 
     /// <summary>
+    /// Fired to inform listeners that a dealer has been chosen.
+    /// </summary>
+    public event EventHandler<DeclareDealerEventArgs>? DeclareDealer;
+
+    /// <summary>
+    /// Fired to inform listeners that some cards have been dealt to a specific player.
+    /// </summary>
+    public event EventHandler<CardsDealtToPlayerEventArgs>? CardsDealtToPlayer;
+
+    /// <summary>
+    /// Fired when the player has played a card.
+    /// </summary>
+    public event EventHandler<CardPlayedByPlayerEventArgs>? CardPlayedByPlayer;
+
+    /// <summary>
+    /// Fired to indicate which player won the most recent trick.
+    /// </summary>
+    public event EventHandler<DeclareTrickWinnerEventArgs>? DeclareTrickWinner;
+
+    /// <summary>
+    /// Fired to indicate which players or player won the current round.
+    /// </summary>
+    public event EventHandler<DeclareRoundWinningPlayersEventArgs>? DeclareRoundWinningPlayers;
+
+    /// <summary>
     /// Occurs when the game has ended and final results are available.
     /// </summary>
     /// <remarks>Subscribe to this event to be notified when the game concludes. The event provides details
@@ -203,6 +228,7 @@ public class EuchreGame
     /// </summary>
     private void DealCards()
     {
+        DeclareDealer?.Invoke(this, new DeclareDealerEventArgs(GameInfo!.Dealer!));
         GameInfo!.Deck.Shuffle();
         
         // Clear hands.
@@ -221,6 +247,8 @@ public class EuchreGame
                 var playerIndex = (Array.IndexOf(GameInfo.Players, GameInfo.Dealer) + 1 + playerCount)
                     % NUMBER_OF_PLAYERS;
                 GameInfo.Players[playerIndex].AddCard(GameInfo.Deck.Deal());
+                CardsDealtToPlayer?.Invoke(this, 
+                    new CardsDealtToPlayerEventArgs(GameInfo.Players[playerIndex], 1));
             }
         }
 
@@ -386,6 +414,7 @@ public class EuchreGame
             var trick = PlayTrick(trickNum);
             GameInfo.CurrentRoundTricks.Add(trick);
             GameInfo.NextTrickPlayer = trick.GetWinner();
+            DeclareTrickWinner?.Invoke(this, new DeclareTrickWinnerEventArgs(GameInfo.NextTrickPlayer));
 
             // Update checkpoint after each trick – this allows us to resume mid-round.
 
@@ -439,6 +468,8 @@ public class EuchreGame
             playedCard = GameInfo.NextTrickPlayer.PlayCard(cardIndex);
             
             trick.AddCard(GameInfo.NextTrickPlayer, playedCard);
+            CardPlayedByPlayer?.Invoke(this, 
+                new CardPlayedByPlayerEventArgs(GameInfo.NextTrickPlayer, playedCard));
 
             GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.NextTrickPlayer);
         }
@@ -469,7 +500,8 @@ public class EuchreGame
         
         int callerTeam = GameInfo.TrumpCaller?.TeamIndex ?? -1;
         int callerTricks = callerTeam == 0 ? team0Tricks : team1Tricks;
-        
+        int winningTeamIndex = callerTeam;
+
         if (callerTricks >= 3)
         {
             if (callerTricks == MAX_NUMBER_OF_TRICKS)
@@ -485,7 +517,14 @@ public class EuchreGame
         {
             int opposingTeam = callerTeam ^= 1;
             GameInfo.TeamScores[opposingTeam] += 2; // Euchred
+            winningTeamIndex = opposingTeam;
         }
+
+        DeclareRoundWinningPlayers?.Invoke(this, 
+            new DeclareRoundWinningPlayersEventArgs(
+                  from player in GameInfo.Players
+                 where player.TeamIndex == winningTeamIndex
+                select player.Name));
 
         // Record that scoring is done.
 
