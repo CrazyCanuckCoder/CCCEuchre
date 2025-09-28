@@ -8,7 +8,6 @@ namespace Euchre.Logic.Data;
 
 internal class DataManager
 {
-
     /// <summary>
     /// The name of the file where game data is saved and loaded from.
     /// </summary>
@@ -71,13 +70,13 @@ internal class DataManager
             gameStateManager.Kitty is null ? 0 : (int)gameStateManager.Kitty.Rank,
             gameStateManager.Trump is null ? 0 : (int)gameStateManager.Trump,
             gameStateManager.Dealer is null ? 0 :
-                stateDS.Player.Where(p => p.Name == gameStateManager.Dealer.Name).First().PlayerID,
+                stateDS.Player.First(p => p.Name == gameStateManager.Dealer.Name).PlayerID,
             gameStateManager.TrumpCaller is null ? 0 :
-                stateDS.Player.Where(p => p.Name == gameStateManager.TrumpCaller.Name).First().PlayerID,
+                stateDS.Player.First(p => p.Name == gameStateManager.TrumpCaller.Name).PlayerID,
             gameStateManager.AlonePlayer is null ? 0 :
-                stateDS.Player.Where(p => p.Name == gameStateManager.AlonePlayer.Name).First().PlayerID,
+                stateDS.Player.First(p => p.Name == gameStateManager.AlonePlayer.Name).PlayerID,
             gameStateManager.NextTrickPlayer is null ? 0 :
-                stateDS.Player.Where(p => p.Name == gameStateManager.NextTrickPlayer.Name).First().PlayerID,
+                stateDS.Player.First(p => p.Name == gameStateManager.NextTrickPlayer.Name).PlayerID,
             (int)gameStateManager.LastCompletedStage,
             gameStateManager.CurrentTrickNumber);
 
@@ -118,37 +117,30 @@ internal class DataManager
 
         // Now that we have the players, add the properties based on the players.
 
-        if (stateDS.GameData.First().DealerID != 0)
+        var gameDataRow = stateDS.GameData.First();
+        if (gameDataRow.DealerID != 0)
         {
             gameStateManager.Dealer = gameStateManager.Players
-                .Where(p => p.Name == stateDS.Player
-                    .Where(r => r.PlayerID == stateDS.GameData.First().DealerID)
-                    .First().Name)
-                .First();
+                .First(p => p.Name == stateDS.Player
+                    .First(r => r.PlayerID == gameDataRow.DealerID).Name);
         }
-        if (stateDS.GameData.First().TrumpCallerID != 0)
+        if (gameDataRow.TrumpCallerID != 0)
         {
             gameStateManager.TrumpCaller = gameStateManager.Players
-                .Where(p => p.Name == stateDS.Player
-                    .Where(r => r.PlayerID == stateDS.GameData.First().TrumpCallerID)
-                    .First().Name)
-                .First();
+                .First(p => p.Name == stateDS.Player
+                    .First(r => r.PlayerID == gameDataRow.TrumpCallerID).Name);
         }
-        if (stateDS.GameData.First().AlonePlayerID != 0)
+        if (gameDataRow.AlonePlayerID != 0)
         {
             gameStateManager.AlonePlayer = gameStateManager.Players
-                .Where(p => p.Name == stateDS.Player
-                    .Where(r => r.PlayerID == stateDS.GameData.First().AlonePlayerID)
-                    .First().Name)
-                .First();
+                .First(p => p.Name == stateDS.Player
+                    .First(r => r.PlayerID == gameDataRow.AlonePlayerID).Name);
         }
-        if (stateDS.GameData.First().NextTrickPlayerID != 0)
+        if (gameDataRow.NextTrickPlayerID != 0)
         {
             gameStateManager.NextTrickPlayer = gameStateManager.Players
-                .Where(p => p.Name == stateDS.Player
-                    .Where(r => r.PlayerID == stateDS.GameData.First().NextTrickPlayerID)
-                    .First().Name)
-                .First();
+                .First(p => p.Name == stateDS.Player
+                    .First(r => r.PlayerID == gameDataRow.NextTrickPlayerID).Name);
         }
 
         // Setup the tricks for the current round.
@@ -161,10 +153,8 @@ internal class DataManager
             foreach (var cardRow in foundCards)
             {
                 var player = gameStateManager.Players
-                    .Where(p => p.Name == stateDS.Player
-                        .Where(r => r.PlayerID == cardRow.PlayerID)
-                        .First().Name)
-                    .First();
+                    .First(p => p.Name == stateDS.Player
+                        .First(r => r.PlayerID == cardRow.PlayerID).Name);
                 newTrick.AddCard(player, new Card((Suit)cardRow.Suit, (Rank)cardRow.Rank));
             }
             gameStateManager.CurrentRoundTricks.Add(newTrick);
@@ -181,12 +171,12 @@ internal class DataManager
         // Setup the remaining properties.
 
         gameStateManager.Deck = new Deck();
-        gameStateManager.Kitty = stateDS.GameData.First().KittySuit == 0 ? null :
-            new Card((Suit)stateDS.GameData.First().KittySuit, (Rank)stateDS.GameData.First().KittyRank);
-        gameStateManager.Trump = stateDS.GameData.First().TrumpSuit == 0 ? null :
-            (Suit?)stateDS.GameData.First().TrumpSuit;
-        gameStateManager.LastCompletedStage = (RoundStage)stateDS.GameData.First().LastCompletedStage;
-        gameStateManager.CurrentTrickNumber = stateDS.GameData.First().CurrentTrickNumber;
+        gameStateManager.Kitty = gameDataRow.KittySuit == 0 ? null :
+            new Card((Suit)gameDataRow.KittySuit, (Rank)gameDataRow.KittyRank);
+        gameStateManager.Trump = gameDataRow.TrumpSuit == 0 ? null :
+            (Suit?)gameDataRow.TrumpSuit;
+        gameStateManager.LastCompletedStage = (RoundStage)gameDataRow.LastCompletedStage;
+        gameStateManager.CurrentTrickNumber = gameDataRow.CurrentTrickNumber;
 
         return gameStateManager;
     }

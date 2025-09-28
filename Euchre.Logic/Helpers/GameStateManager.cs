@@ -101,6 +101,7 @@ public class GameStateManager
     {
         LastCompletedStage = RoundStage.ResetRoundDone;
         CurrentTrickNumber = 0;
+        RestartGame = false;
     }
 
     /// <summary>
@@ -127,5 +128,16 @@ public class GameStateManager
     public static GameStateManager LoadGameData()
     {
         return DataManager.LoadGameState();
+    }
+
+    /// <summary>
+    /// Deletes any saved game data file.
+    /// </summary>
+    public static void ClearSavedGameData()
+    {
+        if (DataExists())
+        {
+            File.Delete(DataManager.FILE_NAME);
+        }
     }
 }
