@@ -27,9 +27,9 @@ public class DeckTests
     {
         Assert.Multiple(() =>
         {
-            Assert.That(_deck?.Cards, Has.Count.EqualTo(24)); // 6 ranks * 4 suits
-            Assert.That(_deck?.Cards.Select(c => c.Suit).Distinct().Count(), Is.EqualTo(4));
-            Assert.That(_deck?.Cards.Select(c => c.Rank).Distinct().Count(), Is.EqualTo(6));
+            Assert.That(_deck!.Cards, Has.Count.EqualTo(24)); // 6 ranks * 4 suits
+            Assert.That(_deck.Cards.Select(c => c.Suit).Distinct().Count(), Is.EqualTo(4));
+            Assert.That(_deck.Cards.Select(c => c.Rank).Distinct().Count(), Is.EqualTo(6));
         });
     }
 
@@ -39,7 +39,7 @@ public class DeckTests
     [Test]
     public void Deal_ShouldThrowInvalidOperationException_WhenCalledBeforeShuffle()
     {
-        Assert.Throws<EmptyDeckException>(() => _deck?.Deal(), "Cannot deal from empty deck.");
+        Assert.Throws<EmptyDeckException>(() => _deck!.Deal(), "Cannot deal from empty deck.");
     }
 
     // Behaviour: After initialization, all of the cards in the deck should have a ShuffleValue of 0.
@@ -47,7 +47,7 @@ public class DeckTests
     [Test]
     public void Cards_ShouldHaveShuffleValueOfZero_AfterInitialization()
     {
-        Assert.That(_deck?.Cards.All(c => c.ShuffleValue == 0), Is.True, 
+        Assert.That(_deck!.Cards.All(c => c.ShuffleValue == 0), Is.True, 
             "All cards should have a ShuffleValue of 0 after initialization.");
     }
 
@@ -58,7 +58,7 @@ public class DeckTests
     {
         _deck?.Shuffle();
         
-        Assert.That(_deck?.Cards.All(c => c.ShuffleValue > 0), Is.True, 
+        Assert.That(_deck!.Cards.All(c => c.ShuffleValue > 0), Is.True, 
             "All cards should have a non-zero ShuffleValue after shuffling.");
     }
 
@@ -67,10 +67,10 @@ public class DeckTests
     [Test]
     public void Shuffle_ShouldAssignUniqueShuffleValues_ToAllCards()
     {
-        _deck?.Shuffle();
+        _deck!.Shuffle();
         
-        var shuffleValues = _deck?.Cards.Select(c => c.ShuffleValue).Distinct().ToList();
-        Assert.That(shuffleValues?.Count, Is.EqualTo(_deck?.Cards.Count), 
+        var shuffleValues = _deck.Cards.Select(c => c.ShuffleValue).Distinct().ToList();
+        Assert.That(shuffleValues?.Count, Is.EqualTo(_deck.Cards.Count), 
             "More than one card has the same ShuffleValue after shuffling the deck.");
     }
 
@@ -79,12 +79,12 @@ public class DeckTests
     [Test]
     public void Deal_ShouldReturnCardsInRandomOrder_AfterShuffle()
     {
-        _deck?.Shuffle();
+        _deck!.Shuffle();
         
         var dealtCards = new List<Card>();
         for (int i = 0; i < 24; i++)
         {
-            dealtCards.Add(_deck?.Deal() ?? throw new EmptyDeckException());
+            dealtCards.Add(_deck.Deal() ?? throw new EmptyDeckException());
         }
         
         Assert.Multiple(() =>

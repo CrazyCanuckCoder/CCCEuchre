@@ -173,7 +173,7 @@ public class PlayManager : IPlayManager
         // If the player is the partner of the caller, if the caller has not led with a trump card,
         //  and the player has the left or right bower, lead it.
 
-        if (!HasPlayerLedTrump(_dataManager.CurrentRoundTricks, _dataManager.TrumpCaller))
+        if (!HasPlayerLedTrump(_dataManager.CurrentRoundTricks, _dataManager.TrumpCaller!))
         {
             cardToLead = CardFinder.HasBower(_playerHand, trump)
                 ? CardFinder.GetHighestBowerCard(_playerHand, trump)
