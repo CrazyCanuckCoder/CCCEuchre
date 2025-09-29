@@ -14,6 +14,14 @@ public class EuchreGame
     /// </summary>
     public EuchreGame()
     {
+        // Load persisted state.
+
+        GameInfo = GameStateManager.LoadGameData()
+                     ?? throw new InvalidGameConditionException("No saved game found.");
+
+        // Flag that we are resuming – the UI can react accordingly.
+
+        GameInfo.RestartGame = true;
     }
 
     /// <summary>
@@ -21,7 +29,7 @@ public class EuchreGame
     /// </summary>
     /// <param name="playerNames">The list of names for the players where the first name is a human.</param>
     /// <exception cref="InvalidNumberOfPlayersException" />
-    public EuchreGame(List<string> playerNames) : this()
+    public EuchreGame(List<string> playerNames)
     {
         if (playerNames.Count != NUMBER_OF_PLAYERS)
         {
@@ -116,31 +124,6 @@ public class EuchreGame
         }
 
         EndGame();
-    }
-
-    /// <summary>
-    /// Restarts the current game session asynchronously, reloading the last saved game state and resuming 
-    /// play from that point.
-    /// </summary>
-    /// <remarks>This method reloads the most recently persisted game state and signals the user interface to
-    /// resume the game. The game will continue from the last checkpoint, and any unsaved progress will be
-    /// lost.</remarks>
-    /// <returns>A task that represents the asynchronous restart operation.</returns>
-    /// <exception cref="InvalidGameConditionException" />
-    public async Task RestartGameAsync()
-    {
-        // Load persisted state.
-
-        GameInfo = GameStateManager.LoadGameData()
-                     ?? throw new InvalidGameConditionException("No saved game found.");
-
-        // Flag that we are resuming – the UI can react accordingly.
-
-        GameInfo.RestartGame = true;
-
-        // Continue the normal loop; PlayRound will inspect the checkpoint.
-
-        await PlayGameAsync();
     }
 
     /// <summary>

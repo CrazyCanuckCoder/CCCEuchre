@@ -10,7 +10,6 @@ namespace Euchre.Logic.Helpers;
 /// <summary>
 /// Manages the game state, including player information, deck, scores, and current hand tricks.
 /// </summary>
-[Serializable]
 public class GameStateManager
 {
     public GameStateManager()

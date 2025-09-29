@@ -27,4 +27,10 @@
     <ProjectReference Include="Euchre.Logic\Euchre.Logic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="CrazyCanuckCoder.Library.WPF">
+      <HintPath>..\CrazyCanuckCoder\Library.WPF\bin\Debug\net8.0-windows\CrazyCanuckCoder.Library.WPF.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
