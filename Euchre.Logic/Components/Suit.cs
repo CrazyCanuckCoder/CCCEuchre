@@ -1,4 +1,4 @@
-namespace Euchre.Logic;
+namespace Euchre.Logic.Components;
 
 public enum Suit
 {

@@ -1,13 +1,24 @@
-﻿using Euchre.Logic;
+﻿using Euchre.Logic.Components;
+using Euchre.Logic.Helpers;
 
 namespace Euchre.Console;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        var playerNames = new[] { "Alice", "Bob", "Charlie", "Diana" };
-        var game = new EuchreGame(playerNames);
-        game.PlayGame();
+        if (GameStateManager.DataExists())
+        {
+            // If so, load the saved game.
+
+            var game = new EuchreGame();
+            await game.RestartGameAsync();
+        }
+        else
+        {
+            List<string> playerNames = ["Stephen", "Alice", "Charlie", "Diana"];
+            var game = new EuchreGame(playerNames);
+            await game.PlayGameAsync();
+        }
     }
 }

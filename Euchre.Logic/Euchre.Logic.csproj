@@ -7,4 +7,29 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Collections" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="CrazyCanuckCoder.Library.Common">
+      <HintPath>..\..\CrazyCanuckCoder\Library.Common\bin\Debug\net8.0-windows\CrazyCanuckCoder.Library.Common.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Data\GameStateDS.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GameStateDS.xsd</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Data\GameStateDS.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>GameStateDS.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
 </Project>
