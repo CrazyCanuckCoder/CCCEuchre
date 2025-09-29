@@ -167,11 +167,23 @@ public static class CardFinder
         return cards.Count(c => c.Rank == rank && c.Suit != trump);
     }
 
+    /// <summary>
+    /// Returns the number of bowers in a list of cards.
+    /// </summary>
+    /// <param name="cards">The list of cards containing bowers.</param>
+    /// <param name="trump">The suit that is considered trump.</param>
+    /// <returns>The number of bowers found.</returns>
     public static int CountBowers(List<Card> cards, Suit trump)
     {
         return cards.Count(c => c.IsBower(trump));
     }
 
+    /// <summary>
+    /// Retrieves the bowers from a list of cards.
+    /// </summary>
+    /// <param name="cards">The list of cards containing bowers.</param>
+    /// <param name="trump">The suit that is considered trump.</param>
+    /// <returns>A List containing the found bowers.</returns>
     public static List<Card> GetBowers(List<Card> cards, Suit trump)
     {
         return cards
@@ -180,6 +192,12 @@ public static class CardFinder
                 .ToList();
     }
 
+    /// <summary>
+    /// Returns the trump cards from a list of cards that are not bowers.
+    /// </summary>
+    /// <param name="cards">The list of cards containing bowers.</param>
+    /// <param name="trump">The suit that is considered trump.</param>
+    /// <returns>A List containing non bower trump cards.</returns>
     public static List<Card> GetNonBowers(List<Card> cards, Suit trump)
     {
         return cards
