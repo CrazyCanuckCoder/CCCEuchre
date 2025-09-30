@@ -3,8 +3,10 @@ using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.Windows;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Threading;
 
 namespace Euchre;
@@ -17,42 +19,21 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = _viewModel;
+        ViewModel = new();
+        ViewModel.Initialize();
+        DataContext = ViewModel;
+        ViewModel.PropertyChanged += ViewModel_PropertyChanged;
     }
 
-    private readonly MainWindowViewModel _viewModel = new();
+    public MainWindowViewModel ViewModel { get; }
 
-    // TODO: Add a new Continue button and move the code for an already existing game.
 
     private async Task StartGame()
     {
-        // Check if there is a game saved that the user wants to continue.
-
-        if (GameStateManager.DataExists())
-        {
-            // If so, load the saved game.
-
-            _viewModel.CurrentGame = new();
-        }
-        else
-        {
-            // If not, start a new game by getting the names of the players.
-
-            var playerNames = GetPlayerNamesFromUser();
-            if (playerNames != null)
-            {
-                _viewModel.CurrentGame = new(playerNames.ToList());
-            }
-            else
-            {
-                return;
-            }
-        }
-
         // Set up the event handlers for the main window and each human player.
 
         AddMainWindowEventHandlers();
-        var humanPlayers =    from player in _viewModel.CurrentGame.GameInfo!.Players
+        var humanPlayers =    from player in ViewModel.CurrentGame!.GameInfo!.Players
                              where player != null && player.IsHuman
                             select player as HumanPlayer;
         foreach (var humanPlayer in humanPlayers)
@@ -62,18 +43,18 @@ public partial class MainWindow : Window
 
         // Start the game.
 
-        await _viewModel.CurrentGame.PlayGameAsync();
+        await ViewModel.CurrentGame.PlayGameAsync();
     }
 
     private void AddMainWindowEventHandlers()
     {
-        _viewModel.CurrentGame!.CardPlayedByPlayer += CurrentGame_CardPlayedByPlayer;
-        _viewModel.CurrentGame.CardsDealtToPlayer += CurrentGame_CardsDealtToPlayer;
-        _viewModel.CurrentGame.DeclareDealer += CurrentGame_DeclareDealer;
-        _viewModel.CurrentGame.DeclareRoundWinningPlayers += CurrentGame_DeclareRoundWinningPlayers;
-        _viewModel.CurrentGame.DeclareTrickWinner += CurrentGame_DeclareTrickWinner;
-        _viewModel.CurrentGame.GameOver += CurrentGame_GameOver;
-        _viewModel.CurrentGame.PlayerBidResult += CurrentGame_PlayerBidResult;
+        ViewModel.CurrentGame!.CardPlayedByPlayer += CurrentGame_CardPlayedByPlayer;
+        ViewModel.CurrentGame.CardsDealtToPlayer += CurrentGame_CardsDealtToPlayer;
+        ViewModel.CurrentGame.DeclareDealer += CurrentGame_DeclareDealer;
+        ViewModel.CurrentGame.DeclareRoundWinningPlayers += CurrentGame_DeclareRoundWinningPlayers;
+        ViewModel.CurrentGame.DeclareTrickWinner += CurrentGame_DeclareTrickWinner;
+        ViewModel.CurrentGame.GameOver += CurrentGame_GameOver;
+        ViewModel.CurrentGame.PlayerBidResult += CurrentGame_PlayerBidResult;
     }
 
     private void AddHumanPlayerEventHandlers(HumanPlayer humanPlayer)
@@ -126,6 +107,15 @@ public partial class MainWindow : Window
 
 
     #region EventHandlers
+
+    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // For future need.  Add code similar to the following example:
+
+        if (e.PropertyName == nameof(ViewModel.ContinueMenuEnabled))
+        {
+        }
+    }
 
     // The event handlers for the main window.
 
@@ -181,6 +171,17 @@ public partial class MainWindow : Window
 
     private async void MenuNewGame_Click(object sender, RoutedEventArgs e)
     {
+        var playerNames = GetPlayerNamesFromUser();
+        if (playerNames != null)
+        {
+            ViewModel.CurrentGame = new(playerNames.ToList());
+            await StartGame();
+        }
+    }
+
+    private async void MenuContinue_Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.CurrentGame = new();
         await StartGame();
     }
 
@@ -215,5 +216,4 @@ public partial class MainWindow : Window
     }
 
     #endregion Menu EventHandlers
-
 }

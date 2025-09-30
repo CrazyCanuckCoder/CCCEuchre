@@ -164,6 +164,10 @@
     <None Remove="images\icons\arrow left.png" />
     <None Remove="images\icons\arrow right.png" />
     <None Remove="images\icons\black.png" />
+    <None Remove="images\icons\Cards-Play-128.png" />
+    <None Remove="images\icons\Cards-Play-16.png" />
+    <None Remove="images\icons\Cards-Play-32.png" />
+    <None Remove="images\icons\Cards-Play-64.png" />
     <None Remove="images\icons\dealer.png" />
     <None Remove="images\icons\Exit-128.png" />
     <None Remove="images\icons\Exit-16.png" />
@@ -349,6 +353,10 @@
     <Resource Include="images\icons\arrow left.png" />
     <Resource Include="images\icons\arrow right.png" />
     <Resource Include="images\icons\black.png" />
+    <Resource Include="images\icons\Cards-Play-128.png" />
+    <Resource Include="images\icons\Cards-Play-16.png" />
+    <Resource Include="images\icons\Cards-Play-32.png" />
+    <Resource Include="images\icons\Cards-Play-64.png" />
     <Resource Include="images\icons\dealer.png" />
     <Resource Include="images\icons\Exit-128.png" />
     <Resource Include="images\icons\Exit-16.png" />
