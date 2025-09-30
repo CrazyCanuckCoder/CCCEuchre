@@ -30,6 +30,9 @@ public abstract class Player : IPlayer
     /// </summary>
     public string Name { get; protected set; }
 
+    /// <summary>
+    /// The number representing the avatar to display on the UI for the player.
+    /// </summary>
     public int AvatarNumber { get; protected set; }
 
     /// <summary>

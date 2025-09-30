@@ -9,10 +9,10 @@ namespace Euchre.Logic.Helpers;
 /// </summary>
 public class PlayManager : IPlayManager
 {
-    public PlayManager(List<Card> playerHand, GameStateManager dataManager, IPlayer player)
+    public PlayManager(List<Card> playerHand, GameStateManager gameStateManager, IPlayer player)
     {
         _playerHand = playerHand ?? throw new ArgumentNullException(nameof(playerHand));
-        _dataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
+        _gameStateManager = gameStateManager ?? throw new ArgumentNullException(nameof(gameStateManager));
         _player = player;
     }
 
@@ -24,7 +24,7 @@ public class PlayManager : IPlayManager
     /// <summary>
     /// The game data manager that provides access to the game's state.
     /// </summary>
-    private readonly GameStateManager _dataManager;
+    private readonly GameStateManager _gameStateManager;
 
     /// <summary>
     /// A reference to the player for this play manager.
@@ -92,13 +92,13 @@ public class PlayManager : IPlayManager
     {
         Card? cardToLead;
 
-        if (_player == _dataManager.TrumpCaller)
+        if (_player == _gameStateManager.TrumpCaller)
         {
             cardToLead = DetermineCardToLeadWhenTrumpCaller(trump);
         }
         else
         {
-            if (_player.TeamIndex == _dataManager.TrumpCaller?.TeamIndex)
+            if (_player.TeamIndex == _gameStateManager.TrumpCaller?.TeamIndex)
             {
                 cardToLead = DetermineCardToLeadWhenPartnerOfTrumpCaller(trump);
             }
@@ -125,7 +125,7 @@ public class PlayManager : IPlayManager
     {
         Card? cardToLead;
 
-        if (_dataManager.GoingAlone)
+        if (_gameStateManager.GoingAlone)
         {
             // If the player is going alone, lead the highest trump card until trump is exhausted.
             //   When no trumps are available, lead with the highest card of any suit.
@@ -138,7 +138,7 @@ public class PlayManager : IPlayManager
         {
             // See if trump has been led in the current round.
 
-            bool hasTrumpBeenLed = _dataManager.CurrentRoundTricks
+            bool hasTrumpBeenLed = _gameStateManager.CurrentRoundTricks
                                           .Any(t => t.Cards.First().Value.EffectiveSuit(trump) == trump);
             if (!hasTrumpBeenLed)
             {
@@ -173,7 +173,7 @@ public class PlayManager : IPlayManager
         // If the player is the partner of the caller, if the caller has not led with a trump card,
         //  and the player has the left or right bower, lead it.
 
-        if (!HasPlayerLedTrump(_dataManager.CurrentRoundTricks, _dataManager.TrumpCaller!))
+        if (!HasPlayerLedTrump(_gameStateManager.CurrentRoundTricks, _gameStateManager.TrumpCaller!))
         {
             cardToLead = CardFinder.HasBower(_playerHand, trump)
                 ? CardFinder.GetHighestBowerCard(_playerHand, trump)
