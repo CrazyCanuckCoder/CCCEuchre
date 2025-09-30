@@ -1,0 +1,32 @@
+<?xml version="1.0" standalone="yes"?>
+<GameSettingsDS xmlns="http://tempuri.org/GameSettingsDS.xsd">
+	<AutoPlayers>
+		<Name>Monica</Name>
+		<AvatarID>10</AvatarID>
+	</AutoPlayers>
+	<AutoPlayers>
+		<Name>Simon</Name>
+		<AvatarID>1</AvatarID>
+	</AutoPlayers>
+	<AutoPlayers>
+		<Name>Suri</Name>
+		<AvatarID>4</AvatarID>
+	</AutoPlayers>
+	<AutoPlayers>
+		<Name>Brad</Name>
+		<AvatarID>19</AvatarID>
+	</AutoPlayers>
+	<AutoPlayers>
+		<Name>Julia</Name>
+		<AvatarID>17</AvatarID>
+	</AutoPlayers>
+	<AutoPlayers>
+		<Name>Tim</Name>
+		<AvatarID>24</AvatarID>
+	</AutoPlayers>
+	<Settings>
+		<SelectedCardBackFile>Grid Blue Card Back.png</SelectedCardBackFile>
+		<PlayLastCardInHumansHand>true</PlayLastCardInHumansHand>
+		<UseStandardMenu>false</UseStandardMenu>
+	</Settings>
+</GameSettingsDS>

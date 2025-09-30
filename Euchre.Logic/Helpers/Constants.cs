@@ -17,4 +17,5 @@ public class Constants
     public const int LEFT_BOWER_VALUE = 999;
     public const int TRUMP_VALUE_ADD = 500;
 
+
 }

@@ -1,12 +1,221 @@
-﻿<Window x:Class="Euchre.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Euchre"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+﻿<Window
+    x:Class="Euchre.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Logic="clr-namespace:Euchre.UILogic.Classes"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Euchre"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
 
-    </Grid>
+    <Window.Resources>
+        <Style TargetType="Border">
+            <Setter Property="BorderBrush" Value="Black" />
+            <Setter Property="BorderThickness" Value="0.5" />
+            <Setter Property="Background" Value="AliceBlue" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Top">
+
+            <!--  Standard Menu  -->
+
+            <Menu
+                x:Name="menuMain"
+                Padding="0,2"
+                IsMainMenu="True"
+                Visibility="{Binding StandardMenuVisibility}">
+
+                <!--  File Menu  -->
+
+                <MenuItem x:Name="menuFile" Header="_File">
+                    <MenuItem
+                        x:Name="menuNewGame"
+                        Click="MenuNewGame_Click"
+                        Header="_New Game...">
+                        <MenuItem.Icon>
+                            <Image Source="/images/icons/Playing-Cards-16.png" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem
+                        x:Name="menuExit"
+                        Click="MenuExit_Click"
+                        Header="E_xit">
+                        <MenuItem.Icon>
+                            <Image Source="/images/icons/Exit-16.png" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+
+                <!--  Test Menu, in Debug only  -->
+
+                <MenuItem
+                    x:Name="menuTest"
+                    Header="T_est"
+                    Visibility="{x:Static Logic:DebugVisibility.DebugOnly}">
+                    <MenuItem
+                        x:Name="menuChoosePartner"
+                        Click="menuChoosePartner_Click"
+                        Header="Choose Partner" />
+                    <MenuItem
+                        x:Name="menuChooseTrump"
+                        Click="menuChooseTrump_Click"
+                        Header="Choose Trump" />
+                    <MenuItem
+                        x:Name="menuChooseBid"
+                        Click="menuChooseBid_Click"
+                        Header="Choose Bid" />
+                    <MenuItem
+                        x:Name="menuChooseCard"
+                        Click="menuChooseCard_Click"
+                        Header="Choose Card" />
+                    <MenuItem
+                        x:Name="menuSurrenderFroque"
+                        Click="menuSurrenderFroque_Click"
+                        Header="Keep or Surrender Froque" />
+                    <MenuItem
+                        x:Name="menuChooseCards"
+                        Click="menuChooseCards_Click"
+                        Header="Choose Cards For Players" />
+                    <MenuItem
+                        x:Name="menuChooseGoThrough"
+                        Click="menuChooseGoThrough_Click"
+                        Header="Choose Whether to Go Through" />
+                </MenuItem>
+
+                <!--  Tools Menu  -->
+
+                <MenuItem x:Name="menuTools" Header="_Tools">
+                    <MenuItem
+                        x:Name="menuOptions"
+                        Click="MenuToolsOptions_Click"
+                        Header="_Options">
+                        <MenuItem.Icon>
+                            <Image Source="/images/icons/Settings-01-16.png" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+
+                <!--  Help Menu  -->
+
+                <MenuItem x:Name="menuHelp" Header="_Help">
+                    <MenuItem
+                        x:Name="menuHelpAbout"
+                        Click="MenuHelpAbout_Click"
+                        Header="_About Euchre">
+                        <MenuItem.Icon>
+                            <Image Source="/images/icons/Help-16.png" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+
+            <!--  Icon Based Menu  -->
+
+            <Grid Visibility="{Binding IconMenuVisibility}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="10" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10" />
+                    <RowDefinition Height="130" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+
+                <!--  New Game  -->
+
+                <Button
+                    Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="MenuNewGame_Click">
+                    <StackPanel>
+                        <Image Width="120" Source="/images/icons/Playing-Cards-128.png" />
+
+                        <AccessText
+                            Margin="0,4,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="16"
+                            Text="_New Game" />
+                    </StackPanel>
+                </Button>
+
+                <!--  Options  -->
+
+                <Button
+                    Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Grid.Column="3"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="MenuToolsOptions_Click">
+                    <StackPanel>
+                        <Image Width="120" Source="/images/icons/Settings-01-128.png" />
+                        <AccessText
+                            Margin="0,4,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="16"
+                            Text="_Options" />
+                    </StackPanel>
+                </Button>
+
+                <!--  About  -->
+
+                <Button
+                    Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Grid.Column="5"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="MenuHelpAbout_Click">
+                    <StackPanel>
+                        <Image Width="120" Source="/images/icons/Help-128.png" />
+                        <AccessText
+                            Margin="0,4,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="16"
+                            Text="_About Euchre" />
+                    </StackPanel>
+                </Button>
+
+                <!--  Exit  -->
+
+                <Button
+                    Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Grid.Column="7"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="MenuExit_Click">
+                    <StackPanel>
+                        <Image Width="120" Source="/images/icons/Exit-128.png" />
+                        <AccessText
+                            Margin="0,4,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="16"
+                            Text="E_xit" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </StackPanel>
+    </DockPanel>
 </Window>

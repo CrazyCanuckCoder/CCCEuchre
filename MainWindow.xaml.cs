@@ -2,6 +2,8 @@
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
+using Euchre.Windows;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -72,8 +74,17 @@ public partial class MainWindow : Window
         humanPlayer.PromptToOrderUp += HumanPlayer_PromptToOrderUp;
     }
 
+    // TODO: Change the return type to be IEnumerable<AutomatedPlayerAvatar>.
     private List<string> GetPlayerNamesFromUser()
     {
+        NewGameWindow newGameWindow = new()
+        {
+            Owner = this,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+        };
+
+        newGameWindow.ShowDialog();
+
         return ["Alice", "Bob", "Charlie", "Diana"]; // Placeholder for actual user input
     }
 
@@ -152,4 +163,59 @@ public partial class MainWindow : Window
     }
 
     #endregion EventHandlers
+
+    private async void MenuNewGame_Click(object sender, RoutedEventArgs e)
+    {
+        await StartGame();
+    }
+
+    private void MenuExit_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void menuChoosePartner_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void menuChooseTrump_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void menuChooseBid_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void menuChooseCard_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void menuSurrenderFroque_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void menuChooseCards_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void menuChooseGoThrough_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void MenuToolsOptions_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void MenuHelpAbout_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
 }
