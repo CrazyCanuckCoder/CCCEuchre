@@ -55,7 +55,6 @@ public class EuchreGame
 
         GameInfo.Players = players;
         GameInfo.Dealer = players[0];
-        GameInfo.ResetRoundCheckpoint();
         GameInfo.SaveGameData();
     }
 
