@@ -58,33 +58,17 @@
                     Header="T_est"
                     Visibility="{x:Static Logic:DebugVisibility.DebugOnly}">
                     <MenuItem
-                        x:Name="menuChoosePartner"
-                        Click="menuChoosePartner_Click"
-                        Header="Choose Partner" />
-                    <MenuItem
                         x:Name="menuChooseTrump"
                         Click="menuChooseTrump_Click"
                         Header="Choose Trump" />
-                    <MenuItem
-                        x:Name="menuChooseBid"
-                        Click="menuChooseBid_Click"
-                        Header="Choose Bid" />
                     <MenuItem
                         x:Name="menuChooseCard"
                         Click="menuChooseCard_Click"
                         Header="Choose Card" />
                     <MenuItem
-                        x:Name="menuSurrenderFroque"
-                        Click="menuSurrenderFroque_Click"
-                        Header="Keep or Surrender Froque" />
-                    <MenuItem
                         x:Name="menuChooseCards"
                         Click="menuChooseCards_Click"
                         Header="Choose Cards For Players" />
-                    <MenuItem
-                        x:Name="menuChooseGoThrough"
-                        Click="menuChooseGoThrough_Click"
-                        Header="Choose Whether to Go Through" />
                 </MenuItem>
 
                 <!--  Tools Menu  -->

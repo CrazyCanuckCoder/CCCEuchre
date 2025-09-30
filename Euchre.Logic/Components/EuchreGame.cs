@@ -29,7 +29,7 @@ public class EuchreGame
     /// </summary>
     /// <param name="playerNames">The list of names for the players where the first name is a human.</param>
     /// <exception cref="InvalidNumberOfPlayersException" />
-    public EuchreGame(List<string> playerNames)
+    public EuchreGame(List<AutomatedPlayerAvatar> playerNames)
     {
         if (playerNames.Count != NUMBER_OF_PLAYERS)
         {
@@ -41,13 +41,16 @@ public class EuchreGame
 
         // Add the human player as the first player.
 
-        //players[0] = new HumanPlayer(playerNames[0], 0);
+        //players[0] = new HumanPlayer(playerNames[0].PlayerName, 0, playerNames[0].AvatarNumber);
 
         // Add automated players.
+        //
+        // TODO: Change i to start at 1 when the human player is uncommented.
 
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
-            players[i] = new AutomatedPlayer(playerNames[i], i % NUMBER_OF_TEAMS, GameInfo);
+            players[i] = new AutomatedPlayer(playerNames[i].PlayerName, i % NUMBER_OF_TEAMS, GameInfo,
+                playerNames[i].AvatarNumber);
         }
 
         GameInfo.Players = players;

@@ -4,9 +4,10 @@ namespace Euchre.Logic.Interfaces;
 
 public interface IPlayer
 {
+    string Name { get; }
+    int AvatarNumber { get; }
     List<Card> Hand { get; }
     bool IsHuman { get; }
-    string Name { get; }
     bool IsGoingAlone { get; set; }
     int TeamIndex { get; }
 

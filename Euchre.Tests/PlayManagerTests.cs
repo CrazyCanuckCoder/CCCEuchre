@@ -22,7 +22,7 @@ public class PlayManagerTests
         var gameDataManager = new GameStateManager();
 
         var validCards = new PlayManager(playerHand, gameDataManager, 
-            new AutomatedPlayer("TestPlayer", 0, gameDataManager)).GetValidCards(leadSuit, Suit.Spades);
+            new AutomatedPlayer("TestPlayer", 0, gameDataManager, 0)).GetValidCards(leadSuit, Suit.Spades);
 
         Assert.Multiple(() =>
             {
@@ -48,7 +48,7 @@ public class PlayManagerTests
         var gameDataManager = new GameStateManager();
 
         var validCards = new PlayManager(playerHand, gameDataManager, 
-            new AutomatedPlayer("TestPlayer", 0, gameDataManager)).GetValidCards(Suit.Hearts, Suit.Spades);
+            new AutomatedPlayer("TestPlayer", 0, gameDataManager, 0)).GetValidCards(Suit.Hearts, Suit.Spades);
 
         Assert.That(validCards?.Count, Is.EqualTo(playerHand.Count),
             "Should return all cards when no matching lead suit.");
@@ -62,7 +62,7 @@ public class PlayManagerTests
         var gameDataManager = new GameStateManager();
 
         var playerManager = new PlayManager([], gameDataManager, 
-            new AutomatedPlayer("TestPlayer", 0, gameDataManager));
+            new AutomatedPlayer("TestPlayer", 0, gameDataManager, 0));
         var validCards = playerManager.GetValidCards(Suit.Hearts, Suit.Spades);
 
         Assert.That(validCards?.Count, Is.EqualTo(0), "Should return an empty list when hand is empty.");

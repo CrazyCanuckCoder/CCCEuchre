@@ -12,65 +12,66 @@
   <xs:element name="GameStateDS" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="GameStateDS" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="GameStateDS">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="Player" msprop:Generator_RowClassName="PlayerRow" msprop:Generator_RowEvHandlerName="PlayerRowChangeEventHandler" msprop:Generator_RowDeletedName="PlayerRowDeleted" msprop:Generator_RowDeletingName="PlayerRowDeleting" msprop:Generator_RowEvArgName="PlayerRowChangeEvent" msprop:Generator_TablePropName="Player" msprop:Generator_RowChangedName="PlayerRowChanged" msprop:Generator_UserTableName="Player" msprop:Generator_RowChangingName="PlayerRowChanging" msprop:Generator_TableClassName="PlayerDataTable" msprop:Generator_TableVarName="tablePlayer">
+        <xs:element name="Player" msprop:Generator_RowEvHandlerName="PlayerRowChangeEventHandler" msprop:Generator_RowDeletedName="PlayerRowDeleted" msprop:Generator_RowDeletingName="PlayerRowDeleting" msprop:Generator_RowEvArgName="PlayerRowChangeEvent" msprop:Generator_TablePropName="Player" msprop:Generator_RowChangedName="PlayerRowChanged" msprop:Generator_UserTableName="Player" msprop:Generator_RowChangingName="PlayerRowChanging" msprop:Generator_RowClassName="PlayerRow" msprop:Generator_TableClassName="PlayerDataTable" msprop:Generator_TableVarName="tablePlayer">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="PlayerID" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="1" msprop:Generator_UserColumnName="PlayerID" msprop:Generator_ColumnPropNameInTable="PlayerIDColumn" msprop:Generator_ColumnPropNameInRow="PlayerID" msprop:Generator_ColumnVarNameInTable="columnPlayerID" type="xs:int" />
-              <xs:element name="Name" msprop:Generator_UserColumnName="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnVarNameInTable="columnName" type="xs:string" minOccurs="0" />
-              <xs:element name="IsHuman" msprop:Generator_UserColumnName="IsHuman" msprop:Generator_ColumnPropNameInTable="IsHumanColumn" msprop:Generator_ColumnPropNameInRow="IsHuman" msprop:Generator_ColumnVarNameInTable="columnIsHuman" type="xs:boolean" minOccurs="0" />
-              <xs:element name="TeamIndex" msprop:Generator_UserColumnName="TeamIndex" msprop:Generator_ColumnPropNameInTable="TeamIndexColumn" msprop:Generator_ColumnPropNameInRow="TeamIndex" msprop:Generator_ColumnVarNameInTable="columnTeamIndex" type="xs:int" minOccurs="0" />
-              <xs:element name="IsGoingAlone" msprop:Generator_UserColumnName="IsGoingAlone" msprop:Generator_ColumnPropNameInTable="IsGoingAloneColumn" msprop:Generator_ColumnPropNameInRow="IsGoingAlone" msprop:Generator_ColumnVarNameInTable="columnIsGoingAlone" type="xs:boolean" minOccurs="0" />
+              <xs:element name="PlayerID" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="1" msprop:Generator_ColumnPropNameInTable="PlayerIDColumn" msprop:Generator_ColumnPropNameInRow="PlayerID" msprop:Generator_UserColumnName="PlayerID" msprop:Generator_ColumnVarNameInTable="columnPlayerID" type="xs:int" />
+              <xs:element name="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_UserColumnName="Name" msprop:Generator_ColumnVarNameInTable="columnName" type="xs:string" minOccurs="0" />
+              <xs:element name="IsHuman" msprop:Generator_ColumnPropNameInTable="IsHumanColumn" msprop:Generator_ColumnPropNameInRow="IsHuman" msprop:Generator_UserColumnName="IsHuman" msprop:Generator_ColumnVarNameInTable="columnIsHuman" type="xs:boolean" minOccurs="0" />
+              <xs:element name="TeamIndex" msprop:Generator_ColumnPropNameInTable="TeamIndexColumn" msprop:Generator_ColumnPropNameInRow="TeamIndex" msprop:Generator_UserColumnName="TeamIndex" msprop:Generator_ColumnVarNameInTable="columnTeamIndex" type="xs:int" minOccurs="0" />
+              <xs:element name="IsGoingAlone" msprop:Generator_ColumnPropNameInTable="IsGoingAloneColumn" msprop:Generator_ColumnPropNameInRow="IsGoingAlone" msprop:Generator_UserColumnName="IsGoingAlone" msprop:Generator_ColumnVarNameInTable="columnIsGoingAlone" type="xs:boolean" minOccurs="0" />
+              <xs:element name="AvatarNumber" msprop:Generator_ColumnPropNameInRow="AvatarNumber" msprop:Generator_ColumnPropNameInTable="AvatarNumberColumn" msprop:Generator_ColumnVarNameInTable="columnAvatarNumber" msprop:Generator_UserColumnName="AvatarNumber" type="xs:int" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="Hand" msprop:Generator_RowClassName="HandRow" msprop:Generator_RowEvHandlerName="HandRowChangeEventHandler" msprop:Generator_RowDeletedName="HandRowDeleted" msprop:Generator_RowDeletingName="HandRowDeleting" msprop:Generator_RowEvArgName="HandRowChangeEvent" msprop:Generator_TablePropName="Hand" msprop:Generator_RowChangedName="HandRowChanged" msprop:Generator_UserTableName="Hand" msprop:Generator_RowChangingName="HandRowChanging" msprop:Generator_TableClassName="HandDataTable" msprop:Generator_TableVarName="tableHand">
+        <xs:element name="Hand" msprop:Generator_RowEvHandlerName="HandRowChangeEventHandler" msprop:Generator_RowDeletedName="HandRowDeleted" msprop:Generator_RowDeletingName="HandRowDeleting" msprop:Generator_RowEvArgName="HandRowChangeEvent" msprop:Generator_TablePropName="Hand" msprop:Generator_RowChangedName="HandRowChanged" msprop:Generator_UserTableName="Hand" msprop:Generator_RowChangingName="HandRowChanging" msprop:Generator_RowClassName="HandRow" msprop:Generator_TableClassName="HandDataTable" msprop:Generator_TableVarName="tableHand">
           <xs:complexType>
             <xs:sequence>
+              <xs:element name="PlayerID" msprop:Generator_ColumnPropNameInTable="PlayerIDColumn" msprop:Generator_ColumnPropNameInRow="PlayerID" msprop:Generator_UserColumnName="PlayerID" msprop:Generator_ColumnVarNameInTable="columnPlayerID" type="xs:int" minOccurs="0" />
+              <xs:element name="Suit" msprop:Generator_ColumnPropNameInTable="SuitColumn" msprop:Generator_ColumnPropNameInRow="Suit" msprop:Generator_UserColumnName="Suit" msprop:Generator_ColumnVarNameInTable="columnSuit" type="xs:int" minOccurs="0" />
+              <xs:element name="Rank" msprop:Generator_ColumnPropNameInTable="RankColumn" msprop:Generator_ColumnPropNameInRow="Rank" msprop:Generator_UserColumnName="Rank" msprop:Generator_ColumnVarNameInTable="columnRank" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="GameData" msprop:Generator_RowEvHandlerName="GameDataRowChangeEventHandler" msprop:Generator_RowDeletedName="GameDataRowDeleted" msprop:Generator_RowDeletingName="GameDataRowDeleting" msprop:Generator_RowEvArgName="GameDataRowChangeEvent" msprop:Generator_TablePropName="GameData" msprop:Generator_RowChangedName="GameDataRowChanged" msprop:Generator_UserTableName="GameData" msprop:Generator_RowChangingName="GameDataRowChanging" msprop:Generator_RowClassName="GameDataRow" msprop:Generator_TableClassName="GameDataDataTable" msprop:Generator_TableVarName="tableGameData">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="KittySuit" msprop:Generator_ColumnPropNameInTable="KittySuitColumn" msprop:Generator_ColumnPropNameInRow="KittySuit" msprop:Generator_UserColumnName="KittySuit" msprop:Generator_ColumnVarNameInTable="columnKittySuit" type="xs:int" minOccurs="0" />
+              <xs:element name="KittyRank" msprop:Generator_ColumnPropNameInTable="KittyRankColumn" msprop:Generator_ColumnPropNameInRow="KittyRank" msprop:Generator_UserColumnName="KittyRank" msprop:Generator_ColumnVarNameInTable="columnKittyRank" type="xs:int" minOccurs="0" />
+              <xs:element name="TrumpSuit" msprop:Generator_ColumnPropNameInTable="TrumpSuitColumn" msprop:Generator_ColumnPropNameInRow="TrumpSuit" msprop:Generator_UserColumnName="TrumpSuit" msprop:Generator_ColumnVarNameInTable="columnTrumpSuit" type="xs:int" minOccurs="0" />
+              <xs:element name="DealerID" msprop:Generator_ColumnPropNameInTable="DealerIDColumn" msprop:Generator_ColumnPropNameInRow="DealerID" msprop:Generator_UserColumnName="DealerID" msprop:Generator_ColumnVarNameInTable="columnDealerID" type="xs:int" minOccurs="0" />
+              <xs:element name="TrumpCallerID" msprop:Generator_ColumnPropNameInTable="TrumpCallerIDColumn" msprop:Generator_ColumnPropNameInRow="TrumpCallerID" msprop:Generator_UserColumnName="TrumpCallerID" msprop:Generator_ColumnVarNameInTable="columnTrumpCallerID" type="xs:int" minOccurs="0" />
+              <xs:element name="AlonePlayerID" msprop:Generator_ColumnPropNameInTable="AlonePlayerIDColumn" msprop:Generator_ColumnPropNameInRow="AlonePlayerID" msprop:Generator_UserColumnName="AlonePlayerID" msprop:Generator_ColumnVarNameInTable="columnAlonePlayerID" type="xs:int" minOccurs="0" />
+              <xs:element name="NextTrickPlayerID" msprop:Generator_ColumnPropNameInTable="NextTrickPlayerIDColumn" msprop:Generator_ColumnPropNameInRow="NextTrickPlayerID" msprop:Generator_UserColumnName="NextTrickPlayerID" msprop:Generator_ColumnVarNameInTable="columnNextTrickPlayerID" type="xs:int" minOccurs="0" />
+              <xs:element name="LastCompletedStage" msprop:Generator_ColumnPropNameInTable="LastCompletedStageColumn" msprop:Generator_ColumnPropNameInRow="LastCompletedStage" msprop:Generator_UserColumnName="LastCompletedStage" msprop:Generator_ColumnVarNameInTable="columnLastCompletedStage" type="xs:int" minOccurs="0" />
+              <xs:element name="CurrentTrickNumber" msprop:Generator_ColumnPropNameInTable="CurrentTrickNumberColumn" msprop:Generator_ColumnPropNameInRow="CurrentTrickNumber" msprop:Generator_UserColumnName="CurrentTrickNumber" msprop:Generator_ColumnVarNameInTable="columnCurrentTrickNumber" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="TeamScores" msprop:Generator_RowEvHandlerName="TeamScoresRowChangeEventHandler" msprop:Generator_RowDeletedName="TeamScoresRowDeleted" msprop:Generator_RowDeletingName="TeamScoresRowDeleting" msprop:Generator_RowEvArgName="TeamScoresRowChangeEvent" msprop:Generator_TablePropName="TeamScores" msprop:Generator_RowChangedName="TeamScoresRowChanged" msprop:Generator_UserTableName="TeamScores" msprop:Generator_RowChangingName="TeamScoresRowChanging" msprop:Generator_RowClassName="TeamScoresRow" msprop:Generator_TableClassName="TeamScoresDataTable" msprop:Generator_TableVarName="tableTeamScores">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="TeamIndex" msprop:Generator_ColumnPropNameInTable="TeamIndexColumn" msprop:Generator_ColumnPropNameInRow="TeamIndex" msprop:Generator_UserColumnName="TeamIndex" msprop:Generator_ColumnVarNameInTable="columnTeamIndex" type="xs:int" minOccurs="0" />
+              <xs:element name="TeamScore" msprop:Generator_ColumnPropNameInTable="TeamScoreColumn" msprop:Generator_ColumnPropNameInRow="TeamScore" msprop:Generator_UserColumnName="TeamScore" msprop:Generator_ColumnVarNameInTable="columnTeamScore" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Trick" msprop:Generator_RowClassName="TrickRow" msprop:Generator_RowEvHandlerName="TrickRowChangeEventHandler" msprop:Generator_RowDeletedName="TrickRowDeleted" msprop:Generator_RowDeletingName="TrickRowDeleting" msprop:Generator_RowEvArgName="TrickRowChangeEvent" msprop:Generator_TablePropName="Trick" msprop:Generator_RowChangedName="TrickRowChanged" msprop:Generator_UserTableName="Trick" msprop:Generator_RowChangingName="TrickRowChanging" msprop:Generator_TableClassName="TrickDataTable" msprop:Generator_TableVarName="tableTrick">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="TrickID" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="1" msprop:Generator_UserColumnName="TrickID" msprop:Generator_ColumnPropNameInTable="TrickIDColumn" msprop:Generator_ColumnPropNameInRow="TrickID" msprop:Generator_ColumnVarNameInTable="columnTrickID" type="xs:int" />
+              <xs:element name="LeadSuit" msprop:Generator_UserColumnName="LeadSuit" msprop:Generator_ColumnPropNameInTable="LeadSuitColumn" msprop:Generator_ColumnPropNameInRow="LeadSuit" msprop:Generator_ColumnVarNameInTable="columnLeadSuit" type="xs:int" minOccurs="0" />
+              <xs:element name="TrumpSuit" msprop:Generator_UserColumnName="TrumpSuit" msprop:Generator_ColumnPropNameInTable="TrumpSuitColumn" msprop:Generator_ColumnPropNameInRow="TrumpSuit" msprop:Generator_ColumnVarNameInTable="columnTrumpSuit" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="TrickCards" msprop:Generator_RowClassName="TrickCardsRow" msprop:Generator_RowEvHandlerName="TrickCardsRowChangeEventHandler" msprop:Generator_RowDeletedName="TrickCardsRowDeleted" msprop:Generator_RowDeletingName="TrickCardsRowDeleting" msprop:Generator_RowEvArgName="TrickCardsRowChangeEvent" msprop:Generator_TablePropName="TrickCards" msprop:Generator_RowChangedName="TrickCardsRowChanged" msprop:Generator_UserTableName="TrickCards" msprop:Generator_RowChangingName="TrickCardsRowChanging" msprop:Generator_TableClassName="TrickCardsDataTable" msprop:Generator_TableVarName="tableTrickCards">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="TrickID" msprop:Generator_UserColumnName="TrickID" msprop:Generator_ColumnPropNameInTable="TrickIDColumn" msprop:Generator_ColumnPropNameInRow="TrickID" msprop:Generator_ColumnVarNameInTable="columnTrickID" type="xs:int" minOccurs="0" />
               <xs:element name="PlayerID" msprop:Generator_UserColumnName="PlayerID" msprop:Generator_ColumnPropNameInTable="PlayerIDColumn" msprop:Generator_ColumnPropNameInRow="PlayerID" msprop:Generator_ColumnVarNameInTable="columnPlayerID" type="xs:int" minOccurs="0" />
               <xs:element name="Suit" msprop:Generator_UserColumnName="Suit" msprop:Generator_ColumnPropNameInTable="SuitColumn" msprop:Generator_ColumnPropNameInRow="Suit" msprop:Generator_ColumnVarNameInTable="columnSuit" type="xs:int" minOccurs="0" />
               <xs:element name="Rank" msprop:Generator_UserColumnName="Rank" msprop:Generator_ColumnPropNameInTable="RankColumn" msprop:Generator_ColumnPropNameInRow="Rank" msprop:Generator_ColumnVarNameInTable="columnRank" type="xs:int" minOccurs="0" />
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="GameData" msprop:Generator_RowClassName="GameDataRow" msprop:Generator_RowEvHandlerName="GameDataRowChangeEventHandler" msprop:Generator_RowDeletedName="GameDataRowDeleted" msprop:Generator_RowDeletingName="GameDataRowDeleting" msprop:Generator_RowEvArgName="GameDataRowChangeEvent" msprop:Generator_TablePropName="GameData" msprop:Generator_RowChangedName="GameDataRowChanged" msprop:Generator_UserTableName="GameData" msprop:Generator_RowChangingName="GameDataRowChanging" msprop:Generator_TableClassName="GameDataDataTable" msprop:Generator_TableVarName="tableGameData">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="KittySuit" msprop:Generator_UserColumnName="KittySuit" msprop:Generator_ColumnPropNameInTable="KittySuitColumn" msprop:Generator_ColumnPropNameInRow="KittySuit" msprop:Generator_ColumnVarNameInTable="columnKittySuit" type="xs:int" minOccurs="0" />
-              <xs:element name="KittyRank" msprop:Generator_UserColumnName="KittyRank" msprop:Generator_ColumnPropNameInTable="KittyRankColumn" msprop:Generator_ColumnPropNameInRow="KittyRank" msprop:Generator_ColumnVarNameInTable="columnKittyRank" type="xs:int" minOccurs="0" />
-              <xs:element name="TrumpSuit" msprop:Generator_UserColumnName="TrumpSuit" msprop:Generator_ColumnPropNameInTable="TrumpSuitColumn" msprop:Generator_ColumnPropNameInRow="TrumpSuit" msprop:Generator_ColumnVarNameInTable="columnTrumpSuit" type="xs:int" minOccurs="0" />
-              <xs:element name="DealerID" msprop:Generator_UserColumnName="DealerID" msprop:Generator_ColumnPropNameInTable="DealerIDColumn" msprop:Generator_ColumnPropNameInRow="DealerID" msprop:Generator_ColumnVarNameInTable="columnDealerID" type="xs:int" minOccurs="0" />
-              <xs:element name="TrumpCallerID" msprop:Generator_UserColumnName="TrumpCallerID" msprop:Generator_ColumnPropNameInTable="TrumpCallerIDColumn" msprop:Generator_ColumnPropNameInRow="TrumpCallerID" msprop:Generator_ColumnVarNameInTable="columnTrumpCallerID" type="xs:int" minOccurs="0" />
-              <xs:element name="AlonePlayerID" msprop:Generator_UserColumnName="AlonePlayerID" msprop:Generator_ColumnPropNameInTable="AlonePlayerIDColumn" msprop:Generator_ColumnPropNameInRow="AlonePlayerID" msprop:Generator_ColumnVarNameInTable="columnAlonePlayerID" type="xs:int" minOccurs="0" />
-              <xs:element name="NextTrickPlayerID" msprop:Generator_UserColumnName="NextTrickPlayerID" msprop:Generator_ColumnPropNameInTable="NextTrickPlayerIDColumn" msprop:Generator_ColumnPropNameInRow="NextTrickPlayerID" msprop:Generator_ColumnVarNameInTable="columnNextTrickPlayerID" type="xs:int" minOccurs="0" />
-              <xs:element name="LastCompletedStage" msprop:Generator_UserColumnName="LastCompletedStage" msprop:Generator_ColumnPropNameInTable="LastCompletedStageColumn" msprop:Generator_ColumnPropNameInRow="LastCompletedStage" msprop:Generator_ColumnVarNameInTable="columnLastCompletedStage" type="xs:int" minOccurs="0" />
-              <xs:element name="CurrentTrickNumber" msprop:Generator_UserColumnName="CurrentTrickNumber" msprop:Generator_ColumnPropNameInTable="CurrentTrickNumberColumn" msprop:Generator_ColumnPropNameInRow="CurrentTrickNumber" msprop:Generator_ColumnVarNameInTable="columnCurrentTrickNumber" type="xs:int" minOccurs="0" />
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="TeamScores" msprop:Generator_RowClassName="TeamScoresRow" msprop:Generator_RowEvHandlerName="TeamScoresRowChangeEventHandler" msprop:Generator_RowDeletedName="TeamScoresRowDeleted" msprop:Generator_RowDeletingName="TeamScoresRowDeleting" msprop:Generator_RowEvArgName="TeamScoresRowChangeEvent" msprop:Generator_TablePropName="TeamScores" msprop:Generator_RowChangedName="TeamScoresRowChanged" msprop:Generator_UserTableName="TeamScores" msprop:Generator_RowChangingName="TeamScoresRowChanging" msprop:Generator_TableClassName="TeamScoresDataTable" msprop:Generator_TableVarName="tableTeamScores">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="TeamIndex" msprop:Generator_UserColumnName="TeamIndex" msprop:Generator_ColumnPropNameInTable="TeamIndexColumn" msprop:Generator_ColumnPropNameInRow="TeamIndex" msprop:Generator_ColumnVarNameInTable="columnTeamIndex" type="xs:int" minOccurs="0" />
-              <xs:element name="TeamScore" msprop:Generator_UserColumnName="TeamScore" msprop:Generator_ColumnPropNameInTable="TeamScoreColumn" msprop:Generator_ColumnPropNameInRow="TeamScore" msprop:Generator_ColumnVarNameInTable="columnTeamScore" type="xs:int" minOccurs="0" />
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="Trick" msprop:Generator_RowEvHandlerName="TrickRowChangeEventHandler" msprop:Generator_RowDeletedName="TrickRowDeleted" msprop:Generator_RowDeletingName="TrickRowDeleting" msprop:Generator_RowEvArgName="TrickRowChangeEvent" msprop:Generator_TablePropName="Trick" msprop:Generator_RowChangedName="TrickRowChanged" msprop:Generator_RowChangingName="TrickRowChanging" msprop:Generator_TableClassName="TrickDataTable" msprop:Generator_RowClassName="TrickRow" msprop:Generator_TableVarName="tableTrick" msprop:Generator_UserTableName="Trick">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="TrickID" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="1" msprop:Generator_ColumnPropNameInRow="TrickID" msprop:Generator_ColumnPropNameInTable="TrickIDColumn" msprop:Generator_ColumnVarNameInTable="columnTrickID" msprop:Generator_UserColumnName="TrickID" type="xs:int" />
-              <xs:element name="LeadSuit" msprop:Generator_ColumnPropNameInRow="LeadSuit" msprop:Generator_ColumnPropNameInTable="LeadSuitColumn" msprop:Generator_ColumnVarNameInTable="columnLeadSuit" msprop:Generator_UserColumnName="LeadSuit" type="xs:int" minOccurs="0" />
-              <xs:element name="TrumpSuit" msprop:Generator_ColumnPropNameInRow="TrumpSuit" msprop:Generator_ColumnPropNameInTable="TrumpSuitColumn" msprop:Generator_ColumnVarNameInTable="columnTrumpSuit" msprop:Generator_UserColumnName="TrumpSuit" type="xs:int" minOccurs="0" />
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="TrickCards" msprop:Generator_RowEvHandlerName="TrickCardsRowChangeEventHandler" msprop:Generator_RowDeletedName="TrickCardsRowDeleted" msprop:Generator_RowDeletingName="TrickCardsRowDeleting" msprop:Generator_RowEvArgName="TrickCardsRowChangeEvent" msprop:Generator_TablePropName="TrickCards" msprop:Generator_RowChangedName="TrickCardsRowChanged" msprop:Generator_RowChangingName="TrickCardsRowChanging" msprop:Generator_TableClassName="TrickCardsDataTable" msprop:Generator_RowClassName="TrickCardsRow" msprop:Generator_TableVarName="tableTrickCards" msprop:Generator_UserTableName="TrickCards">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="TrickID" msprop:Generator_ColumnPropNameInRow="TrickID" msprop:Generator_ColumnPropNameInTable="TrickIDColumn" msprop:Generator_ColumnVarNameInTable="columnTrickID" msprop:Generator_UserColumnName="TrickID" type="xs:int" minOccurs="0" />
-              <xs:element name="PlayerID" msprop:Generator_ColumnPropNameInRow="PlayerID" msprop:Generator_ColumnPropNameInTable="PlayerIDColumn" msprop:Generator_ColumnVarNameInTable="columnPlayerID" msprop:Generator_UserColumnName="PlayerID" type="xs:int" minOccurs="0" />
-              <xs:element name="Suit" msprop:Generator_ColumnPropNameInRow="Suit" msprop:Generator_ColumnPropNameInTable="SuitColumn" msprop:Generator_ColumnVarNameInTable="columnSuit" msprop:Generator_UserColumnName="Suit" type="xs:int" minOccurs="0" />
-              <xs:element name="Rank" msprop:Generator_ColumnPropNameInRow="Rank" msprop:Generator_ColumnPropNameInTable="RankColumn" msprop:Generator_ColumnVarNameInTable="columnRank" msprop:Generator_UserColumnName="Rank" type="xs:int" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

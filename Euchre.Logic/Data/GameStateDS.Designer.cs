@@ -466,6 +466,8 @@ namespace Euchre.Logic.Data {
             
             private global::System.Data.DataColumn columnIsGoingAlone;
             
+            private global::System.Data.DataColumn columnAvatarNumber;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public PlayerDataTable() {
@@ -543,6 +545,14 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn AvatarNumberColumn {
+                get {
+                    return this.columnAvatarNumber;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -578,14 +588,15 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public PlayerRow AddPlayerRow(string Name, bool IsHuman, int TeamIndex, bool IsGoingAlone) {
+            public PlayerRow AddPlayerRow(string Name, bool IsHuman, int TeamIndex, bool IsGoingAlone, int AvatarNumber) {
                 PlayerRow rowPlayerRow = ((PlayerRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         null,
                         Name,
                         IsHuman,
                         TeamIndex,
-                        IsGoingAlone};
+                        IsGoingAlone,
+                        AvatarNumber};
                 rowPlayerRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowPlayerRow);
                 return rowPlayerRow;
@@ -620,6 +631,7 @@ namespace Euchre.Logic.Data {
                 this.columnIsHuman = base.Columns["IsHuman"];
                 this.columnTeamIndex = base.Columns["TeamIndex"];
                 this.columnIsGoingAlone = base.Columns["IsGoingAlone"];
+                this.columnAvatarNumber = base.Columns["AvatarNumber"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -635,6 +647,8 @@ namespace Euchre.Logic.Data {
                 base.Columns.Add(this.columnTeamIndex);
                 this.columnIsGoingAlone = new global::System.Data.DataColumn("IsGoingAlone", typeof(bool), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnIsGoingAlone);
+                this.columnAvatarNumber = new global::System.Data.DataColumn("AvatarNumber", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnAvatarNumber);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnPlayerID}, true));
                 this.columnPlayerID.AutoIncrement = true;
@@ -2340,6 +2354,22 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public int AvatarNumber {
+                get {
+                    try {
+                        return ((int)(this[this.tablePlayer.AvatarNumberColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'AvatarNumber\' in table \'Player\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePlayer.AvatarNumberColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public bool IsNameNull() {
                 return this.IsNull(this.tablePlayer.NameColumn);
             }
@@ -2384,6 +2414,18 @@ namespace Euchre.Logic.Data {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public void SetIsGoingAloneNull() {
                 this[this.tablePlayer.IsGoingAloneColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public bool IsAvatarNumberNull() {
+                return this.IsNull(this.tablePlayer.AvatarNumberColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public void SetAvatarNumberNull() {
+                this[this.tablePlayer.AvatarNumberColumn] = global::System.Convert.DBNull;
             }
         }
         

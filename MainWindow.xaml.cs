@@ -17,9 +17,12 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        DataContext = _viewModel;
     }
 
     private readonly MainWindowViewModel _viewModel = new();
+
+    // TODO: Add a new Continue button and move the code for an already existing game.
 
     private async Task StartGame()
     {
@@ -35,21 +38,28 @@ public partial class MainWindow : Window
         {
             // If not, start a new game by getting the names of the players.
 
-            List<string> playerNames = GetPlayerNamesFromUser();
-            _viewModel.CurrentGame = new(playerNames);
+            var playerNames = GetPlayerNamesFromUser();
+            if (playerNames != null)
+            {
+                _viewModel.CurrentGame = new(playerNames.ToList());
+            }
+            else
+            {
+                return;
+            }
         }
 
         // Set up the event handlers for the main window and each human player.
 
         AddMainWindowEventHandlers();
-        var humanPlayers = (  from player in _viewModel.CurrentGame.GameInfo!.Players
+        var humanPlayers =    from player in _viewModel.CurrentGame.GameInfo!.Players
                              where player != null && player.IsHuman
-                            select player as HumanPlayer);
+                            select player as HumanPlayer;
         foreach (var humanPlayer in humanPlayers)
         {
             AddHumanPlayerEventHandlers(humanPlayer);
         }
-        
+
         // Start the game.
 
         await _viewModel.CurrentGame.PlayGameAsync();
@@ -75,7 +85,7 @@ public partial class MainWindow : Window
     }
 
     // TODO: Change the return type to be IEnumerable<AutomatedPlayerAvatar>.
-    private List<string> GetPlayerNamesFromUser()
+    private IEnumerable<AutomatedPlayerAvatar>? GetPlayerNamesFromUser()
     {
         NewGameWindow newGameWindow = new()
         {
@@ -83,9 +93,12 @@ public partial class MainWindow : Window
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
         };
 
-        newGameWindow.ShowDialog();
+        if (newGameWindow.ShowDialog() == true)
+        {
+            return newGameWindow.GetPlayers();
+        }
 
-        return ["Alice", "Bob", "Charlie", "Diana"]; // Placeholder for actual user input
+        return null;
     }
 
     /// <summary>
@@ -164,6 +177,8 @@ public partial class MainWindow : Window
 
     #endregion EventHandlers
 
+    #region Menu EventHandlers
+
     private async void MenuNewGame_Click(object sender, RoutedEventArgs e)
     {
         await StartGame();
@@ -171,20 +186,10 @@ public partial class MainWindow : Window
 
     private void MenuExit_Click(object sender, RoutedEventArgs e)
     {
-
-    }
-
-    private void menuChoosePartner_Click(object sender, RoutedEventArgs e)
-    {
-
+        Close();
     }
 
     private void menuChooseTrump_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
-
-    private void menuChooseBid_Click(object sender, RoutedEventArgs e)
     {
 
     }
@@ -194,17 +199,7 @@ public partial class MainWindow : Window
 
     }
 
-    private void menuSurrenderFroque_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
-
     private void menuChooseCards_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
-
-    private void menuChooseGoThrough_Click(object sender, RoutedEventArgs e)
     {
 
     }
@@ -218,4 +213,7 @@ public partial class MainWindow : Window
     {
 
     }
+
+    #endregion Menu EventHandlers
+
 }
