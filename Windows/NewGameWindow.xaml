@@ -246,14 +246,26 @@
             </StackPanel>
         </Border>
 
-        <!--  Begin Button  -->
+        <!--  Start Game Button  -->
 
         <Button
             Grid.Row="6"
             Grid.Column="1"
-            Click="ButtonBegin_Click"
-            Content="_Begin"
+            Click="ButtonStartGame_Click"
+            Content="_Start Game"
             IsDefault="True"
+            HorizontalAlignment="Left"
+            Style="{DynamicResource SubmitButtonStyle}" />
+
+        <!--  Cancel Button  -->
+
+        <Button
+            Grid.Row="6"
+            Grid.Column="1"
+            Click="ButtonCancel_Click"
+            Content="_Cancel"
+            IsCancel="True"
+            HorizontalAlignment="Right"
             Style="{DynamicResource SubmitButtonStyle}" />
     </Grid>
 </Window>

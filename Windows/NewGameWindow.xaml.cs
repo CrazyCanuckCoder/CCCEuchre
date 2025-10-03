@@ -129,7 +129,7 @@ public partial class NewGameWindow : Window
         }
         catch (FileNotFoundException)
         {
-            DialogBoxes.ErrorDialog("The data file for Solo is missing.  Please reinstall the application.",
+            DialogBoxes.ErrorDialog("The data file for Euchre is missing.  Please reinstall the application.",
                 this, "Data File Missing");
         }
     }
@@ -186,12 +186,18 @@ public partial class NewGameWindow : Window
         }
     }
 
-    private void ButtonBegin_Click(object sender, RoutedEventArgs e)
+    private void ButtonStartGame_Click(object sender, RoutedEventArgs e)
     {
         if (UserEnteredAllInformation())
         {
             DialogResult = true;
             Close();
         }
+    }
+
+    private void ButtonCancel_Click(object sender, RoutedEventArgs e)
+    {
+        DialogResult = false;
+        Close();
     }
 }
