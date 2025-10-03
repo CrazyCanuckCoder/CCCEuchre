@@ -25,9 +25,16 @@ public partial class MainWindow : Window
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
     }
 
+    /// <summary>
+    /// The view model class to use to manage the data properties.
+    /// </summary>
     public MainWindowViewModel ViewModel { get; }
 
-
+    /// <summary>
+    /// Starts the game of Euchre asynchronously.  Assumes the players have been created before the method
+    /// has been called.
+    /// </summary>
+    /// <returns>A Task that represents the asynchronous operation.</returns>
     private async Task StartGame()
     {
         // Set up the event handlers for the main window and each human player.
@@ -65,7 +72,10 @@ public partial class MainWindow : Window
         humanPlayer.PromptToOrderUp += HumanPlayer_PromptToOrderUp;
     }
 
-    // TODO: Change the return type to be IEnumerable<AutomatedPlayerAvatar>.
+    /// <summary>
+    /// Prompts the user to enter their name and avatar plus select the automated players.
+    /// </summary>
+    /// <returns>A list of player names of avatar numbers.</returns>
     private IEnumerable<AutomatedPlayerAvatar>? GetPlayerNamesFromUser()
     {
         NewGameWindow newGameWindow = new()
@@ -79,30 +89,9 @@ public partial class MainWindow : Window
             return newGameWindow.GetPlayers();
         }
 
+        // User closed the window to indicate they cancelled the operation.
+
         return null;
-    }
-
-    /// <summary>
-    /// Ensures the UI is updated.
-    /// </summary>
-    private static void AllowUIToUpdate()
-    {
-        DispatcherFrame frame = new();
-
-        // DispatcherPriority set to Input, the highest priority.
-
-        Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Input,
-            new DispatcherOperationCallback(delegate (object parameter)
-            {
-                frame.Continue = false;
-                Thread.Sleep(20); // Stop all processes to make sure the UI update is perform
-                return null;
-            }), null);
-        Dispatcher.PushFrame(frame);
-
-        // DispatcherPriority set to Input, the highest priority.
-
-        Application.Current?.Dispatcher.Invoke(DispatcherPriority.Input, new Action(delegate { }));
     }
 
 

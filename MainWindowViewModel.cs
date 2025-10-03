@@ -52,6 +52,21 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    private bool _playLastCardInHand;
+
+    /// <summary>
+    /// True to indicate the last card in a human player's hand can be automatically played.
+    /// </summary>
+    public bool PlayLastCardInHand
+    {
+        get => _playLastCardInHand;
+        set 
+        { 
+            _playLastCardInHand = value; 
+            OnPropertyChanged();
+        }
+    }
+
 
     /// <summary>
     /// The reference to the object running the game logic.
@@ -64,5 +79,10 @@ public class MainWindowViewModel : ViewModelBase
     internal void Initialize()
     {
         ContinueMenuEnabled = GameStateManager.DataExists();
+        IconMenuVisibility = GameSettingsManager.Instance.UseStandardMenu ? 
+            Visibility.Collapsed : Visibility.Visible;
+        StandardMenuVisibility = GameSettingsManager.Instance.UseStandardMenu ? 
+            Visibility.Visible : Visibility.Collapsed;
+        PlayLastCardInHand = GameSettingsManager.Instance.PlayLastCardInHand;
     }
 }
