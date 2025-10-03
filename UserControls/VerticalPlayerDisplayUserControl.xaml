@@ -1,0 +1,150 @@
+﻿<UserControl x:Class="Euchre.UserControls.VerticalPlayerDisplayUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Euchre.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="120" Background="#FFF7F0" >
+
+    <UserControl.Resources>
+        <Style TargetType="Label">
+            <Style.Setters>
+                <Setter Property="BorderBrush" Value="Black" />
+                <Setter Property="BorderThickness" Value="0.5" />
+                <Setter Property="Background" Value="White" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Height" Value="38" />
+                <Setter Property="Width" Value="120" />
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="42"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Grid.Column="0" BorderBrush="Black" BorderThickness="1" Background="White"
+                Padding="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="38"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <!-- Player Name -->
+
+                <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"
+                       FontSize="16" BorderThickness="0" Content="{Binding VerticalActivePlayer.Player.Name, 
+                                         RelativeSource={RelativeSource AncestorType=UserControl}, 
+                                         UpdateSourceTrigger=PropertyChanged}" />
+
+                <!-- Dealer Indicator Image -->
+
+                <Image Grid.Row="0" Grid.Column="1" Width="30" Height="30" Margin="2,0,2,0" 
+                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                       Visibility="{Binding VerticalDealerIconVisibility,
+                                            RelativeSource={RelativeSource AncestorType=UserControl}, 
+                                            UpdateSourceTrigger=PropertyChanged}"
+                       Source="/Euchre;component/images/icons/dealer.png" />
+            </Grid>
+        </Border>
+
+        <!-- Avatar Image -->
+
+        <local:AvatarUserControl Grid.Row="1" Grid.Column="0" Height="100" Width="100"
+                                 AvatarNumber="{Binding VerticalActivePlayer.AvatarNumber, 
+                                                RelativeSource={RelativeSource AncestorType=UserControl}, 
+                                                UpdateSourceTrigger=PropertyChanged}" HasBorder="False" />
+
+        <!-- Number of Tricks -->
+
+        <Border Grid.Row="2" Grid.Column="0" BorderBrush="Black" BorderThickness="1" Background="White">
+            <StackPanel>
+
+                <!-- Icons when the player is the bidder or bidder's partner. -->
+
+                <Grid Visibility="{Binding BidderPartnerIconVisibility}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="4"></RowDefinition>
+                        <RowDefinition Height="28"></RowDefinition>
+                        <RowDefinition Height="6"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Image Grid.Row="1" Grid.Column="1" Visibility="{Binding BidderTrickIconsVisibility[4]}"
+                           Source="/Euchre;component/images/icons/green.png"
+                           ToolTip="The number of tricks won by the player." />
+                    <Image Grid.Row="1" Grid.Column="2" Visibility="{Binding BidderTrickIconsVisibility[3]}"
+                           Source="/Euchre;component/images/icons/green.png" 
+                           ToolTip="The number of tricks won by the player." />
+                    <Image Grid.Row="1" Grid.Column="3" Visibility="{Binding BidderTrickIconsVisibility[2]}"
+                           Source="/Euchre;component/images/icons/green.png" 
+                           ToolTip="The number of tricks won by the player." />
+                    <Image Grid.Row="1" Grid.Column="4" Visibility="{Binding BidderTrickIconsVisibility[1]}"
+                           Source="/Euchre;component/images/icons/green.png" 
+                           ToolTip="The number of tricks won by the player." />
+                    <Image Grid.Row="1" Grid.Column="5" Visibility="{Binding BidderTrickIconsVisibility[0]}"
+                           Source="/Euchre;component/images/icons/green.png" 
+                           ToolTip="The number of tricks won by the player." />
+                </Grid>
+
+                <!-- Icons when the player is the opposition. -->
+
+                <Grid Visibility="{Binding OppositionIconVisibility}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="4"></RowDefinition>
+                        <RowDefinition Height="28"></RowDefinition>
+                        <RowDefinition Height="6"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Image Grid.Row="1" Grid.Column="1" 
+                           Visibility="{Binding OppositionTrickIconsVisibility[3]}"
+                           Source="/Euchre;component/images/icons/red.png" 
+                           ToolTip="The number of tricks won by the player." />
+                    <Image Grid.Row="1" Grid.Column="2" 
+                           Visibility="{Binding OppositionTrickIconsVisibility[2]}"
+                           Source="/Euchre;component/images/icons/red.png" 
+                           ToolTip="The number of tricks won by the player." />
+                    <Image Grid.Row="1" Grid.Column="3" 
+                           Visibility="{Binding OppositionTrickIconsVisibility[1]}"
+                           Source="/Euchre;component/images/icons/red.png" 
+                           ToolTip="The number of tricks won by the player." />
+                    <Image Grid.Row="1" Grid.Column="4" 
+                           Visibility="{Binding OppositionTrickIconsVisibility[0]}"
+                           Source="/Euchre;component/images/icons/red.png" 
+                           ToolTip="The number of tricks won by the player." />
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
