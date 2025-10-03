@@ -39,6 +39,21 @@ public sealed class GameSettingsManager
     public static GameSettingsManager Instance => _lazy.Value;
 
     /// <summary>
+    /// True to indicate the last card in the user's hand should be played automatically.
+    /// </summary>
+    public bool PlayLastCardInHand { get; set; }
+
+    /// <summary>
+    /// The file name of the selected card back to display in the UI.
+    /// </summary>
+    public string SelectedCardBack { get; set; } = string.Empty;
+
+    /// <summary>
+    /// True to indicate the standard menu should be display and false to display the icon based menu.
+    /// </summary>
+    public bool UseStandardMenu { get; set; }
+
+    /// <summary>
     /// Reads the current XML file and loads the information into the GameDataSet property.
     /// </summary>
     /// <exception cref="FileNotFoundException"></exception>
@@ -47,6 +62,10 @@ public sealed class GameSettingsManager
         if (File.Exists(FILE_NAME))
         {
             _settingsDS.ReadXml(FILE_NAME);
+            var settingsRow = _settingsDS.Settings.First();
+            PlayLastCardInHand = settingsRow.PlayLastCardInHumansHand;
+            SelectedCardBack = settingsRow.SelectedCardBackFile;
+            UseStandardMenu = settingsRow.UseStandardMenu;
         }
         else
         {
@@ -65,6 +84,10 @@ public sealed class GameSettingsManager
             File.Delete(FILE_NAME);
         }
 
+        var settingsRow = _settingsDS.Settings.First();
+        settingsRow.PlayLastCardInHumansHand = PlayLastCardInHand;
+        settingsRow.SelectedCardBackFile = SelectedCardBack;
+        settingsRow.UseStandardMenu = UseStandardMenu;
         _settingsDS.AcceptChanges();
         _settingsDS.WriteXml(FILE_NAME);
 

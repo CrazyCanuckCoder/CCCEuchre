@@ -6,7 +6,7 @@ namespace Euchre.Logic.Helpers;
 /// <summary>
 /// Finds a card or cards in a collection based on various criteria.
 /// </summary>
-public static class CardFinder
+internal static class CardFinder
 {
     /// <summary>
     /// Determines whether the specified collection of cards contains at least one card of the given suit.
