@@ -1,0 +1,32 @@
+﻿<UserControl
+    x:Class="Euchre.UserControls.VerticalCardDisplayUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Euchre.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="400"
+    d:DesignWidth="150"
+    mc:Ignorable="d">
+
+    <StackPanel Orientation="Vertical">
+        <ItemsControl ItemsSource="{Binding VerticalCardImages}">
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Image
+                        Margin="{Binding CardMargin}"
+                        Source="{Binding ImageData.Source}"
+                        Stretch="Fill"
+                        Visibility="{Binding ImageVisibility}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>
