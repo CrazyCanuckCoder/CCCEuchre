@@ -1,5 +1,4 @@
-﻿using Euchre.Logic.Enums;
-using Euchre.Logic.Interfaces;
+﻿using Euchre.Logic.Interfaces;
 using Euchre.UILogic.Classes;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -32,20 +31,6 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
         DependencyProperty.Register(nameof(VerticalDealerIconVisibility), typeof(Visibility),
             typeof(VerticalPlayerDisplayUserControl), new PropertyMetadata(Visibility.Hidden));
 
-    /// <summary>
-    /// Using a DependencyProperty as the backing store for BidderPartnerVisibility.
-    /// </summary>
-    public static readonly DependencyProperty BidderPartnerIconVisibilityProperty =
-        DependencyProperty.Register(nameof(BidderPartnerIconVisibility), typeof(Visibility),
-            typeof(VerticalPlayerDisplayUserControl), new PropertyMetadata(Visibility.Collapsed));
-
-    /// <summary>
-    /// Using a DependencyProperty as the backing store for OppositionIconVisibility.
-    /// </summary>
-    public static readonly DependencyProperty OppositionIconVisibilityProperty =
-        DependencyProperty.Register(nameof(OppositionIconVisibility), typeof(Visibility),
-            typeof(VerticalPlayerDisplayUserControl), new PropertyMetadata(Visibility.Collapsed));
-
 
     /// <summary>
     /// The information about the user associated with this control.
@@ -66,55 +51,17 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
     }
 
     /// <summary>
-    /// The visibility setting of the icons when the player is either the bidder or their partner.
-    /// </summary>
-    public Visibility BidderPartnerIconVisibility
-    {
-        get => (Visibility)GetValue(BidderPartnerIconVisibilityProperty);
-        set => SetValue(BidderPartnerIconVisibilityProperty, value);
-    }
-
-    /// <summary>
-    /// The visibility setting of the icons when the player is a member of the opposition.
-    /// </summary>
-    public Visibility OppositionIconVisibility
-    {
-        get => (Visibility)GetValue(OppositionIconVisibilityProperty);
-        set => SetValue(OppositionIconVisibilityProperty, value);
-    }
-
-    /// <summary>
-    /// A list of visibility values corresponding to the number of tricks won by player when they are the 
-    /// bidder or their partner, if they have one.
-    /// </summary>
-    public ObservableCollection<Visibility> BidderTrickIconsVisibility { get; set; } = new()
-    {
-        Visibility.Hidden,
-        Visibility.Hidden,
-        Visibility.Hidden,
-        Visibility.Hidden,
-        Visibility.Hidden,
-    };
-
-    /// <summary>
     /// A list of visibility values corresponding to the number of tricks won by the player when they are a 
     /// member of the opposition.
     /// </summary>
-    public ObservableCollection<Visibility> OppositionTrickIconsVisibility { get; set; } = new()
+    public ObservableCollection<Visibility> TrickIconsVisibility { get; set; } = new()
     {
         Visibility.Hidden,
         Visibility.Hidden,
         Visibility.Hidden,
         Visibility.Hidden,
+        Visibility.Hidden,
     };
-
-    /// <summary>
-    /// Indicates whether the player is the bidder, their partner, a member of the opposition or if the 
-    /// player's status is currently unknown.
-    /// </summary>
-    public PlayerRoundState PlayerBidStatus { get; set; } = PlayerRoundState.None;
-
-
 
 
     /// <summary>
@@ -133,27 +80,6 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
     }
 
     /// <summary>
-    /// Changes the bidding status of the player and changes which icons are displayed for the number of
-    /// tricks won by the player.
-    /// </summary>
-    /// <param name="newPlayerStatus">The new bid status for the player.</param>
-    public void SetPlayersBidStatus(PlayerRoundState newPlayerStatus)
-    {
-        PlayerBidStatus = newPlayerStatus;
-
-        // Set the visibility of the number of tricks icons.
-
-        BidderPartnerIconVisibility = PlayerBidStatus == PlayerRoundState.BiddingTeam ?
-            Visibility.Visible : Visibility.Collapsed;
-        OppositionIconVisibility = PlayerBidStatus == PlayerRoundState.OppositionTeam ?
-            Visibility.Visible : Visibility.Collapsed;
-
-        // Reset the display of the number of tricks icons.
-
-        UpdateNumberOfTricks(VerticalActivePlayer.TotalTricks);
-    }
-
-    /// <summary>
     /// Updates the display of the number of tricks for the player to a specified number.
     /// </summary>
     /// <param name="newNumberOfTricks">The number of tricks for the player.</param>
@@ -167,16 +93,7 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
         }
         else
         {
-            // Update the icons that display the number of tricks won by the player.
-
-            if (PlayerBidStatus == PlayerRoundState.BiddingTeam)
-            {
-                SetBidderAndPartnerTrickNumbers(VerticalActivePlayer.TotalTricks);
-            }
-            else
-            { 
-                SetOppositionTrickNumbers(VerticalActivePlayer.TotalTricks);
-            }
+            SetTrickNumbers(VerticalActivePlayer.TotalTricks);
         }
     }
 
@@ -194,42 +111,23 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
     /// </summary>
     private void ResetIconVisibility()
     {
-        for (int index = 0; index < BidderTrickIconsVisibility.Count; index++)
+        for (int index = 0; index < TrickIconsVisibility.Count; index++)
         {
-            BidderTrickIconsVisibility[index] = Visibility.Hidden;
-        }
-        for (int index = 0; index < OppositionTrickIconsVisibility.Count; index++)
-        {
-            OppositionTrickIconsVisibility[index] = Visibility.Hidden;
+            TrickIconsVisibility[index] = Visibility.Hidden;
         }
     }
 
     /// <summary>
-    /// Sets the number of icons of tricks won when the player is the bidder or their partner.
+    /// Sets the number of icons of tricks won by the player.
     /// </summary>
     /// <param name="numberOfTricks">The number of icons to show.</param>
-    private void SetBidderAndPartnerTrickNumbers(int numberOfTricks)
-    {
-        if (numberOfTricks < 6)
-        {
-            for (int count = 1; count <= numberOfTricks; count++)
-            {
-                BidderTrickIconsVisibility[count - 1] = Visibility.Visible;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Sets the number of icons of tricks won by the player when they are a member of the opposition.
-    /// </summary>
-    /// <param name="numberOfTricks">The number of icons to show.</param>
-    private void SetOppositionTrickNumbers(int numberOfTricks)
+    private void SetTrickNumbers(int numberOfTricks)
     {
         if (numberOfTricks < 5)
         {
             for (int count = 1; count <= numberOfTricks; count++)
             {
-                OppositionTrickIconsVisibility[count - 1] = Visibility.Visible;
+                TrickIconsVisibility[count - 1] = Visibility.Visible;
             }
         }
     }
