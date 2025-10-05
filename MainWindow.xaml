@@ -5,9 +5,14 @@
     xmlns:Logic="clr-namespace:Euchre.UILogic.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Euchre"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Euchre" Height="1000" Width="1440" MinHeight="1000" MinWidth="1440"
-    WindowStartupLocation="CenterScreen" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
+    Title="Euchre"
+    Width="1440"
+    Height="1000"
+    MinWidth="1440"
+    MinHeight="1000"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
     <Window.Resources>
@@ -140,7 +145,10 @@
                     BorderThickness="0"
                     Click="MenuNewGame_Click">
                     <StackPanel>
-                        <Image Width="120" Source="/images/icons/Playing-Cards-128.png" />
+                        <Image
+                            Width="120"
+                            Source="/images/icons/Playing-Cards-128.png"
+                            ToolTip="Starts a new game of Euchre." />
 
                         <AccessText
                             Margin="0,4,0,0"
@@ -162,7 +170,10 @@
                     Click="MenuContinue_Click"
                     IsEnabled="{Binding ContinueMenuEnabled, UpdateSourceTrigger=PropertyChanged}">
                     <StackPanel>
-                        <Image Width="120" Source="/images/icons/Cards-Play-128.png" />
+                        <Image
+                            Width="120"
+                            Source="/images/icons/Cards-Play-128.png"
+                            ToolTip="Continues the previously played game." />
 
                         <AccessText
                             Margin="0,4,0,0"
@@ -183,7 +194,10 @@
                     BorderThickness="0"
                     Click="MenuToolsOptions_Click">
                     <StackPanel>
-                        <Image Width="120" Source="/images/icons/Settings-01-128.png" />
+                        <Image
+                            Width="120"
+                            Source="/images/icons/Settings-01-128.png"
+                            ToolTip="Modifies the settings for the game." />
                         <AccessText
                             Margin="0,4,0,0"
                             HorizontalAlignment="Center"
@@ -203,7 +217,10 @@
                     BorderThickness="0"
                     Click="MenuHelpAbout_Click">
                     <StackPanel>
-                        <Image Width="120" Source="/images/icons/Help-128.png" />
+                        <Image
+                            Width="120"
+                            Source="/images/icons/Help-128.png"
+                            ToolTip="Displays information about the Euchre game." />
                         <AccessText
                             Margin="0,4,0,0"
                             HorizontalAlignment="Center"
@@ -223,7 +240,10 @@
                     BorderThickness="0"
                     Click="MenuExit_Click">
                     <StackPanel>
-                        <Image Width="120" Source="/images/icons/Exit-128.png" />
+                        <Image
+                            Width="120"
+                            Source="/images/icons/Exit-128.png"
+                            ToolTip="Exits the game." />
                         <AccessText
                             Margin="0,4,0,0"
                             HorizontalAlignment="Center"
