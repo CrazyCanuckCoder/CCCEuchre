@@ -82,103 +82,57 @@
             Background="White"
             BorderBrush="Black"
             BorderThickness="1">
-            <StackPanel>
 
-                <!--  Icons when the player is the bidder or bidder's partner.  -->
+            <!--  Icons when the player is the bidder or bidder's partner.  -->
 
-                <Grid Visibility="{Binding BidderPartnerIconVisibility}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="10" />
-                    </Grid.ColumnDefinitions>
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="10" />
+                </Grid.ColumnDefinitions>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="4" />
-                        <RowDefinition Height="28" />
-                        <RowDefinition Height="6" />
-                    </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4" />
+                    <RowDefinition Height="28" />
+                    <RowDefinition Height="6" />
+                </Grid.RowDefinitions>
 
-                    <Image
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Source="/Euchre;component/images/icons/green.png"
-                        ToolTip="The number of tricks won by the player."
-                        Visibility="{Binding BidderTrickIconsVisibility[4]}" />
-                    <Image
-                        Grid.Row="1"
-                        Grid.Column="2"
-                        Source="/Euchre;component/images/icons/green.png"
-                        ToolTip="The number of tricks won by the player."
-                        Visibility="{Binding BidderTrickIconsVisibility[3]}" />
-                    <Image
-                        Grid.Row="1"
-                        Grid.Column="3"
-                        Source="/Euchre;component/images/icons/green.png"
-                        ToolTip="The number of tricks won by the player."
-                        Visibility="{Binding BidderTrickIconsVisibility[2]}" />
-                    <Image
-                        Grid.Row="1"
-                        Grid.Column="4"
-                        Source="/Euchre;component/images/icons/green.png"
-                        ToolTip="The number of tricks won by the player."
-                        Visibility="{Binding BidderTrickIconsVisibility[1]}" />
-                    <Image
-                        Grid.Row="1"
-                        Grid.Column="5"
-                        Source="/Euchre;component/images/icons/green.png"
-                        ToolTip="The number of tricks won by the player."
-                        Visibility="{Binding BidderTrickIconsVisibility[0]}" />
-                </Grid>
-
-                <!--  Icons when the player is the opposition.  -->
-
-                <Grid Visibility="{Binding OppositionIconVisibility}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="10" />
-                    </Grid.ColumnDefinitions>
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="4" />
-                        <RowDefinition Height="28" />
-                        <RowDefinition Height="6" />
-                    </Grid.RowDefinitions>
-
-                    <Image
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Source="/Euchre;component/images/icons/red.png"
-                        ToolTip="The number of tricks won by the player."
-                        Visibility="{Binding OppositionTrickIconsVisibility[3]}" />
-                    <Image
-                        Grid.Row="1"
-                        Grid.Column="2"
-                        Source="/Euchre;component/images/icons/red.png"
-                        ToolTip="The number of tricks won by the player."
-                        Visibility="{Binding OppositionTrickIconsVisibility[2]}" />
-                    <Image
-                        Grid.Row="1"
-                        Grid.Column="3"
-                        Source="/Euchre;component/images/icons/red.png"
-                        ToolTip="The number of tricks won by the player."
-                        Visibility="{Binding OppositionTrickIconsVisibility[1]}" />
-                    <Image
-                        Grid.Row="1"
-                        Grid.Column="4"
-                        Source="/Euchre;component/images/icons/red.png"
-                        ToolTip="The number of tricks won by the player."
-                        Visibility="{Binding OppositionTrickIconsVisibility[0]}" />
-                </Grid>
-            </StackPanel>
+                <Image
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Source="/Euchre;component/images/icons/green.png"
+                    ToolTip="The number of tricks won by the player."
+                    Visibility="{Binding TrickIconsVisibility[4]}" />
+                <Image
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Source="/Euchre;component/images/icons/green.png"
+                    ToolTip="The number of tricks won by the player."
+                    Visibility="{Binding TrickIconsVisibility[3]}" />
+                <Image
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    Source="/Euchre;component/images/icons/green.png"
+                    ToolTip="The number of tricks won by the player."
+                    Visibility="{Binding TrickIconsVisibility[2]}" />
+                <Image
+                    Grid.Row="1"
+                    Grid.Column="4"
+                    Source="/Euchre;component/images/icons/green.png"
+                    ToolTip="The number of tricks won by the player."
+                    Visibility="{Binding TrickIconsVisibility[1]}" />
+                <Image
+                    Grid.Row="1"
+                    Grid.Column="5"
+                    Source="/Euchre;component/images/icons/green.png"
+                    ToolTip="The number of tricks won by the player."
+                    Visibility="{Binding TrickIconsVisibility[0]}" />
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

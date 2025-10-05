@@ -1,4 +1,5 @@
-﻿using Euchre.Logic.Interfaces;
+﻿using Euchre.Logic.Helpers;
+using Euchre.Logic.Interfaces;
 using Euchre.UILogic.Classes;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -123,7 +124,7 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
     /// <param name="numberOfTricks">The number of icons to show.</param>
     private void SetTrickNumbers(int numberOfTricks)
     {
-        if (numberOfTricks < 5)
+        if (numberOfTricks <= Constants.MAX_NUMBER_OF_TRICKS)
         {
             for (int count = 1; count <= numberOfTricks; count++)
             {
