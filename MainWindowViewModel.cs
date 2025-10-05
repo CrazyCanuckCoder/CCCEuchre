@@ -76,7 +76,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// Sets up some of the properties for this view model class.
     /// </summary>
-    internal void Initialize()
+    public void Initialize()
     {
         ContinueMenuEnabled = GameStateManager.DataExists();
         IconMenuVisibility = GameSettingsManager.Instance.UseStandardMenu ? 

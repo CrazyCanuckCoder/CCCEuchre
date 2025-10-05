@@ -85,7 +85,7 @@
 
             <!--  Icons when the player is the bidder or bidder's partner.  -->
 
-            <Grid >
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="10" />

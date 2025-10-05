@@ -214,6 +214,9 @@
     <Reference Include="CrazyCanuckCoder.Library.WPF">
       <HintPath>..\CrazyCanuckCoder\Library.WPF\bin\Debug\net8.0-windows\CrazyCanuckCoder.Library.WPF.dll</HintPath>
     </Reference>
+    <Reference Include="CrazyCanuckCoder.Library.WPFControls">
+      <HintPath>..\CrazyCanuckCoder\Library.WPFControls\bin\Debug\net8.0-windows\CrazyCanuckCoder.Library.WPFControls.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
