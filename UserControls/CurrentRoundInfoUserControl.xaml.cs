@@ -1,4 +1,5 @@
-﻿using Euchre.Logic.Interfaces;
+﻿using Euchre.Logic.Components;
+using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -55,4 +56,25 @@ public partial class CurrentRoundInfoUserControl : UserControl
     /// The list of the players for the second team.
     /// </summary>
     public ObservableCollection<IPlayer> Team2List { get; set; } = [];
+
+    /// <summary>
+    /// Sets the text for the bidding information based on the player, trump and went alone status.
+    /// </summary>
+    /// <param name="player">The player that called trump.</param>
+    /// <param name="trump">The trump suit.</param>
+    /// <param name="isAlone">True if the player went alone.</param>
+    public void SetBidInformation(IPlayer player, Suit trump, bool isAlone)
+    {
+        ArgumentNullException.ThrowIfNull(player, nameof(player));
+
+        BidInfo = $"{player.Name} called {trump} {(isAlone ? "Alone" : string.Empty)}";
+    }
+
+    /// <summary>
+    /// Clears the text for the bidding information.
+    /// </summary>
+    public void ResetBidInformation()
+    {
+        BidInfo = string.Empty;
+    }
 }

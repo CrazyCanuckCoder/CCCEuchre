@@ -11,6 +11,7 @@ public class MainWindowViewModel : ViewModelBase
     // The fields used for the properties.
 
     private bool _continueMenuEnabled;
+    private bool _playLastCardInHand;
     private Visibility _iconMenuVisibility = Visibility.Collapsed;
     private Visibility _standardMenuVisibility = Visibility.Visible;
 
@@ -52,8 +53,6 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
         }
     }
-
-    private bool _playLastCardInHand;
 
     /// <summary>
     /// True to indicate the last card in a human player's hand can be automatically played.
