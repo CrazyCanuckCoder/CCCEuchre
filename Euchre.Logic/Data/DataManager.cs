@@ -36,7 +36,7 @@ internal class DataManager
         foreach (var player in gameStateManager.Players)
         {
             int playerID = stateDS.Player.AddPlayerRow(player.Name, player.IsHuman, player.TeamIndex,
-                player.IsGoingAlone, player.AvatarNumber).PlayerID;
+                player.PlayerIndex, player.IsGoingAlone, player.AvatarNumber).PlayerID;
             foreach (var card in player.Hand)
             {
                 stateDS.Hand.AddHandRow(playerID, (int)card.Suit, (int)card.Rank);
@@ -212,11 +212,11 @@ internal class DataManager
 
         if (playerRow.IsHuman)
         {
-            newPlayer = new HumanPlayer(playerRow.Name, playerRow.TeamIndex, playerRow.AvatarNumber);
+            newPlayer = new HumanPlayer(playerRow.Name, playerRow.TeamIndex, playerRow.PlayerIndex, playerRow.AvatarNumber);
         }
         else
         {
-            newPlayer = new AutomatedPlayer(playerRow.Name, playerRow.TeamIndex, gameStateManager, 
+            newPlayer = new AutomatedPlayer(playerRow.Name, playerRow.TeamIndex, playerRow.PlayerIndex, gameStateManager, 
                 playerRow.AvatarNumber);
         }
 

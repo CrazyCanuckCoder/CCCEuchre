@@ -10,7 +10,7 @@ public interface IPlayer
     bool IsHuman { get; }
     bool IsGoingAlone { get; set; }
     int TeamIndex { get; }
-
+    int PlayerIndex { get; }
 
     void AddCard(Card card);
     Suit? CallTrump(Card kitty);

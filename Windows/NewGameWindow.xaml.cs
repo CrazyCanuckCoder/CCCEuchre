@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows;
 
 namespace Euchre.Windows;
+
 /// <summary>
 /// Interaction logic for NewGameWindow.xaml
 /// </summary>

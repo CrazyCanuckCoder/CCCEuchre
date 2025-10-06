@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Euchre.UserControls;
+
 /// <summary>
 /// Interaction logic for VerticalPlayerDisplayUserControl.xaml
 /// </summary>
@@ -58,14 +59,14 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
     /// A list of visibility values corresponding to the number of tricks won by the player when they are a 
     /// member of the opposition.
     /// </summary>
-    public ObservableCollection<Visibility> TrickIconsVisibility { get; set; } = new()
-    {
+    public ObservableCollection<Visibility> TrickIconsVisibility { get; set; } =
+    [
         Visibility.Hidden,
         Visibility.Hidden,
         Visibility.Hidden,
         Visibility.Hidden,
         Visibility.Hidden,
-    };
+    ];
 
     /// <summary>
     /// The colour to use for the number of trick won by the player.

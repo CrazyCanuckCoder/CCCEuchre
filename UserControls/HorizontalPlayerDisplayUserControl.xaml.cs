@@ -59,14 +59,14 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl
     /// <summary>
     /// A list of visibility values corresponding to the number of tricks won by player.
     /// </summary>
-    public ObservableCollection<Visibility> TrickIconsVisibility { get; set; } = new()
-    {
+    public ObservableCollection<Visibility> TrickIconsVisibility { get; set; } =
+    [
         Visibility.Hidden,
         Visibility.Hidden,
         Visibility.Hidden,
         Visibility.Hidden,
         Visibility.Hidden,
-    };
+    ];
 
     /// <summary>
     /// The colour to use for the number of trick won by the player.

@@ -16,11 +16,12 @@ public abstract class Player : IPlayer
     /// <param name="teamIndex"> The index of the team this player is associated with, starting from 0.</param>
     /// <param name="isHuman">True if the player is a human and false for automated players.</param>
     /// <param name="avatarNumber">The number indicating which avatar the user is represented by in the UI.</param>
-    public Player(string name, int teamIndex, bool isHuman, int avatarNumber)
+    public Player(string name, int teamIndex, int playerIndex, bool isHuman, int avatarNumber)
     {
         Name = name;
         Hand = [];
         TeamIndex = teamIndex;
+        PlayerIndex = playerIndex;
         IsHuman = isHuman;
         AvatarNumber = avatarNumber;
     }
@@ -49,6 +50,11 @@ public abstract class Player : IPlayer
     /// Gets the index of the team associated with this player.
     /// </summary>
     public int TeamIndex { get; protected set; }
+
+    /// <summary>
+    /// Gets/sets the index number of the player in the list of players.
+    /// </summary>
+    public int PlayerIndex { get; protected set; }
 
     /// <summary>
     /// Gets a value indicating whether the individual is going alone.

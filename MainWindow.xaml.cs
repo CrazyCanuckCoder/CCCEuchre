@@ -48,6 +48,10 @@ public partial class MainWindow : Window
             AddHumanPlayerEventHandlers(humanPlayer);
         }
 
+        // Set up the elements on the game board.
+
+        ViewModel.SetupUserInterface(this);
+
         // Start the game.
 
         await ViewModel.CurrentGame.PlayGameAsync();
@@ -110,6 +114,8 @@ public partial class MainWindow : Window
 
     private void CurrentGame_PlayerBidResult(object? sender, PlayerBidEventArgs e)
     {
+        // Set the BidInfo property of the CurrentRoundInfoUserControl.
+
     }
 
     private void CurrentGame_GameOver(object? sender, GameOverEventArgs e)
@@ -118,10 +124,12 @@ public partial class MainWindow : Window
 
     private void CurrentGame_DeclareTrickWinner(object? sender, DeclareTrickWinnerEventArgs e)
     {
+        // Update the previous tricks control with the current trick.
     }
 
     private void CurrentGame_DeclareRoundWinningPlayers(object? sender, DeclareRoundWinningPlayersEventArgs e)
     {
+        // Clear the previous tricks control.
     }
 
     private void CurrentGame_DeclareDealer(object? sender, DeclareDealerEventArgs e)
