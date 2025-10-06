@@ -1,9 +1,11 @@
 ﻿using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
+using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Euchre.UserControls;
 
@@ -15,6 +17,7 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl
     public HorizontalPlayerDisplayUserControl()
     {
         InitializeComponent();
+        TricksColour = new SolidColorBrush(UIConstants.Team1Colour);
         DataContext = this;
     }
 
@@ -54,8 +57,7 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl
     }
 
     /// <summary>
-    /// A list of visibility values corresponding to the number of tricks won by player when they are the 
-    /// bidder or their partner, if they have one.
+    /// A list of visibility values corresponding to the number of tricks won by player.
     /// </summary>
     public ObservableCollection<Visibility> TrickIconsVisibility { get; set; } = new()
     {
@@ -66,6 +68,10 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl
         Visibility.Hidden,
     };
 
+    /// <summary>
+    /// The colour to use for the number of trick won by the player.
+    /// </summary>
+    public Brush TricksColour { get; }
 
     /// <summary>
     /// Sets the player information to display on the control.

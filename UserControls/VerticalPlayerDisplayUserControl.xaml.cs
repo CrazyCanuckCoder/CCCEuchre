@@ -1,9 +1,11 @@
 ﻿using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
+using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Euchre.UserControls;
 /// <summary>
@@ -14,6 +16,7 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
     public VerticalPlayerDisplayUserControl()
     {
         InitializeComponent();
+        TricksColour = new SolidColorBrush(UIConstants.Team2Colour);
         DataContext = this;
     }
 
@@ -63,6 +66,11 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
         Visibility.Hidden,
         Visibility.Hidden,
     };
+
+    /// <summary>
+    /// The colour to use for the number of trick won by the player.
+    /// </summary>
+    public SolidColorBrush TricksColour { get; }
 
 
     /// <summary>

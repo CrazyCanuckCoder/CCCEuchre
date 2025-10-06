@@ -5,6 +5,7 @@
     xmlns:WPFControls="clr-namespace:CrazyCanuckCoder.Library.WPFControls;assembly=CrazyCanuckCoder.Library.WPFControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Euchre.UserControls"
+    xmlns:logic="clr-namespace:Euchre.UILogic"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="250"
     d:DesignWidth="230"
@@ -77,10 +78,10 @@
                         x:Name="labelledProgressBarUserControlTeam1"
                         MaximumValue="10"
                         MinimumValue="0"
-                        ProgressBarColour="ForestGreen" />
+                        ProgressBarColour="{x:Static logic:UIConstants.Team1Colour}" />
                 </Border>
 
-                <!--  Team 2Score Controls  -->
+                <!--  Team 2 Score Controls  -->
 
                 <Label
                     Grid.Row="3"
@@ -97,7 +98,7 @@
                         x:Name="labelledProgressBarUserControlTeam2"
                         MaximumValue="10"
                         MinimumValue="0"
-                        ProgressBarColour="Red" />
+                        ProgressBarColour="{x:Static logic:UIConstants.Team2Colour}" />
                 </Border>
             </Grid>
         </Border>

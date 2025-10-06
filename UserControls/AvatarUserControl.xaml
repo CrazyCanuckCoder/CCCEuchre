@@ -1,22 +1,25 @@
-﻿<UserControl x:Class="Euchre.UserControls.AvatarUserControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Euchre.UserControls"
-             xmlns:uilogic="clr-namespace:Euchre.UILogic.Classes"
-             mc:Ignorable="d" 
-             d:Height="100" d:Width="100">
+﻿<UserControl
+    x:Class="Euchre.UserControls.AvatarUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Euchre.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uilogic="clr-namespace:Euchre.UILogic.Classes"
+    d:Height="100"
+    d:Width="100"
+    mc:Ignorable="d">
     <UserControl.Resources>
-        <uilogic:BoolToContentConverter x:Key="BorderThicknessConverter"
-			  TrueContent="0.5"
-			  FalseContent="0"/>
+        <uilogic:BoolToContentConverter
+            x:Key="BorderThicknessConverter"
+            FalseContent="0"
+            TrueContent="0.5" />
     </UserControl.Resources>
 
-    <Border BorderThickness="{Binding HasBorder, Converter={StaticResource BorderThicknessConverter}}"
-            BorderBrush="Black" 
-            Background="{Binding Path=Background, RelativeSource={RelativeSource FindAncestor, 
-                                                                            AncestorType={x:Type Control}}}">
-        <Image Source="{Binding AvatarImage.Source}" Stretch="Fill"/>
+    <Border
+        Background="{Binding Path=Background, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Control}}}"
+        BorderBrush="Black"
+        BorderThickness="{Binding HasBorder, Converter={StaticResource BorderThicknessConverter}}">
+        <Image Source="{Binding AvatarImage.Source}" Stretch="Fill" />
     </Border>
 </UserControl>

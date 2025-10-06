@@ -11,7 +11,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <Style TargetType="Label">
+        <Style x:Key="TextLabel" TargetType="Label">
             <Style.Setters>
                 <Setter Property="BorderBrush" Value="Black" />
                 <Setter Property="BorderThickness" Value="0.5" />
@@ -47,7 +47,8 @@
                 VerticalAlignment="Center"
                 BorderThickness="1"
                 Content="{Binding ActivePlayer.Player.Name, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
-                FontSize="16" />
+                FontSize="16"
+                Style="{DynamicResource TextLabel}" />
 
             <!--  Dealer Indicator Image  -->
 
@@ -102,34 +103,39 @@
                     <RowDefinition Height="6" />
                 </Grid.RowDefinitions>
 
-                <Image
+                <Label
                     Grid.Row="1"
                     Grid.Column="1"
-                    Source="/Euchre;component/images/icons/green.png"
+                    Background="{Binding TricksColour}"
+                    BorderThickness="0"
                     ToolTip="The number of tricks won by the player."
                     Visibility="{Binding TrickIconsVisibility[4]}" />
-                <Image
+                <Label
                     Grid.Row="1"
                     Grid.Column="2"
-                    Source="/Euchre;component/images/icons/green.png"
+                    Background="{Binding TricksColour}"
+                    BorderThickness="0"
                     ToolTip="The number of tricks won by the player."
                     Visibility="{Binding TrickIconsVisibility[3]}" />
-                <Image
+                <Label
                     Grid.Row="1"
                     Grid.Column="3"
-                    Source="/Euchre;component/images/icons/green.png"
+                    Background="{Binding TricksColour}"
+                    BorderThickness="0"
                     ToolTip="The number of tricks won by the player."
                     Visibility="{Binding TrickIconsVisibility[2]}" />
-                <Image
+                <Label
                     Grid.Row="1"
                     Grid.Column="4"
-                    Source="/Euchre;component/images/icons/green.png"
+                    Background="{Binding TricksColour}"
+                    BorderThickness="0"
                     ToolTip="The number of tricks won by the player."
                     Visibility="{Binding TrickIconsVisibility[1]}" />
-                <Image
+                <Label
                     Grid.Row="1"
                     Grid.Column="5"
-                    Source="/Euchre;component/images/icons/green.png"
+                    Background="{Binding TricksColour}"
+                    BorderThickness="0"
                     ToolTip="The number of tricks won by the player."
                     Visibility="{Binding TrickIconsVisibility[0]}" />
             </Grid>
