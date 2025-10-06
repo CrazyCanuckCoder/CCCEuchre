@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace Euchre.UILogic;
@@ -30,5 +31,20 @@ internal static class UIHelpers
         // DispatcherPriority set to Input, the highest priority.
 
         Application.Current?.Dispatcher.Invoke(DispatcherPriority.Input, new Action(delegate { }));
+    }
+
+    /// <summary>
+    /// Creates the image source based on a specified URI string.
+    /// </summary>
+    /// <param name="uriSource">The URI based path to the image.</param>
+    /// <returns>A BitmapImage containing the image.</returns>
+    public static BitmapImage GenerateImageSource(string uriSource)
+    {
+        BitmapImage source = new();
+        source.BeginInit();
+        source.UriSource = new(uriSource);
+        source.EndInit();
+
+        return source;
     }
 }

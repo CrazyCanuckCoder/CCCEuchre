@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic.Components;
+using Euchre.UILogic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -383,28 +384,13 @@ public partial class PreviousTricksUserControl : UserControl
     }
 
     /// <summary>
-    /// Creates the image source based on a specified URI string.
-    /// </summary>
-    /// <param name="uriSource">The URI based path to the image.</param>
-    /// <returns>A BitmapImage containing the image.</returns>
-    private BitmapImage GenerateImageSource(string uriSource)
-    {
-        BitmapImage source = new();
-        source.BeginInit();
-        source.UriSource = new(uriSource);
-        source.EndInit();
-
-        return source;
-    }
-
-    /// <summary>
     /// Creates the image to be used for a specified card.
     /// </summary>
     /// <param name="cardPlayed">The card to generate the image for.</param>
     /// <returns>A BitmapImage containing the image for the card.</returns>
     private BitmapImage GenerateCardImage(Card cardPlayed)
     {
-        return GenerateImageSource(
+        return UIHelpers.GenerateImageSource(
             $"pack://application:,,,/Euchre;component/images/cards/{cardPlayed.ToString()?.ToLower()}.png");
     }
 
@@ -571,7 +557,7 @@ public partial class PreviousTricksUserControl : UserControl
     /// <returns>A BitmapImage containing the image for the indicator.</returns>
     private BitmapImage GenerateCardLeadIndicatorSource()
     {
-        return GenerateImageSource(
+        return UIHelpers.GenerateImageSource(
             "pack://application:,,,/Euchre;component/images/icons/lead card indicator.png");
     }
 
@@ -581,7 +567,7 @@ public partial class PreviousTricksUserControl : UserControl
     /// <returns>A BitmapImage containing the image for the indicator.</returns>
     private BitmapImage GenerateTrickWonIndicatorSource()
     {
-        return GenerateImageSource(
+        return UIHelpers.GenerateImageSource(
             "pack://application:,,,/Euchre;component/images/icons/trick won indicator.png");
     }
 
