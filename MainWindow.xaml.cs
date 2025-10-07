@@ -1,13 +1,9 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
-using Euchre.Logic.Interfaces;
 using Euchre.Windows;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Threading;
 
 namespace Euchre;
 

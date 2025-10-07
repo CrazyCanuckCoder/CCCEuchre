@@ -76,6 +76,7 @@
                     BorderThickness="1,0,1,1">
                     <WPFControls:LabelledProgressBarUserControl
                         x:Name="labelledProgressBarUserControlTeam1"
+                        Background="White"
                         MaximumValue="10"
                         MinimumValue="0"
                         ProgressBarColour="{x:Static logic:UIConstants.Team1Colour}" />
@@ -96,6 +97,7 @@
                     BorderThickness="1,0,1,1">
                     <WPFControls:LabelledProgressBarUserControl
                         x:Name="labelledProgressBarUserControlTeam2"
+                        Background="White"
                         MaximumValue="10"
                         MinimumValue="0"
                         ProgressBarColour="{x:Static logic:UIConstants.Team2Colour}" />

@@ -58,10 +58,9 @@
                 <Image
                     Grid.Row="1"
                     Grid.Column="0"
-                    Height="156"
                     Width="124"
-                    Source="{Binding TrumpImage.Source}" />
-
+                    Height="156"
+                    Source="{Binding TrumpImage.Source, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </Border>
     </Grid>
