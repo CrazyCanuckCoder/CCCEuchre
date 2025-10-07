@@ -80,18 +80,14 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
             //  current group of cards. 
 
             Suit previousSuit = Cards.First().Suit;
-            bool isTrump = Cards.First().IsTrump(_trumpSuit);
 
             // Load each card in order.
 
             for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
             {
                 string cardFilename = Cards[cardIndex].ToString()?.ToLower() + ".png";
-                BitmapImage source = new();
-                source.BeginInit();
-                source.UriSource =
-                    new Uri($"pack://application:,,,/Euchre;component/images/cards/{cardFilename}");
-                source.EndInit();
+                BitmapImage source = UIHelpers.GenerateImageSource(
+                    $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}");
 
                 // Determine the margin to use for the current card.
 
@@ -213,11 +209,8 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
                 }
                 string cardFilename = Cards[cardIndex].ToString()?.ToLower() +
                     (disableCard ? " disabled" : "") + ".png";
-                BitmapImage source = new();
-                source.BeginInit();
-                source.UriSource =
-                    new Uri($"pack://application:,,,/Euchre;component/images/cards/{cardFilename}");
-                source.EndInit();
+                BitmapImage source = UIHelpers.GenerateImageSource(
+                    $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}");
 
                 // Determine the margin to use for the current card.
 

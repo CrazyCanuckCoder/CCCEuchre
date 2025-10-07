@@ -34,7 +34,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 FontSize="16"
-                Text="Trump" />
+                Text="{Binding TitleText, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}" />
         </Border>
 
         <!--  Trump Display  -->

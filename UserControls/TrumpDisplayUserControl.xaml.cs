@@ -14,6 +14,7 @@ public partial class TrumpDisplayUserControl : UserControl
     public TrumpDisplayUserControl()
     {
         InitializeComponent();
+        TrumpImage = new Image();
     }
 
 
@@ -25,12 +26,40 @@ public partial class TrumpDisplayUserControl : UserControl
             new PropertyMetadata(null));
 
     /// <summary>
+    /// Using a DependencyProperty as the backing store for TitleText.
+    /// </summary>
+    public static readonly DependencyProperty TitleTextProperty =
+        DependencyProperty.Register(nameof(TitleText), typeof(string), typeof(TrumpDisplayUserControl),
+            new PropertyMetadata("Trump"));
+
+
+    /// <summary>
+    /// The text to display in the title label.
+    /// </summary>
+    public string TitleText
+    {
+        get => (string)GetValue(TitleTextProperty); 
+        set => SetValue(TitleTextProperty, value);
+    }
+
+    /// <summary>
     /// The image to display for trump.
     /// </summary>
     public Image TrumpImage
     {
         get => (Image)GetValue(TrumpImageProperty); 
         set => SetValue(TrumpImageProperty, value);
+    }
+
+    /// <summary>
+    /// Displays a specified card that represents the card on top of the kitty.
+    /// </summary>
+    /// <param name="kitty">The card on top of the kitty.</param>
+    public void SetKittyCard(Card kitty)
+    {
+        TrumpImage.Source = UIHelpers.GenerateImageSource(
+            $"pack://application:,,,/Euchre;component/images/cards/{kitty.ToString()?.ToLower()}.png");
+        TitleText = "Kitty";
     }
 
     /// <summary>
@@ -59,12 +88,13 @@ public partial class TrumpDisplayUserControl : UserControl
                 break;
         }
         TrumpImage.Source = UIHelpers.GenerateImageSource(uriSource + ".png");
+        TitleText = "Trump";
     }
 
     /// <summary>
     /// Clears the image that was displaying the current trump suit.
     /// </summary>
-    public void ClearTrump()
+    public void ClearImage()
     {
         TrumpImage.Source = null; 
     }

@@ -402,6 +402,35 @@ public class MainWindowViewModel : DependencyObject
         });
     }
 
+    public void SetKittyCard(Card kitty)
+    {
+        _mainWindow.Dispatcher.Invoke(() =>
+        {
+            _mainWindow.TrumpDisplayUserControl.SetKittyCard(kitty);
+        });
+    }
+
+    public void PlayerPassed(IPlayer player)
+    {
+        DisplayPlayerMessage(player, "Pass", 1, false);
+    }
+
+    public void KittyWasTurnedDown()
+    {
+        UpdateGameInformation("The kitty card was turned down.");
+        ClearPlayerMessages();
+    }
+
+    public void PlayerMadeTrump(IPlayer player, Suit? trump, bool isGoingAlone)
+    {
+        DisplayPlayerMessage(player, $"{trump!.Value} {(isGoingAlone ? " alone" : "")}", 1, false);
+        _mainWindow.Dispatcher.Invoke(() =>
+        {
+            _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(player, trump!.Value, isGoingAlone);
+        });
+        ClearPlayerMessages();
+    }
+
     /// <summary>
     /// Updates the collection that references each player's card display control and the collection that
     /// references each player's cards that are dealt to them.
@@ -428,6 +457,9 @@ public class MainWindowViewModel : DependencyObject
         _playerPlayedCardsDisplayControls.Add(3, _mainWindow.Player4PlayedCardsDisplayUserControl);
     }
 
+    /// <summary>
+    /// Displays the game board and hides the menus.
+    /// </summary>
     private void ShowGameBoard()
     {
         GameBoardVisibility = Visibility.Visible;
@@ -435,6 +467,10 @@ public class MainWindowViewModel : DependencyObject
         IconMenuVisibility = Visibility.Collapsed;
     }
 
+    /// <summary>
+    /// Adds the players names to the correct teams on the current round information user control.
+    /// </summary>
+    /// <param name="currentRoundInfoUserControl"></param>
     private void SetupCurrentRoundInfoControl(CurrentRoundInfoUserControl currentRoundInfoUserControl)
     {
         currentRoundInfoUserControl.Team1List.Add(CurrentGame!.GameInfo!.Players![0]);
@@ -443,6 +479,9 @@ public class MainWindowViewModel : DependencyObject
         currentRoundInfoUserControl.Team2List.Add(CurrentGame.GameInfo.Players[3]);
     }
 
+    /// <summary>
+    /// Sets each player's name and avatar on the main window.
+    /// </summary>
     private void SetupPlayerDisplayControls()
     {
         _mainWindow.Player1DisplayUserControl.SetActivePlayer(CurrentGame!.GameInfo!.Players![0],
@@ -519,6 +558,12 @@ public class MainWindowViewModel : DependencyObject
         });
     }
 
+    /// <summary>
+    /// Sets the visibility of the dealt and played cards for a specified player.
+    /// </summary>
+    /// <param name="playerIndex">The index of the player in the list of players.</param>
+    /// <param name="dealtVisibility">The visibility setting to use for the player's dealt cards.</param>
+    /// <param name="playedVisibility">The visibility setting to use for the player's played cards.</param>
     private void SetPlayerVisibility(int playerIndex, Visibility dealtVisibility, Visibility playedVisibility)
     {
         switch (playerIndex)
@@ -566,5 +611,66 @@ public class MainWindowViewModel : DependencyObject
                 _playerCardDisplayControls[indexOfPlayer].AddCards(numberOfCardsDealt);
 #endif
         }
+    }
+    /// <summary>
+    /// Displays a specified message in front of the player for a specified number of seconds.
+    /// </summary>
+    /// <param name="player">The player who displays the message.</param>
+    /// <param name="message">The text to display for the player.</param>
+    /// <param name="pauseLength">The number of seconds to pause after the message is displayed.</param>
+    /// <param name="hideText">True to hide the text after the message is displayed.</param>
+    private void DisplayPlayerMessage(IPlayer player, string message, int pauseLength, bool hideText)
+    {
+        _mainWindow.Dispatcher.Invoke(() =>
+        {
+            switch (player.PlayerIndex)
+            {
+                case 0:
+                    Player1Text = message;
+                    Player1TextVisibility = Visibility.Visible;
+                    PauseGame(pauseLength);
+                    if (hideText) Player1TextVisibility = Visibility.Collapsed;
+                    break;
+
+                case 1:
+                    Player2Text = message;
+                    Player2TextVisibility = Visibility.Visible;
+                    PauseGame(pauseLength);
+                    if (hideText) Player2TextVisibility = Visibility.Collapsed;
+                    break;
+
+                case 2:
+                    Player3Text = message;
+                    Player3TextVisibility = Visibility.Visible;
+                    PauseGame(pauseLength);
+                    if (hideText) Player3TextVisibility = Visibility.Collapsed;
+                    break;
+
+                case 3:
+                    Player4Text = message;
+                    Player4TextVisibility = Visibility.Visible;
+                    PauseGame(pauseLength);
+                    if (hideText) Player4TextVisibility = Visibility.Collapsed;
+                    break;
+            }
+        });
+    }
+
+    /// <summary>
+    /// Resets each player's message text to blank and hides the control.
+    /// </summary>
+    private void ClearPlayerMessages()
+    {
+        _mainWindow.Dispatcher.Invoke(() =>
+        {
+            Player1Text = string.Empty;
+            Player1TextVisibility = Visibility.Collapsed;
+            Player2Text = string.Empty;
+            Player2TextVisibility = Visibility.Collapsed;
+            Player3Text = string.Empty;
+            Player3TextVisibility = Visibility.Collapsed;
+            Player4Text = string.Empty;
+            Player4TextVisibility = Visibility.Collapsed;
+        });
     }
 }

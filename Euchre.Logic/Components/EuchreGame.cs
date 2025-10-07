@@ -80,6 +80,16 @@ public class EuchreGame
     public event EventHandler<CardsDealtToPlayerEventArgs>? CardsDealtToPlayer;
 
     /// <summary>
+    /// Fired to inform listeners of the card that appears on top of the kitty.
+    /// </summary>
+    public event EventHandler<DeclareKittyCardEventArgs>? DeclareKittyCard;
+
+    /// <summary>
+    /// Fired to inform listeners that the kitty card was not made trump.
+    /// </summary>
+    public event EventHandler<System.EventArgs>? KittyWasTurnedDown;
+
+    /// <summary>
     /// Fired when the player has played a card.
     /// </summary>
     public event EventHandler<CardPlayedByPlayerEventArgs>? CardPlayedByPlayer;
@@ -240,6 +250,7 @@ public class EuchreGame
         // Set turned up card.
 
         GameInfo.Kitty = GameInfo.Deck.Deal();
+        DeclareKittyCard?.Invoke(this, new DeclareKittyCardEventArgs(GameInfo.Kitty));
 
         // Record that dealing is done.
 
@@ -261,6 +272,8 @@ public class EuchreGame
             GameInfo.SaveGameData();
             return true;
         }
+
+        KittyWasTurnedDown?.Invoke(this, new System.EventArgs());
 
         // Second round – bid any other suit.
 

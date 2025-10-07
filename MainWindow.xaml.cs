@@ -60,6 +60,8 @@ public partial class MainWindow : Window
         ViewModel.CurrentGame!.CardPlayedByPlayer += CurrentGame_CardPlayedByPlayer;
         ViewModel.CurrentGame.CardsDealtToPlayer += CurrentGame_CardsDealtToPlayer;
         ViewModel.CurrentGame.DeclareDealer += CurrentGame_DeclareDealer;
+        ViewModel.CurrentGame.DeclareKittyCard += CurrentGame_DeclareKittyCard;
+        ViewModel.CurrentGame.KittyWasTurnedDown += CurrentGame_KittyWasTurnedDown;
         ViewModel.CurrentGame.DeclareRoundWinningPlayers += CurrentGame_DeclareRoundWinningPlayers;
         ViewModel.CurrentGame.DeclareTrickWinner += CurrentGame_DeclareTrickWinner;
         ViewModel.CurrentGame.GameOver += CurrentGame_GameOver;
@@ -107,8 +109,14 @@ public partial class MainWindow : Window
 
     private void CurrentGame_PlayerBidResult(object? sender, PlayerBidEventArgs e)
     {
-        // Set the BidInfo property of the CurrentRoundInfoUserControl.
-
+        if (!e.MadeTrump)
+        {
+            ViewModel.PlayerPassed(e.Player);
+        }
+        else
+        {
+            ViewModel.PlayerMadeTrump(e.Player, e.Trump, e.IsGoingAlone);
+        }
     }
 
     private void CurrentGame_GameOver(object? sender, GameOverEventArgs e)
@@ -133,6 +141,16 @@ public partial class MainWindow : Window
     private void CurrentGame_CardsDealtToPlayer(object? sender, CardsDealtToPlayerEventArgs e)
     {
         ViewModel.DealCardsToPlayer(e.Player.PlayerIndex, e.NumberOfCardsDealt);
+    }
+
+    private void CurrentGame_DeclareKittyCard(object? sender, DeclareKittyCardEventArgs e)
+    {
+        ViewModel.SetKittyCard(e.Kitty);
+    }
+
+    private void CurrentGame_KittyWasTurnedDown(object? sender, EventArgs e)
+    {
+        ViewModel.KittyWasTurnedDown();
     }
 
     private void CurrentGame_CardPlayedByPlayer(object? sender, CardPlayedByPlayerEventArgs e)
