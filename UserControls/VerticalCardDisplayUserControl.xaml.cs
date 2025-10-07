@@ -1,6 +1,7 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.Helpers;
 using Euchre.UILogic.Classes;
+using Euchre.UILogic.Interfaces;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,7 +12,7 @@ namespace Euchre.UserControls;
 /// <summary>
 /// Interaction logic for VerticalCardDisplayUserControl.xaml
 /// </summary>
-public partial class VerticalCardDisplayUserControl : UserControl
+public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisplay
 {
     public VerticalCardDisplayUserControl()
     {

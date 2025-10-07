@@ -6,6 +6,7 @@ using Euchre.UILogic;
 using Euchre.UILogic.Interfaces;
 using Euchre.UserControls;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Euchre;
 
@@ -43,12 +44,19 @@ public class MainWindowViewModel : ViewModelBase
     private Visibility _player3CardDisplayUserControlVisibility = Visibility.Visible;
     private Visibility _player4CardDisplayUserControlVisibility = Visibility.Visible;
 
-
+    /// <summary>
+    /// Tracks the player index value for the previous dealer.
+    /// </summary>
+    private int _previousDealerPlayerIndex = -1;
 
     /// <summary>
     /// Used for setting the visibility properties for each of the player cards user controls.
     /// </summary>
     private Action<Visibility>? _visibilitySetter;
+
+    /// <summary>
+    /// A reference to the main window.
+    /// </summary>
     private MainWindow _mainWindow;
 
 
@@ -398,12 +406,64 @@ public class MainWindowViewModel : ViewModelBase
     {
         _mainWindow = mainWindow;
         SetupCurrentRoundInfoControl(_mainWindow.CurrentRoundInfoUserControl);
+        InitializeCardDisplayControlCollection();
         ShowGameBoard();
         SetupPlayerDisplayControls();
     }
 
     public void DeclareDealer(IPlayer dealer)
     {
+        _mainWindow.Dispatcher.Invoke(() =>
+        {
+            SetPlayerDealerIconVisibility(dealer.PlayerIndex, true);
+            SetPlayerDealerIconVisibility(_previousDealerPlayerIndex, false);
+        });
+
+        _previousDealerPlayerIndex = dealer.PlayerIndex;
+
+        UpdateGameInformation($"{dealer.Name} is the dealer.");
+    }
+
+    public void DealCardsToPlayer(int indexOfPlayer, int numberOfCardsDealt)
+    {
+        _mainWindow.Dispatcher.Invoke(() =>
+        {
+            _playerDealtCardsDisplayControls[indexOfPlayer].DisplayCards(numberOfCardsDealt);
+            SetPlayerVisibility(indexOfPlayer, Visibility.Visible, Visibility.Collapsed);
+
+            PauseGame(2);
+
+            SetPlayerVisibility(indexOfPlayer, Visibility.Collapsed, Visibility.Collapsed);
+            _playerDealtCardsDisplayControls[indexOfPlayer].ClearCards();
+
+            UpdatePlayersHandAfterDeal(indexOfPlayer, numberOfCardsDealt);
+        });
+    }
+
+    /// <summary>
+    /// Updates the collection that references each player's card display control and the collection that
+    /// references each player's cards that are dealt to them.
+    /// </summary>
+    private void InitializeCardDisplayControlCollection()
+    {
+        _playerCardDisplayControls.Add(0, _mainWindow.Player1CardDisplayUserControl);
+        _playerCardDisplayControls.Add(1, _mainWindow.Player2CardDisplayUserControl);
+        _playerCardDisplayControls.Add(2, _mainWindow.Player3CardDisplayUserControl);
+        _playerCardDisplayControls.Add(3, _mainWindow.Player4CardDisplayUserControl);
+
+        _playerCardDisplayControlsVisibility.Add(1, c => Player2CardDisplayUserControlVisibility = c);
+        _playerCardDisplayControlsVisibility.Add(2, c => Player3CardDisplayUserControlVisibility = c);
+        _playerCardDisplayControlsVisibility.Add(3, c => Player4CardDisplayUserControlVisibility = c);
+
+        _playerDealtCardsDisplayControls.Add(0, _mainWindow.Player1DealtCardsDisplayUserControl);
+        _playerDealtCardsDisplayControls.Add(1, _mainWindow.Player2DealtCardsDisplayUserControl);
+        _playerDealtCardsDisplayControls.Add(2, _mainWindow.Player3DealtCardsDisplayUserControl);
+        _playerDealtCardsDisplayControls.Add(3, _mainWindow.Player4DealtCardsDisplayUserControl);
+
+        _playerPlayedCardsDisplayControls.Add(0, _mainWindow.Player1PlayedCardsDisplayUserControl);
+        _playerPlayedCardsDisplayControls.Add(1, _mainWindow.Player2PlayedCardsDisplayUserControl);
+        _playerPlayedCardsDisplayControls.Add(2, _mainWindow.Player3PlayedCardsDisplayUserControl);
+        _playerPlayedCardsDisplayControls.Add(3, _mainWindow.Player4PlayedCardsDisplayUserControl);
     }
 
     private void ShowGameBoard()
@@ -431,5 +491,115 @@ public class MainWindowViewModel : ViewModelBase
             CurrentGame.GameInfo.Players[2].AvatarNumber);
         _mainWindow.Player4DisplayUserControl.SetActivePlayer(CurrentGame.GameInfo.Players[3],
             CurrentGame.GameInfo.Players[3].AvatarNumber);
+    }
+
+    /// <summary>
+    /// Hides or shows the dealer icon for a specified player.
+    /// </summary>
+    /// <param name="playerIndex">The index of the player.</param>
+    /// <param name="isVisible">True to show the icon and false to hide it.</param>
+    private void SetPlayerDealerIconVisibility(int playerIndex, bool isVisible)
+    {
+        switch (playerIndex)
+        {
+            case 0:
+                _mainWindow.Player1DisplayUserControl.SetDealerIconVisibility(isVisible);
+                break;
+
+            case 1:
+                _mainWindow.Player2DisplayUserControl.SetDealerIconVisibility(isVisible);
+                break;
+
+            case 2:
+                _mainWindow.Player3DisplayUserControl.SetDealerIconVisibility(isVisible);
+                break;
+
+            case 3:
+                _mainWindow.Player4DisplayUserControl.SetDealerIconVisibility(isVisible);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Pauses the game for a specified number of seconds to update the UI.
+    /// </summary>
+    /// <param name="numSeconds">The number of seconds to pause.</param>
+    private static void PauseGame(int numSeconds)
+    {
+        var waitTime = TimeSpan.FromSeconds(numSeconds);
+        DateTime start = DateTime.Now;
+
+        while (DateTime.Now - start <= waitTime)
+        {
+            UIHelpers.AllowUIToUpdate();
+        }
+    }
+
+    /// <summary>
+    /// Displays a string in the middle of the game board.
+    /// </summary>
+    /// <param name="message">The text to display on the game board.</param>
+    private void UpdateGameInformation(string message)
+    {
+        GameInformation = message;
+        GameInformationVisibility = Visibility.Visible;
+
+        // Wait for two seconds.
+
+        PauseGame(2);
+
+        // Hide the text.
+
+        GameInformation = string.Empty;
+        GameInformationVisibility = Visibility.Hidden;
+    }
+
+    private void SetPlayerVisibility(int playerIndex, Visibility dealtVisibility, Visibility playedVisibility)
+    {
+        switch (playerIndex)
+        {
+            case 0:
+                Player1DealtCardsDisplayUserControlVisibility = dealtVisibility;
+                Player1PlayedCardsDisplayUserControlVisibility = playedVisibility;
+                break;
+            case 1:
+                Player2DealtCardsDisplayUserControlVisibility = dealtVisibility;
+                Player2PlayedCardsDisplayUserControlVisibility = playedVisibility;
+                break;
+            case 2:
+                Player3DealtCardsDisplayUserControlVisibility = dealtVisibility;
+                Player3PlayedCardsDisplayUserControlVisibility = playedVisibility;
+                break;
+            case 3:
+                Player4DealtCardsDisplayUserControlVisibility = dealtVisibility;
+                Player4PlayedCardsDisplayUserControlVisibility = playedVisibility;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Displays the cards that have been dealt to a specified player.
+    /// </summary>
+    /// <param name="indexOfPlayer">The index of the player from the GameManager's Players list.</param>
+    /// <param name="numberOfCardsDealt">The number of cards dealt to an automated player.</param>
+    private void UpdatePlayersHandAfterDeal(int indexOfPlayer, int numberOfCardsDealt)
+    {
+        if (CurrentGame!.GameInfo!.Players![indexOfPlayer] is HumanPlayer humanPlayer)
+        {
+            var sortedCards = humanPlayer.Hand.Sort(trump: null);
+            _playerCardDisplayControls[indexOfPlayer].SetupCards(sortedCards);
+        }
+        else
+        {
+#if DEBUG
+            if (CurrentGame.GameInfo.Players[indexOfPlayer] is AutomatedPlayer automatedPlayer)
+            {
+                var sortedCards = automatedPlayer.Hand.Sort(trump: null);
+                _playerCardDisplayControls[indexOfPlayer].SetupCards(sortedCards);
+            }
+#else
+                _playerCardDisplayControls[indexOfPlayer].AddCards(numberOfCardsDealt);
+#endif
+        }
     }
 }

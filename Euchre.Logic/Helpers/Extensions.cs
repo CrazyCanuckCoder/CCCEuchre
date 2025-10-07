@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic.Components;
+using System.Collections.Generic;
 
 namespace Euchre.Logic.Helpers;
 
@@ -29,8 +30,94 @@ public static class Extensions
         return CardFinder.HasTrump(cards, trumpSuit);
     }
 
+    /// <summary>
+    /// Returns true to indicate a specified card is trump.
+    /// </summary>
+    /// <param name="card">The card to test if it is a trump card.</param>
+    /// <param name="trumpSuit">The suit considered trump.</param>
+    /// <returns>True if the card is a trump card and false if it is not.</returns>
     public static bool IsTrump(this Card card, Suit trumpSuit)
     {
         return card.EffectiveSuit(trumpSuit) == trumpSuit;
+    }
+
+    public static List<Card> Sort(this List<Card> cards, Suit? trump)
+    {
+        List<Card> sortedCards = [];
+
+        var suitOrder = GetComplementarySuits(trump);
+
+        foreach (Suit suit in suitOrder)
+        {
+            if (trump.HasValue && suit == trump)
+            {
+                sortedCards.AddRange(    from card in cards
+                                        where card.Suit == suit
+                                      orderby card.GetTrickValue(trump.Value, suit)
+                                       select card);
+            }
+            else
+            {
+                sortedCards.AddRange(   from card in cards
+                                       where card.Suit == suit
+                                     orderby card.Rank
+                                      select card);
+            }
+        }
+
+        return sortedCards;
+    }
+
+    /// <summary>
+    /// Based on a trump suit, determines the sorting order of the rest of the suits.
+    /// </summary>
+    /// <param name="trumpSuit">The current trump suit.</param>
+    /// <returns>A list of SuitTypes in an order that alternates the suit colour compared to the trump suit.</returns>
+    private static List<Suit> GetComplementarySuits(Suit? trumpSuit)
+    {
+        List<Suit> suitTypes = [];
+
+        if (trumpSuit == null)
+        {
+            suitTypes.Add(Suit.Clubs);
+            suitTypes.Add(Suit.Hearts);
+            suitTypes.Add(Suit.Spades);
+            suitTypes.Add(Suit.Diamonds);
+        }
+        else
+        {
+            // Start with the trump suit then add the rest of the suits.
+
+            suitTypes.Add(trumpSuit.Value);
+
+            switch (trumpSuit)
+            {
+                case Suit.Clubs:
+                    suitTypes.Add(Suit.Hearts);
+                    suitTypes.Add(Suit.Spades);
+                    suitTypes.Add(Suit.Diamonds);
+                    break;
+
+                case Suit.Hearts:
+                    suitTypes.Add(Suit.Spades);
+                    suitTypes.Add(Suit.Diamonds);
+                    suitTypes.Add(Suit.Clubs);
+                    break;
+
+                case Suit.Spades:
+                    suitTypes.Add(Suit.Hearts);
+                    suitTypes.Add(Suit.Clubs);
+                    suitTypes.Add(Suit.Diamonds);
+                    break;
+
+                case Suit.Diamonds:
+                    suitTypes.Add(Suit.Clubs);
+                    suitTypes.Add(Suit.Hearts);
+                    suitTypes.Add(Suit.Spades);
+                    break;
+            }
+        }
+
+        return suitTypes;
     }
 }

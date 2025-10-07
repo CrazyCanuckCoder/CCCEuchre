@@ -537,12 +537,12 @@
                         Background="White"
                         BorderBrush="Black"
                         BorderThickness="1"
-                        Visibility="{Binding GameInformationVisibility}">
+                        Visibility="{Binding GameInformationVisibility, UpdateSourceTrigger=PropertyChanged}">
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="14"
-                            Text="{Binding GameInformation}"
+                            Text="{Binding GameInformation, UpdateSourceTrigger=PropertyChanged}"
                             TextAlignment="Center"
                             TextWrapping="Wrap" />
                     </Border>

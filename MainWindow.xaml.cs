@@ -22,10 +22,6 @@ public partial class MainWindow : Window
         DataContext = ViewModel;
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
     }
-    /// <summary>
-    /// Tracks the player index value for the previous dealer.
-    /// </summary>
-    private int _previousDealerPlayerIndex = -1;
 
     /// <summary>
     /// The view model class to use to manage the data properties.
@@ -107,67 +103,6 @@ public partial class MainWindow : Window
         return null;
     }
 
-    /// <summary>
-    /// Hides or shows the dealer icon for a specified player.
-    /// </summary>
-    /// <param name="playerIndex">The index of the player.</param>
-    /// <param name="isVisible">True to show the icon and false to hide it.</param>
-    private void SetPlayerDealerIconVisibility(int playerIndex, bool isVisible)
-    {
-        switch (playerIndex)
-        {
-            case 0:
-                Player1DisplayUserControl.SetDealerIconVisibility(isVisible);
-                break;
-
-            case 1:
-                Player2DisplayUserControl.SetDealerIconVisibility(isVisible);
-                break;
-
-            case 2:
-                Player3DisplayUserControl.SetDealerIconVisibility(isVisible);
-                break;
-
-            case 3:
-                Player4DisplayUserControl.SetDealerIconVisibility(isVisible);
-                break;
-        }
-    }
-
-    /// <summary>
-    /// Pauses the game for a specified number of seconds to update the UI.
-    /// </summary>
-    /// <param name="numSeconds">The number of seconds to pause.</param>
-    private static void PauseGame(int numSeconds)
-    {
-        var waitTime = TimeSpan.FromSeconds(numSeconds);
-        DateTime start = DateTime.Now;
-
-        while (DateTime.Now - start <= waitTime)
-        {
-            UIHelpers.AllowUIToUpdate();
-        }
-    }
-
-    /// <summary>
-    /// Displays a string in the middle of the game board.
-    /// </summary>
-    /// <param name="message">The text to display on the game board.</param>
-    private void UpdateGameInformation(string message)
-    {
-        ViewModel.GameInformation = message;
-        ViewModel.GameInformationVisibility = Visibility.Visible;
-
-        // Wait for two seconds.
-
-        PauseGame(2);
-
-        // Hide the text.
-
-        ViewModel.GameInformation = string.Empty;
-        ViewModel.GameInformationVisibility = Visibility.Hidden;
-    }
-
 
     #region EventHandlers
 
@@ -204,19 +139,12 @@ public partial class MainWindow : Window
 
     private void CurrentGame_DeclareDealer(object? sender, DeclareDealerEventArgs e)
     {
-        Dispatcher.Invoke(() =>
-        {
-            SetPlayerDealerIconVisibility(e.Dealer.PlayerIndex, true);
-            SetPlayerDealerIconVisibility(_previousDealerPlayerIndex, false);
-        });
-
-        _previousDealerPlayerIndex = e.Dealer.PlayerIndex;
-
-        UpdateGameInformation($"{e.Dealer.Name} is the dealer.");
+        ViewModel.DeclareDealer(e.Dealer);
     }
 
     private void CurrentGame_CardsDealtToPlayer(object? sender, CardsDealtToPlayerEventArgs e)
     {
+        ViewModel.DealCardsToPlayer(e.Player.PlayerIndex, e.NumberOfCardsDealt);
     }
 
     private void CurrentGame_CardPlayedByPlayer(object? sender, CardPlayedByPlayerEventArgs e)

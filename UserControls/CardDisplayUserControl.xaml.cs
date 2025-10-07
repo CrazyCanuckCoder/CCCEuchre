@@ -3,6 +3,7 @@ using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
 using Euchre.UILogic;
 using Euchre.UILogic.Classes;
+using Euchre.UILogic.Interfaces;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,7 +15,7 @@ namespace Euchre.UserControls;
 /// <summary>
 /// Interaction logic for CardDisplayUserControl.xaml
 /// </summary>
-public partial class CardDisplayUserControl : UserControl
+public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
 {
     public CardDisplayUserControl()
     {
@@ -57,7 +58,16 @@ public partial class CardDisplayUserControl : UserControl
     /// <summary>
     /// Displays a provided list of cards on the control.
     /// </summary>
-    /// <param name="cards">The list of IPlayerCards to display on the control.</param>
+    /// <param name="cards">The list of Cards to display on the control.</param>
+    public void SetupCards(List<Card> cards)
+    {
+        SetupCards(cards, Suit.Clubs);
+    }
+
+    /// <summary>
+    /// Displays a provided list of cards on the control.
+    /// </summary>
+    /// <param name="cards">The list of Cards to display on the control.</param>
     /// <param name="trumpSuit">The current suit for trump.</param>
     public void SetupCards(List<Card> cards, Suit trumpSuit)
     {
@@ -67,7 +77,7 @@ public partial class CardDisplayUserControl : UserControl
     /// <summary>
     /// Displays a provided list of cards on the control.
     /// </summary>
-    /// <param name="cards">The list of IPlayerCards to display on the control.</param>
+    /// <param name="cards">The list of Cards to display on the control.</param>
     /// <param name="disabledSuits">A list of the suits that should be disabled on the control.</param>
     /// <param name="allowSelection">True to indicate the user can select a card; false by default.</param>
     public void SetupCards(List<Card> cards, Suit? trickSuit, bool trickSuitIsTrump,
@@ -79,7 +89,7 @@ public partial class CardDisplayUserControl : UserControl
     /// <summary>
     /// Displays a provided list of cards on the control.
     /// </summary>
-    /// <param name="cards">The list of IPlayerCards to display on the control.</param>
+    /// <param name="cards">The list of Cards to display on the control.</param>
     /// <param name="disabledSuits">A list of the suits that should be disabled on the control.</param>
     /// <param name="allowSelection">True to indicate the user can select a card; false by default.</param>
     public void SetupCards(List<Card> cards, Suit? trickSuit, bool trickSuitIsTrump,
