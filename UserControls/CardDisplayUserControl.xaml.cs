@@ -61,7 +61,69 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
     /// <param name="cards">The list of Cards to display on the control.</param>
     public void SetupCards(List<Card> cards)
     {
-        SetupCards(cards, Suit.Clubs);
+        ClearCards();
+
+        // Get the cards that have not been played.
+
+        Cards = (  from currentCard in cards
+                  where !currentCard.IsPlayed
+                 select currentCard)
+                .ToList();
+
+        // Create a different Margin value for a card that separates the group.
+
+        Thickness inGroupMargin = new(-25, 0, 0, 0);
+
+        if (Cards.Count > 0)
+        {
+            // Group the cards by suit. Setup up a previous suit to see if the current card belongs in the
+            //  current group of cards. 
+
+            Suit previousSuit = Cards.First().Suit;
+            bool isTrump = Cards.First().IsTrump(_trumpSuit);
+
+            // Load each card in order.
+
+            for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
+            {
+                string cardFilename = Cards[cardIndex].ToString()?.ToLower() + ".png";
+                BitmapImage source = new();
+                source.BeginInit();
+                source.UriSource =
+                    new Uri($"pack://application:,,,/Euchre;component/images/cards/{cardFilename}");
+                source.EndInit();
+
+                // Determine the margin to use for the current card.
+
+                Thickness cardMargin = new(0);
+                if (cardIndex > 0)
+                {
+                    if (Cards[cardIndex].Suit == previousSuit)
+                    {
+                        cardMargin = inGroupMargin;
+                    }
+                }
+
+                // Add the image to the collection of images and set its visibility.
+
+                CardImages.Add(new CardDisplay()
+                {
+                    ImageData = new Image()
+                    {
+                        Source = source
+                    },
+                    CardVisibility = Visibility.Collapsed,
+                    ImageVisibility = Visibility.Visible,
+                    Card = Cards[cardIndex],
+                    CardMargin = cardMargin,
+                    IsEnabled = true
+                });
+
+                // Reset the suit and trump tracker variables.
+
+                previousSuit = Cards[cardIndex].Suit;
+            }
+        }
     }
 
     /// <summary>
@@ -98,8 +160,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
         ClearCards();
         _trumpSuit = trumpSuit;
 
-        // Get the cards that have not been played.  Also, don't include the card that is used to call the
-        //  unknown Ace.
+        // Get the cards that have not been played.
 
         Cards = (  from currentCard in cards
                   where !currentCard.IsPlayed

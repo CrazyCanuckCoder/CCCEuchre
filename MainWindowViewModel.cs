@@ -27,7 +27,6 @@ public class MainWindowViewModel : DependencyObject
     /// </summary>
     private MainWindow _mainWindow;
 
-
     /// <summary>
     /// Tracks a cards display control to a player.
     /// </summary>
@@ -44,11 +43,6 @@ public class MainWindowViewModel : DependencyObject
     private readonly Dictionary<int, IBaseCardDisplay> _playerPlayedCardsDisplayControls = [];
 
     /// <summary>
-    /// Tracks the cards display control for unknown partner card.
-    /// </summary>
-    private readonly Dictionary<int, IBaseCardDisplay> _playerUnknownCardDisplayControls = [];
-
-    /// <summary>
     /// Tracks the visibility of the regular cards display controls.
     /// </summary>
     private readonly Dictionary<int, Action<Visibility>> _playerCardDisplayControlsVisibility = [];
@@ -57,87 +51,117 @@ public class MainWindowViewModel : DependencyObject
 
     #region Properties
 
-    // Dependency Properties
+    #region Dependency Properties
+
     public static readonly DependencyProperty Player3CardDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player3CardDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
+        DependencyProperty.Register(nameof(Player3CardDisplayUserControlVisibility), typeof(Visibility), 
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
 
     public static readonly DependencyProperty Player4CardDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player4CardDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
+        DependencyProperty.Register(nameof(Player4CardDisplayUserControlVisibility), typeof(Visibility), 
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
 
     public static readonly DependencyProperty Player1DealtCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player1DealtCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(Player1DealtCardsDisplayUserControlVisibility), 
+            typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player2DealtCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player2DealtCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(Player2DealtCardsDisplayUserControlVisibility), 
+            typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player3DealtCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player3DealtCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(Player3DealtCardsDisplayUserControlVisibility), 
+            typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player4DealtCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player4DealtCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(Player4DealtCardsDisplayUserControlVisibility), 
+            typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player1PlayedCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player1PlayedCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(Player1PlayedCardsDisplayUserControlVisibility), 
+            typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player2PlayedCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player2PlayedCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(Player2PlayedCardsDisplayUserControlVisibility), 
+            typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player3PlayedCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player3PlayedCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(Player3PlayedCardsDisplayUserControlVisibility), 
+            typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player4PlayedCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player4PlayedCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(Player4PlayedCardsDisplayUserControlVisibility), 
+            typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty GameBoardVisibilityProperty =
-        DependencyProperty.Register(nameof(GameBoardVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(GameBoardVisibility), typeof(Visibility), 
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty GameInformationProperty =
-        DependencyProperty.Register(nameof(GameInformation), typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+        DependencyProperty.Register(nameof(GameInformation), typeof(string), typeof(MainWindowViewModel), 
+            new PropertyMetadata(string.Empty));
 
     public static readonly DependencyProperty GameInformationVisibilityProperty =
-        DependencyProperty.Register(nameof(GameInformationVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(GameInformationVisibility), typeof(Visibility), 
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player1TextVisibilityProperty =
-        DependencyProperty.Register(nameof(Player1TextVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(Player1TextVisibility), typeof(Visibility), 
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player2TextVisibilityProperty =
-        DependencyProperty.Register(nameof(Player2TextVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(Player2TextVisibility), typeof(Visibility), 
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player3TextVisibilityProperty =
-        DependencyProperty.Register(nameof(Player3TextVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(Player3TextVisibility), typeof(Visibility), 
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player4TextVisibilityProperty =
-        DependencyProperty.Register(nameof(Player4TextVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(Player4TextVisibility), typeof(Visibility), 
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player1TextProperty =
-        DependencyProperty.Register(nameof(Player1Text), typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+        DependencyProperty.Register(nameof(Player1Text), typeof(string), typeof(MainWindowViewModel), 
+            new PropertyMetadata(string.Empty));
 
     public static readonly DependencyProperty Player2TextProperty =
-        DependencyProperty.Register(nameof(Player2Text), typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+        DependencyProperty.Register(nameof(Player2Text), typeof(string), typeof(MainWindowViewModel), 
+            new PropertyMetadata(string.Empty));
 
     public static readonly DependencyProperty Player3TextProperty =
-        DependencyProperty.Register(nameof(Player3Text), typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+        DependencyProperty.Register(nameof(Player3Text), typeof(string), typeof(MainWindowViewModel), 
+            new PropertyMetadata(string.Empty));
 
     public static readonly DependencyProperty Player4TextProperty =
-        DependencyProperty.Register(nameof(Player4Text), typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+        DependencyProperty.Register(nameof(Player4Text), typeof(string), typeof(MainWindowViewModel), 
+            new PropertyMetadata(string.Empty));
 
     public static readonly DependencyProperty Player1CardDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player1CardDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
+        DependencyProperty.Register(nameof(Player1CardDisplayUserControlVisibility), typeof(Visibility), 
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
 
     public static readonly DependencyProperty Player2CardDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player2CardDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
+        DependencyProperty.Register(nameof(Player2CardDisplayUserControlVisibility), typeof(Visibility), 
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
 
     public static readonly DependencyProperty ContinueMenuEnabledProperty =
-        DependencyProperty.Register(nameof(ContinueMenuEnabled), typeof(bool), typeof(MainWindowViewModel), new PropertyMetadata(false));
+        DependencyProperty.Register(nameof(ContinueMenuEnabled), typeof(bool), typeof(MainWindowViewModel), 
+            new PropertyMetadata(false));
 
     public static readonly DependencyProperty StandardMenuVisibilityProperty =
-        DependencyProperty.Register(nameof(StandardMenuVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
+        DependencyProperty.Register(nameof(StandardMenuVisibility), typeof(Visibility), 
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
 
     public static readonly DependencyProperty IconMenuVisibilityProperty =
-        DependencyProperty.Register(nameof(IconMenuVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(IconMenuVisibility), typeof(Visibility), 
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty PlayLastCardInHandProperty =
-        DependencyProperty.Register(nameof(PlayLastCardInHand), typeof(bool), typeof(MainWindowViewModel), new PropertyMetadata(false));
+        DependencyProperty.Register(nameof(PlayLastCardInHand), typeof(bool), typeof(MainWindowViewModel), 
+            new PropertyMetadata(false));
+
+    #endregion Dependency Properties
 
     // Properties
     public Visibility Player3CardDisplayUserControlVisibility
@@ -369,7 +393,7 @@ public class MainWindowViewModel : DependencyObject
             _playerDealtCardsDisplayControls[indexOfPlayer].DisplayCards(numberOfCardsDealt);
             SetPlayerVisibility(indexOfPlayer, Visibility.Visible, Visibility.Collapsed);
 
-            PauseGame(2);
+            PauseGame(1);
 
             SetPlayerVisibility(indexOfPlayer, Visibility.Collapsed, Visibility.Collapsed);
             _playerDealtCardsDisplayControls[indexOfPlayer].ClearCards();
@@ -483,16 +507,13 @@ public class MainWindowViewModel : DependencyObject
         {
             GameInformation = message;
             GameInformationVisibility = Visibility.Visible;
-        });
 
-        // Wait for two seconds.
+            // Wait for two seconds.
 
-        PauseGame(2);
+            PauseGame(2);
 
-        // Hide the text.
+            // Hide the text.
 
-        _mainWindow.Dispatcher.Invoke(() =>
-        {
             GameInformation = string.Empty;
             GameInformationVisibility = Visibility.Hidden;
         });

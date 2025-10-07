@@ -53,14 +53,14 @@ public static class Extensions
             {
                 sortedCards.AddRange(    from card in cards
                                         where card.Suit == suit
-                                      orderby card.GetTrickValue(trump.Value, suit)
+                                      orderby card.GetTrickValue(trump.Value, suit) descending
                                        select card);
             }
             else
             {
                 sortedCards.AddRange(   from card in cards
                                        where card.Suit == suit
-                                     orderby card.Rank
+                                     orderby card.Rank descending
                                       select card);
             }
         }
