@@ -1,6 +1,8 @@
 ﻿using CrazyCanuckCoder.Library.WPF;
 using Euchre.Logic.Components;
 using Euchre.Logic.Helpers;
+using Euchre.Logic.Interfaces;
+using Euchre.UILogic;
 using Euchre.UILogic.Interfaces;
 using Euchre.UserControls;
 using System.Windows;
@@ -44,14 +46,10 @@ public class MainWindowViewModel : ViewModelBase
 
 
     /// <summary>
-    /// Tracks the player index value for the previous dealer.
-    /// </summary>
-    private int _previousDealerPlayerIndex = -1;
-
-    /// <summary>
     /// Used for setting the visibility properties for each of the player cards user controls.
     /// </summary>
     private Action<Visibility>? _visibilitySetter;
+    private MainWindow _mainWindow;
 
 
     /// <summary>
@@ -398,9 +396,14 @@ public class MainWindowViewModel : ViewModelBase
     /// <param name="mainWindow">A reference to the main window to update.</param>
     public void SetupUserInterface(MainWindow mainWindow)
     {
-        SetupCurrentRoundInfoControl(mainWindow.CurrentRoundInfoUserControl);
+        _mainWindow = mainWindow;
+        SetupCurrentRoundInfoControl(_mainWindow.CurrentRoundInfoUserControl);
         ShowGameBoard();
-        SetupPlayerDisplayControls(mainWindow);
+        SetupPlayerDisplayControls();
+    }
+
+    public void DeclareDealer(IPlayer dealer)
+    {
     }
 
     private void ShowGameBoard()
@@ -418,15 +421,15 @@ public class MainWindowViewModel : ViewModelBase
         currentRoundInfoUserControl.Team2List.Add(CurrentGame.GameInfo.Players[3]);
     }
 
-    private void SetupPlayerDisplayControls(MainWindow mainWindow)
+    private void SetupPlayerDisplayControls()
     {
-        mainWindow.Player1DisplayUserControl.SetActivePlayer(CurrentGame!.GameInfo!.Players![0],
+        _mainWindow.Player1DisplayUserControl.SetActivePlayer(CurrentGame!.GameInfo!.Players![0],
             CurrentGame.GameInfo.Players[0].AvatarNumber);
-        mainWindow.Player2DisplayUserControl.SetActivePlayer(CurrentGame.GameInfo.Players[1],
+        _mainWindow.Player2DisplayUserControl.SetActivePlayer(CurrentGame.GameInfo.Players[1],
             CurrentGame.GameInfo.Players[1].AvatarNumber);
-        mainWindow.Player3DisplayUserControl.SetActivePlayer(CurrentGame.GameInfo.Players[2],
+        _mainWindow.Player3DisplayUserControl.SetActivePlayer(CurrentGame.GameInfo.Players[2],
             CurrentGame.GameInfo.Players[2].AvatarNumber);
-        mainWindow.Player4DisplayUserControl.SetActivePlayer(CurrentGame.GameInfo.Players[3],
+        _mainWindow.Player4DisplayUserControl.SetActivePlayer(CurrentGame.GameInfo.Players[3],
             CurrentGame.GameInfo.Players[3].AvatarNumber);
     }
 }
