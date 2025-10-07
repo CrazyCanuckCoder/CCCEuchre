@@ -1,48 +1,16 @@
-﻿using CrazyCanuckCoder.Library.WPF;
-using Euchre.Logic.Components;
+﻿using Euchre.Logic.Components;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Interfaces;
 using Euchre.UserControls;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace Euchre;
 
-public class MainWindowViewModel : ViewModelBase
+public class MainWindowViewModel : DependencyObject
 {
     #region Fields
-
-    // The fields used for the properties.
-
-    private bool _continueMenuEnabled;
-    private bool _playLastCardInHand;
-    private Visibility _gameBoardVisibility = Visibility.Collapsed;
-    private Visibility _iconMenuVisibility = Visibility.Collapsed;
-    private Visibility _standardMenuVisibility = Visibility.Visible;
-    private Visibility _player1DealtCardsDisplayUserControlVisibility = Visibility.Collapsed;
-    private Visibility _player2DealtCardsDisplayUserControlVisibility = Visibility.Collapsed;
-    private Visibility _player3DealtCardsDisplayUserControlVisibility = Visibility.Collapsed;
-    private Visibility _player4DealtCardsDisplayUserControlVisibility = Visibility.Collapsed;
-    private Visibility _player1PlayedCardsDisplayUserControlVisibility = Visibility.Collapsed;
-    private Visibility _player2PlayedCardsDisplayUserControlVisibility = Visibility.Collapsed;
-    private Visibility _player3PlayedCardsDisplayUserControlVisibility = Visibility.Collapsed;
-    private Visibility _player4PlayedCardsDisplayUserControlVisibility = Visibility.Collapsed;
-    private string _gameInformation = string.Empty;
-    private Visibility _gameInformationVisibility = Visibility.Collapsed;
-    private Visibility _player1TextVisibility = Visibility.Collapsed;
-    private Visibility _player2TextVisibility = Visibility.Collapsed;
-    private Visibility _player3TextVisibility = Visibility.Collapsed;
-    private Visibility _player4TextVisibility = Visibility.Collapsed;
-    private string _player4Text = string.Empty;
-    private string _player3Text = string.Empty;
-    private string _player2Text = string.Empty;
-    private string _player1Text = string.Empty;
-    private Visibility _player1CardDisplayUserControlVisibility = Visibility.Visible;
-    private Visibility _player2CardDisplayUserControlVisibility = Visibility.Visible;
-    private Visibility _player3CardDisplayUserControlVisibility = Visibility.Visible;
-    private Visibility _player4CardDisplayUserControlVisibility = Visibility.Visible;
 
     /// <summary>
     /// Tracks the player index value for the previous dealer.
@@ -89,239 +57,225 @@ public class MainWindowViewModel : ViewModelBase
 
     #region Properties
 
+    // Dependency Properties
+    public static readonly DependencyProperty Player3CardDisplayUserControlVisibilityProperty =
+        DependencyProperty.Register(nameof(Player3CardDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
+
+    public static readonly DependencyProperty Player4CardDisplayUserControlVisibilityProperty =
+        DependencyProperty.Register(nameof(Player4CardDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
+
+    public static readonly DependencyProperty Player1DealtCardsDisplayUserControlVisibilityProperty =
+        DependencyProperty.Register(nameof(Player1DealtCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty Player2DealtCardsDisplayUserControlVisibilityProperty =
+        DependencyProperty.Register(nameof(Player2DealtCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty Player3DealtCardsDisplayUserControlVisibilityProperty =
+        DependencyProperty.Register(nameof(Player3DealtCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty Player4DealtCardsDisplayUserControlVisibilityProperty =
+        DependencyProperty.Register(nameof(Player4DealtCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty Player1PlayedCardsDisplayUserControlVisibilityProperty =
+        DependencyProperty.Register(nameof(Player1PlayedCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty Player2PlayedCardsDisplayUserControlVisibilityProperty =
+        DependencyProperty.Register(nameof(Player2PlayedCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty Player3PlayedCardsDisplayUserControlVisibilityProperty =
+        DependencyProperty.Register(nameof(Player3PlayedCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty Player4PlayedCardsDisplayUserControlVisibilityProperty =
+        DependencyProperty.Register(nameof(Player4PlayedCardsDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty GameBoardVisibilityProperty =
+        DependencyProperty.Register(nameof(GameBoardVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty GameInformationProperty =
+        DependencyProperty.Register(nameof(GameInformation), typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+
+    public static readonly DependencyProperty GameInformationVisibilityProperty =
+        DependencyProperty.Register(nameof(GameInformationVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty Player1TextVisibilityProperty =
+        DependencyProperty.Register(nameof(Player1TextVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty Player2TextVisibilityProperty =
+        DependencyProperty.Register(nameof(Player2TextVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty Player3TextVisibilityProperty =
+        DependencyProperty.Register(nameof(Player3TextVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty Player4TextVisibilityProperty =
+        DependencyProperty.Register(nameof(Player4TextVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty Player1TextProperty =
+        DependencyProperty.Register(nameof(Player1Text), typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+
+    public static readonly DependencyProperty Player2TextProperty =
+        DependencyProperty.Register(nameof(Player2Text), typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+
+    public static readonly DependencyProperty Player3TextProperty =
+        DependencyProperty.Register(nameof(Player3Text), typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+
+    public static readonly DependencyProperty Player4TextProperty =
+        DependencyProperty.Register(nameof(Player4Text), typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+
+    public static readonly DependencyProperty Player1CardDisplayUserControlVisibilityProperty =
+        DependencyProperty.Register(nameof(Player1CardDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
+
+    public static readonly DependencyProperty Player2CardDisplayUserControlVisibilityProperty =
+        DependencyProperty.Register(nameof(Player2CardDisplayUserControlVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
+
+    public static readonly DependencyProperty ContinueMenuEnabledProperty =
+        DependencyProperty.Register(nameof(ContinueMenuEnabled), typeof(bool), typeof(MainWindowViewModel), new PropertyMetadata(false));
+
+    public static readonly DependencyProperty StandardMenuVisibilityProperty =
+        DependencyProperty.Register(nameof(StandardMenuVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
+
+    public static readonly DependencyProperty IconMenuVisibilityProperty =
+        DependencyProperty.Register(nameof(IconMenuVisibility), typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
+
+    public static readonly DependencyProperty PlayLastCardInHandProperty =
+        DependencyProperty.Register(nameof(PlayLastCardInHand), typeof(bool), typeof(MainWindowViewModel), new PropertyMetadata(false));
+
+    // Properties
     public Visibility Player3CardDisplayUserControlVisibility
     {
-        get => _player3CardDisplayUserControlVisibility;
-        set
-        {
-            _player3CardDisplayUserControlVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player3CardDisplayUserControlVisibilityProperty);
+        set => SetValue(Player3CardDisplayUserControlVisibilityProperty, value);
     }
 
     public Visibility Player4CardDisplayUserControlVisibility
     {
-        get => _player4CardDisplayUserControlVisibility;
-        set
-        {
-            _player4CardDisplayUserControlVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player4CardDisplayUserControlVisibilityProperty);
+        set => SetValue(Player4CardDisplayUserControlVisibilityProperty, value);
     }
 
     public Visibility Player1DealtCardsDisplayUserControlVisibility
     {
-        get => _player1DealtCardsDisplayUserControlVisibility;
-        set
-        {
-            _player1DealtCardsDisplayUserControlVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player1DealtCardsDisplayUserControlVisibilityProperty);
+        set => SetValue(Player1DealtCardsDisplayUserControlVisibilityProperty, value);
     }
 
     public Visibility Player2DealtCardsDisplayUserControlVisibility
     {
-        get => _player2DealtCardsDisplayUserControlVisibility;
-        set
-        {
-            _player2DealtCardsDisplayUserControlVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player2DealtCardsDisplayUserControlVisibilityProperty);
+        set => SetValue(Player2DealtCardsDisplayUserControlVisibilityProperty, value);
     }
 
     public Visibility Player3DealtCardsDisplayUserControlVisibility
     {
-        get => _player3DealtCardsDisplayUserControlVisibility;
-        set
-        {
-            _player3DealtCardsDisplayUserControlVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player3DealtCardsDisplayUserControlVisibilityProperty);
+        set => SetValue(Player3DealtCardsDisplayUserControlVisibilityProperty, value);
     }
 
     public Visibility Player4DealtCardsDisplayUserControlVisibility
     {
-        get => _player4DealtCardsDisplayUserControlVisibility;
-        set
-        {
-            _player4DealtCardsDisplayUserControlVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player4DealtCardsDisplayUserControlVisibilityProperty);
+        set => SetValue(Player4DealtCardsDisplayUserControlVisibilityProperty, value);
     }
 
     public Visibility Player1PlayedCardsDisplayUserControlVisibility
     {
-        get => _player1PlayedCardsDisplayUserControlVisibility;
-        set
-        {
-            _player1PlayedCardsDisplayUserControlVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player1PlayedCardsDisplayUserControlVisibilityProperty);
+        set => SetValue(Player1PlayedCardsDisplayUserControlVisibilityProperty, value);
     }
 
     public Visibility Player2PlayedCardsDisplayUserControlVisibility
     {
-        get => _player2PlayedCardsDisplayUserControlVisibility;
-        set
-        {
-            _player2PlayedCardsDisplayUserControlVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player2PlayedCardsDisplayUserControlVisibilityProperty);
+        set => SetValue(Player2PlayedCardsDisplayUserControlVisibilityProperty, value);
     }
 
     public Visibility Player3PlayedCardsDisplayUserControlVisibility
     {
-        get => _player3PlayedCardsDisplayUserControlVisibility;
-        set
-        {
-            _player3PlayedCardsDisplayUserControlVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player3PlayedCardsDisplayUserControlVisibilityProperty);
+        set => SetValue(Player3PlayedCardsDisplayUserControlVisibilityProperty, value);
     }
 
     public Visibility Player4PlayedCardsDisplayUserControlVisibility
     {
-        get => _player4PlayedCardsDisplayUserControlVisibility;
-        set
-        {
-            _player4PlayedCardsDisplayUserControlVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player4PlayedCardsDisplayUserControlVisibilityProperty);
+        set => SetValue(Player4PlayedCardsDisplayUserControlVisibilityProperty, value);
     }
-
 
     public Visibility GameBoardVisibility
     {
-        get => _gameBoardVisibility;
-        set
-        {
-            _gameBoardVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(GameBoardVisibilityProperty);
+        set => SetValue(GameBoardVisibilityProperty, value);
     }
 
     public string GameInformation
     {
-        get => _gameInformation;
-        set
-        {
-            _gameInformation = value;
-            OnPropertyChanged();
-        }
+        get => (string)GetValue(GameInformationProperty);
+        set => SetValue(GameInformationProperty, value);
     }
 
     public Visibility GameInformationVisibility
     {
-        get => _gameInformationVisibility;
-        set
-        {
-            _gameInformationVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(GameInformationVisibilityProperty);
+        set => SetValue(GameInformationVisibilityProperty, value);
     }
 
     public Visibility Player1TextVisibility
     {
-        get => _player1TextVisibility;
-        set
-        {
-            _player1TextVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player1TextVisibilityProperty);
+        set => SetValue(Player1TextVisibilityProperty, value);
     }
 
     public Visibility Player2TextVisibility
     {
-        get => _player2TextVisibility;
-        set
-        {
-            _player2TextVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player2TextVisibilityProperty);
+        set => SetValue(Player2TextVisibilityProperty, value);
     }
 
     public Visibility Player3TextVisibility
     {
-        get => _player3TextVisibility;
-        set
-        {
-            _player3TextVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player3TextVisibilityProperty);
+        set => SetValue(Player3TextVisibilityProperty, value);
     }
 
     public Visibility Player4TextVisibility
     {
-        get => _player4TextVisibility;
-        set
-        {
-            _player4TextVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player4TextVisibilityProperty);
+        set => SetValue(Player4TextVisibilityProperty, value);
     }
 
     public string Player1Text
     {
-        get => _player1Text;
-        set
-        {
-            _player1Text = value;
-            OnPropertyChanged();
-        }
+        get => (string)GetValue(Player1TextProperty);
+        set => SetValue(Player1TextProperty, value);
     }
 
     public string Player2Text
     {
-        get => _player2Text;
-        set
-        {
-            _player2Text = value;
-            OnPropertyChanged();
-        }
+        get => (string)GetValue(Player2TextProperty);
+        set => SetValue(Player2TextProperty, value);
     }
 
     public string Player3Text
     {
-        get => _player3Text;
-        set
-        {
-            _player3Text = value;
-            OnPropertyChanged();
-        }
+        get => (string)GetValue(Player3TextProperty);
+        set => SetValue(Player3TextProperty, value);
     }
 
     public string Player4Text
     {
-        get => _player4Text;
-        set
-        {
-            _player4Text = value;
-            OnPropertyChanged();
-        }
+        get => (string)GetValue(Player4TextProperty);
+        set => SetValue(Player4TextProperty, value);
     }
 
     public Visibility Player1CardDisplayUserControlVisibility
     {
-        get => _player1CardDisplayUserControlVisibility;
-        set
-        {
-            _player1CardDisplayUserControlVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player1CardDisplayUserControlVisibilityProperty);
+        set => SetValue(Player1CardDisplayUserControlVisibilityProperty, value);
     }
 
-
-    /// <summary>
-    /// The visibility setting for the controls that show the card when showing the regular cards.
-    /// </summary>
     public Visibility Player2CardDisplayUserControlVisibility
     {
-        get => _player2CardDisplayUserControlVisibility;
-        set
-        {
-            _player2CardDisplayUserControlVisibility = value;
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(Player2CardDisplayUserControlVisibilityProperty);
+        set => SetValue(Player2CardDisplayUserControlVisibilityProperty, value);
     }
 
     /// <summary>
@@ -329,12 +283,8 @@ public class MainWindowViewModel : ViewModelBase
     /// </summary>
     public bool ContinueMenuEnabled
     {
-        get => _continueMenuEnabled;
-        set 
-        { 
-            _continueMenuEnabled = value;
-            OnPropertyChanged();
-        }
+        get => (bool)GetValue(ContinueMenuEnabledProperty);
+        set => SetValue(ContinueMenuEnabledProperty, value);
     }
 
     /// <summary>
@@ -342,12 +292,8 @@ public class MainWindowViewModel : ViewModelBase
     /// </summary>
     public Visibility StandardMenuVisibility
     {
-        get => _standardMenuVisibility; 
-        set 
-        { 
-            _standardMenuVisibility = value; 
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(StandardMenuVisibilityProperty);
+        set => SetValue(StandardMenuVisibilityProperty, value);
     }
 
     /// <summary>
@@ -355,12 +301,8 @@ public class MainWindowViewModel : ViewModelBase
     /// </summary>
     public Visibility IconMenuVisibility
     {
-        get => _iconMenuVisibility;
-        set 
-        { 
-            _iconMenuVisibility = value; 
-            OnPropertyChanged();
-        }
+        get => (Visibility)GetValue(IconMenuVisibilityProperty);
+        set => SetValue(IconMenuVisibilityProperty, value);
     }
 
     /// <summary>
@@ -368,12 +310,8 @@ public class MainWindowViewModel : ViewModelBase
     /// </summary>
     public bool PlayLastCardInHand
     {
-        get => _playLastCardInHand;
-        set 
-        { 
-            _playLastCardInHand = value; 
-            OnPropertyChanged();
-        }
+        get => (bool)GetValue(PlayLastCardInHandProperty);
+        set => SetValue(PlayLastCardInHandProperty, value);
     }
 
 
@@ -541,8 +479,11 @@ public class MainWindowViewModel : ViewModelBase
     /// <param name="message">The text to display on the game board.</param>
     private void UpdateGameInformation(string message)
     {
-        GameInformation = message;
-        GameInformationVisibility = Visibility.Visible;
+        _mainWindow.Dispatcher.Invoke(() =>
+        {
+            GameInformation = message;
+            GameInformationVisibility = Visibility.Visible;
+        });
 
         // Wait for two seconds.
 
@@ -550,8 +491,11 @@ public class MainWindowViewModel : ViewModelBase
 
         // Hide the text.
 
-        GameInformation = string.Empty;
-        GameInformationVisibility = Visibility.Hidden;
+        _mainWindow.Dispatcher.Invoke(() =>
+        {
+            GameInformation = string.Empty;
+            GameInformationVisibility = Visibility.Hidden;
+        });
     }
 
     private void SetPlayerVisibility(int playerIndex, Visibility dealtVisibility, Visibility playedVisibility)

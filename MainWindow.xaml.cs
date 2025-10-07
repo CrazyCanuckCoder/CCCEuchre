@@ -1,9 +1,7 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
-using Euchre.UILogic;
 using Euchre.Windows;
-using System.ComponentModel;
 using System.Windows;
 
 namespace Euchre;
@@ -20,7 +18,6 @@ public partial class MainWindow : Window
         ViewModel = new();
         ViewModel.Initialize();
         DataContext = ViewModel;
-        ViewModel.PropertyChanged += ViewModel_PropertyChanged;
     }
 
     /// <summary>
@@ -105,15 +102,6 @@ public partial class MainWindow : Window
 
 
     #region EventHandlers
-
-    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        // For future need.  Add code similar to the following example:
-
-        if (e.PropertyName == nameof(ViewModel.ContinueMenuEnabled))
-        {
-        }
-    }
 
     // The event handlers for the main window.
 
