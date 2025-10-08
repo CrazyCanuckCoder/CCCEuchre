@@ -66,9 +66,12 @@
                 <Label
                     Grid.Row="0"
                     Grid.Column="0"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
                     BorderBrush="Black"
                     BorderThickness="1"
-                    Content="{Binding Team1Names}" />
+                    Content="{Binding Team1Names}"
+                    FontSize="16" />
                 <Border
                     Grid.Row="1"
                     Grid.Column="0"
@@ -87,9 +90,12 @@
                 <Label
                     Grid.Row="3"
                     Grid.Column="0"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
                     BorderBrush="Black"
                     BorderThickness="1"
-                    Content="{Binding Team2Names}" />
+                    Content="{Binding Team2Names}"
+                    FontSize="16" />
                 <Border
                     Grid.Row="4"
                     Grid.Column="0"

@@ -111,11 +111,11 @@ public partial class MainWindow : Window
     {
         if (!e.MadeTrump)
         {
-            ViewModel.PlayerPassed(e.Player);
+            ViewModel.PlayerPassed(e.Player, e.IsKittyRound);
         }
         else
         {
-            ViewModel.PlayerMadeTrump(e.Player, e.Trump, e.IsGoingAlone);
+            ViewModel.PlayerMadeTrump(e.Player, e.Trump, e.IsGoingAlone, e.IsKittyRound);
         }
     }
 

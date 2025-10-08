@@ -322,7 +322,7 @@ public class EuchreGame
                     // Inform UI of the order up and if the player is going alone.
 
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, true, GameInfo.Trump,
-                        player.IsGoingAlone));
+                        player.IsGoingAlone, true));
 
                     // Dealer picks up kitty.
 
@@ -335,7 +335,7 @@ public class EuchreGame
                 {
                     // Inform UI that the player is passing.
 
-                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false));
+                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, true));
                 }
             }
             else if (round == 2)
@@ -348,7 +348,7 @@ public class EuchreGame
                     // Inform UI of the order up and if the player is going alone.
 
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, true, GameInfo.Trump,
-                        player.IsGoingAlone));
+                        player.IsGoingAlone, false));
 
                     GameInfo.SaveGameData();
 
@@ -358,7 +358,7 @@ public class EuchreGame
                 {
                     // Inform UI that the player is passing.
 
-                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false));
+                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, false));
                 }
             }
         }

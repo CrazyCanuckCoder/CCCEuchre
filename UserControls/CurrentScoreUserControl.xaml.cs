@@ -60,8 +60,8 @@ public partial class CurrentScoreUserControl : UserControl
             throw new InvalidNumberOfPlayersException();
         }
 
-        Team1Names = $"{playerNames[0]} and {playerNames[3]}";
-        Team2Names = $"{playerNames[2]} and {playerNames[4]}";
+        Team1Names = $"{playerNames[0]} and {playerNames[2]}";
+        Team2Names = $"{playerNames[1]} and {playerNames[3]}";
     }
 
     /// <summary>

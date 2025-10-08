@@ -368,6 +368,7 @@ public class MainWindowViewModel : DependencyObject
     {
         _mainWindow = mainWindow;
         SetupCurrentRoundInfoControl(_mainWindow.CurrentRoundInfoUserControl);
+        SetupCurrentScoreControl(_mainWindow.CurrentPlayersScoresUserControl);
         InitializeCardDisplayControlCollection();
         ShowGameBoard();
         SetupPlayerDisplayControls();
@@ -410,9 +411,16 @@ public class MainWindowViewModel : DependencyObject
         });
     }
 
-    public void PlayerPassed(IPlayer player)
+    public void PlayerPassed(IPlayer player, bool isKittyRound)
     {
-        DisplayPlayerMessage(player, "Pass", 1, false);
+        string message = "Pass";
+
+        if (isKittyRound && CurrentGame!.GameInfo!.Dealer == player)
+        {
+            message = "Turning down the kitty card.";
+        }
+
+        DisplayPlayerMessage(player, message, 1, false);
     }
 
     public void KittyWasTurnedDown()
@@ -421,9 +429,23 @@ public class MainWindowViewModel : DependencyObject
         ClearPlayerMessages();
     }
 
-    public void PlayerMadeTrump(IPlayer player, Suit? trump, bool isGoingAlone)
+    public void PlayerMadeTrump(IPlayer player, Suit? trump, bool isGoingAlone, bool isKittyRound)
     {
-        DisplayPlayerMessage(player, $"{trump!.Value} {(isGoingAlone ? " alone" : "")}", 1, false);
+        string message = string.Empty;
+
+        if (isKittyRound)
+        {
+            string goingAlone = isGoingAlone ? "and I am going alone" : "";
+            message = CurrentGame!.GameInfo!.Dealer == player
+                ? $"I am picking up the kitty card{goingAlone}."
+                : $"Pick it up{goingAlone}.";
+        }
+        else
+        {
+            message = $"{trump!.Value} {(isGoingAlone ? " alone" : "")}";
+        }
+
+        DisplayPlayerMessage(player, message, 1, false);
         _mainWindow.Dispatcher.Invoke(() =>
         {
             _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(player, trump!.Value, isGoingAlone);
@@ -477,6 +499,17 @@ public class MainWindowViewModel : DependencyObject
         currentRoundInfoUserControl.Team1List.Add(CurrentGame.GameInfo.Players[2]);
         currentRoundInfoUserControl.Team2List.Add(CurrentGame.GameInfo.Players[1]);
         currentRoundInfoUserControl.Team2List.Add(CurrentGame.GameInfo.Players[3]);
+    }
+
+    private void SetupCurrentScoreControl(CurrentScoreUserControl currentPlayersScoresUserControl)
+    {
+        currentPlayersScoresUserControl.SetTeamNames(
+            (  from player in CurrentGame!.GameInfo!.Players!
+            orderby player.PlayerIndex
+             select player.Name).ToList()
+            );
+        currentPlayersScoresUserControl.UpdateTeamScore(1, 0);
+        currentPlayersScoresUserControl.UpdateTeamScore(2, 0);
     }
 
     /// <summary>

@@ -12,12 +12,14 @@ public class PlayerBidEventArgs
     /// <param name="madeTrump">True to indicate the player made a bid and false for the player to pass.</param>
     /// <param name="trump">The suit that will be trump if the player made a bid.</param>
     /// <param name="isGoingAlone">True if the player is going alone when they made a bid.</param>
-    public PlayerBidEventArgs(IPlayer player, bool madeTrump, Suit? trump, bool isGoingAlone)
+    public PlayerBidEventArgs(IPlayer player, bool madeTrump, Suit? trump, bool isGoingAlone, 
+        bool isKittyRound)
     {
         Player = player;
         MadeTrump = madeTrump;
         Trump = trump;
         IsGoingAlone = isGoingAlone;
+        IsKittyRound = isKittyRound;
     }
 
     /// <summary>
@@ -39,5 +41,10 @@ public class PlayerBidEventArgs
     /// True if the player is going alone when they made a bid.
     /// </summary>
     public bool IsGoingAlone { get; set; }
+
+    /// <summary>
+    /// True to indicate the players are bidding on the suit displayed by the card on top of the kitty pile.
+    /// </summary>
+    public bool IsKittyRound { get; set; }
 
 }

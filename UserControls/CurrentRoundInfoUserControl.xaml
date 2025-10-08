@@ -30,11 +30,11 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
-                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="20" />
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="30" />
+                <RowDefinition Height="35" />
                 <RowDefinition Height="10" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="5" />
