@@ -1,5 +1,6 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.Helpers;
+using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using Euchre.UILogic.Interfaces;
 using System.Collections.ObjectModel;
@@ -68,14 +69,9 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
 
             for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
             {
-                // Load the rotated image for the card.
+                // Generate the file name for the card.
 
                 string cardFilename = Cards[cardIndex].ToString()?.ToLower() + " rotated.png";
-                BitmapImage source = new();
-                source.BeginInit();
-                source.UriSource =
-                    new Uri($"pack://application:,,,/Euchre;component/images/cards/{cardFilename}");
-                source.EndInit();
 
                 // Add the image to the collection of images.
 
@@ -83,7 +79,8 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
                 {
                     ImageData = new Image()
                     {
-                        Source = source
+                        Source = UIHelpers.GenerateImageSource(
+                            $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}")
                     },
                     Card = Cards[cardIndex],
                     CardVisibility = Visibility.Collapsed,
@@ -133,26 +130,19 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
     {
         string cardFilename = GameSettingsManager.Instance.SelectedCardBack;
         cardFilename = cardFilename.Insert(cardFilename.LastIndexOf('.'), " rotated");
-        Uri uriSource = new($"pack://application:,,,/Euchre;component/images/cardbacks/{cardFilename}");
 
         // Load each card back for the specified number cards.
 
         for (int cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
         {
-            // Load the image for the card.
-
-            BitmapImage source = new();
-            source.BeginInit();
-            source.UriSource = uriSource;
-            source.EndInit();
-
             // Add the image to the collection of images and set it visible.
 
             VerticalCardImages.Add(new CardDisplay()
             {
                 ImageData = new Image()
                 {
-                    Source = source
+                    Source = UIHelpers.GenerateImageSource(
+                        $"pack://application:,,,/Euchre;component/images/cardbacks/{cardFilename}")
                 },
                 CardVisibility = Visibility.Collapsed,
                 ImageVisibility = Visibility.Visible,

@@ -42,14 +42,9 @@ public partial class ChooseAvatarWindow : Window
 
         for (int avatarNumber = 1; avatarNumber <= UIConstants.MaximumNumberOfAvatars; avatarNumber++)
         {
-            // Load the image for the avatar.
+            // Set the file name for the avatar.
 
             string avatarFilename = $"avatar{avatarNumber}.png";
-            BitmapImage source = new();
-            source.BeginInit();
-            source.UriSource =
-                new Uri($"pack://application:,,,/Euchre;component/images/avatars/{avatarFilename}");
-            source.EndInit();
 
             // Add the image to the collection of images.
 
@@ -57,7 +52,8 @@ public partial class ChooseAvatarWindow : Window
             {
                 ImageData = new Image()
                 {
-                    Source = source
+                    Source = UIHelpers.GenerateImageSource(
+                        $"pack://application:,,,/Euchre;component/images/avatars/{avatarFilename}")
                 },
                 AvatarNumber = avatarNumber,
             });

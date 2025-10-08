@@ -316,28 +316,19 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
     /// <param name="numberOfCards">The number of card back images to show on the control.</param>
     public void DisplayCards(int numberOfCards)
     {
-        Uri uriSource =
-            new("pack://application:,,,/Euchre;component/images/cardbacks/" +
-                GameSettingsManager.Instance.SelectedCardBack);
-
         // Load each card back for the specified number of cards.
 
         for (int cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
         {
-            // Load the image for the card.
-
-            BitmapImage source = new();
-            source.BeginInit();
-            source.UriSource = uriSource;
-            source.EndInit();
-
             // Add the image to the collection of images and set it visible.
 
             CardImages.Add(new CardDisplay()
             {
                 ImageData = new Image()
                 {
-                    Source = source
+                    Source = UIHelpers.GenerateImageSource(
+                        "pack://application:,,,/Euchre;component/images/cardbacks/" + 
+                        GameSettingsManager.Instance.SelectedCardBack)
                 },
                 CardVisibility = Visibility.Collapsed,
                 ImageVisibility = Visibility.Visible,

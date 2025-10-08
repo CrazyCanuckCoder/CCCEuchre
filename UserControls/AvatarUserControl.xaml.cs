@@ -81,14 +81,10 @@ public partial class AvatarUserControl : UserControl
         }
 
         string imageFilename = $"avatar{avatarNumber}.png";
-        BitmapImage source = new();
-        source.BeginInit();
-        source.UriSource =
-            new Uri($"pack://application:,,,/Euchre;component/images/avatars/{imageFilename}");
-        source.EndInit();
         AvatarImage = new Image()
         {
-            Source = source
+            Source = UIHelpers.GenerateImageSource(
+                $"pack://application:,,,/Euchre;component/images/avatars/{imageFilename}")
         };
     }
 
