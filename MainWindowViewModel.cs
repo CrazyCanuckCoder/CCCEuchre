@@ -376,11 +376,8 @@ public class MainWindowViewModel : DependencyObject
 
     public void DeclareDealer(IPlayer dealer)
     {
-        _mainWindow.Dispatcher.Invoke(() =>
-        {
-            SetPlayerDealerIconVisibility(dealer.PlayerIndex, true);
-            SetPlayerDealerIconVisibility(_previousDealerPlayerIndex, false);
-        });
+        SetPlayerDealerIconVisibility(dealer.PlayerIndex, true);
+        SetPlayerDealerIconVisibility(_previousDealerPlayerIndex, false);
 
         _previousDealerPlayerIndex = dealer.PlayerIndex;
 
@@ -389,26 +386,20 @@ public class MainWindowViewModel : DependencyObject
 
     public void DealCardsToPlayer(int indexOfPlayer, int numberOfCardsDealt)
     {
-        _mainWindow.Dispatcher.Invoke(() =>
-        {
-            _playerDealtCardsDisplayControls[indexOfPlayer].DisplayCards(numberOfCardsDealt);
-            SetPlayerVisibility(indexOfPlayer, Visibility.Visible, Visibility.Collapsed);
+        _playerDealtCardsDisplayControls[indexOfPlayer].DisplayCards(numberOfCardsDealt);
+        SetPlayerVisibility(indexOfPlayer, Visibility.Visible, Visibility.Collapsed);
 
-            PauseGame(1);
+        PauseGame(1);
 
-            SetPlayerVisibility(indexOfPlayer, Visibility.Collapsed, Visibility.Collapsed);
-            _playerDealtCardsDisplayControls[indexOfPlayer].ClearCards();
+        SetPlayerVisibility(indexOfPlayer, Visibility.Collapsed, Visibility.Collapsed);
+        _playerDealtCardsDisplayControls[indexOfPlayer].ClearCards();
 
-            UpdatePlayersHandAfterDeal(indexOfPlayer, numberOfCardsDealt);
-        });
+        UpdatePlayersHandAfterDeal(indexOfPlayer, numberOfCardsDealt);
     }
 
     public void SetKittyCard(Card kitty)
     {
-        _mainWindow.Dispatcher.Invoke(() =>
-        {
-            _mainWindow.TrumpDisplayUserControl.SetKittyCard(kitty);
-        });
+        _mainWindow.TrumpDisplayUserControl.SetKittyCard(kitty);
     }
 
     public void PlayerPassed(IPlayer player, bool isKittyRound)
@@ -446,10 +437,7 @@ public class MainWindowViewModel : DependencyObject
         }
 
         DisplayPlayerMessage(player, message, 1, false);
-        _mainWindow.Dispatcher.Invoke(() =>
-        {
-            _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(player, trump!.Value, isGoingAlone);
-        });
+        _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(player, trump!.Value, isGoingAlone);
         ClearPlayerMessages();
     }
 
@@ -575,20 +563,17 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="message">The text to display on the game board.</param>
     private void UpdateGameInformation(string message)
     {
-        _mainWindow.Dispatcher.Invoke(() =>
-        {
-            GameInformation = message;
-            GameInformationVisibility = Visibility.Visible;
+        GameInformation = message;
+        GameInformationVisibility = Visibility.Visible;
 
-            // Wait for two seconds.
+        // Wait for two seconds.
 
-            PauseGame(2);
+        PauseGame(2);
 
-            // Hide the text.
+        // Hide the text.
 
-            GameInformation = string.Empty;
-            GameInformationVisibility = Visibility.Hidden;
-        });
+        GameInformation = string.Empty;
+        GameInformationVisibility = Visibility.Hidden;
     }
 
     /// <summary>
@@ -654,39 +639,36 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="hideText">True to hide the text after the message is displayed.</param>
     private void DisplayPlayerMessage(IPlayer player, string message, int pauseLength, bool hideText)
     {
-        _mainWindow.Dispatcher.Invoke(() =>
+        switch (player.PlayerIndex)
         {
-            switch (player.PlayerIndex)
-            {
-                case 0:
-                    Player1Text = message;
-                    Player1TextVisibility = Visibility.Visible;
-                    PauseGame(pauseLength);
-                    if (hideText) Player1TextVisibility = Visibility.Collapsed;
-                    break;
+            case 0:
+                Player1Text = message;
+                Player1TextVisibility = Visibility.Visible;
+                PauseGame(pauseLength);
+                if (hideText) Player1TextVisibility = Visibility.Collapsed;
+                break;
 
-                case 1:
-                    Player2Text = message;
-                    Player2TextVisibility = Visibility.Visible;
-                    PauseGame(pauseLength);
-                    if (hideText) Player2TextVisibility = Visibility.Collapsed;
-                    break;
+            case 1:
+                Player2Text = message;
+                Player2TextVisibility = Visibility.Visible;
+                PauseGame(pauseLength);
+                if (hideText) Player2TextVisibility = Visibility.Collapsed;
+                break;
 
-                case 2:
-                    Player3Text = message;
-                    Player3TextVisibility = Visibility.Visible;
-                    PauseGame(pauseLength);
-                    if (hideText) Player3TextVisibility = Visibility.Collapsed;
-                    break;
+            case 2:
+                Player3Text = message;
+                Player3TextVisibility = Visibility.Visible;
+                PauseGame(pauseLength);
+                if (hideText) Player3TextVisibility = Visibility.Collapsed;
+                break;
 
-                case 3:
-                    Player4Text = message;
-                    Player4TextVisibility = Visibility.Visible;
-                    PauseGame(pauseLength);
-                    if (hideText) Player4TextVisibility = Visibility.Collapsed;
-                    break;
-            }
-        });
+            case 3:
+                Player4Text = message;
+                Player4TextVisibility = Visibility.Visible;
+                PauseGame(pauseLength);
+                if (hideText) Player4TextVisibility = Visibility.Collapsed;
+                break;
+        }
     }
 
     /// <summary>
@@ -694,16 +676,13 @@ public class MainWindowViewModel : DependencyObject
     /// </summary>
     private void ClearPlayerMessages()
     {
-        _mainWindow.Dispatcher.Invoke(() =>
-        {
-            Player1Text = string.Empty;
-            Player1TextVisibility = Visibility.Collapsed;
-            Player2Text = string.Empty;
-            Player2TextVisibility = Visibility.Collapsed;
-            Player3Text = string.Empty;
-            Player3TextVisibility = Visibility.Collapsed;
-            Player4Text = string.Empty;
-            Player4TextVisibility = Visibility.Collapsed;
-        });
+        Player1Text = string.Empty;
+        Player1TextVisibility = Visibility.Collapsed;
+        Player2Text = string.Empty;
+        Player2TextVisibility = Visibility.Collapsed;
+        Player3Text = string.Empty;
+        Player3TextVisibility = Visibility.Collapsed;
+        Player4Text = string.Empty;
+        Player4TextVisibility = Visibility.Collapsed;
     }
 }

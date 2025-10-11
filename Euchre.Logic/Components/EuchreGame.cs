@@ -396,15 +396,7 @@ public class EuchreGame
 
         if (resumeFrom > 0)
         {
-            // Replay already-finished tricks to restore state.
-
-            for (int trickCount = 1; trickCount <= resumeFrom; trickCount++)
-            {
-                // The trick objects are already stored in CurrentRoundTricks,
-                // so we just need to set the correct next player.
-                
-                GameInfo.NextTrickPlayer = GameInfo.CurrentRoundTricks[trickCount - 1].GetWinner();
-            }
+            GameInfo.NextTrickPlayer = GameInfo.CurrentRoundTricks.Last().GetWinner();
         }
 
         for (int trickNum = resumeFrom + 1; trickNum <= MAX_NUMBER_OF_TRICKS; trickNum++)

@@ -1,6 +1,7 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
+using Euchre.UILogic;
 using Euchre.Windows;
 using System.Windows;
 
@@ -109,70 +110,109 @@ public partial class MainWindow : Window
 
     private void CurrentGame_PlayerBidResult(object? sender, PlayerBidEventArgs e)
     {
-        if (!e.MadeTrump)
+        UIHelpers.RunOnUIThread(() =>
         {
-            ViewModel.PlayerPassed(e.Player, e.IsKittyRound);
-        }
-        else
-        {
-            ViewModel.PlayerMadeTrump(e.Player, e.Trump, e.IsGoingAlone, e.IsKittyRound);
-        }
+            if (!e.MadeTrump)
+            {
+                ViewModel.PlayerPassed(e.Player, e.IsKittyRound);
+            }
+            else
+            {
+                ViewModel.PlayerMadeTrump(e.Player, e.Trump, e.IsGoingAlone, e.IsKittyRound);
+            }
+        });
     }
 
     private void CurrentGame_GameOver(object? sender, GameOverEventArgs e)
     {
+        UIHelpers.RunOnUIThread(() =>
+        {
+        });
     }
 
     private void CurrentGame_DeclareTrickWinner(object? sender, DeclareTrickWinnerEventArgs e)
     {
-        // Update the previous tricks control with the current trick.
+        UIHelpers.RunOnUIThread(() =>
+        {
+            // Update the previous tricks control with the current trick.
+        });
     }
 
     private void CurrentGame_DeclareRoundWinningPlayers(object? sender, DeclareRoundWinningPlayersEventArgs e)
     {
-        // Clear the previous tricks control.
+        UIHelpers.RunOnUIThread(() =>
+        {
+            // Clear the previous tricks control.
+        });
     }
 
     private void CurrentGame_DeclareDealer(object? sender, DeclareDealerEventArgs e)
     {
-        ViewModel.DeclareDealer(e.Dealer);
+        UIHelpers.RunOnUIThread(() =>
+        {
+            ViewModel.DeclareDealer(e.Dealer);
+        });
     }
 
     private void CurrentGame_CardsDealtToPlayer(object? sender, CardsDealtToPlayerEventArgs e)
     {
-        ViewModel.DealCardsToPlayer(e.Player.PlayerIndex, e.NumberOfCardsDealt);
+        UIHelpers.RunOnUIThread(() =>
+        {
+            ViewModel.DealCardsToPlayer(e.Player.PlayerIndex, e.NumberOfCardsDealt);
+        });
     }
 
     private void CurrentGame_DeclareKittyCard(object? sender, DeclareKittyCardEventArgs e)
     {
-        ViewModel.SetKittyCard(e.Kitty);
+        UIHelpers.RunOnUIThread(() =>
+        {
+            ViewModel.SetKittyCard(e.Kitty);
+        });
     }
 
     private void CurrentGame_KittyWasTurnedDown(object? sender, EventArgs e)
     {
-        ViewModel.KittyWasTurnedDown();
+        UIHelpers.RunOnUIThread(() =>
+        {
+            ViewModel.KittyWasTurnedDown();
+        });
     }
 
     private void CurrentGame_CardPlayedByPlayer(object? sender, CardPlayedByPlayerEventArgs e)
     {
+        UIHelpers.RunOnUIThread(() =>
+        {
+        });
     }
 
     // The event handlers for the human player.
 
     private void HumanPlayer_PromptToOrderUp(object? sender, PromptToOrderUpEventArgs e)
     {
+        UIHelpers.RunOnUIThread(() =>
+        {
+        });
     }
 
     private void HumanPlayer_PromptForTrumpSuit(object? sender, PromptForTrumpSuitEventArgs e)
     {
+        UIHelpers.RunOnUIThread(() =>
+        {
+        });
     }
 
     private void HumanPlayer_PromptForDiscard(object? sender, PromptForDiscardEventArgs e)
     {
+        UIHelpers.RunOnUIThread(() =>
+        {
+        });
     }
 
     private void HumanPlayer_PromptForCardToPlay(object? sender, PromptForCardToPlayEventArgs e)
     {
+        UIHelpers.RunOnUIThread(() =>
+        {
+        });
     }
 
     #endregion EventHandlers

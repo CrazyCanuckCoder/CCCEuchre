@@ -9,7 +9,6 @@ namespace Euchre.UILogic;
 /// </summary>
 internal static class UIHelpers
 {
-
     /// <summary>
     /// Ensures the UI is updated.
     /// </summary>
@@ -31,6 +30,26 @@ internal static class UIHelpers
         // DispatcherPriority set to Input, the highest priority.
 
         Application.Current?.Dispatcher.Invoke(DispatcherPriority.Input, new Action(delegate { }));
+    }
+
+    /// <summary>
+    /// Ensures the provided <paramref name="action"/> runs on the UI thread.
+    /// </summary>
+    /// <param name="action">Action to execute.</param>
+    /// <param name="priority">Dispatcher priority to use when marshalling.</param>
+    public static void RunOnUIThread(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+
+        var dispatcher = Application.Current?.Dispatcher ?? Dispatcher.CurrentDispatcher;
+        if (dispatcher.CheckAccess())
+        {
+            action();
+        }
+        else
+        {
+            dispatcher.Invoke(action, priority);
+        }
     }
 
     /// <summary>
