@@ -1,10 +1,13 @@
-﻿using Euchre.Logic.Components;
+﻿using CrazyCanuckCoder.Library.Common;
+using Euchre.Logic.Components;
+using Euchre.Logic.Enums;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Interfaces;
 using Euchre.UserControls;
 using System.Windows;
+using System.Windows.Data;
 
 namespace Euchre;
 
@@ -505,6 +508,23 @@ public class MainWindowViewModel : DependencyObject
         ClearPlayedCards();
     }
 
+    public void EndOfRoundUpdate(List<string> winningPlayers)
+    {
+        // Display the winning round message to the user.
+
+        UpdateGameInformation($"{winningPlayers.ToListedString()} won the round.");
+
+        // The round is over, reset the board for the next round.
+
+        ResetCardDisplayControlsVisibility();
+        ClearPlayersHands();
+        UpdateGameScores();
+        ResetTrickCounters();
+        _mainWindow.PreviousTricksUserControl.ClearTricks();
+        _mainWindow.TrumpDisplayUserControl.ClearImage();
+        _mainWindow.CurrentRoundInfoUserControl.ResetBidInformation();
+    }
+
 
     /// <summary>
     /// Updates the collection that references each player's card display control and the collection that
@@ -788,5 +808,85 @@ public class MainWindowViewModel : DependencyObject
             _playerPlayedCardsDisplayControls[index].ClearCards();
             SetPlayersPlayedCardDisplayControlVisibility(index, Visibility.Collapsed);
         }
+    }
+
+    /// <summary>
+    /// Blanks out the cards in each player's card display control to get the control ready to receive new
+    /// cards for the next round.
+    /// </summary>
+    private void ClearPlayersHands()
+    {
+        foreach (var playersHandsControl in _playerCardDisplayControls.Values)
+        {
+            playersHandsControl?.ClearCards();
+        }
+    }
+
+    private void ResetCardDisplayControlsVisibility()
+    {
+        _playerCardDisplayControls[0] = _mainWindow.Player1CardDisplayUserControl;
+        Player1CardDisplayUserControlVisibility = Visibility.Visible;
+
+        // Update the visibility values for the automated players.
+
+        for (int playerIndex = 1; playerIndex < Constants.NUMBER_OF_PLAYERS; playerIndex++)
+        {
+            if (_playerCardDisplayControlsVisibility.ContainsKey(playerIndex))
+            {
+                switch (playerIndex)
+                {
+                    case 1:
+                        _playerCardDisplayControls[playerIndex] = _mainWindow.Player2CardDisplayUserControl;
+                        break;
+
+                    case 2:
+                        _playerCardDisplayControls[playerIndex] = _mainWindow.Player3CardDisplayUserControl;
+                        break;
+
+                    case 3:
+                        _playerCardDisplayControls[playerIndex] = _mainWindow.Player4CardDisplayUserControl;
+                        break;
+                }
+                _visibilitySetter = _playerCardDisplayControlsVisibility[playerIndex];
+                _visibilitySetter(Visibility.Visible);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Resets each player's number of tricks won to zero.
+    /// </summary>
+    private void ResetTrickCounters()
+    {
+        for (int playerIndex = 0; playerIndex < Constants.NUMBER_OF_PLAYERS; playerIndex++)
+        {
+            switch (playerIndex)
+            {
+                case 0:
+                    _mainWindow.Player1DisplayUserControl.UpdateNumberOfTricks(0);
+                    break;
+
+                case 1:
+                    _mainWindow.Player2DisplayUserControl.UpdateNumberOfTricks(0);
+                    break;
+
+                case 2:
+                    _mainWindow.Player3DisplayUserControl.UpdateNumberOfTricks(0);
+                    break;
+
+                case 3:
+                    _mainWindow.Player4DisplayUserControl.UpdateNumberOfTricks(0);
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Updates the player score display with the scores for each team.
+    /// </summary>
+    private void UpdateGameScores()
+    {
+        _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(1, CurrentGame!.GameInfo!.TeamScores[0]);
+        _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(2, CurrentGame.GameInfo.TeamScores[1]);
     }
 }

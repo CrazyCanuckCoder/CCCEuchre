@@ -142,7 +142,7 @@ public partial class MainWindow : Window
     {
         UIHelpers.RunOnUIThread(() =>
         {
-            // Clear the previous tricks control.
+            ViewModel.EndOfRoundUpdate(e.WinningPlayers);
         });
     }
 

@@ -74,10 +74,12 @@ public partial class CurrentScoreUserControl : UserControl
         if (teamNumber == 1)
         {
             labelledProgressBarUserControlTeam1.ProgressValue = teamScore;
+            labelledProgressBarUserControlTeam1.Text = teamScore.ToString();
         }
         else
         {
             labelledProgressBarUserControlTeam2.ProgressValue = teamScore;
+            labelledProgressBarUserControlTeam2.Text = teamScore.ToString();
         }
     }
 }

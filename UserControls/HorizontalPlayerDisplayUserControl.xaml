@@ -90,16 +90,20 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="2" />
                     <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="2" />
                     <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="2" />
                     <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="2" />
                     <ColumnDefinition Width="10" />
                     <ColumnDefinition Width="10" />
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="4" />
-                    <RowDefinition Height="28" />
+                    <RowDefinition Height="6" />
+                    <RowDefinition Height="24" />
                     <RowDefinition Height="6" />
                 </Grid.RowDefinitions>
 
@@ -112,28 +116,28 @@
                     Visibility="{Binding TrickIconsVisibility[4]}" />
                 <Label
                     Grid.Row="1"
-                    Grid.Column="2"
+                    Grid.Column="3"
                     Background="{Binding TricksColour}"
                     BorderThickness="0"
                     ToolTip="The number of tricks won by the player."
                     Visibility="{Binding TrickIconsVisibility[3]}" />
                 <Label
                     Grid.Row="1"
-                    Grid.Column="3"
+                    Grid.Column="5"
                     Background="{Binding TricksColour}"
                     BorderThickness="0"
                     ToolTip="The number of tricks won by the player."
                     Visibility="{Binding TrickIconsVisibility[2]}" />
                 <Label
                     Grid.Row="1"
-                    Grid.Column="4"
+                    Grid.Column="7"
                     Background="{Binding TricksColour}"
                     BorderThickness="0"
                     ToolTip="The number of tricks won by the player."
                     Visibility="{Binding TrickIconsVisibility[1]}" />
                 <Label
                     Grid.Row="1"
-                    Grid.Column="5"
+                    Grid.Column="9"
                     Background="{Binding TricksColour}"
                     BorderThickness="0"
                     ToolTip="The number of tricks won by the player."
