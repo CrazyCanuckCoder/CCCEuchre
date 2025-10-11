@@ -441,6 +441,36 @@ public class MainWindowViewModel : DependencyObject
         ClearPlayerMessages();
     }
 
+
+    public void DisplayCardPlayedByPlayer(IPlayer player, ICard cardPlayed)
+    {
+        if (player is HumanPlayer humanPlayer)
+        {
+            _playerCardDisplayControls[player.PlayerIndex].SetupCards(humanPlayer.Hand,
+                CurrentGame!.GameInfo!.Trump!.Value);
+        }
+        else
+        {
+#if DEBUG
+            if (player is AutomatedPlayer automatedPlayer)
+            {
+                _playerCardDisplayControls[player.PlayerIndex].SetupCards(automatedPlayer.Hand,
+                    CurrentGame!.GameInfo!.Trump!.Value);
+            }
+#else
+            _playerCardDisplayControls[player.PlayerIndex].RemoveCard();
+#endif
+        }
+        SetPlayersPlayedCardDisplayControlVisibility(player.PlayerIndex, Visibility.Visible);
+        var cardPlayedClone = cardPlayed.Clone();
+        cardPlayedClone.IsPlayed = false;
+        _playerPlayedCardsDisplayControls[player.PlayerIndex].SetupCards([(Card)cardPlayedClone]);
+
+        PauseGame(2);
+    }
+
+
+
     /// <summary>
     /// Updates the collection that references each player's card display control and the collection that
     /// references each player's cards that are dealt to them.
@@ -684,5 +714,32 @@ public class MainWindowViewModel : DependencyObject
         Player3TextVisibility = Visibility.Collapsed;
         Player4Text = string.Empty;
         Player4TextVisibility = Visibility.Collapsed;
+    }
+
+    /// <summary>
+    /// Sets the visibility property for a specified player's displayed cards control.
+    /// </summary>
+    /// <param name="playerIndex">The index of the player.</param>
+    /// <param name="newVisibility">The new visibility value to set for the player's control.</param>
+    private void SetPlayersPlayedCardDisplayControlVisibility(int playerIndex, Visibility newVisibility)
+    {
+        switch (playerIndex)
+        {
+            case 0:
+                Player1PlayedCardsDisplayUserControlVisibility = newVisibility;
+                break;
+
+            case 1:
+                Player2PlayedCardsDisplayUserControlVisibility = newVisibility;
+                break;
+
+            case 2:
+                Player3PlayedCardsDisplayUserControlVisibility = newVisibility;
+                break;
+
+            case 3:
+                Player4PlayedCardsDisplayUserControlVisibility = newVisibility;
+                break;
+        }
     }
 }

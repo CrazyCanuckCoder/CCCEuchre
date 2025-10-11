@@ -10,6 +10,7 @@ public interface ICard
     Suit Suit { get; }
     bool IsPlayed { get; set; }
 
+    ICard Clone();
     Suit EffectiveSuit(Suit trump);
     int GetTrickValue(Suit trump, Suit leadSuit);
     bool IsBower(Suit trump);
