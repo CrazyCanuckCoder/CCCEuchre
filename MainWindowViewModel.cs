@@ -470,6 +470,41 @@ public class MainWindowViewModel : DependencyObject
     }
 
 
+    public void EndOfTrick(IPlayer trickWinningPlayer)
+    {
+        // Update the trick winner's number of tricks won on the display for the user and the list of tricks
+        //  for each player for the game.
+
+        switch (trickWinningPlayer.PlayerIndex)
+        {
+            case 0:
+                _mainWindow.Player1DisplayUserControl.UpdateNumberOfTricks(
+                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer]);
+                break;
+
+            case 1:
+                _mainWindow.Player2DisplayUserControl.UpdateNumberOfTricks(
+                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer]);
+                break;
+
+            case 2:
+                _mainWindow.Player3DisplayUserControl.UpdateNumberOfTricks(
+                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer]);
+                break;
+
+            case 3:
+                _mainWindow.Player4DisplayUserControl.UpdateNumberOfTricks(
+                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer]);
+                break;
+        }
+        UpdateGameInformation($"{trickWinningPlayer.Name} won the trick.");
+
+        // Add the trick to the list of previous tricks and clear the played cards from the game board.
+
+        _mainWindow.PreviousTricksUserControl.AddTrick(CurrentGame!.GameInfo!.CurrentRoundTricks.Last());
+        ClearPlayedCards();
+    }
+
 
     /// <summary>
     /// Updates the collection that references each player's card display control and the collection that
@@ -740,6 +775,18 @@ public class MainWindowViewModel : DependencyObject
             case 3:
                 Player4PlayedCardsDisplayUserControlVisibility = newVisibility;
                 break;
+        }
+    }
+
+    /// <summary>
+    /// Clears the controls that displayed the cards played for the current round.
+    /// </summary>
+    private void ClearPlayedCards()
+    {
+        for (int index = 0; index < _playerPlayedCardsDisplayControls.Count; index++)
+        {
+            _playerPlayedCardsDisplayControls[index].ClearCards();
+            SetPlayersPlayedCardDisplayControlVisibility(index, Visibility.Collapsed);
         }
     }
 }

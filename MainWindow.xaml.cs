@@ -134,7 +134,7 @@ public partial class MainWindow : Window
     {
         UIHelpers.RunOnUIThread(() =>
         {
-            // Update the previous tricks control with the current trick.
+            ViewModel.EndOfTrick(e.TrickWinningPlayer);
         });
     }
 

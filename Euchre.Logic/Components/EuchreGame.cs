@@ -212,6 +212,12 @@ public class EuchreGame
         GameInfo.AlonePlayer = null;
         GameInfo.Kitty = null;
 
+        GameInfo.TricksWonByPlayers.Clear();
+        foreach (var player in GameInfo.Players!)
+        {
+            GameInfo.TricksWonByPlayers.Add(player, 0);
+        }
+
         // Reset checkpoint for a brand-new round.
 
         GameInfo.ResetRoundCheckpoint();
@@ -404,6 +410,7 @@ public class EuchreGame
             var trick = PlayTrick(trickNum);
             GameInfo.CurrentRoundTricks.Add(trick);
             GameInfo.NextTrickPlayer = trick.GetWinner();
+            GameInfo.TricksWonByPlayers[GameInfo.NextTrickPlayer]++;
             DeclareTrickWinner?.Invoke(this, new DeclareTrickWinnerEventArgs(GameInfo.NextTrickPlayer));
 
             // Update checkpoint after each trick – this allows us to resume mid-round.

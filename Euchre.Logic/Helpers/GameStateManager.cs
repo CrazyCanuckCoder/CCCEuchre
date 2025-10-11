@@ -94,6 +94,11 @@ public class GameStateManager
     public int CurrentTrickNumber { get; internal set; } = 0;
 
     /// <summary>
+    /// Tracks the number of tricks won by each player for the current round.
+    /// </summary>
+    public Dictionary<IPlayer, int> TricksWonByPlayers { get; set; } = [];
+
+    /// <summary>
     /// Helper to reset checkpoint info when a brand‑new round begins.
     /// </summary>
     public void ResetRoundCheckpoint()
