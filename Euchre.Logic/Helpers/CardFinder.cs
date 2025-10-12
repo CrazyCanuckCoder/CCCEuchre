@@ -91,7 +91,10 @@ internal static class CardFinder
     /// <returns>The highest ranked card of the trump suit, or null if no such card exists.</returns>
     public static Card? GetHighestTrumpCard(List<Card> cards, Suit trump)
     {
-        return cards.OrderByDescending(c => c.GetTrickValue(trump, trump)).FirstOrNull();
+        return cards
+                .Where(c => c.EffectiveSuit(trump) == trump)
+                .OrderBy(c => c.GetTrickValue(trump, trump))
+                .FirstOrNull();
     }
 
     /// <summary>
@@ -102,7 +105,10 @@ internal static class CardFinder
     /// <returns>The lowest ranked card of the trump suit, or null if no such card exists.</returns>
     public static Card? GetLowestTrumpCard(List<Card> cards, Suit trump)
     {
-        return cards.OrderByDescending(c => c.GetTrickValue(trump, trump)).LastOrNull();
+        return cards
+                .Where(c => c.EffectiveSuit(trump) == trump)
+                .OrderBy(c => c.GetTrickValue(trump, trump))
+                .FirstOrNull();
     }
 
     /// <summary>

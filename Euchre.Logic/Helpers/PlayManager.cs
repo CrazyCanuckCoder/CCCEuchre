@@ -215,14 +215,14 @@ public class PlayManager : IPlayManager
         // Determine who is winning the current trick, whether the player has trump, and whether the player
         //   has off suit.
 
-        (IPlayer winningPlayer, ICard _) = trick.GetHighestCardInTrick();
+        (IPlayer winningPlayer, ICard highestTrickCard) = trick.GetHighestCardInTrick();
         bool hasTrump = CardFinder.HasTrump(_playerHand, trump);
         bool hasOffSuit = CardFinder.HasOffSuit(_playerHand, trump);
 
         // If the lead suit is trump, determine which trump card to play.
 
         cardToPlay = leadSuit == trump
-            ? DetermineCardToPlayWhenTrumpLead(trump, winningPlayer, hasTrump)
+            ? DetermineCardToPlayWhenTrumpLead(trump, winningPlayer, hasTrump, highestTrickCard)
             : DetermineCardToPlayWhenOffSuitLead(trump, leadSuit.Value, winningPlayer, hasTrump, hasOffSuit);
 
         return cardToPlay ??
@@ -235,8 +235,10 @@ public class PlayManager : IPlayManager
     /// <param name="trump">The suit that was declared trump for the current trick.</param>
     /// <param name="winningPlayer">Which player is currently winning the trick.</param>
     /// <param name="hasTrump">True to indicate the player has trump in their hand.</param>
+    /// <param name="highestTrickCard">The highest card played in the current trick.</param>
     /// <returns>A card to play or null to indicate one could not be chosen.</returns>
-    private Card? DetermineCardToPlayWhenTrumpLead(Suit trump, IPlayer winningPlayer, bool hasTrump)
+    private Card? DetermineCardToPlayWhenTrumpLead(Suit trump, IPlayer winningPlayer, bool hasTrump, 
+        ICard highestTrickCard)
     {
         Card? cardToPlay;
 
@@ -247,7 +249,7 @@ public class PlayManager : IPlayManager
 
             cardToPlay = winningPlayer.TeamIndex == _player.TeamIndex
                 ? CardFinder.GetLowestTrumpCard(_playerHand, trump)
-                : CardFinder.GetHighestTrumpCard(_playerHand, trump);
+                : GetTrumpCardToBeatOpponent(trump, highestTrickCard);
         }
         else
         {
@@ -328,5 +330,30 @@ public class PlayManager : IPlayManager
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Finds a trump card in the player hand higher than the specified opponent's card.  If there is no 
+    /// higher trump card in the player's hand, the lowest trump card is returned.
+    /// </summary>
+    /// <param name="trump">The suit that was declared trump for the current trick.</param>
+    /// <param name="opponentsCard">The card the player is trying to beat.</param>
+    /// <returns>A card greater than the opponent card, if possible, or the lowest trump card when not 
+    /// possible.</returns>
+    /// <exception cref="InvalidGameConditionException"></exception>
+    private Card GetTrumpCardToBeatOpponent(Suit trump, ICard opponentsCard)
+    {
+        Card? cardToPlay;
+
+        bool canBeatOpponentCard =
+            CardFinder.GetHighestTrumpCard(_playerHand, trump)!.GetTrickValue(trump, trump) >
+            opponentsCard.GetTrickValue(trump, trump);
+
+        cardToPlay = canBeatOpponentCard
+            ? CardFinder.GetHighestTrumpCard(_playerHand, trump)
+            : CardFinder.GetLowestTrumpCard(_playerHand, trump);
+
+        return cardToPlay ??
+            throw new InvalidGameConditionException("No card was found for the player to play!");
     }
 }

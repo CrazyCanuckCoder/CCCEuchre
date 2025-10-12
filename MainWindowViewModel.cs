@@ -1,13 +1,11 @@
 ﻿using CrazyCanuckCoder.Library.Common;
 using Euchre.Logic.Components;
-using Euchre.Logic.Enums;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Interfaces;
 using Euchre.UserControls;
 using System.Windows;
-using System.Windows.Data;
 
 namespace Euchre;
 
