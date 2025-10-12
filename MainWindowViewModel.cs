@@ -531,7 +531,7 @@ public class MainWindowViewModel : DependencyObject
              select player.Name)
             .ToList()
             .ToListedString();
-        UpdateGameInformation($"Game is over! {gameWinners} are the winners!");
+        UpdateGameInformation($"Game is over! {gameWinners} are the winners!", 5);
         ResetGameUI();
     }
 
@@ -542,24 +542,27 @@ public class MainWindowViewModel : DependencyObject
     /// </summary>
     private void InitializeCardDisplayControlCollection()
     {
-        _playerCardDisplayControls.Add(0, _mainWindow.Player1CardDisplayUserControl);
-        _playerCardDisplayControls.Add(1, _mainWindow.Player2CardDisplayUserControl);
-        _playerCardDisplayControls.Add(2, _mainWindow.Player3CardDisplayUserControl);
-        _playerCardDisplayControls.Add(3, _mainWindow.Player4CardDisplayUserControl);
+        if (_playerCardDisplayControls.Count == 0)
+        {
+            _playerCardDisplayControls.Add(0, _mainWindow.Player1CardDisplayUserControl);
+            _playerCardDisplayControls.Add(1, _mainWindow.Player2CardDisplayUserControl);
+            _playerCardDisplayControls.Add(2, _mainWindow.Player3CardDisplayUserControl);
+            _playerCardDisplayControls.Add(3, _mainWindow.Player4CardDisplayUserControl);
 
-        _playerCardDisplayControlsVisibility.Add(1, c => Player2CardDisplayUserControlVisibility = c);
-        _playerCardDisplayControlsVisibility.Add(2, c => Player3CardDisplayUserControlVisibility = c);
-        _playerCardDisplayControlsVisibility.Add(3, c => Player4CardDisplayUserControlVisibility = c);
+            _playerCardDisplayControlsVisibility.Add(1, c => Player2CardDisplayUserControlVisibility = c);
+            _playerCardDisplayControlsVisibility.Add(2, c => Player3CardDisplayUserControlVisibility = c);
+            _playerCardDisplayControlsVisibility.Add(3, c => Player4CardDisplayUserControlVisibility = c);
 
-        _playerDealtCardsDisplayControls.Add(0, _mainWindow.Player1DealtCardsDisplayUserControl);
-        _playerDealtCardsDisplayControls.Add(1, _mainWindow.Player2DealtCardsDisplayUserControl);
-        _playerDealtCardsDisplayControls.Add(2, _mainWindow.Player3DealtCardsDisplayUserControl);
-        _playerDealtCardsDisplayControls.Add(3, _mainWindow.Player4DealtCardsDisplayUserControl);
+            _playerDealtCardsDisplayControls.Add(0, _mainWindow.Player1DealtCardsDisplayUserControl);
+            _playerDealtCardsDisplayControls.Add(1, _mainWindow.Player2DealtCardsDisplayUserControl);
+            _playerDealtCardsDisplayControls.Add(2, _mainWindow.Player3DealtCardsDisplayUserControl);
+            _playerDealtCardsDisplayControls.Add(3, _mainWindow.Player4DealtCardsDisplayUserControl);
 
-        _playerPlayedCardsDisplayControls.Add(0, _mainWindow.Player1PlayedCardsDisplayUserControl);
-        _playerPlayedCardsDisplayControls.Add(1, _mainWindow.Player2PlayedCardsDisplayUserControl);
-        _playerPlayedCardsDisplayControls.Add(2, _mainWindow.Player3PlayedCardsDisplayUserControl);
-        _playerPlayedCardsDisplayControls.Add(3, _mainWindow.Player4PlayedCardsDisplayUserControl);
+            _playerPlayedCardsDisplayControls.Add(0, _mainWindow.Player1PlayedCardsDisplayUserControl);
+            _playerPlayedCardsDisplayControls.Add(1, _mainWindow.Player2PlayedCardsDisplayUserControl);
+            _playerPlayedCardsDisplayControls.Add(2, _mainWindow.Player3PlayedCardsDisplayUserControl);
+            _playerPlayedCardsDisplayControls.Add(3, _mainWindow.Player4PlayedCardsDisplayUserControl);
+        }
     }
 
     /// <summary>
@@ -656,14 +659,15 @@ public class MainWindowViewModel : DependencyObject
     /// Displays a string in the middle of the game board.
     /// </summary>
     /// <param name="message">The text to display on the game board.</param>
-    private void UpdateGameInformation(string message)
+    /// <param name="pauseSeconds">The number of seconds to pause the game, default is 2 seconds.</param>
+    private void UpdateGameInformation(string message, int pauseSeconds = 2)
     {
         GameInformation = message;
         GameInformationVisibility = Visibility.Visible;
 
-        // Wait for two seconds.
+        // Wait for the specified number of seconds.
 
-        PauseGame(2);
+        PauseGame(pauseSeconds);
 
         // Hide the text.
 
