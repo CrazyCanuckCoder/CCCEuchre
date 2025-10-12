@@ -2,6 +2,7 @@
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
 using Euchre.UILogic;
+using Euchre.UILogic.Classes;
 using Euchre.Windows;
 using System.Windows;
 
@@ -283,7 +284,25 @@ public partial class MainWindow : Window
 
     private void menuChooseTrump_Click(object sender, RoutedEventArgs e)
     {
-
+        List<Suit> trumpSuits =
+        [
+            Suit.Hearts,
+            Suit.Diamonds,
+            Suit.Spades,
+        ];
+        PickTrumpSuitWindow pickTrump = new(trumpSuits)
+        {
+            Owner = this,
+        };
+        if (pickTrump.ShowDialog() == true)
+        {
+            string message = "Selected to pass.";
+            if (pickTrump.SelectedSuit != null)
+            {
+                message = $"Selected {pickTrump.SelectedSuit}" + $"{(pickTrump.GoAlone ? " alone" : "")}.";
+            }
+            DialogBoxes.InformationDialog(message, this);
+        }
     }
 
     private void menuChooseCard_Click(object sender, RoutedEventArgs e)
