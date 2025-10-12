@@ -356,10 +356,7 @@ public class MainWindowViewModel : DependencyObject
     public void Initialize()
     {
         ContinueMenuEnabled = GameStateManager.DataExists();
-        IconMenuVisibility = GameSettingsManager.Instance.UseStandardMenu ? 
-            Visibility.Collapsed : Visibility.Visible;
-        StandardMenuVisibility = GameSettingsManager.Instance.UseStandardMenu ? 
-            Visibility.Visible : Visibility.Collapsed;
+        SetMenuVisibility();
         PlayLastCardInHand = GameSettingsManager.Instance.PlayLastCardInHand;
     }
 
@@ -439,7 +436,7 @@ public class MainWindowViewModel : DependencyObject
             message = $"{trump!.Value} {(isGoingAlone ? " alone" : "")}";
         }
 
-        DisplayPlayerMessage(player, message, 1, false);
+        DisplayPlayerMessage(player, message, 2, false);
         _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(player, trump!.Value, isGoingAlone);
         ClearPlayerMessages();
     }
@@ -523,6 +520,19 @@ public class MainWindowViewModel : DependencyObject
         _mainWindow.PreviousTricksUserControl.ClearTricks();
         _mainWindow.TrumpDisplayUserControl.ClearImage();
         _mainWindow.CurrentRoundInfoUserControl.ResetBidInformation();
+    }
+
+    public void EndOfGameUpdate(GameStateManager gameInfo)
+    {
+        int winningTeamIndex = gameInfo.TeamScores[0] > gameInfo.TeamScores[1] ? 0 : 1;
+        string gameWinners =
+            (  from player in CurrentGame!.GameInfo!.Players!
+              where player.TeamIndex == winningTeamIndex
+             select player.Name)
+            .ToList()
+            .ToListedString();
+        UpdateGameInformation($"Game is over! {gameWinners} are the winners!");
+        ResetGameUI();
     }
 
 
@@ -888,5 +898,34 @@ public class MainWindowViewModel : DependencyObject
     {
         _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(1, CurrentGame!.GameInfo!.TeamScores[0]);
         _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(2, CurrentGame.GameInfo.TeamScores[1]);
+    }
+
+    /// <summary>
+    /// Restores the interface of the main form to prompting the user for a new game.
+    /// </summary>
+    private void ResetGameUI()
+    {
+        GameBoardVisibility = Visibility.Hidden;
+        SetMenuVisibility();
+        ClearPlayersScores();
+    }
+
+    /// <summary>
+    /// Sets the visibility of the menus on the main form.
+    /// </summary>
+    private void SetMenuVisibility()
+    {
+        IconMenuVisibility = GameSettingsManager.Instance.UseStandardMenu ?
+            Visibility.Collapsed : Visibility.Visible;
+        StandardMenuVisibility = GameSettingsManager.Instance.UseStandardMenu ?
+            Visibility.Visible : Visibility.Collapsed;
+    }
+
+    /// <summary>
+    /// Clears the score tracking control of all text.
+    /// </summary>
+    private void ClearPlayersScores()
+    {
+        _mainWindow.CurrentPlayersScoresUserControl.Reset();
     }
 }

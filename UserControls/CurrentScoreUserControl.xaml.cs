@@ -82,4 +82,15 @@ public partial class CurrentScoreUserControl : UserControl
             labelledProgressBarUserControlTeam2.Text = teamScore.ToString();
         }
     }
+
+    /// <summary>
+    /// Resets the display of the teams to blank values.
+    /// </summary>
+    public void Reset()
+    {
+        Team1Names = string.Empty;
+        Team2Names = string.Empty;
+        UpdateTeamScore(1, 0);
+        UpdateTeamScore(2, 0);
+    }
 }

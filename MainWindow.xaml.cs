@@ -82,6 +82,34 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
+    /// Removes event handlers to all of the events fired by the class running the game.
+    /// </summary>
+    private void RemoveMainWindowEventHandlers()
+    {
+        ViewModel.CurrentGame!.CardPlayedByPlayer -= CurrentGame_CardPlayedByPlayer;
+        ViewModel.CurrentGame.CardsDealtToPlayer -= CurrentGame_CardsDealtToPlayer;
+        ViewModel.CurrentGame.DeclareDealer -= CurrentGame_DeclareDealer;
+        ViewModel.CurrentGame.DeclareKittyCard -= CurrentGame_DeclareKittyCard;
+        ViewModel.CurrentGame.KittyWasTurnedDown -= CurrentGame_KittyWasTurnedDown;
+        ViewModel.CurrentGame.DeclareRoundWinningPlayers -= CurrentGame_DeclareRoundWinningPlayers;
+        ViewModel.CurrentGame.DeclareTrickWinner -= CurrentGame_DeclareTrickWinner;
+        ViewModel.CurrentGame.GameOver -= CurrentGame_GameOver;
+        ViewModel.CurrentGame.PlayerBidResult -= CurrentGame_PlayerBidResult;
+    }
+
+    /// <summary>
+    /// Removes event handlers for all of the events a human player's class may fire.
+    /// </summary>
+    /// <param name="humanPlayer">The human player from which to remove events.</param>
+    private void RemoveHumanPlayerEventHandlers(HumanPlayer humanPlayer)
+    {
+        humanPlayer.PromptForCardToPlay -= HumanPlayer_PromptForCardToPlay;
+        humanPlayer.PromptForDiscard -= HumanPlayer_PromptForDiscard;
+        humanPlayer.PromptForTrumpSuit -= HumanPlayer_PromptForTrumpSuit;
+        humanPlayer.PromptToOrderUp -= HumanPlayer_PromptToOrderUp;
+    }
+
+    /// <summary>
     /// Prompts the user to enter their name and avatar plus select the automated players.
     /// </summary>
     /// <returns>A list of player names of avatar numbers.</returns>
@@ -127,6 +155,18 @@ public partial class MainWindow : Window
     {
         UIHelpers.RunOnUIThread(() =>
         {
+            ViewModel.EndOfGameUpdate(e.GameInfo);
+
+            // Remove the event handlers for the main window and each human player.
+
+            RemoveMainWindowEventHandlers();
+            var humanPlayers =   from player in ViewModel.CurrentGame!.GameInfo!.Players
+                                where player != null && player.IsHuman
+                               select player as HumanPlayer;
+            foreach (var humanPlayer in humanPlayers)
+            {
+                RemoveHumanPlayerEventHandlers(humanPlayer);
+            }
         });
     }
 
