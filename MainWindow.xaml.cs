@@ -307,7 +307,23 @@ public partial class MainWindow : Window
 
     private void menuChooseCard_Click(object sender, RoutedEventArgs e)
     {
+        List<Card> playerCards = new()
+        {
+            new Card(Suit.Clubs, Rank.Jack),
+            new Card(Suit.Clubs, Rank.Ace),
+            new Card(Suit.Clubs, Rank.King),
+            new Card(Suit.Spades, Rank.Ace),
+            new Card(Suit.Spades, Rank.King),
+        };
 
+        ChooseDiscardWindow cardWindow = new(playerCards)
+        {
+            Owner = this
+        };
+        if (cardWindow.ShowDialog() == true)
+        {
+            DialogBoxes.InformationDialog($"Card selected was {cardWindow.ChosenCard}.", this);
+        }
     }
 
     private void menuChooseCards_Click(object sender, RoutedEventArgs e)

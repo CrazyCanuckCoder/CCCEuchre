@@ -290,6 +290,70 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
     }
 
     /// <summary>
+    /// Sets up the cards to allow the user to pick one card to discard.
+    /// </summary>
+    /// <param name="cards">The list of cards to pick from.</param>
+    public void GetDiscard(List<Card> cards)
+    {
+        // Get the cards that have not been played.
+
+        Cards = (  from currentCard in cards
+                  where !currentCard.IsPlayed
+                 select currentCard)
+                .ToList();
+
+        if (Cards.Count > 0)
+        {
+            // Group the cards by suit. Setup up a previous suit to see if the current card belongs in the
+            //  current group of cards. Create two different Margin values for a card in the group and the
+            //  card that separates the group.
+
+            Suit previousSuit = Cards.First().Suit;
+            Thickness inGroupMargin = new(-25, 0, 0, 0);
+
+            // Load each card in order.
+
+            for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
+            {
+                // Load the image for the card.
+
+                string cardFilename = Cards[cardIndex].ToString()?.ToLower() + ".png";
+                string imageName = $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}";
+
+                // Determine the margin to use for the current card.
+
+                Thickness cardMargin = new(0);
+                if (cardIndex > 0)
+                {
+                    if (Cards[cardIndex].Suit == previousSuit)
+                    {
+                        cardMargin = inGroupMargin;
+                    }
+                }
+
+                // Add the image to the collection of images and set its visibility.
+
+                CardImages.Add(new CardDisplay()
+                {
+                    ImageData = new Image()
+                    {
+                        Source = UIHelpers.GenerateImageSource(imageName)
+                    },
+                    CardVisibility = Visibility.Visible,
+                    ImageVisibility = Visibility.Collapsed,
+                    Card = Cards[cardIndex],
+                    CardMargin = cardMargin,
+                    IsEnabled = true,
+                });
+
+                // Reset the suit tracker variable.
+
+                previousSuit = Cards[cardIndex].Suit;
+            }
+        }
+    }
+
+    /// <summary>
     /// Removes a card from the list of images of cards.
     /// </summary>
     public void RemoveCard()
