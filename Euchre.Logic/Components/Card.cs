@@ -32,11 +32,6 @@ public class Card : ICard
     public int ShuffleValue { get; internal set; }
 
     /// <summary>
-    /// True to indicate the card has been played by the user.
-    /// </summary>
-    public bool IsPlayed { get; set; }
-
-    /// <summary>
     /// Determines whether the card is the right bower in the specified trump suit.
     /// </summary>
     /// <param name="trump">The trump suit to evaluate against.</param>
@@ -140,7 +135,6 @@ public class Card : ICard
         return new Card(Suit, Rank)
         {
             ShuffleValue = ShuffleValue,
-            IsPlayed = IsPlayed,
         };
     }
 }

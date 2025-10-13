@@ -8,7 +8,6 @@ public interface ICard
     Rank Rank { get; }
     int ShuffleValue { get; }
     Suit Suit { get; }
-    bool IsPlayed { get; set; }
 
     ICard Clone();
     Suit EffectiveSuit(Suit trump);

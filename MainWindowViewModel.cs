@@ -468,7 +468,6 @@ public class MainWindowViewModel : DependencyObject
         }
         SetPlayersPlayedCardDisplayControlVisibility(player.PlayerIndex, Visibility.Visible);
         var cardPlayedClone = cardPlayed.Clone();
-        cardPlayedClone.IsPlayed = false;
         _playerPlayedCardsDisplayControls[player.PlayerIndex].SetupCards([(Card)cardPlayedClone]);
 
         PauseGame(2);

@@ -16,7 +16,7 @@ internal static class CardFinder
     /// <returns>True if the collection contains at least one card of the specified suit; otherwise, false.</returns>
     public static bool HasACardOfSuit(List<Card> cards, Suit suit)
     {
-        return cards.Any(c => c.Suit == suit && !c.IsPlayed);
+        return cards.Any(c => c.Suit == suit);
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ internal static class CardFinder
     /// false.</returns>
     public static bool HasTrump(List<Card> cards, Suit trump)
     {
-        return cards.Any(c => c.EffectiveSuit(trump) == trump && !c.IsPlayed);
+        return cards.Any(c => c.EffectiveSuit(trump) == trump);
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ internal static class CardFinder
     /// <returns>True if the collection contains a bower for the specified trump suit; otherwise, false.</returns>
     public static bool HasBower(List<Card> cards, Suit trump)
     {
-        return cards.Any(c => c.IsBower(trump) && !c.IsPlayed);
+        return cards.Any(c => c.IsBower(trump));
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ internal static class CardFinder
     /// otherwise, false.</returns>
     public static bool HasOffSuit(List<Card> cards, Suit trump)
     {
-        return cards.Any(c => c.EffectiveSuit(trump) != trump && !c.IsPlayed);
+        return cards.Any(c => c.EffectiveSuit(trump) != trump);
     }
 
     /// <summary>
@@ -64,7 +64,7 @@ internal static class CardFinder
     public static Card? GetHighestOffSuitCard(List<Card> cards, Suit trump)
     {
         return cards
-                .Where(c => c.EffectiveSuit(trump) != trump && !c.IsPlayed)
+                .Where(c => c.EffectiveSuit(trump) != trump)
                 .OrderByDescending(c => (int)c.Rank)
                 .FirstOrNull();
     }
@@ -78,7 +78,7 @@ internal static class CardFinder
     public static Card? GetLowestOffSuitCard(List<Card> cards, Suit trump)
     {
         return cards
-                .Where(c => c.EffectiveSuit(trump) != trump && !c.IsPlayed)
+                .Where(c => c.EffectiveSuit(trump) != trump)
                 .OrderByDescending(c => (int)c.Rank)
                 .LastOrNull();
     }
@@ -92,7 +92,7 @@ internal static class CardFinder
     public static Card? GetHighestTrumpCard(List<Card> cards, Suit trump)
     {
         return cards
-                .Where(c => c.EffectiveSuit(trump) == trump && !c.IsPlayed)
+                .Where(c => c.EffectiveSuit(trump) == trump)
                 .OrderBy(c => c.GetTrickValue(trump, trump))
                 .FirstOrNull();
     }
@@ -106,7 +106,7 @@ internal static class CardFinder
     public static Card? GetLowestTrumpCard(List<Card> cards, Suit trump)
     {
         return cards
-                .Where(c => c.EffectiveSuit(trump) == trump && !c.IsPlayed)
+                .Where(c => c.EffectiveSuit(trump) == trump)
                 .OrderBy(c => c.GetTrickValue(trump, trump))
                 .FirstOrNull();
     }
@@ -120,7 +120,7 @@ internal static class CardFinder
     public static Card? GetHighestCardOfSuit(List<Card> cards, Suit? suit)
     {
         return cards
-                .Where(c => c.Suit == suit && !c.IsPlayed)
+                .Where(c => c.Suit == suit)
                 .OrderByDescending(c => (int)c.Rank)
                 .FirstOrNull();
     }
@@ -134,7 +134,7 @@ internal static class CardFinder
     public static Card? GetHighestBowerCard(List<Card> cards, Suit trump)
     {
         return cards
-                .Where(c => c.IsBower(trump) && !c.IsPlayed)
+                .Where(c => c.IsBower(trump))
                 .OrderByDescending(c => c.GetTrickValue(trump, trump))
                 .FirstOrNull();
     }
@@ -147,7 +147,7 @@ internal static class CardFinder
     /// <returns>The number of cards found for the specified suit.</returns>
     public static int CountCardsOfSuit(List<Card> cards, Suit suit)
     {
-        return cards.Count(c => c.Suit == suit && !c.IsPlayed);
+        return cards.Count(c => c.Suit == suit);
     }
 
     /// <summary>
@@ -158,7 +158,7 @@ internal static class CardFinder
     /// <returns>The number of cards found for the specified rank.</returns>
     public static int CountCardsOfRank(List<Card> cards, Rank rank)
     {
-        return cards.Count(c => c.Rank == rank && !c.IsPlayed);
+        return cards.Count(c => c.Rank == rank);
     }
 
     /// <summary>
@@ -170,7 +170,7 @@ internal static class CardFinder
     /// <returns>The number of cards found for the specified rank.</returns>
     public static int CountNonTrumpCardsOfRank(List<Card> cards, Rank rank, Suit trump)
     {
-        return cards.Count(c => c.Rank == rank && c.Suit != trump && !c.IsPlayed);
+        return cards.Count(c => c.Rank == rank && c.Suit != trump);
     }
 
     /// <summary>
@@ -181,7 +181,7 @@ internal static class CardFinder
     /// <returns>The number of bowers found.</returns>
     public static int CountBowers(List<Card> cards, Suit trump)
     {
-        return cards.Count(c => c.IsBower(trump) && !c.IsPlayed);
+        return cards.Count(c => c.IsBower(trump));
     }
 
     /// <summary>
@@ -193,7 +193,7 @@ internal static class CardFinder
     public static List<Card> GetBowers(List<Card> cards, Suit trump)
     {
         return cards
-                .Where(c => c.IsBower(trump) && !c.IsPlayed)
+                .Where(c => c.IsBower(trump))
                 .OrderByDescending(c => c.GetTrickValue(trump, trump))
                 .ToList();
     }
@@ -207,7 +207,7 @@ internal static class CardFinder
     public static List<Card> GetNonBowers(List<Card> cards, Suit trump)
     {
         return cards
-                .Where(c => !c.IsBower(trump) && !c.IsPlayed)
+                .Where(c => !c.IsBower(trump))
                 .OrderByDescending(c => c.GetTrickValue(trump, trump))
                 .ToList();
     }

@@ -9,17 +9,11 @@ namespace Euchre.Logic.Helpers;
 /// </summary>
 public class PlayManager : IPlayManager
 {
-    public PlayManager(List<Card> playerHand, GameStateManager gameStateManager, IPlayer player)
+    public PlayManager(GameStateManager gameStateManager, IPlayer player)
     {
-        _playerHand = playerHand ?? throw new ArgumentNullException(nameof(playerHand));
         _gameStateManager = gameStateManager ?? throw new ArgumentNullException(nameof(gameStateManager));
         _player = player;
     }
-
-    /// <summary>
-    /// The player's hand, which contains the cards they can play.
-    /// </summary>
-    private readonly List<Card> _playerHand;
 
     /// <summary>
     /// The game data manager that provides access to the game's state.
@@ -42,10 +36,10 @@ public class PlayManager : IPlayManager
     /// suit, those cards are returned. Otherwise, all cards in the hand are considered valid.</returns>
     public List<Card> GetValidCards(Suit leadSuit, Suit trump)
     {
-        if (_playerHand.Count == 0) return [];
+        if (_player.Hand.Count == 0) return [];
 
-        var leadCards = _playerHand.Where(c => c.EffectiveSuit(trump) == leadSuit).ToList();
-        return leadCards.Count > 0 ? leadCards : [.. _playerHand];
+        var leadCards = _player.Hand.Where(c => c.EffectiveSuit(trump) == leadSuit).ToList();
+        return leadCards.Count > 0 ? leadCards : [.. _player.Hand];
     }
 
     /// <summary>
@@ -60,16 +54,16 @@ public class PlayManager : IPlayManager
     /// the player's hand is returned.</returns>
     public Card DetermineCardToPlay(Trick trick, Suit trump, Suit? leadSuit)
     {
-        if (_playerHand.Count == 0)
+        if (_player.Hand.Count == 0)
         {
             throw new InvalidGameConditionException("Cannot play a card when the player's hand is empty.");
         }
 
         // If there is only one card left in the player's hand, choose it.
 
-        if (_playerHand.Count == 1) 
+        if (_player.Hand.Count == 1) 
         {
-            return _playerHand[0];
+            return _player.Hand[0];
         }
         else
         {
@@ -107,8 +101,8 @@ public class PlayManager : IPlayManager
                 // If the player is not a member of the calling team, lead the highest card of any suit that
                 //  is not trump.
 
-                cardToLead = CardFinder.GetHighestOffSuitCard(_playerHand, trump)
-                          ?? CardFinder.GetLowestTrumpCard(_playerHand, trump);
+                cardToLead = CardFinder.GetHighestOffSuitCard(_player.Hand, trump)
+                          ?? CardFinder.GetLowestTrumpCard(_player.Hand, trump);
             }
         }
 
@@ -130,9 +124,9 @@ public class PlayManager : IPlayManager
             // If the player is going alone, lead the highest trump card until trump is exhausted.
             //   When no trumps are available, lead with the highest card of any suit.
 
-            cardToLead = CardFinder.HasTrump(_playerHand, trump)
-                ? CardFinder.GetHighestTrumpCard(_playerHand, trump)
-                : CardFinder.GetHighestOffSuitCard(_playerHand, trump);
+            cardToLead = CardFinder.HasTrump(_player.Hand, trump)
+                ? CardFinder.GetHighestTrumpCard(_player.Hand, trump)
+                : CardFinder.GetHighestOffSuitCard(_player.Hand, trump);
         }
         else
         {
@@ -144,17 +138,17 @@ public class PlayManager : IPlayManager
             {
                 // Lead the highest trump. If no trumps are available, lead with the highest card of any suit.
 
-                cardToLead = CardFinder.HasTrump(_playerHand, trump)
-                    ? CardFinder.GetHighestTrumpCard(_playerHand, trump)
-                    : CardFinder.GetHighestOffSuitCard(_playerHand, trump);
+                cardToLead = CardFinder.HasTrump(_player.Hand, trump)
+                    ? CardFinder.GetHighestTrumpCard(_player.Hand, trump)
+                    : CardFinder.GetHighestOffSuitCard(_player.Hand, trump);
             }
             else
             {
                 // Lead the highest card of any suit that is not trump.
 
-                cardToLead = CardFinder.HasOffSuit(_playerHand, trump)
-                    ? CardFinder.GetHighestOffSuitCard(_playerHand, trump)
-                    : CardFinder.GetHighestTrumpCard(_playerHand, trump);
+                cardToLead = CardFinder.HasOffSuit(_player.Hand, trump)
+                    ? CardFinder.GetHighestOffSuitCard(_player.Hand, trump)
+                    : CardFinder.GetHighestTrumpCard(_player.Hand, trump);
             }
         }
 
@@ -175,18 +169,18 @@ public class PlayManager : IPlayManager
 
         if (!HasPlayerLedTrump(_gameStateManager.CurrentRoundTricks, _gameStateManager.TrumpCaller!))
         {
-            cardToLead = CardFinder.HasBower(_playerHand, trump)
-                ? CardFinder.GetHighestBowerCard(_playerHand, trump)
-                : CardFinder.GetHighestOffSuitCard(_playerHand, trump)
-                  ?? CardFinder.GetLowestTrumpCard(_playerHand, trump);
+            cardToLead = CardFinder.HasBower(_player.Hand, trump)
+                ? CardFinder.GetHighestBowerCard(_player.Hand, trump)
+                : CardFinder.GetHighestOffSuitCard(_player.Hand, trump)
+                  ?? CardFinder.GetLowestTrumpCard(_player.Hand, trump);
         }
         else
         {
             // If the player is the partner of the caller, if the caller has led with a trump card,
             //  lead the highest card of any suit that is not trump.
 
-            cardToLead = CardFinder.GetHighestOffSuitCard(_playerHand, trump)
-                      ?? CardFinder.GetLowestTrumpCard(_playerHand, trump);
+            cardToLead = CardFinder.GetHighestOffSuitCard(_player.Hand, trump)
+                      ?? CardFinder.GetLowestTrumpCard(_player.Hand, trump);
         }
 
         return cardToLead;
@@ -216,8 +210,8 @@ public class PlayManager : IPlayManager
         //   has off suit.
 
         (IPlayer winningPlayer, ICard highestTrickCard) = trick.GetHighestCardInTrick();
-        bool hasTrump = CardFinder.HasTrump(_playerHand, trump);
-        bool hasOffSuit = CardFinder.HasOffSuit(_playerHand, trump);
+        bool hasTrump = CardFinder.HasTrump(_player.Hand, trump);
+        bool hasOffSuit = CardFinder.HasOffSuit(_player.Hand, trump);
 
         // If the lead suit is trump, determine which trump card to play.
 
@@ -248,14 +242,14 @@ public class PlayManager : IPlayManager
             //   Else, if the player has a trump card, play the highest trump card in their hand.
 
             cardToPlay = winningPlayer.TeamIndex == _player.TeamIndex
-                ? CardFinder.GetLowestTrumpCard(_playerHand, trump)
+                ? CardFinder.GetLowestTrumpCard(_player.Hand, trump)
                 : GetTrumpCardToBeatOpponent(trump, highestTrickCard);
         }
         else
         {
             // If the player does not have a trump card, play the lowest off suit card.
 
-            cardToPlay = CardFinder.GetLowestOffSuitCard(_playerHand, trump);
+            cardToPlay = CardFinder.GetLowestOffSuitCard(_player.Hand, trump);
         }
 
         return cardToPlay;
@@ -275,11 +269,11 @@ public class PlayManager : IPlayManager
     {
         Card? cardToPlay;
 
-        if (CardFinder.HasACardOfSuit(_playerHand, leadSuit))
+        if (CardFinder.HasACardOfSuit(_player.Hand, leadSuit))
         {
             // If the player has a card of the lead suit, play the highest card of that suit.
 
-            cardToPlay = CardFinder.GetHighestCardOfSuit(_playerHand, leadSuit);
+            cardToPlay = CardFinder.GetHighestCardOfSuit(_player.Hand, leadSuit);
         }
         else
         {
@@ -290,8 +284,8 @@ public class PlayManager : IPlayManager
             if (winningPlayer.TeamIndex == _player.TeamIndex)
             {
                 cardToPlay = hasOffSuit
-                    ? CardFinder.GetLowestOffSuitCard(_playerHand, trump)
-                    : CardFinder.GetLowestTrumpCard(_playerHand, trump);
+                    ? CardFinder.GetLowestOffSuitCard(_player.Hand, trump)
+                    : CardFinder.GetLowestTrumpCard(_player.Hand, trump);
             }
             else
             {
@@ -299,8 +293,8 @@ public class PlayManager : IPlayManager
                 //   If not, play the lowest off suit card.
 
                 cardToPlay = hasTrump
-                    ? CardFinder.GetHighestTrumpCard(_playerHand, trump)
-                    : CardFinder.GetLowestOffSuitCard(_playerHand, trump);
+                    ? CardFinder.GetHighestTrumpCard(_player.Hand, trump)
+                    : CardFinder.GetLowestOffSuitCard(_player.Hand, trump);
             }
         }
 
@@ -346,12 +340,12 @@ public class PlayManager : IPlayManager
         Card? cardToPlay;
 
         bool canBeatOpponentCard =
-            CardFinder.GetHighestTrumpCard(_playerHand, trump)!.GetTrickValue(trump, trump) >
+            CardFinder.GetHighestTrumpCard(_player.Hand, trump)!.GetTrickValue(trump, trump) >
             opponentsCard.GetTrickValue(trump, trump);
 
         cardToPlay = canBeatOpponentCard
-            ? CardFinder.GetHighestTrumpCard(_playerHand, trump)
-            : CardFinder.GetLowestTrumpCard(_playerHand, trump);
+            ? CardFinder.GetHighestTrumpCard(_player.Hand, trump)
+            : CardFinder.GetLowestTrumpCard(_player.Hand, trump);
 
         return cardToPlay ??
             throw new InvalidGameConditionException("No card was found for the player to play!");

@@ -59,7 +59,6 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
         //  unknown Ace.
 
         Cards = (  from currentCard in cards
-                  where !currentCard.IsPlayed
                  select currentCard)
                 .ToList();
 

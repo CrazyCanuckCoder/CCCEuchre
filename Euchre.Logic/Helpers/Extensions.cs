@@ -49,10 +49,10 @@ public static class Extensions
 
         foreach (Suit suit in suitOrder)
         {
-            if (trump.HasValue && suit == trump)
+            if (trump.HasValue)
             {
                 sortedCards.AddRange(    from card in cards
-                                        where card.Suit == suit
+                                        where card.EffectiveSuit(trump.Value) == suit
                                       orderby card.GetTrickValue(trump.Value, suit) descending
                                        select card);
             }

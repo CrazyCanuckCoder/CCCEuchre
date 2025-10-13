@@ -66,7 +66,6 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
         // Get the cards that have not been played.
 
         Cards = (  from currentCard in cards
-                  where !currentCard.IsPlayed
                  select currentCard)
                 .ToList();
 
@@ -159,7 +158,6 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
         // Get the cards that have not been played.
 
         Cards = (  from currentCard in cards
-                  where !currentCard.IsPlayed
                  select currentCard)
                 .ToList();
 
@@ -274,9 +272,9 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
         SetupCards(cards.ToArray().ToList(), trickSuit, trickSuitIsTrump, trumpSuit, true);
         ChosenCard = null;
 
-        if (GameSettingsManager.Instance.PlayLastCardInHand && cards.Where(c => !c.IsPlayed).Count() == 1)
+        if (GameSettingsManager.Instance.PlayLastCardInHand && cards.Count() == 1)
         {
-            ChosenCard = cards.Where(c => !c.IsPlayed).First();
+            ChosenCard = cards.First();
         }
         else
         {
@@ -298,7 +296,6 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
         // Get the cards that have not been played.
 
         Cards = (  from currentCard in cards
-                  where !currentCard.IsPlayed
                  select currentCard)
                 .ToList();
 
