@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic.Exceptions;
+using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using static Euchre.Logic.Helpers.Constants;
 
@@ -88,6 +89,11 @@ public abstract class Player : IPlayer
     public void ClearHand()
     {
         Hand.Clear();
+    }
+
+    public void SortPlayerCards(Suit? trump)
+    {
+        Hand = Hand.Sort(trump);
     }
 
     /// <summary>

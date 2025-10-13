@@ -73,7 +73,7 @@ public static class Extensions
     /// </summary>
     /// <param name="trumpSuit">The current trump suit.</param>
     /// <returns>A list of SuitTypes in an order that alternates the suit colour compared to the trump suit.</returns>
-    private static List<Suit> GetComplementarySuits(Suit? trumpSuit)
+    public static List<Suit> GetComplementarySuits(Suit? trumpSuit)
     {
         List<Suit> suitTypes = [];
 

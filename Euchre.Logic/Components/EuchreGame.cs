@@ -41,13 +41,11 @@ public class EuchreGame
 
         // Add the human player as the first player.
 
-        //players[0] = new HumanPlayer(playerNames[0].PlayerName, 0, 0, playerNames[0].AvatarNumber);
+        players[0] = new HumanPlayer(playerNames[0].PlayerName, 0, 0, playerNames[0].AvatarNumber);
 
         // Add automated players.
-        //
-        // TODO: Change i to start at 1 when the human player is uncommented.
 
-        for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
+        for (int i = 1; i < NUMBER_OF_PLAYERS; i++)
         {
             players[i] = new AutomatedPlayer(playerNames[i].PlayerName, i % NUMBER_OF_TEAMS, i, GameInfo,
                 playerNames[i].AvatarNumber);

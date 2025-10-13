@@ -1,6 +1,7 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
+using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using Euchre.Windows;
@@ -233,6 +234,8 @@ public partial class MainWindow : Window
     {
         UIHelpers.RunOnUIThread(() =>
         {
+            e.OrderedUp = ViewModel.PromptUserToOrderUp(e.Kitty, out bool goAlone);
+            e.GoAlone = goAlone;
         });
     }
 
@@ -240,6 +243,8 @@ public partial class MainWindow : Window
     {
         UIHelpers.RunOnUIThread(() =>
         {
+            e.TrumpSuit = ViewModel.PromptUserForTrump(e.Kitty, out bool goAlone);
+            e.GoAlone = goAlone;
         });
     }
 
@@ -247,6 +252,10 @@ public partial class MainWindow : Window
     {
         UIHelpers.RunOnUIThread(() =>
         {
+            if (sender is HumanPlayer player)
+            {
+                e.DiscardedCard = ViewModel.PromptUserForDiscard(player);
+            }
         });
     }
 
@@ -254,6 +263,10 @@ public partial class MainWindow : Window
     {
         UIHelpers.RunOnUIThread(() =>
         {
+            if (sender is HumanPlayer player)
+            {
+                e.PlayedCard = ViewModel.GetCardFromUser(player, e.LeadSuit, e.Trump);
+            }
         });
     }
 
@@ -287,7 +300,7 @@ public partial class MainWindow : Window
         List<Suit> trumpSuits =
         [
             Suit.Hearts,
-            Suit.Diamonds,
+            //Suit.Diamonds,
             Suit.Spades,
         ];
         PickTrumpSuitWindow pickTrump = new(trumpSuits)

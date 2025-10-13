@@ -3,9 +3,12 @@ using Euchre.Logic.Components;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
+using Euchre.UILogic.Classes;
 using Euchre.UILogic.Interfaces;
 using Euchre.UserControls;
+using Euchre.Windows;
 using System.Windows;
+using Extensions = Euchre.Logic.Helpers.Extensions;
 
 namespace Euchre;
 
@@ -435,6 +438,10 @@ public class MainWindowViewModel : DependencyObject
         }
 
         DisplayPlayerMessage(player, message, 2, false);
+        foreach (IPlayer updatePlayer in CurrentGame!.GameInfo!.Players!)
+        {
+            UpdatePlayersHandAfterTrumpSet(updatePlayer.PlayerIndex, trump!.Value);
+        }
         _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(player, trump!.Value, isGoingAlone);
         ClearPlayerMessages();
     }
@@ -533,6 +540,78 @@ public class MainWindowViewModel : DependencyObject
         ResetGameUI();
     }
 
+    public bool PromptUserToOrderUp(Card kitty, out bool goAlone)
+    {
+        goAlone = false;
+        bool orderedUp = false;
+
+        List<Suit> suits = [kitty.Suit];
+        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits)
+        {
+            Owner = _mainWindow
+        };
+        if (pickTrumpSuitWindow.ShowDialog() == true)
+        {
+            orderedUp = pickTrumpSuitWindow.SelectedSuit != null;
+            goAlone = pickTrumpSuitWindow.GoAlone;
+        }
+
+        return orderedUp;
+    }
+
+    public Suit? PromptUserForTrump(Card kitty, out bool goAlone)
+    {
+        goAlone = false;
+        Suit? chosenSuit = null;
+
+        List<Suit> suits = Extensions.GetComplementarySuits(kitty.Suit);
+        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits)
+        {
+            Owner = _mainWindow
+        };
+        if (pickTrumpSuitWindow.ShowDialog() == true)
+        {
+            chosenSuit = pickTrumpSuitWindow.SelectedSuit;
+            goAlone = pickTrumpSuitWindow.GoAlone;
+        }
+
+        return chosenSuit;
+    }
+
+    public Card? PromptUserForDiscard(HumanPlayer player)
+    {
+        Card? discard = null;
+
+        ChooseDiscardWindow cardWindow = new(player.Hand)
+        {
+            Owner = _mainWindow,
+        };
+        if (cardWindow.ShowDialog() == true)
+        {
+            discard = (Card?)cardWindow.ChosenCard;
+        }
+
+        return discard;
+    }
+
+    public Card? GetCardFromUser(IPlayer user, Suit? trickSuit, Suit trump)
+    {
+        Card? chosenCard = null;
+
+        // Let the user know they need to play a card.
+
+        DisplayPlayerMessage(user, "It's your turn.", 2, true);
+
+        // Get the card from the user.
+
+        if (_playerCardDisplayControls[0] is CardDisplayUserControl playerControl)
+        {
+            playerControl.GetCardFromUser(user.Hand, trickSuit, trickSuit! == trump, trump);
+            chosenCard = playerControl.ChosenCard;
+        }
+
+        return chosenCard;
+    }
 
     /// <summary>
     /// Updates the collection that references each player's card display control and the collection that
@@ -711,22 +790,42 @@ public class MainWindowViewModel : DependencyObject
     {
         if (CurrentGame!.GameInfo!.Players![indexOfPlayer] is HumanPlayer humanPlayer)
         {
-            var sortedCards = humanPlayer.Hand.Sort(trump: null);
-            _playerCardDisplayControls[indexOfPlayer].SetupCards(sortedCards);
+            humanPlayer.SortPlayerCards(trump: null);
+            _playerCardDisplayControls[indexOfPlayer].SetupCards(humanPlayer.Hand);
         }
         else
         {
 #if DEBUG
             if (CurrentGame.GameInfo.Players[indexOfPlayer] is AutomatedPlayer automatedPlayer)
             {
-                var sortedCards = automatedPlayer.Hand.Sort(trump: null);
-                _playerCardDisplayControls[indexOfPlayer].SetupCards(sortedCards);
+                automatedPlayer.SortPlayerCards(trump: null);
+                _playerCardDisplayControls[indexOfPlayer].SetupCards(automatedPlayer.Hand);
             }
 #else
                 _playerCardDisplayControls[indexOfPlayer].AddCards(numberOfCardsDealt);
 #endif
         }
     }
+
+    private void UpdatePlayersHandAfterTrumpSet(int indexOfPlayer, Suit trump)
+    {
+        if (CurrentGame!.GameInfo!.Players![indexOfPlayer] is HumanPlayer humanPlayer)
+        {
+            humanPlayer.SortPlayerCards(trump);
+            _playerCardDisplayControls[indexOfPlayer].SetupCards(humanPlayer.Hand);
+        }
+        else
+        {
+#if DEBUG
+            if (CurrentGame.GameInfo.Players[indexOfPlayer] is AutomatedPlayer automatedPlayer)
+            {
+                automatedPlayer.SortPlayerCards(trump);
+                _playerCardDisplayControls[indexOfPlayer].SetupCards(automatedPlayer.Hand);
+            }
+#endif
+        }
+    }
+
     /// <summary>
     /// Displays a specified message in front of the player for a specified number of seconds.
     /// </summary>
