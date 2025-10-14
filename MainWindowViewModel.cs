@@ -7,6 +7,7 @@ using Euchre.UILogic.Interfaces;
 using Euchre.UserControls;
 using Euchre.Windows;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using Extensions = Euchre.Logic.Helpers.Extensions;
 
 namespace Euchre;
@@ -442,7 +443,7 @@ public class MainWindowViewModel : DependencyObject
 
         if (isKittyRound)
         {
-            string goingAlone = isGoingAlone ? "and I am going alone" : "";
+            string goingAlone = isGoingAlone ? " and I am going alone" : "";
             message = CurrentGame!.GameInfo!.Dealer == player
                 ? $"I am picking up the kitty card{goingAlone}."
                 : $"Pick it up{goingAlone}.";
@@ -458,7 +459,8 @@ public class MainWindowViewModel : DependencyObject
             UpdatePlayersHandAfterTrumpSet(updatePlayer.PlayerIndex, trump!.Value);
         }
         _mainWindow.TrumpDisplayUserControl.SetTrump(trump!.Value);
-        _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(player, trump!.Value, isGoingAlone);
+        _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(player, trump.Value, isGoingAlone);
+        SetPlayerTrumpSuitIcon(player.PlayerIndex, trump.Value);
         if (isGoingAlone) 
         {
             SetPartnerDisabled(player);
@@ -540,6 +542,7 @@ public class MainWindowViewModel : DependencyObject
         ClearPlayersHands();
         UpdateGameScores();
         ResetTrickCounters();
+        ResetPlayerTrumpSuitIcon(CurrentGame!.GameInfo!.TrumpCaller!.PlayerIndex);
         _mainWindow.PreviousTricksUserControl.ClearTricks();
         _mainWindow.TrumpDisplayUserControl.ClearImage();
         _mainWindow.CurrentRoundInfoUserControl.ResetBidInformation();
@@ -738,6 +741,50 @@ public class MainWindowViewModel : DependencyObject
 
             case 3:
                 _mainWindow.Player4DisplayUserControl.SetDealerIconVisibility(isVisible);
+                break;
+        }
+    }
+
+    private void SetPlayerTrumpSuitIcon(int playerIndex, Suit trump)
+    {
+        switch (playerIndex)
+        {
+            case 0:
+                _mainWindow.Player1DisplayUserControl.SetTrumpSuit(trump);
+                break;
+
+            case 1:
+                _mainWindow.Player2DisplayUserControl.SetTrumpSuit(trump);
+                break;
+
+            case 2:
+                _mainWindow.Player3DisplayUserControl.SetTrumpSuit(trump);
+                break;
+
+            case 3:
+                _mainWindow.Player4DisplayUserControl.SetTrumpSuit(trump);
+                break;
+        }
+    }
+
+    private void ResetPlayerTrumpSuitIcon(int playerIndex)
+    {
+        switch (playerIndex)
+        {
+            case 0:
+                _mainWindow.Player1DisplayUserControl.ClearTrumpSuit();
+                break;
+
+            case 1:
+                _mainWindow.Player2DisplayUserControl.ClearTrumpSuit();
+                break;
+
+            case 2:
+                _mainWindow.Player3DisplayUserControl.ClearTrumpSuit();
+                break;
+
+            case 3:
+                _mainWindow.Player4DisplayUserControl.ClearTrumpSuit();
                 break;
         }
     }

@@ -1,4 +1,5 @@
-﻿using Euchre.Logic.Helpers;
+﻿using Euchre.Logic.Components;
+using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Classes;
@@ -56,6 +57,20 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
     }
 
     /// <summary>
+    /// Using a DependencyProperty as the backing store for SuitImage.
+    /// </summary>
+    public static readonly DependencyProperty SuitImageProperty =
+        DependencyProperty.Register(nameof(SuitImage), typeof(Image),
+            typeof(VerticalPlayerDisplayUserControl), new PropertyMetadata(null));
+
+    /// <summary>
+    /// Using a DependencyProperty as the backing store for SuitIconVisibility.
+    /// </summary>
+    public static readonly DependencyProperty SuitIconVisibilityProperty =
+        DependencyProperty.Register(nameof(SuitIconVisibility), typeof(Visibility),
+            typeof(VerticalPlayerDisplayUserControl), new PropertyMetadata(Visibility.Hidden));
+
+    /// <summary>
     /// A list of visibility values corresponding to the number of tricks won by the player when they are a 
     /// member of the opposition.
     /// </summary>
@@ -73,6 +88,24 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
     /// </summary>
     public SolidColorBrush TricksColour { get; }
 
+    /// <summary>
+    /// Contains the image of the suit that the player called trump.
+    /// </summary>
+    public Image SuitImage
+    {
+        get => (Image)GetValue(SuitImageProperty); 
+        set => SetValue(SuitImageProperty, value);
+    }
+
+    /// <summary>
+    /// Sets the visibility of the icon displaying the suit that the player called trump.
+    /// </summary>
+    public Visibility SuitIconVisibility
+    {
+        get => (Visibility)GetValue(SuitIconVisibilityProperty); 
+        set => SetValue(SuitIconVisibilityProperty, value);
+    }
+
 
     /// <summary>
     /// Sets the player information to display on the control.
@@ -87,6 +120,21 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
             AvatarNumber = avatarNumber,
             TotalTricks = 0,
         };
+    }
+
+    public void SetTrumpSuit(Suit trump)
+    {
+        SuitImage = new Image()
+        {
+            Source = UIHelpers.GenerateImageSource(
+                $"pack://application:,,,/Euchre;component/images/suits/{trump}.png")
+        };
+        SuitIconVisibility = Visibility.Visible;
+    }
+
+    public void ClearTrumpSuit()
+    {
+        SuitIconVisibility = Visibility.Hidden;
     }
 
     /// <summary>

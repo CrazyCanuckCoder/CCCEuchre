@@ -1,4 +1,5 @@
-﻿using Euchre.Logic.Helpers;
+﻿using Euchre.Logic.Components;
+using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Classes;
@@ -37,6 +38,20 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl
         DependencyProperty.Register(nameof(DealerIconVisibility), typeof(Visibility),
             typeof(HorizontalPlayerDisplayUserControl), new PropertyMetadata(Visibility.Hidden));
 
+    /// <summary>
+    /// Using a DependencyProperty as the backing store for SuitImage.
+    /// </summary>
+    public static readonly DependencyProperty SuitImageProperty =
+        DependencyProperty.Register(nameof(SuitImage), typeof(Image), 
+            typeof(HorizontalPlayerDisplayUserControl), new PropertyMetadata(null));
+
+    /// <summary>
+    /// Using a DependencyProperty as the backing store for SuitIconVisibility.
+    /// </summary>
+    public static readonly DependencyProperty SuitIconVisibilityProperty =
+        DependencyProperty.Register(nameof(SuitIconVisibility), typeof(Visibility),
+            typeof(HorizontalPlayerDisplayUserControl), new PropertyMetadata(Visibility.Hidden));
+
 
     /// <summary>
     /// The information about the user associated with this control.
@@ -54,6 +69,24 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl
     {
         get => (Visibility)GetValue(DealerIconVisibilityProperty);
         set => SetValue(DealerIconVisibilityProperty, value);
+    }
+
+    /// <summary>
+    /// Sets the visibility of the icon displaying the suit that the player called trump.
+    /// </summary>
+    public Visibility SuitIconVisibility
+    { 
+        get => (Visibility)GetValue(SuitIconVisibilityProperty);
+        set => SetValue(SuitIconVisibilityProperty, value);
+    }
+
+    /// <summary>
+    /// Contains the image of the suit that the player called trump.
+    /// </summary>
+    public Image SuitImage
+    {
+        get => (Image)GetValue(SuitImageProperty);
+        set => SetValue(SuitImageProperty, value);
     }
 
     /// <summary>
@@ -86,6 +119,23 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl
             AvatarNumber = avatarNumber,
             TotalTricks = 0,
         };
+    }
+
+
+    public void SetTrumpSuit(Suit trump)
+    {
+        SuitImage = new Image()
+        {
+            Source = UIHelpers.GenerateImageSource(
+                $"pack://application:,,,/Euchre;component/images/suits/{trump}.png")
+        };
+        SuitIconVisibility = Visibility.Visible;
+    }
+
+    public void ClearTrumpSuit()
+    {
+        SuitImage.Source = null;
+        SuitIconVisibility = Visibility.Hidden;
     }
 
     /// <summary>
