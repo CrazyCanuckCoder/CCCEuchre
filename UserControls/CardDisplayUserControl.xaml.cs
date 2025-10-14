@@ -30,11 +30,6 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
     private int _numberOfCardBacks = 0;
 
     /// <summary>
-    /// The suit considered trump for the current trick.
-    /// </summary>
-    private Suit _trumpSuit = Suit.Clubs;
-
-    /// <summary>
     /// The collection of images to display for the cards.
     /// </summary>
     public ObservableCollection<CardDisplay> CardImages { get; set; }
@@ -153,7 +148,6 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
         Suit trumpSuit, bool allowSelection = false)
     {
         ClearCards();
-        _trumpSuit = trumpSuit;
 
         // Get the cards that have not been played.
 
@@ -165,7 +159,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
 
         List<Suit> disabledSuits = [];
         if (allowSelection && !trickSuitIsTrump && trickSuit != null &&
-            Cards.HasAnyOfSuit(trickSuit.Value))
+            Cards.HasAnyOfSuit(trickSuit.Value, trumpSuit))
         {
             disabledSuits = (  from Suit suitType in Enum.GetValues(typeof(Suit))
                               where suitType != trickSuit
@@ -184,7 +178,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
             //  current group of cards. 
 
             Suit previousSuit = Cards.First().Suit;
-            bool isTrump = Cards.First().IsTrump(_trumpSuit);
+            bool isTrump = Cards.First().IsTrump(trumpSuit);
 
             // Load each card in order.
 
@@ -195,15 +189,15 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
                 bool disableCard;
                 if (trickSuitIsTrump)
                 {
-                    disableCard = Cards.HasAnyTrump(_trumpSuit) && !Cards[cardIndex].IsTrump(_trumpSuit);
+                    disableCard = Cards.HasAnyTrump(trumpSuit) && !Cards[cardIndex].IsTrump(trumpSuit);
                 }
-                else if (Cards[cardIndex].IsTrump(_trumpSuit))
+                else if (Cards[cardIndex].IsTrump(trumpSuit))
                 {
                     disableCard = disabledSuits.Count != 0;
                 }
                 else
                 {
-                    disableCard = disabledSuits.Contains(Cards[cardIndex].Suit);
+                    disableCard = disabledSuits.Contains(Cards[cardIndex].EffectiveSuit(trumpSuit));
                 }
                 string cardFilename = Cards[cardIndex].ToString()?.ToLower() +
                     (disableCard ? " disabled" : "") + ".png";
@@ -215,11 +209,11 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
                 Thickness cardMargin = new(0);
                 if (cardIndex > 0)
                 {
-                    if (isTrump && Cards[cardIndex].IsTrump(_trumpSuit))
+                    if (isTrump && Cards[cardIndex].IsTrump(trumpSuit))
                     {
                         cardMargin = inGroupMargin;
                     }
-                    else if (Cards[cardIndex].Suit == previousSuit)
+                    else if (Cards[cardIndex].EffectiveSuit(trumpSuit) == previousSuit)
                     {
                         cardMargin = inGroupMargin;
                     }
@@ -244,7 +238,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
 
                 // Reset the suit and trump tracker variables.
 
-                isTrump = Cards[cardIndex].IsTrump(_trumpSuit);
+                isTrump = Cards[cardIndex].IsTrump(trumpSuit);
                 previousSuit = isTrump ? trumpSuit : Cards[cardIndex].Suit;
             }
         }
@@ -272,7 +266,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
         SetupCards(cards.ToArray().ToList(), trickSuit, trickSuitIsTrump, trumpSuit, true);
         ChosenCard = null;
 
-        if (GameSettingsManager.Instance.PlayLastCardInHand && cards.Count() == 1)
+        if (GameSettingsManager.Instance.PlayLastCardInHand && cards.Count == 1)
         {
             ChosenCard = cards.First();
         }

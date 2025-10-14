@@ -27,6 +27,6 @@
 	<Settings>
 		<SelectedCardBackFile>Grid Blue Card Back.png</SelectedCardBackFile>
 		<PlayLastCardInHumansHand>true</PlayLastCardInHumansHand>
-		<UseStandardMenu>true</UseStandardMenu>
+		<UseStandardMenu>false</UseStandardMenu>
 	</Settings>
 </GameSettingsDS>

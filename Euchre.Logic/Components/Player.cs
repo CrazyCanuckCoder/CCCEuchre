@@ -91,6 +91,10 @@ public abstract class Player : IPlayer
         Hand.Clear();
     }
 
+    /// <summary>
+    /// Resorts the player's hand based on a specified trump suit.
+    /// </summary>
+    /// <param name="trump">The suit set as trump.  Null indicates no trump set.</param>
     public void SortPlayerCards(Suit? trump)
     {
         Hand = Hand.Sort(trump);

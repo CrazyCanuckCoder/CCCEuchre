@@ -88,6 +88,16 @@ public class EuchreGame
     public event EventHandler<System.EventArgs>? KittyWasTurnedDown;
 
     /// <summary>
+    /// Fired to inform listeners that a player has called a suit as trump.
+    /// </summary>
+    public event EventHandler<System.EventArgs>? TrumpCalled;
+
+    /// <summary>
+    /// Fired to inform listeners that all players passed for the second round of bidding.
+    /// </summary>
+    public event EventHandler<System.EventArgs>? NoTrumpCalled;
+
+    /// <summary>
     /// Fired when the player has played a card.
     /// </summary>
     public event EventHandler<CardPlayedByPlayerEventArgs>? CardPlayedByPlayer;
@@ -272,6 +282,7 @@ public class EuchreGame
 
         if (BiddingRound(1, GameInfo!.Kitty!.Suit))
         {
+            TrumpCalled?.Invoke(this, new System.EventArgs());
             GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
             GameInfo.SaveGameData();
             return true;
@@ -283,6 +294,7 @@ public class EuchreGame
 
         if (BiddingRound(2, null))
         {
+            TrumpCalled?.Invoke(this, new System.EventArgs());
             GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
             GameInfo.SaveGameData();
             return true;
@@ -290,6 +302,7 @@ public class EuchreGame
 
         // Nobody called trump – round ends, dealer advances.
 
+        NoTrumpCalled?.Invoke(this, new System.EventArgs());
         AdvanceDealer();
         return false;
     }

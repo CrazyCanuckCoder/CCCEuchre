@@ -1,7 +1,6 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
-using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using Euchre.Windows;
@@ -65,6 +64,8 @@ public partial class MainWindow : Window
         ViewModel.CurrentGame.DeclareDealer += CurrentGame_DeclareDealer;
         ViewModel.CurrentGame.DeclareKittyCard += CurrentGame_DeclareKittyCard;
         ViewModel.CurrentGame.KittyWasTurnedDown += CurrentGame_KittyWasTurnedDown;
+        ViewModel.CurrentGame.TrumpCalled += CurrentGame_TrumpCalled;
+        ViewModel.CurrentGame.NoTrumpCalled += CurrentGame_NoTrumpCalled;
         ViewModel.CurrentGame.DeclareRoundWinningPlayers += CurrentGame_DeclareRoundWinningPlayers;
         ViewModel.CurrentGame.DeclareTrickWinner += CurrentGame_DeclareTrickWinner;
         ViewModel.CurrentGame.GameOver += CurrentGame_GameOver;
@@ -79,6 +80,7 @@ public partial class MainWindow : Window
     {
         humanPlayer.PromptForCardToPlay += HumanPlayer_PromptForCardToPlay;
         humanPlayer.PromptForDiscard += HumanPlayer_PromptForDiscard;
+        humanPlayer.UserHandUpdated += HumanPlayer_UserHandUpdated;
         humanPlayer.PromptForTrumpSuit += HumanPlayer_PromptForTrumpSuit;
         humanPlayer.PromptToOrderUp += HumanPlayer_PromptToOrderUp;
     }
@@ -93,6 +95,8 @@ public partial class MainWindow : Window
         ViewModel.CurrentGame.DeclareDealer -= CurrentGame_DeclareDealer;
         ViewModel.CurrentGame.DeclareKittyCard -= CurrentGame_DeclareKittyCard;
         ViewModel.CurrentGame.KittyWasTurnedDown -= CurrentGame_KittyWasTurnedDown;
+        ViewModel.CurrentGame.TrumpCalled -= CurrentGame_TrumpCalled;
+        ViewModel.CurrentGame.NoTrumpCalled -= CurrentGame_NoTrumpCalled;
         ViewModel.CurrentGame.DeclareRoundWinningPlayers -= CurrentGame_DeclareRoundWinningPlayers;
         ViewModel.CurrentGame.DeclareTrickWinner -= CurrentGame_DeclareTrickWinner;
         ViewModel.CurrentGame.GameOver -= CurrentGame_GameOver;
@@ -107,6 +111,7 @@ public partial class MainWindow : Window
     {
         humanPlayer.PromptForCardToPlay -= HumanPlayer_PromptForCardToPlay;
         humanPlayer.PromptForDiscard -= HumanPlayer_PromptForDiscard;
+        humanPlayer.UserHandUpdated -= HumanPlayer_UserHandUpdated;
         humanPlayer.PromptForTrumpSuit -= HumanPlayer_PromptForTrumpSuit;
         humanPlayer.PromptToOrderUp -= HumanPlayer_PromptToOrderUp;
     }
@@ -220,6 +225,22 @@ public partial class MainWindow : Window
         });
     }
 
+    private void CurrentGame_TrumpCalled(object? sender, EventArgs e)
+    {
+        UIHelpers.RunOnUIThread(() =>
+        {
+            ViewModel.TrumpCalled();
+        });
+    }
+
+    private void CurrentGame_NoTrumpCalled(object? sender, EventArgs e)
+    {
+        UIHelpers.RunOnUIThread(() =>
+        {
+            ViewModel.NoTrumpWasCalled();
+        });
+    }
+
     private void CurrentGame_CardPlayedByPlayer(object? sender, CardPlayedByPlayerEventArgs e)
     {
         UIHelpers.RunOnUIThread(() =>
@@ -255,6 +276,17 @@ public partial class MainWindow : Window
             if (sender is HumanPlayer player)
             {
                 e.DiscardedCard = ViewModel.PromptUserForDiscard(player);
+            }
+        });
+    }
+
+    private void HumanPlayer_UserHandUpdated(object? sender, EventArgs e)
+    {
+        UIHelpers.RunOnUIThread(() =>
+        {
+            if (sender is HumanPlayer player)
+            {
+                ViewModel.RedisplayUserHand(player);
             }
         });
     }

@@ -17,7 +17,7 @@ public class AutomatedPlayer : Player
     public AutomatedPlayer(string name, int teamIndex, int playerIndex, GameStateManager dataManager, int avatarNumber) : 
         base(name, teamIndex, playerIndex, false, avatarNumber) 
     {
-        _bidder = new Bidder(Hand);
+        _bidder = new Bidder(this);
         _playManager = new PlayManager(dataManager, this);
     }
 
@@ -35,7 +35,7 @@ public class AutomatedPlayer : Player
     public AutomatedPlayer(string name, int teamIndex, int playerIndex, IBidder bidder, IPlayManager playManager,
         GameStateManager dataManager, int avatarNumber) : base(name, teamIndex, playerIndex, false, avatarNumber)
     {
-        _bidder = bidder ?? new Bidder(Hand);
+        _bidder = bidder ?? new Bidder(this);
         _playManager = playManager ?? new PlayManager(dataManager, this);
     }
 

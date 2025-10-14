@@ -115,7 +115,7 @@ public class BidderTests
     public void GivenPlayingConditions_DetermineWhetherToOrderUp_ShouldReturnCorrectResult(
         List<Card> playerHand, Card kitty, bool isDealer, bool expectedGoAlone, bool expectedResult)
     {
-        var bidder = new Bidder(playerHand);
+        var bidder = new Bidder(new AutomatedPlayer("", 0, 0, new GameStateManager(), 1));
         bool result = bidder.DetermineWhetherToOrderUp(kitty, isDealer, out bool goAlone);
 
         Assert.Multiple(() =>

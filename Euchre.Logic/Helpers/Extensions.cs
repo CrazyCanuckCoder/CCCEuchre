@@ -14,9 +14,9 @@ public static class Extensions
     /// <param name="cards">The list of cards to check.</param>
     /// <param name="suitToFind">The suit of the cards to find.</param>
     /// <returns>True indicating the list has at least one card in the specified suit.</returns>
-    public static bool HasAnyOfSuit(this List<Card> cards, Suit suitToFind)
+    public static bool HasAnyOfSuit(this List<Card> cards, Suit suitToFind, Suit trump)
     {
-        return CardFinder.HasACardOfSuit(cards, suitToFind);
+        return CardFinder.HasACardOfSuit(cards, suitToFind, trump);
     }
 
     /// <summary>

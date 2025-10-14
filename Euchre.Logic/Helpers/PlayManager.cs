@@ -269,11 +269,11 @@ public class PlayManager : IPlayManager
     {
         Card? cardToPlay;
 
-        if (CardFinder.HasACardOfSuit(_player.Hand, leadSuit))
+        if (CardFinder.HasACardOfSuit(_player.Hand, leadSuit, trump))
         {
             // If the player has a card of the lead suit, play the highest card of that suit.
 
-            cardToPlay = CardFinder.GetHighestCardOfSuit(_player.Hand, leadSuit);
+            cardToPlay = CardFinder.GetHighestCardOfSuit(_player.Hand, leadSuit, trump);
         }
         else
         {

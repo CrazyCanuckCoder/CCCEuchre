@@ -7,7 +7,9 @@ using Euchre.UILogic.Classes;
 using Euchre.UILogic.Interfaces;
 using Euchre.UserControls;
 using Euchre.Windows;
+using System.Numerics;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using Extensions = Euchre.Logic.Helpers.Extensions;
 
 namespace Euchre;
@@ -418,7 +420,23 @@ public class MainWindowViewModel : DependencyObject
     public void KittyWasTurnedDown()
     {
         UpdateGameInformation("The kitty card was turned down.");
+        _mainWindow.TrumpDisplayUserControl.ClearImage();
         ClearPlayerMessages();
+    }
+
+    public void TrumpCalled()
+    {
+        foreach (IPlayer player in CurrentGame!.GameInfo!.Players!)
+        {
+            UpdatePlayersHandAfterTrumpSet(player.PlayerIndex, CurrentGame.GameInfo.Trump!.Value);
+        }
+    }
+
+    public void NoTrumpWasCalled()
+    {
+        ClearPlayerMessages();
+        ResetCardDisplayControlsVisibility();
+        ClearPlayersHands();
     }
 
     public void PlayerMadeTrump(IPlayer player, Suit? trump, bool isGoingAlone, bool isKittyRound)
@@ -442,6 +460,7 @@ public class MainWindowViewModel : DependencyObject
         {
             UpdatePlayersHandAfterTrumpSet(updatePlayer.PlayerIndex, trump!.Value);
         }
+        _mainWindow.TrumpDisplayUserControl.SetTrump(trump!.Value);
         _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(player, trump!.Value, isGoingAlone);
         ClearPlayerMessages();
     }
@@ -564,6 +583,7 @@ public class MainWindowViewModel : DependencyObject
         Suit? chosenSuit = null;
 
         List<Suit> suits = Extensions.GetComplementarySuits(kitty.Suit);
+        suits.Remove(kitty.Suit);
         PickTrumpSuitWindow pickTrumpSuitWindow = new(suits)
         {
             Owner = _mainWindow
@@ -591,6 +611,12 @@ public class MainWindowViewModel : DependencyObject
         }
 
         return discard;
+    }
+
+    public void RedisplayUserHand(HumanPlayer player)
+    {
+        _playerCardDisplayControls[player.PlayerIndex].SetupCards(player.Hand,
+            CurrentGame!.GameInfo!.Trump!.Value);
     }
 
     public Card? GetCardFromUser(IPlayer user, Suit? trickSuit, Suit trump)
@@ -783,7 +809,7 @@ public class MainWindowViewModel : DependencyObject
     /// <summary>
     /// Displays the cards that have been dealt to a specified player.
     /// </summary>
-    /// <param name="indexOfPlayer">The index of the player from the GameManager's Players list.</param>
+    /// <param name="indexOfPlayer">The index of the player from the GameStateManager's Players list.</param>
     /// <param name="numberOfCardsDealt">The number of cards dealt to an automated player.</param>
     private void UpdatePlayersHandAfterDeal(int indexOfPlayer, int numberOfCardsDealt)
     {
@@ -806,12 +832,17 @@ public class MainWindowViewModel : DependencyObject
         }
     }
 
+    /// <summary>
+    /// Resorts a specified player's hand based on a trump suit, then displays the sorted hand on the UI.
+    /// </summary>
+    /// <param name="indexOfPlayer">The index of the player from the GameStateManager's Players list.</param>
+    /// <param name="trump">The suit designated as the trump suit.</param>
     private void UpdatePlayersHandAfterTrumpSet(int indexOfPlayer, Suit trump)
     {
         if (CurrentGame!.GameInfo!.Players![indexOfPlayer] is HumanPlayer humanPlayer)
         {
             humanPlayer.SortPlayerCards(trump);
-            _playerCardDisplayControls[indexOfPlayer].SetupCards(humanPlayer.Hand);
+            _playerCardDisplayControls[indexOfPlayer].SetupCards(humanPlayer.Hand, trump);
         }
         else
         {
@@ -819,7 +850,7 @@ public class MainWindowViewModel : DependencyObject
             if (CurrentGame.GameInfo.Players[indexOfPlayer] is AutomatedPlayer automatedPlayer)
             {
                 automatedPlayer.SortPlayerCards(trump);
-                _playerCardDisplayControls[indexOfPlayer].SetupCards(automatedPlayer.Hand);
+                _playerCardDisplayControls[indexOfPlayer].SetupCards(automatedPlayer.Hand, trump);
             }
 #endif
         }
@@ -932,6 +963,9 @@ public class MainWindowViewModel : DependencyObject
         }
     }
 
+    /// <summary>
+    /// Sets the visibility of each player's card display control to visible.
+    /// </summary>
     private void ResetCardDisplayControlsVisibility()
     {
         _playerCardDisplayControls[0] = _mainWindow.Player1CardDisplayUserControl;
