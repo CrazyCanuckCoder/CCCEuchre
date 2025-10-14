@@ -149,4 +149,68 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
             });
         }
     }
+
+    public void DisableCards(int numberOfCards)
+    {
+        string cardFilename = GameSettingsManager.Instance.SelectedCardBack;
+        cardFilename = cardFilename.Insert(cardFilename.LastIndexOf('.'), " rotated disabled");
+
+        // Load each card back for the specified number cards.
+
+        for (int cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
+        {
+            // Add the image to the collection of images and set it visible.
+
+            VerticalCardImages.Add(new CardDisplay()
+            {
+                ImageData = new Image()
+                {
+                    Source = UIHelpers.GenerateImageSource(
+                        $"pack://application:,,,/Euchre;component/images/cardbacks/{cardFilename}")
+                },
+                CardVisibility = Visibility.Collapsed,
+                ImageVisibility = Visibility.Visible,
+                CardMargin = _numberOfCardBacks + cardIndex > 0 ? new(0, -70, 0, 0) : new(0)
+            });
+        }
+    }
+
+    public void DisableCards(List<Card> cards, Suit trumpSuit)
+    {
+        ClearCards();
+
+        // Get the cards that have not been played.  Also, don't include the card that is used to call the
+        //  unknown Ace.
+
+        Cards = (  from currentCard in cards
+                 select currentCard)
+                .ToList();
+
+        if (Cards.Count > 0)
+        {
+            // Load each card in order.
+
+            for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
+            {
+                // Generate the file name for the card.
+
+                string cardFilename = Cards[cardIndex].ToString()?.ToLower() + " rotated disabled.png";
+
+                // Add the image to the collection of images.
+
+                VerticalCardImages.Add(new CardDisplay()
+                {
+                    ImageData = new Image()
+                    {
+                        Source = UIHelpers.GenerateImageSource(
+                            $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}")
+                    },
+                    Card = Cards[cardIndex],
+                    CardVisibility = Visibility.Collapsed,
+                    ImageVisibility = Visibility.Visible,
+                    CardMargin = cardIndex > 0 ? new(0, -70, 0, 0) : new(0),
+                });
+            }
+        }
+    }
 }

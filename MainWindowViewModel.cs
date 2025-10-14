@@ -3,13 +3,10 @@ using Euchre.Logic.Components;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
-using Euchre.UILogic.Classes;
 using Euchre.UILogic.Interfaces;
 using Euchre.UserControls;
 using Euchre.Windows;
-using System.Numerics;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 using Extensions = Euchre.Logic.Helpers.Extensions;
 
 namespace Euchre;
@@ -426,10 +423,10 @@ public class MainWindowViewModel : DependencyObject
 
     public void TrumpCalled()
     {
-        foreach (IPlayer player in CurrentGame!.GameInfo!.Players!)
-        {
-            UpdatePlayersHandAfterTrumpSet(player.PlayerIndex, CurrentGame.GameInfo.Trump!.Value);
-        }
+        //foreach (IPlayer player in CurrentGame!.GameInfo!.Players!)
+        //{
+        //    UpdatePlayersHandAfterTrumpSet(player.PlayerIndex, CurrentGame.GameInfo.Trump!.Value);
+        //}
     }
 
     public void NoTrumpWasCalled()
@@ -462,9 +459,12 @@ public class MainWindowViewModel : DependencyObject
         }
         _mainWindow.TrumpDisplayUserControl.SetTrump(trump!.Value);
         _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(player, trump!.Value, isGoingAlone);
+        if (isGoingAlone) 
+        {
+            SetPartnerDisabled(player);
+        }
         ClearPlayerMessages();
     }
-
 
     public void DisplayCardPlayedByPlayer(IPlayer player, ICard cardPlayed)
     {
@@ -852,6 +852,29 @@ public class MainWindowViewModel : DependencyObject
                 automatedPlayer.SortPlayerCards(trump);
                 _playerCardDisplayControls[indexOfPlayer].SetupCards(automatedPlayer.Hand, trump);
             }
+#endif
+        }
+    }
+
+    private void SetPartnerDisabled(IPlayer player)
+    {
+        var partner = (  from anyPlayer in CurrentGame!.GameInfo!.Players
+                        where anyPlayer.TeamIndex == player.TeamIndex
+                           && anyPlayer.PlayerIndex != player.PlayerIndex
+                       select anyPlayer)
+                      .First();
+        if (partner is HumanPlayer humanPlayer)
+        {
+            _playerCardDisplayControls[humanPlayer.PlayerIndex].DisableCards(humanPlayer.Hand, 
+                CurrentGame!.GameInfo!.Trump!.Value);
+        }
+        else
+        {
+#if DEBUG
+            _playerCardDisplayControls[partner.PlayerIndex].DisableCards(partner.Hand,
+                CurrentGame!.GameInfo!.Trump!.Value);
+#else
+            _playerCardDisplayControls[partner.PlayerIndex].DisableCards(partner.Hand.Count);
 #endif
         }
     }

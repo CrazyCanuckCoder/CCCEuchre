@@ -10,4 +10,6 @@ public interface IBaseCardDisplay
     void SetupCards(List<Card> cards, Suit trumpSuit);
     void AddCards(int numberOfCards);
     void DisplayCards(int numberOfCards);
+    void DisableCards(int numberOfCards);
+    void DisableCards(List<Card> cards, Suit trumpSuit);
 }

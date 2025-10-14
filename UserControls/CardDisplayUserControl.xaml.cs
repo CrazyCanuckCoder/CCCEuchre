@@ -5,6 +5,7 @@ using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using Euchre.UILogic.Interfaces;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -389,6 +390,104 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
                 ImageVisibility = Visibility.Visible,
                 CardMargin = _numberOfCardBacks + cardIndex > 0 ? new(-25, 0, 0, 0) : new(0)
             });
+        }
+    }
+
+    public void DisableCards(int numberOfCards)
+    {
+        ClearCards();
+
+        // Load each card back for the specified number of cards.
+
+        string cardFile = Path.GetFileNameWithoutExtension(GameSettingsManager.Instance.SelectedCardBack) +
+            " disabled.png";
+
+        for (int cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
+        {
+            // Add the image to the collection of images and set it visible.
+
+            CardImages.Add(new CardDisplay()
+            {
+                ImageData = new Image()
+                {
+                    Source = UIHelpers.GenerateImageSource(
+                        "pack://application:,,,/Euchre;component/images/cardbacks/" + cardFile)
+                },
+                CardVisibility = Visibility.Collapsed,
+                ImageVisibility = Visibility.Visible,
+                CardMargin = _numberOfCardBacks + cardIndex > 0 ? new(-25, 0, 0, 0) : new(0)
+            });
+        }
+    }
+
+    public void DisableCards(List<Card> cards, Suit trumpSuit)
+    {
+        ClearCards();
+
+        // Get the cards that have not been played.
+
+        Cards = (  from currentCard in cards
+                 select currentCard)
+                .ToList();
+
+        // Create a different Margin value for a card that separates the group.
+
+        Thickness inGroupMargin = new(-25, 0, 0, 0);
+
+        if (Cards.Count > 0)
+        {
+
+            // Group the cards by suit. Setup up a previous suit to see if the current card belongs in the
+            //  current group of cards. 
+
+            Suit previousSuit = Cards.First().Suit;
+            bool isTrump = Cards.First().IsTrump(trumpSuit);
+
+            // Load each card in order.
+
+            for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
+            {
+                // Load the image for the card.
+
+                string cardFilename = Cards[cardIndex].ToString()?.ToLower() + " disabled.png";
+                BitmapImage source = UIHelpers.GenerateImageSource(
+                    $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}");
+
+                // Determine the margin to use for the current card.
+
+                Thickness cardMargin = new(0);
+                if (cardIndex > 0)
+                {
+                    if (isTrump && Cards[cardIndex].IsTrump(trumpSuit))
+                    {
+                        cardMargin = inGroupMargin;
+                    }
+                    else if (Cards[cardIndex].EffectiveSuit(trumpSuit) == previousSuit)
+                    {
+                        cardMargin = inGroupMargin;
+                    }
+                }
+
+                // Add the image to the collection of images and set its visibility.
+
+                CardImages.Add(new CardDisplay()
+                {
+                    ImageData = new Image()
+                    {
+                        Source = source
+                    },
+                    CardVisibility = Visibility.Collapsed,
+                    ImageVisibility = Visibility.Visible,
+                    Card = Cards[cardIndex],
+                    CardMargin = cardMargin,
+                    IsEnabled = false
+                });
+
+                // Reset the suit and trump tracker variables.
+
+                isTrump = Cards[cardIndex].IsTrump(trumpSuit);
+                previousSuit = isTrump ? trumpSuit : Cards[cardIndex].Suit;
+            }
         }
     }
 

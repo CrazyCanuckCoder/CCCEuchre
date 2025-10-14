@@ -94,7 +94,7 @@ internal static class CardFinder
     {
         return cards
                 .Where(c => c.EffectiveSuit(trump) == trump)
-                .OrderBy(c => c.GetTrickValue(trump, trump))
+                .OrderByDescending(c => c.GetTrickValue(trump, trump))
                 .FirstOrNull();
     }
 
