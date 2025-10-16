@@ -26,6 +26,11 @@ public class PlayManager : IPlayManager
     private readonly IPlayer _player;
 
     /// <summary>
+    /// A reference to the trick being played.
+    /// </summary>
+    private Trick _currentTrick;
+
+    /// <summary>
     /// Determines the valid cards that can be played based on the lead suit and trump suit.
     /// </summary>
     /// <remarks>This method enforces the rule that players must follow the lead suit if they have cards of
@@ -67,6 +72,8 @@ public class PlayManager : IPlayManager
         }
         else
         {
+            _currentTrick = trick;
+
             // Which card to play depends on whether the player is leading the trick or following suit.
 
             return trick.Cards.Count == 0
@@ -293,9 +300,56 @@ public class PlayManager : IPlayManager
                 //   If not, play the lowest off suit card.
 
                 cardToPlay = hasTrump
-                    ? CardFinder.GetHighestTrumpCard(_player.Hand, trump)
+                    ? DetermineCardToTrumpOpponentsTrick(trump)
                     : CardFinder.GetLowestOffSuitCard(_player.Hand, trump);
             }
+        }
+
+        return cardToPlay;
+    }
+
+    /// <summary>
+    /// Determines a card to play when the player's opponents are winning the trick.
+    /// </summary>
+    /// <remarks>This method assumes it is being called when an opponent is winning the trick.</remarks>
+    /// <param name="trump">The suit that was declared trump for the current trick.</param>
+    /// <returns>A Card that was determined to play for the current trick.</returns>
+    private Card? DetermineCardToTrumpOpponentsTrick(Suit trump)
+    {
+        Card? cardToPlay = null;
+
+        // Has the trick been trumped already?
+
+        var trickCards = (  from card in _currentTrick.Cards.Values
+                          select card)
+                         .ToList();
+        if (CardFinder.HasTrump(trickCards, trump))
+        {
+            // Since it is the opponent's card, does the player have a higher trump?
+
+            var winningCard = _currentTrick.GetCurrentLeadingCard();
+            var playersHighestTrump = CardFinder.GetHighestTrumpCard(_player.Hand, trump);
+
+            if (playersHighestTrump!.GetTrickValue(trump, _currentTrick.LeadSuit) >
+                winningCard.GetTrickValue(trump, _currentTrick.LeadSuit))
+            {
+                // If yes, play the next highest trump.
+
+                cardToPlay = playersHighestTrump;
+            }
+            else
+            {
+                // If no, play off suit.
+
+                cardToPlay = CardFinder.GetLowestOffSuitCard(_player.Hand, trump)
+                    ?? CardFinder.GetLowestTrumpCard(_player.Hand, trump);
+            }
+        }
+        else
+        {
+            // If not, return the lowest trump card.
+
+            cardToPlay = CardFinder.GetLowestTrumpCard(_player.Hand, trump);
         }
 
         return cardToPlay;

@@ -160,7 +160,8 @@ public class Bidder : IBidder
         var numTrumpCards = CardFinder.GetNonBowerTrump(_player.Hand, trump).Count;
         var numAces = CardFinder.CountCardsOfRank(_player.Hand, Rank.Ace);
 
-        return (numBowers >= 1 && numTrumpCards >= 4) 
-            || (numBowers == 2 && numTrumpCards > 2 && numAces >= 1);
+        return (numBowers + numTrumpCards >= 4) 
+            || (numBowers >= 1 && numTrumpCards >= 3) 
+            || (numBowers == 2 && numTrumpCards >= 1 && numAces >= 1);
     }
 }
