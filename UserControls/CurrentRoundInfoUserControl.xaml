@@ -10,17 +10,6 @@
     d:DesignWidth="281"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <Style x:Key="TextLabel" TargetType="Label">
-            <Style.Setters>
-                <Setter Property="BorderBrush" Value="Black" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Background" Value="White" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-            </Style.Setters>
-        </Style>
-    </UserControl.Resources>
-
     <Border
         Background="#FFF7F0"
         BorderBrush="Black"
@@ -28,8 +17,8 @@
         <Grid Margin="20">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
+                <ColumnDefinition Width="50*" />
+                <ColumnDefinition Width="50*" />
                 <ColumnDefinition Width="20" />
             </Grid.ColumnDefinitions>
 
@@ -46,15 +35,22 @@
 
             <!--  Bidding Information Label  -->
 
-            <Label
+            <Border
                 Grid.Row="0"
                 Grid.Column="0"
                 Grid.ColumnSpan="3"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Content="{Binding BidInfo, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
-                FontSize="16"
-                Style="{DynamicResource TextLabel}" />
+                Background="White"
+                BorderBrush="Black"
+                BorderThickness="1">
+                <TextBlock
+                    Padding="5,2,2,2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    FontSize="16"
+                    Text="{Binding BidInfo, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="Wrap" />
+            </Border>
 
             <!--  Teams Label  -->
 
@@ -70,6 +66,7 @@
                 Grid.Row="4"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
+                MinWidth="218"
                 BorderBrush="Black"
                 BorderThickness="1"
                 ItemsSource="{Binding Team1List, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}">
@@ -95,6 +92,7 @@
             <Label
                 Grid.Row="4"
                 Grid.Column="2"
+                Width="20"
                 Background="{Binding Team1Colour}" />
 
             <!--  Team 2 List  -->
@@ -103,6 +101,7 @@
                 Grid.Row="6"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
+                MinWidth="218"
                 BorderBrush="Black"
                 BorderThickness="1"
                 ItemsSource="{Binding Team2List, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}">
@@ -128,6 +127,7 @@
             <Label
                 Grid.Row="6"
                 Grid.Column="2"
+                Width="20"
                 Background="{Binding Team2Colour}" />
         </Grid>
     </Border>

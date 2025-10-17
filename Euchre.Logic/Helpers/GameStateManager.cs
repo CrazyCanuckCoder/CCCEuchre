@@ -109,6 +109,20 @@ public class GameStateManager
     }
 
     /// <summary>
+    /// Resets the tricks won by players property for the next round.
+    /// </summary>
+    public void ResetTricksWonByPlayers()
+    {
+        ArgumentNullException.ThrowIfNull(nameof(Players));
+
+        TricksWonByPlayers.Clear();
+        foreach (var player in Players!)
+        {
+            TricksWonByPlayers.Add(player, 0);
+        }
+    }
+
+    /// <summary>
     /// Saves the current game data to a file.
     /// </summary>
     public void SaveGameData()

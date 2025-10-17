@@ -123,12 +123,14 @@
                 <Image
                     Grid.Row="1"
                     Grid.Column="0"
+                    Grid.ColumnSpan="2"
                     Width="24"
                     Height="24"
                     Margin="2,0,24,0"
+                    VerticalAlignment="Top"
                     Source="{Binding SuitImage.Source}"
                     Stretch="Fill"
-                    Visibility="{Binding SuitIconVisibility, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2" VerticalAlignment="Top" />
+                    Visibility="{Binding SuitIconVisibility, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}" />
 
                 <Label
                     Grid.Row="1"

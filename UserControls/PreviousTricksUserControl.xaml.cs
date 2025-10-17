@@ -414,13 +414,23 @@ public partial class PreviousTricksUserControl : UserControl
     /// </summary>
     private void ResetCardImages()
     {
-        // The Image properties will be null until a trump suit is called.
+        // The Image properties will be null until a trump suit is called.  One of them will be null when a
+        //  player goes alone.
 
         if (FirstPlayerImage != null)
         {
-            FirstPlayerImage.Source  = null;
+            FirstPlayerImage.Source = null;
+        }
+        if (SecondPlayerImage != null)
+        {
             SecondPlayerImage.Source = null;
-            ThirdPlayerImage.Source  = null;
+        }
+        if (ThirdPlayerImage != null)
+        {
+            ThirdPlayerImage.Source = null;
+        }
+        if (FourthPlayerImage != null)
+        {
             FourthPlayerImage.Source = null;
         }
     }

@@ -1,11 +1,13 @@
 ﻿using CrazyCanuckCoder.Library.Common;
 using Euchre.Logic.Components;
+using Euchre.Logic.Enums;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Interfaces;
 using Euchre.UserControls;
 using Euchre.Windows;
+using System.Numerics;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using Extensions = Euchre.Logic.Helpers.Extensions;
@@ -373,6 +375,10 @@ public class MainWindowViewModel : DependencyObject
         InitializeCardDisplayControlCollection();
         ShowGameBoard();
         SetupPlayerDisplayControls();
+        if (CurrentGame!.GameInfo!.RestartGame)
+        {
+            RestoreGameUI();
+        }
     }
 
     public void DeclareDealer(IPlayer dealer)
@@ -690,6 +696,11 @@ public class MainWindowViewModel : DependencyObject
         currentRoundInfoUserControl.Team1List.Add(CurrentGame.GameInfo.Players[2]);
         currentRoundInfoUserControl.Team2List.Add(CurrentGame.GameInfo.Players[1]);
         currentRoundInfoUserControl.Team2List.Add(CurrentGame.GameInfo.Players[3]);
+        if (CurrentGame.GameInfo.Trump != null)
+        {
+            currentRoundInfoUserControl.SetBidInformation(CurrentGame.GameInfo.TrumpCaller!,
+                CurrentGame.GameInfo.Trump.Value, CurrentGame.GameInfo.TrumpCaller!.IsGoingAlone);
+        }
     }
 
     private void SetupCurrentScoreControl(CurrentScoreUserControl currentPlayersScoresUserControl)
@@ -699,8 +710,8 @@ public class MainWindowViewModel : DependencyObject
             orderby player.PlayerIndex
              select player.Name).ToList()
             );
-        currentPlayersScoresUserControl.UpdateTeamScore(1, 0);
-        currentPlayersScoresUserControl.UpdateTeamScore(2, 0);
+        currentPlayersScoresUserControl.UpdateTeamScore(1, CurrentGame.GameInfo.TeamScores[0]);
+        currentPlayersScoresUserControl.UpdateTeamScore(2, CurrentGame.GameInfo.TeamScores[1]);
     }
 
     /// <summary>
@@ -874,7 +885,7 @@ public class MainWindowViewModel : DependencyObject
                 _playerCardDisplayControls[indexOfPlayer].SetupCards(automatedPlayer.Hand);
             }
 #else
-                _playerCardDisplayControls[indexOfPlayer].AddCards(numberOfCardsDealt);
+            _playerCardDisplayControls[indexOfPlayer].AddCards(numberOfCardsDealt);
 #endif
         }
     }
@@ -1124,6 +1135,80 @@ public class MainWindowViewModel : DependencyObject
         StandardMenuVisibility = GameSettingsManager.Instance.UseStandardMenu ?
             Visibility.Visible : Visibility.Collapsed;
     }
+
+    private void RestoreGameUI()
+    {
+        if (CurrentGame!.GameInfo!.LastCompletedStage == RoundStage.CardsDealt)
+        {
+            UpdateAllPlayersHands();
+        }
+        else if (CurrentGame.GameInfo.LastCompletedStage == RoundStage.TrumpChosen)
+        {
+            _previousDealerPlayerIndex = CurrentGame!.GameInfo!.Dealer!.PlayerIndex;
+            SetPlayerDealerIconVisibility(CurrentGame!.GameInfo!.Dealer!.PlayerIndex, true);
+            UpdateAllPlayersHands();
+            _mainWindow.TrumpDisplayUserControl.SetTrump(CurrentGame.GameInfo.Trump!.Value);
+            _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(CurrentGame.GameInfo.TrumpCaller!,
+                CurrentGame.GameInfo.Trump.Value, CurrentGame.GameInfo.TrumpCaller!.IsGoingAlone);
+            SetPlayerTrumpSuitIcon(CurrentGame.GameInfo.TrumpCaller.PlayerIndex, 
+                CurrentGame.GameInfo.Trump.Value);
+            if (CurrentGame.GameInfo.TrumpCaller.IsGoingAlone)
+            {
+                SetPartnerDisabled(CurrentGame.GameInfo.TrumpCaller);
+            }
+            UpdatePlayersTrickCounters();
+            ReloadTricks();
+        }
+    }
+
+    private void ReloadTricks()
+    {
+        foreach (var trick in CurrentGame!.GameInfo!.CurrentRoundTricks)
+        {
+            _mainWindow.PreviousTricksUserControl.AddTrick(trick);
+        }
+    }
+
+    /// <summary>
+    /// Resets each player's number of tricks to the stored values.
+    /// </summary>
+    private void UpdatePlayersTrickCounters()
+    {
+        foreach (var player in CurrentGame!.GameInfo!.Players!)
+        {
+            switch (player.PlayerIndex)
+            {
+                case 0:
+                    _mainWindow.Player1DisplayUserControl.UpdateNumberOfTricks(
+                        CurrentGame.GameInfo.TricksWonByPlayers[player]);
+                    break;
+
+                case 1:
+                    _mainWindow.Player2DisplayUserControl.UpdateNumberOfTricks(
+                        CurrentGame.GameInfo.TricksWonByPlayers[player]);
+                    break;
+
+                case 2:
+                    _mainWindow.Player3DisplayUserControl.UpdateNumberOfTricks(
+                        CurrentGame.GameInfo.TricksWonByPlayers[player]);
+                    break;
+
+                case 3:
+                    _mainWindow.Player4DisplayUserControl.UpdateNumberOfTricks(
+                        CurrentGame.GameInfo.TricksWonByPlayers[player]);
+                    break;
+            }
+        }
+    }
+
+    private void UpdateAllPlayersHands()
+    {
+        foreach (var player in CurrentGame!.GameInfo!.Players!)
+        {
+            UpdatePlayersHandAfterTrumpSet(player.PlayerIndex, CurrentGame.GameInfo.Trump!.Value);
+        }
+    }
+
 
     /// <summary>
     /// Clears the score tracking control of all text.

@@ -219,16 +219,11 @@ public class EuchreGame
         GameInfo.GoingAlone = false;
         GameInfo.AlonePlayer = null;
         GameInfo.Kitty = null;
-
-        GameInfo.TricksWonByPlayers.Clear();
-        foreach (var player in GameInfo.Players!)
-        {
-            GameInfo.TricksWonByPlayers.Add(player, 0);
-        }
-
+        
         // Reset checkpoint for a brand-new round.
 
         GameInfo.ResetRoundCheckpoint();
+        GameInfo.ResetTricksWonByPlayers();
         GameInfo.SaveGameData();
     }
 
@@ -426,7 +421,6 @@ public class EuchreGame
 
             // Update checkpoint after each trick – this allows us to resume mid-round.
 
-            GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
             GameInfo.CurrentTrickNumber = trickNum; // remember where we stopped
             GameInfo.SaveGameData();
         }
@@ -434,6 +428,8 @@ public class EuchreGame
         // All tricks done – reset the per-round trick counter.
 
         GameInfo.CurrentTrickNumber = 0;
+        GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
+        GameInfo.SaveGameData();
     }
 
     /// <summary>

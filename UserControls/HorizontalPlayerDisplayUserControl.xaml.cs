@@ -19,6 +19,7 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl
     {
         InitializeComponent();
         TricksColour = new SolidColorBrush(UIConstants.Team1Colour);
+        SuitImage = new Image();
         DataContext = this;
     }
 

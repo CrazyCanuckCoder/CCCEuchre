@@ -144,9 +144,12 @@ internal class DataManager
             gameStateManager.NextTrickPlayer = GetPlayerFromPlayerID(gameStateManager, stateDS,
                 gameDataRow.NextTrickPlayerID);
         }
+        gameStateManager.GoingAlone = gameStateManager.TrumpCaller != null 
+            && gameStateManager.TrumpCaller.IsGoingAlone;
 
         // Setup the tricks for the current round.
 
+        gameStateManager.ResetTricksWonByPlayers();
         gameStateManager.CurrentRoundTricks = [];
         foreach (var trickRow in stateDS.Trick)
         {
@@ -160,6 +163,7 @@ internal class DataManager
                 newTrick.AddCard(player, new Card((Suit)cardRow.Suit, (Rank)cardRow.Rank));
             }
             gameStateManager.CurrentRoundTricks.Add(newTrick);
+            gameStateManager.TricksWonByPlayers[newTrick.GetWinner()]++;
         }
 
         // Setup the team scores.
@@ -172,10 +176,8 @@ internal class DataManager
 
         // Setup the remaining properties.
 
-        gameStateManager.Kitty = gameDataRow.KittySuit == 0 ? null :
-            new Card((Suit)gameDataRow.KittySuit, (Rank)gameDataRow.KittyRank);
-        gameStateManager.Trump = gameDataRow.TrumpSuit == 0 ? null :
-            (Suit?)gameDataRow.TrumpSuit;
+        gameStateManager.Kitty = new Card((Suit)gameDataRow.KittySuit, (Rank)gameDataRow.KittyRank);
+        gameStateManager.Trump = (Suit?)gameDataRow.TrumpSuit;
         gameStateManager.LastCompletedStage = (RoundStage)gameDataRow.LastCompletedStage;
         gameStateManager.CurrentTrickNumber = gameDataRow.CurrentTrickNumber;
 
