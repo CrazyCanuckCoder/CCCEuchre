@@ -414,10 +414,15 @@ public partial class PreviousTricksUserControl : UserControl
     /// </summary>
     private void ResetCardImages()
     {
-        FirstPlayerImage.Source  ??= null;
-        SecondPlayerImage.Source ??= null;
-        ThirdPlayerImage.Source  ??= null;
-        FourthPlayerImage.Source ??= null;
+        // The Image properties will be null until a trump suit is called.
+
+        if (FirstPlayerImage != null)
+        {
+            FirstPlayerImage.Source  = null;
+            SecondPlayerImage.Source = null;
+            ThirdPlayerImage.Source  = null;
+            FourthPlayerImage.Source = null;
+        }
     }
 
     /// <summary>
