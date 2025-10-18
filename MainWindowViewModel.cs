@@ -1123,6 +1123,7 @@ public class MainWindowViewModel : DependencyObject
         GameBoardVisibility = Visibility.Hidden;
         SetMenuVisibility();
         ClearPlayersScores();
+        _mainWindow.CurrentRoundInfoUserControl.Clear();
     }
 
     /// <summary>

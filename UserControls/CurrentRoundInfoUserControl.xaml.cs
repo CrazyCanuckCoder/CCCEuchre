@@ -77,4 +77,14 @@ public partial class CurrentRoundInfoUserControl : UserControl
     {
         BidInfo = string.Empty;
     }
+
+    /// <summary>
+    /// Resets the control to blank values except for the team colour display.
+    /// </summary>
+    public void Clear()
+    {
+        ResetBidInformation();
+        Team1List.Clear();
+        Team2List.Clear();
+    }
 }
