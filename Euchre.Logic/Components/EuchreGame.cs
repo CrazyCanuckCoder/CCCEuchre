@@ -558,8 +558,7 @@ public class EuchreGame
     /// player in the list.</returns>
     private IPlayer GetNextPlayer(IPlayer current)
     {
-        int currentIndex = Array.IndexOf(GameInfo!.Players!, current);
-        return GameInfo.Players![(currentIndex + 1) % NUMBER_OF_PLAYERS];
+        return GameInfo!.Players![(current.PlayerIndex + 1) % NUMBER_OF_PLAYERS];
     }
 
     /// <summary>
