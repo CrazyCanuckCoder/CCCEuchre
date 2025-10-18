@@ -412,7 +412,7 @@ public class EuchreGame
 
         for (int trickNum = resumeFrom + 1; trickNum <= MAX_NUMBER_OF_TRICKS; trickNum++)
         {
-            var trick = PlayTrick(trickNum);
+            var trick = PlayTrick();
             GameInfo.CurrentRoundTricks.Add(trick);
             GameInfo.NextTrickPlayer = trick.GetWinner();
             GameInfo.TricksWonByPlayers[GameInfo.NextTrickPlayer]++;
@@ -437,11 +437,9 @@ public class EuchreGame
     /// </summary>
     /// <remarks>If a player is going alone, their partner is skipped during the trick. The method updates 
     /// the game state to reflect the cards played and the next player to act.</remarks>
-    /// <param name="trickNumber">The zero-based index of the trick within the current round. Used to track 
-    /// the sequence of tricks played.</param>
     /// <returns>A Trick object representing the completed trick, including all cards played and the order in
     /// which they were played.</returns>
-    private Trick PlayTrick(int trickNumber)
+    private Trick PlayTrick()
     {
         var trick = new Trick(GameInfo!.Trump!.Value);
         
