@@ -450,10 +450,7 @@ public class EuchreGame
         {
             // Skip partner if going alone.
 
-            if (GameInfo.GoingAlone 
-                && GameInfo.AlonePlayer != null 
-                && IsPartner(GameInfo.AlonePlayer, GameInfo.NextTrickPlayer!) 
-                && GameInfo.NextTrickPlayer != GameInfo.AlonePlayer)
+            if (GameInfo.AlonePlayer != null && IsPartner(GameInfo.AlonePlayer, GameInfo.NextTrickPlayer!))
             {
                 GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.NextTrickPlayer!);
                 continue;
