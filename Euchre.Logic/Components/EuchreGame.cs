@@ -246,13 +246,13 @@ public class EuchreGame
 
         for (int round = 0; round < CARDS_PER_PLAYER; round++)
         {
+            int currentPlayerIndex = GetNextPlayer(GameInfo.Dealer!).PlayerIndex;
             for (int playerCount = 0; playerCount < NUMBER_OF_PLAYERS; playerCount++)
             {
-                var playerIndex = (Array.IndexOf(GameInfo.Players, GameInfo.Dealer) + 1 + playerCount)
-                    % NUMBER_OF_PLAYERS;
-                GameInfo.Players[playerIndex].AddCard(GameInfo.Deck.Deal());
+                GameInfo.Players[currentPlayerIndex].AddCard(GameInfo.Deck.Deal());
                 CardsDealtToPlayer?.Invoke(this, 
-                    new CardsDealtToPlayerEventArgs(GameInfo.Players[playerIndex], 1));
+                    new CardsDealtToPlayerEventArgs(GameInfo.Players[currentPlayerIndex], 1));
+                currentPlayerIndex = GetNextPlayer(GameInfo.Players[currentPlayerIndex]).PlayerIndex;
             }
         }
 
@@ -317,12 +317,11 @@ public class EuchreGame
     /// <returns>true if a player successfully orders up or calls trump during the round; otherwise, false.</returns>
     private bool BiddingRound(int round, Suit? forcedSuit)
     {
-        int startPlayerIndex = (Array.IndexOf(GameInfo!.Players!, GameInfo.Dealer) + 1) % NUMBER_OF_PLAYERS;
+        var player = GameInfo!.Dealer!;
         
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
-            var playerIndex = (startPlayerIndex + i) % NUMBER_OF_PLAYERS;
-            var player = GameInfo.Players![playerIndex];
+            player = GetNextPlayer(player);
             bool isDealer = player == GameInfo.Dealer;
             
             if (round == 1 && forcedSuit.HasValue)
