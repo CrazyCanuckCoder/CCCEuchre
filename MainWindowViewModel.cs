@@ -151,9 +151,9 @@ public class MainWindowViewModel : DependencyObject
         DependencyProperty.Register(nameof(Player2CardDisplayUserControlVisibility), typeof(Visibility), 
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
 
-    public static readonly DependencyProperty ContinueMenuEnabledProperty =
-        DependencyProperty.Register(nameof(ContinueMenuEnabled), typeof(bool), typeof(MainWindowViewModel), 
-            new PropertyMetadata(false));
+    public static readonly DependencyProperty ContinueMenuVisibilityProperty =
+        DependencyProperty.Register(nameof(ContinueMenuVisibility), typeof(Visibility),
+            typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty StandardMenuVisibilityProperty =
         DependencyProperty.Register(nameof(StandardMenuVisibility), typeof(Visibility), 
@@ -309,12 +309,12 @@ public class MainWindowViewModel : DependencyObject
     }
 
     /// <summary>
-    /// Enables the continue game menu option when a game data file exists.
+    /// Shows/hides the continue game menu option when a game data file exists.
     /// </summary>
-    public bool ContinueMenuEnabled
-    {
-        get => (bool)GetValue(ContinueMenuEnabledProperty);
-        set => SetValue(ContinueMenuEnabledProperty, value);
+    public Visibility ContinueMenuVisibility
+    { 
+        get => (Visibility)GetValue(ContinueMenuVisibilityProperty);
+        set => SetValue(ContinueMenuVisibilityProperty, value);
     }
 
     /// <summary>
@@ -358,7 +358,7 @@ public class MainWindowViewModel : DependencyObject
     /// </summary>
     public void Initialize()
     {
-        ContinueMenuEnabled = GameStateManager.DataExists();
+        ContinueMenuVisibility = GameStateManager.DataExists() ? Visibility.Visible : Visibility.Collapsed;
         SetMenuVisibility();
         PlayLastCardInHand = GameSettingsManager.Instance.PlayLastCardInHand;
     }
@@ -564,6 +564,7 @@ public class MainWindowViewModel : DependencyObject
             .ToList()
             .ToListedString();
         UpdateGameInformation($"Game is over! {gameWinners} are the winners!", 5);
+        ContinueMenuVisibility = GameStateManager.DataExists() ? Visibility.Visible : Visibility.Collapsed;
         ResetGameUI();
     }
 
@@ -696,10 +697,10 @@ public class MainWindowViewModel : DependencyObject
         currentRoundInfoUserControl.Team1List.Add(CurrentGame.GameInfo.Players[2]);
         currentRoundInfoUserControl.Team2List.Add(CurrentGame.GameInfo.Players[1]);
         currentRoundInfoUserControl.Team2List.Add(CurrentGame.GameInfo.Players[3]);
-        if (CurrentGame.GameInfo.Trump != null)
+        if (CurrentGame.GameInfo.TrumpCaller != null)
         {
-            currentRoundInfoUserControl.SetBidInformation(CurrentGame.GameInfo.TrumpCaller!,
-                CurrentGame.GameInfo.Trump.Value, CurrentGame.GameInfo.TrumpCaller!.IsGoingAlone);
+            currentRoundInfoUserControl.SetBidInformation(CurrentGame.GameInfo.TrumpCaller,
+                CurrentGame.GameInfo.Trump!.Value, CurrentGame.GameInfo.TrumpCaller.IsGoingAlone);
         }
     }
 

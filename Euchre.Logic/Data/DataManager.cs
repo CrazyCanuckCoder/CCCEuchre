@@ -124,22 +124,22 @@ internal class DataManager
         // Now that we have the players, add the properties based on the players.
 
         var gameDataRow = stateDS.GameData.First();
-        if (gameDataRow.DealerID != 0)
+        if (gameDataRow.DealerID > 0)
         {
             gameStateManager.Dealer = GetPlayerFromPlayerID(gameStateManager, stateDS, 
                 gameDataRow.DealerID);
         }
-        if (gameDataRow.TrumpCallerID != 0)
+        if (gameDataRow.TrumpCallerID > 0)
         {
             gameStateManager.TrumpCaller = GetPlayerFromPlayerID(gameStateManager, stateDS,
                 gameDataRow.TrumpCallerID);
         }
-        if (gameDataRow.AlonePlayerID != 0)
+        if (gameDataRow.AlonePlayerID > 0)
         {
             gameStateManager.AlonePlayer = GetPlayerFromPlayerID(gameStateManager, stateDS,
                 gameDataRow.AlonePlayerID);
         }
-        if (gameDataRow.NextTrickPlayerID != 0)
+        if (gameDataRow.NextTrickPlayerID > 0)
         {
             gameStateManager.NextTrickPlayer = GetPlayerFromPlayerID(gameStateManager, stateDS,
                 gameDataRow.NextTrickPlayerID);
