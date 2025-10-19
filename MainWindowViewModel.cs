@@ -375,7 +375,7 @@ public class MainWindowViewModel : DependencyObject
         InitializeCardDisplayControlCollection();
         ShowGameBoard();
         SetupPlayerDisplayControls();
-        if (CurrentGame!.GameInfo!.RestartGame)
+        if (CurrentGame!.GameInfo.RestartGame)
         {
             RestoreGameUI();
         }
@@ -413,7 +413,7 @@ public class MainWindowViewModel : DependencyObject
     {
         string message = "Pass";
 
-        if (isKittyRound && CurrentGame!.GameInfo!.Dealer == player)
+        if (isKittyRound && CurrentGame!.GameInfo.Dealer == player)
         {
             message = "Turning down the kitty card.";
         }
@@ -430,7 +430,7 @@ public class MainWindowViewModel : DependencyObject
 
     public void TrumpCalled()
     {
-        //foreach (IPlayer player in CurrentGame!.GameInfo!.Players!)
+        //foreach (IPlayer player in CurrentGame!.GameInfo.Players!)
         //{
         //    UpdatePlayersHandAfterTrumpSet(player.PlayerIndex, CurrentGame.GameInfo.Trump!.Value);
         //}
@@ -450,7 +450,7 @@ public class MainWindowViewModel : DependencyObject
         if (isKittyRound)
         {
             string goingAlone = isGoingAlone ? " and I am going alone" : "";
-            message = CurrentGame!.GameInfo!.Dealer == player
+            message = CurrentGame!.GameInfo.Dealer == player
                 ? $"I am picking up the kitty card{goingAlone}."
                 : $"Pick it up{goingAlone}.";
         }
@@ -460,7 +460,7 @@ public class MainWindowViewModel : DependencyObject
         }
 
         DisplayPlayerMessage(player, message, 2, false);
-        foreach (IPlayer updatePlayer in CurrentGame!.GameInfo!.Players!)
+        foreach (IPlayer updatePlayer in CurrentGame!.GameInfo.Players!)
         {
             UpdatePlayersHandAfterTrumpSet(updatePlayer.PlayerIndex, trump!.Value);
         }
@@ -479,7 +479,7 @@ public class MainWindowViewModel : DependencyObject
         if (player is HumanPlayer humanPlayer)
         {
             _playerCardDisplayControls[player.PlayerIndex].SetupCards(humanPlayer.Hand,
-                CurrentGame!.GameInfo!.Trump!.Value);
+                CurrentGame!.GameInfo.Trump!.Value);
         }
         else
         {
@@ -487,7 +487,7 @@ public class MainWindowViewModel : DependencyObject
             if (player is AutomatedPlayer automatedPlayer)
             {
                 _playerCardDisplayControls[player.PlayerIndex].SetupCards(automatedPlayer.Hand,
-                    CurrentGame!.GameInfo!.Trump!.Value);
+                    CurrentGame!.GameInfo.Trump!.Value);
             }
 #else
             _playerCardDisplayControls[player.PlayerIndex].RemoveCard();
@@ -510,29 +510,29 @@ public class MainWindowViewModel : DependencyObject
         {
             case 0:
                 _mainWindow.Player1DisplayUserControl.UpdateNumberOfTricks(
-                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer.PlayerIndex]);
+                    CurrentGame!.GameInfo.TricksWonByPlayers[trickWinningPlayer.PlayerIndex]);
                 break;
 
             case 1:
                 _mainWindow.Player2DisplayUserControl.UpdateNumberOfTricks(
-                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer.PlayerIndex]);
+                    CurrentGame!.GameInfo.TricksWonByPlayers[trickWinningPlayer.PlayerIndex]);
                 break;
 
             case 2:
                 _mainWindow.Player3DisplayUserControl.UpdateNumberOfTricks(
-                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer.PlayerIndex]);
+                    CurrentGame!.GameInfo.TricksWonByPlayers[trickWinningPlayer.PlayerIndex]);
                 break;
 
             case 3:
                 _mainWindow.Player4DisplayUserControl.UpdateNumberOfTricks(
-                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer.PlayerIndex]);
+                    CurrentGame!.GameInfo.TricksWonByPlayers[trickWinningPlayer.PlayerIndex]);
                 break;
         }
         UpdateGameInformation($"{trickWinningPlayer.Name} won the trick.");
 
         // Add the trick to the list of previous tricks and clear the played cards from the game board.
 
-        _mainWindow.PreviousTricksUserControl.AddTrick(CurrentGame!.GameInfo!.CurrentRoundTricks.Last());
+        _mainWindow.PreviousTricksUserControl.AddTrick(CurrentGame!.GameInfo.CurrentRoundTricks.Last());
         ClearPlayedCards();
     }
 
@@ -548,7 +548,7 @@ public class MainWindowViewModel : DependencyObject
         ClearPlayersHands();
         UpdateGameScores();
         ResetTrickCounters();
-        ResetPlayerTrumpSuitIcon(CurrentGame!.GameInfo!.TrumpCaller!.PlayerIndex);
+        ResetPlayerTrumpSuitIcon(CurrentGame!.GameInfo.TrumpCaller!.PlayerIndex);
         _mainWindow.PreviousTricksUserControl.ClearTricks();
         _mainWindow.TrumpDisplayUserControl.ClearImage();
         _mainWindow.CurrentRoundInfoUserControl.ResetBidInformation();
@@ -558,7 +558,7 @@ public class MainWindowViewModel : DependencyObject
     {
         int winningTeamIndex = gameInfo.TeamScores[0] > gameInfo.TeamScores[1] ? 0 : 1;
         string gameWinners =
-            (  from player in CurrentGame!.GameInfo!.Players!
+            (  from player in CurrentGame!.GameInfo.Players!
               where player.TeamIndex == winningTeamIndex
              select player.Name)
             .ToList()
@@ -626,7 +626,7 @@ public class MainWindowViewModel : DependencyObject
     public void RedisplayUserHand(HumanPlayer player)
     {
         _playerCardDisplayControls[player.PlayerIndex].SetupCards(player.Hand,
-            CurrentGame!.GameInfo!.Trump!.Value);
+            CurrentGame!.GameInfo.Trump!.Value);
     }
 
     public Card? GetCardFromUser(IPlayer user, Suit? trickSuit, Suit trump)
@@ -693,7 +693,7 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="currentRoundInfoUserControl"></param>
     private void SetupCurrentRoundInfoControl(CurrentRoundInfoUserControl currentRoundInfoUserControl)
     {
-        currentRoundInfoUserControl.Team1List.Add(CurrentGame!.GameInfo!.Players![0]);
+        currentRoundInfoUserControl.Team1List.Add(CurrentGame!.GameInfo.Players![0]);
         currentRoundInfoUserControl.Team1List.Add(CurrentGame.GameInfo.Players[2]);
         currentRoundInfoUserControl.Team2List.Add(CurrentGame.GameInfo.Players[1]);
         currentRoundInfoUserControl.Team2List.Add(CurrentGame.GameInfo.Players[3]);
@@ -707,7 +707,7 @@ public class MainWindowViewModel : DependencyObject
     private void SetupCurrentScoreControl(CurrentScoreUserControl currentPlayersScoresUserControl)
     {
         currentPlayersScoresUserControl.SetTeamNames(
-            (  from player in CurrentGame!.GameInfo!.Players!
+            (  from player in CurrentGame!.GameInfo.Players!
             orderby player.PlayerIndex
              select player.Name).ToList()
             );
@@ -720,7 +720,7 @@ public class MainWindowViewModel : DependencyObject
     /// </summary>
     private void SetupPlayerDisplayControls()
     {
-        _mainWindow.Player1DisplayUserControl.SetActivePlayer(CurrentGame!.GameInfo!.Players![0],
+        _mainWindow.Player1DisplayUserControl.SetActivePlayer(CurrentGame!.GameInfo.Players![0],
             CurrentGame.GameInfo.Players[0].AvatarNumber);
         _mainWindow.Player2DisplayUserControl.SetActivePlayer(CurrentGame.GameInfo.Players[1],
             CurrentGame.GameInfo.Players[1].AvatarNumber);
@@ -872,7 +872,7 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="numberOfCardsDealt">The number of cards dealt to an automated player.</param>
     private void UpdatePlayersHandAfterDeal(int indexOfPlayer, int numberOfCardsDealt)
     {
-        if (CurrentGame!.GameInfo!.Players![indexOfPlayer] is HumanPlayer humanPlayer)
+        if (CurrentGame!.GameInfo.Players![indexOfPlayer] is HumanPlayer humanPlayer)
         {
             humanPlayer.SortPlayerCards(trump: null);
             _playerCardDisplayControls[indexOfPlayer].SetupCards(humanPlayer.Hand);
@@ -898,7 +898,7 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="trump">The suit designated as the trump suit.</param>
     private void UpdatePlayersHandAfterTrumpSet(int indexOfPlayer, Suit trump)
     {
-        if (CurrentGame!.GameInfo!.Players![indexOfPlayer] is HumanPlayer humanPlayer)
+        if (CurrentGame!.GameInfo.Players![indexOfPlayer] is HumanPlayer humanPlayer)
         {
             humanPlayer.SortPlayerCards(trump);
             _playerCardDisplayControls[indexOfPlayer].SetupCards(humanPlayer.Hand, trump);
@@ -917,7 +917,7 @@ public class MainWindowViewModel : DependencyObject
 
     private void SetPartnerDisabled(IPlayer player)
     {
-        var partner = (  from anyPlayer in CurrentGame!.GameInfo!.Players
+        var partner = (  from anyPlayer in CurrentGame!.GameInfo.Players
                         where anyPlayer.TeamIndex == player.TeamIndex
                            && anyPlayer.PlayerIndex != player.PlayerIndex
                        select anyPlayer)
@@ -925,13 +925,13 @@ public class MainWindowViewModel : DependencyObject
         if (partner is HumanPlayer humanPlayer)
         {
             _playerCardDisplayControls[humanPlayer.PlayerIndex].DisableCards(humanPlayer.Hand, 
-                CurrentGame!.GameInfo!.Trump!.Value);
+                CurrentGame!.GameInfo.Trump!.Value);
         }
         else
         {
 #if DEBUG
             _playerCardDisplayControls[partner.PlayerIndex].DisableCards(partner.Hand,
-                CurrentGame!.GameInfo!.Trump!.Value);
+                CurrentGame!.GameInfo.Trump!.Value);
 #else
             _playerCardDisplayControls[partner.PlayerIndex].DisableCards(partner.Hand.Count);
 #endif
@@ -1112,7 +1112,7 @@ public class MainWindowViewModel : DependencyObject
     /// </summary>
     private void UpdateGameScores()
     {
-        _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(1, CurrentGame!.GameInfo!.TeamScores[0]);
+        _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(1, CurrentGame!.GameInfo.TeamScores[0]);
         _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(2, CurrentGame.GameInfo.TeamScores[1]);
     }
 
@@ -1140,14 +1140,14 @@ public class MainWindowViewModel : DependencyObject
 
     private void RestoreGameUI()
     {
-        if (CurrentGame!.GameInfo!.LastCompletedStage == RoundStage.CardsDealt)
+        if (CurrentGame!.GameInfo.LastCompletedStage == RoundStage.CardsDealt)
         {
             UpdateAllPlayersHands();
         }
         else if (CurrentGame.GameInfo.LastCompletedStage == RoundStage.TrumpChosen)
         {
-            _previousDealerPlayerIndex = CurrentGame!.GameInfo!.Dealer!.PlayerIndex;
-            SetPlayerDealerIconVisibility(CurrentGame!.GameInfo!.Dealer!.PlayerIndex, true);
+            _previousDealerPlayerIndex = CurrentGame!.GameInfo.Dealer!.PlayerIndex;
+            SetPlayerDealerIconVisibility(CurrentGame!.GameInfo.Dealer!.PlayerIndex, true);
             UpdateAllPlayersHands();
             _mainWindow.TrumpDisplayUserControl.SetTrump(CurrentGame.GameInfo.Trump!.Value);
             _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(CurrentGame.GameInfo.TrumpCaller!,
@@ -1165,7 +1165,7 @@ public class MainWindowViewModel : DependencyObject
 
     private void ReloadTricks()
     {
-        foreach (var trick in CurrentGame!.GameInfo!.CurrentRoundTricks)
+        foreach (var trick in CurrentGame!.GameInfo.CurrentRoundTricks)
         {
             _mainWindow.PreviousTricksUserControl.AddTrick(trick);
         }
@@ -1176,7 +1176,7 @@ public class MainWindowViewModel : DependencyObject
     /// </summary>
     private void UpdatePlayersTrickCounters()
     {
-        foreach (var player in CurrentGame!.GameInfo!.Players!)
+        foreach (var player in CurrentGame!.GameInfo.Players!)
         {
             switch (player.PlayerIndex)
             {
@@ -1205,7 +1205,7 @@ public class MainWindowViewModel : DependencyObject
 
     private void UpdateAllPlayersHands()
     {
-        foreach (var player in CurrentGame!.GameInfo!.Players!)
+        foreach (var player in CurrentGame!.GameInfo.Players!)
         {
             UpdatePlayersHandAfterTrumpSet(player.PlayerIndex, CurrentGame.GameInfo.Trump!.Value);
         }
