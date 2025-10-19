@@ -239,6 +239,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="Euchre.Logic\Euchre.Logic.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
-﻿using Euchre.Logic.Components;
+﻿using CrazyCanuckCoder.Library.WPF;
+using Euchre.Logic.Components;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
 using Euchre.UILogic;
@@ -17,10 +18,13 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        _placementManager = new WindowPlacementManager(this);
         ViewModel = new();
         ViewModel.Initialize();
         DataContext = ViewModel;
     }
+
+    private readonly WindowPlacementManager _placementManager;
 
     /// <summary>
     /// The view model class to use to manage the data properties.

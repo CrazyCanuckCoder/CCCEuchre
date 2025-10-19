@@ -331,9 +331,12 @@ public class EuchreGame
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, true, GameInfo.Trump,
                         player.IsGoingAlone, true));
 
-                    // Dealer picks up kitty.
+                    // Dealer picks up kitty unless their partner went alone.
 
-                    GameInfo.Dealer!.DiscardForKitty(GameInfo.Kitty!);
+                    if (!IsPartner(GameInfo.TrumpCaller!, GameInfo.Dealer!))
+                    {
+                        GameInfo.Dealer!.DiscardForKitty(GameInfo.Kitty!);
+                    }
                     GameInfo.SaveGameDataAsync();
 
                     return true;

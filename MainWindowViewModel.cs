@@ -564,7 +564,7 @@ public class MainWindowViewModel : DependencyObject
             .ToList()
             .ToListedString();
         UpdateGameInformation($"Game is over! {gameWinners} are the winners!", 5);
-        ContinueMenuVisibility = GameStateManager.DataExists() ? Visibility.Visible : Visibility.Collapsed;
+        ContinueMenuVisibility = Visibility.Collapsed;
         ResetGameUI();
     }
 
@@ -1142,13 +1142,15 @@ public class MainWindowViewModel : DependencyObject
     {
         if (CurrentGame!.GameInfo.LastCompletedStage == RoundStage.CardsDealt)
         {
-            UpdateAllPlayersHands();
+            SetUIAfterCardsDealt();
+            if (CurrentGame.GameInfo.Kitty != null)
+            {
+                _mainWindow.TrumpDisplayUserControl.SetKittyCard(CurrentGame.GameInfo.Kitty);
+            }
         }
         else if (CurrentGame.GameInfo.LastCompletedStage == RoundStage.TrumpChosen)
         {
-            _previousDealerPlayerIndex = CurrentGame!.GameInfo.Dealer!.PlayerIndex;
-            SetPlayerDealerIconVisibility(CurrentGame!.GameInfo.Dealer!.PlayerIndex, true);
-            UpdateAllPlayersHands();
+            SetUIAfterCardsDealt();
             _mainWindow.TrumpDisplayUserControl.SetTrump(CurrentGame.GameInfo.Trump!.Value);
             _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(CurrentGame.GameInfo.TrumpCaller!,
                 CurrentGame.GameInfo.Trump.Value, CurrentGame.GameInfo.TrumpCaller!.IsGoingAlone);
@@ -1161,6 +1163,13 @@ public class MainWindowViewModel : DependencyObject
             UpdatePlayersTrickCounters();
             ReloadTricks();
         }
+    }
+
+    private void SetUIAfterCardsDealt()
+    {
+        _previousDealerPlayerIndex = CurrentGame!.GameInfo.Dealer!.PlayerIndex;
+        SetPlayerDealerIconVisibility(CurrentGame!.GameInfo.Dealer!.PlayerIndex, true);
+        UpdateAllPlayersHands();
     }
 
     private void ReloadTricks()
