@@ -513,7 +513,7 @@ public class EuchreGame
         }
         else
         {
-            int opposingTeam = callerTeam ^= 1;
+            int opposingTeam = callerTeam ^ 1;
             GameInfo.TeamScores[opposingTeam] += 2; // Euchred
             winningTeamIndex = opposingTeam;
         }
