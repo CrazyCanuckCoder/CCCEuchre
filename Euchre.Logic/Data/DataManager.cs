@@ -168,7 +168,7 @@ internal class DataManager
                 newTrick.AddCard(player, new Card((Suit)cardRow.Suit, (Rank)cardRow.Rank));
             }
             gameStateManager.CurrentRoundTricks.Add(newTrick);
-            gameStateManager.TricksWonByPlayers[newTrick.GetWinner()]++;
+            gameStateManager.TricksWonByPlayers[newTrick.GetWinner().PlayerIndex]++;
         }
 
         // Setup the team scores.

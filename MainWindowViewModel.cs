@@ -510,22 +510,22 @@ public class MainWindowViewModel : DependencyObject
         {
             case 0:
                 _mainWindow.Player1DisplayUserControl.UpdateNumberOfTricks(
-                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer]);
+                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer.PlayerIndex]);
                 break;
 
             case 1:
                 _mainWindow.Player2DisplayUserControl.UpdateNumberOfTricks(
-                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer]);
+                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer.PlayerIndex]);
                 break;
 
             case 2:
                 _mainWindow.Player3DisplayUserControl.UpdateNumberOfTricks(
-                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer]);
+                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer.PlayerIndex]);
                 break;
 
             case 3:
                 _mainWindow.Player4DisplayUserControl.UpdateNumberOfTricks(
-                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer]);
+                    CurrentGame!.GameInfo!.TricksWonByPlayers[trickWinningPlayer.PlayerIndex]);
                 break;
         }
         UpdateGameInformation($"{trickWinningPlayer.Name} won the trick.");
@@ -1182,22 +1182,22 @@ public class MainWindowViewModel : DependencyObject
             {
                 case 0:
                     _mainWindow.Player1DisplayUserControl.UpdateNumberOfTricks(
-                        CurrentGame.GameInfo.TricksWonByPlayers[player]);
+                        CurrentGame.GameInfo.TricksWonByPlayers[player.PlayerIndex]);
                     break;
 
                 case 1:
                     _mainWindow.Player2DisplayUserControl.UpdateNumberOfTricks(
-                        CurrentGame.GameInfo.TricksWonByPlayers[player]);
+                        CurrentGame.GameInfo.TricksWonByPlayers[player.PlayerIndex]);
                     break;
 
                 case 2:
                     _mainWindow.Player3DisplayUserControl.UpdateNumberOfTricks(
-                        CurrentGame.GameInfo.TricksWonByPlayers[player]);
+                        CurrentGame.GameInfo.TricksWonByPlayers[player.PlayerIndex]);
                     break;
 
                 case 3:
                     _mainWindow.Player4DisplayUserControl.UpdateNumberOfTricks(
-                        CurrentGame.GameInfo.TricksWonByPlayers[player]);
+                        CurrentGame.GameInfo.TricksWonByPlayers[player.PlayerIndex]);
                     break;
             }
         }

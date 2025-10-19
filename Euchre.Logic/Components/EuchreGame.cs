@@ -415,7 +415,7 @@ public class EuchreGame
             var trick = PlayTrick();
             GameInfo.CurrentRoundTricks.Add(trick);
             GameInfo.NextTrickPlayer = trick.GetWinner();
-            GameInfo.TricksWonByPlayers[GameInfo.NextTrickPlayer]++;
+            GameInfo.TricksWonByPlayers[GameInfo.NextTrickPlayer.PlayerIndex]++;
             DeclareTrickWinner?.Invoke(this, new DeclareTrickWinnerEventArgs(GameInfo.NextTrickPlayer));
 
             // Update checkpoint after each trick – this allows us to resume mid-round.

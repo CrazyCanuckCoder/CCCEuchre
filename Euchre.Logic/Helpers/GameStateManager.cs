@@ -96,7 +96,7 @@ public class GameStateManager
     /// <summary>
     /// Tracks the number of tricks won by each player for the current round.
     /// </summary>
-    public Dictionary<IPlayer, int> TricksWonByPlayers { get; set; } = [];
+    public int[] TricksWonByPlayers { get; set; } = new int[NUMBER_OF_PLAYERS];
 
     /// <summary>
     /// Helper to reset checkpoint info when a brand‑new round begins.
@@ -115,10 +115,9 @@ public class GameStateManager
     {
         ArgumentNullException.ThrowIfNull(nameof(Players));
 
-        TricksWonByPlayers.Clear();
-        foreach (var player in Players!)
+        for (int index = 0; index < NUMBER_OF_PLAYERS; index++)
         {
-            TricksWonByPlayers.Add(player, 0);
+            TricksWonByPlayers[index] = 0;
         }
     }
 
