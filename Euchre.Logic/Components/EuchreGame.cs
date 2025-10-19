@@ -53,7 +53,7 @@ public class EuchreGame
 
         GameInfo.Players = players;
         GameInfo.Dealer = players[0];
-        GameInfo.SaveGameData();
+        GameInfo.SaveGameDataAsync();
     }
 
     /// <summary>
@@ -224,7 +224,7 @@ public class EuchreGame
 
         GameInfo.ResetRoundCheckpoint();
         GameInfo.ResetTricksWonByPlayers();
-        GameInfo.SaveGameData();
+        GameInfo.SaveGameDataAsync();
     }
 
     /// <summary>
@@ -264,7 +264,7 @@ public class EuchreGame
         // Record that dealing is done.
 
         GameInfo.LastCompletedStage = RoundStage.CardsDealt;
-        GameInfo.SaveGameData();
+        GameInfo.SaveGameDataAsync();
     }
 
     /// <summary>
@@ -279,7 +279,7 @@ public class EuchreGame
         {
             TrumpCalled?.Invoke(this, new System.EventArgs());
             GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
-            GameInfo.SaveGameData();
+            GameInfo.SaveGameDataAsync();
             return true;
         }
 
@@ -291,7 +291,7 @@ public class EuchreGame
         {
             TrumpCalled?.Invoke(this, new System.EventArgs());
             GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
-            GameInfo.SaveGameData();
+            GameInfo.SaveGameDataAsync();
             return true;
         }
 
@@ -338,7 +338,7 @@ public class EuchreGame
                     // Dealer picks up kitty.
 
                     GameInfo.Dealer!.DiscardForKitty(GameInfo.Kitty!);
-                    GameInfo.SaveGameData();
+                    GameInfo.SaveGameDataAsync();
 
                     return true;
                 }
@@ -361,7 +361,7 @@ public class EuchreGame
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, true, GameInfo.Trump,
                         player.IsGoingAlone, false));
 
-                    GameInfo.SaveGameData();
+                    GameInfo.SaveGameDataAsync();
 
                     return true;
                 }
@@ -421,14 +421,14 @@ public class EuchreGame
             // Update checkpoint after each trick – this allows us to resume mid-round.
 
             GameInfo.CurrentTrickNumber = trickNum; // remember where we stopped
-            GameInfo.SaveGameData();
+            GameInfo.SaveGameDataAsync();
         }
 
         // All tricks done – reset the per-round trick counter.
 
         GameInfo.CurrentTrickNumber = 0;
         GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
-        GameInfo.SaveGameData();
+        GameInfo.SaveGameDataAsync();
     }
 
     /// <summary>
@@ -527,7 +527,7 @@ public class EuchreGame
         // Record that scoring is done.
 
         GameInfo.LastCompletedStage = RoundStage.Scored;
-        GameInfo.SaveGameData();
+        GameInfo.SaveGameDataAsync();
     }
 
     /// <summary>
@@ -565,7 +565,7 @@ public class EuchreGame
     {
         GameInfo!.Dealer = GetNextPlayer(GameInfo.Dealer!);
         GameInfo.LastCompletedStage = RoundStage.DealerAdvanced;
-        GameInfo.SaveGameData();
+        GameInfo.SaveGameDataAsync();
         GameInfo.LastCompletedStage = RoundStage.None; // ready for next round
     }
 

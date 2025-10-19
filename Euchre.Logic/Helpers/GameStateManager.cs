@@ -125,9 +125,9 @@ public class GameStateManager
     /// <summary>
     /// Saves the current game data to a file.
     /// </summary>
-    public void SaveGameData()
+    public async void SaveGameDataAsync()
     {
-        DataManager.SaveGameState(this);
+        await Task.Run(() => DataManager.SaveGameState(this));
     }
 
     /// <summary>

@@ -12,6 +12,7 @@ internal class DataManager
     /// The name of the file where game data is saved and loaded from.
     /// </summary>
     internal const string FILE_NAME = "GameData.xml";
+    private static readonly object _lockObject = new();
 
     /// <summary>
     /// Saves the information in the provided game state manager to an XML file.
@@ -80,14 +81,18 @@ internal class DataManager
             (int)gameStateManager.LastCompletedStage,
             gameStateManager.CurrentTrickNumber);
 
-        // Save the dataset to the file.
-
-        if (File.Exists(FILE_NAME))
+        lock (_lockObject)
         {
-            File.Delete(FILE_NAME);
+            // Save the dataset to the file.
+
+            if (File.Exists(FILE_NAME))
+            {
+                File.Delete(FILE_NAME);
+            }
+            stateDS.WriteXml(FILE_NAME);
         }
-        stateDS.WriteXml(FILE_NAME);
     }
+
 
     /// <summary>
     /// Retrieves the game information from an existing game save file and creates an instance of the 
