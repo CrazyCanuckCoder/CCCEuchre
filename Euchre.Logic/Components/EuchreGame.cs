@@ -480,24 +480,24 @@ public class EuchreGame
             .GroupBy(t => t.GetWinner().TeamIndex)
             .ToDictionary(g => g.Key, g => g.Count());
 
-        int team0Tricks = tricksByTeam.GetValueOrDefault(0, 0);
-        int team1Tricks = tricksByTeam.GetValueOrDefault(1, 0);
+        int numTeam0Tricks = tricksByTeam.GetValueOrDefault(0, 0);
+        int numTeam1Tricks = tricksByTeam.GetValueOrDefault(1, 0);
 
-        int callerTeam = GameInfo.TrumpCaller?.TeamIndex ?? -1;
-        int callerTricks = callerTeam == 0 ? team0Tricks : team1Tricks;
-        int winningTeamIndex = callerTeam;
+        int callerTeamIndex = GameInfo.TrumpCaller?.TeamIndex ?? -1;
+        int numCallerTricks = callerTeamIndex == 0 ? numTeam0Tricks : numTeam1Tricks;
+        int winningTeamIndex = callerTeamIndex;
 
-        if (callerTricks >= MIN_NUMBER_TRICKS_TO_SCORE)
+        if (numCallerTricks >= MIN_NUMBER_TRICKS_TO_SCORE)
         {
-            GameInfo.TeamScores[callerTeam] += callerTricks == MAX_NUMBER_OF_TRICKS
+            GameInfo.TeamScores[callerTeamIndex] += numCallerTricks == MAX_NUMBER_OF_TRICKS
                 ? (GameInfo.GoingAlone ? NUM_POINTS_FOR_ALL_TRICKS_GOING_ALONE : NUM_POINTS_FOR_ALL_TRICKS)
                 : NUM_POINTS_FOR_WIN;
         }
         else
         {
-            int opposingTeam = callerTeam ^ 1;
-            GameInfo.TeamScores[opposingTeam] += NUM_POINTS_FOR_EUCHRE;
-            winningTeamIndex = opposingTeam;
+            int opposingTeamIndex = callerTeamIndex ^ 1;
+            GameInfo.TeamScores[opposingTeamIndex] += NUM_POINTS_FOR_EUCHRE;
+            winningTeamIndex = opposingTeamIndex;
         }
 
         DeclareRoundWinningPlayers?.Invoke(this, 
