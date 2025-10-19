@@ -421,6 +421,14 @@ public class EuchreGame
 
             GameInfo.CurrentTrickNumber = trickNum; // remember where we stopped
             GameInfo.SaveGameDataAsync();
+
+            // Check if the bidding team has the minimum they need to win and can't get anymore points.
+            //  Or if the opposition team has enough tricks to end the round.
+
+            if (trickNum < MAX_NUMBER_OF_TRICKS && CanEndRound())
+            {
+                break;
+            }
         }
 
         // All tricks done – reset the per-round trick counter.
@@ -428,6 +436,30 @@ public class EuchreGame
         GameInfo.CurrentTrickNumber = 0;
         GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
         GameInfo.SaveGameDataAsync();
+    }
+
+    private bool CanEndRound()
+    {
+        bool endRound = false;
+
+        int numBidderTricks = (  from player in GameInfo.Players
+                                where player.TeamIndex == GameInfo.TrumpCaller!.TeamIndex
+                               select GameInfo.TricksWonByPlayers[player.PlayerIndex])
+                              .Sum();
+        int numOppositionTricks = (  from player in GameInfo.Players
+                                    where player.TeamIndex != GameInfo.TrumpCaller!.TeamIndex
+                                   select GameInfo.TricksWonByPlayers[player.PlayerIndex])
+                                  .Sum();
+        if (numBidderTricks == MIN_NUMBER_TRICKS_TO_SCORE)
+        {
+            endRound = numOppositionTricks > 0;
+        }
+        else
+        {
+            endRound = numOppositionTricks == MIN_NUMBER_TRICKS_TO_SCORE;
+        }
+
+        return endRound;
     }
 
     /// <summary>
