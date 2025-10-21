@@ -333,7 +333,8 @@ public class EuchreGame
 
                     // Dealer picks up kitty unless their partner went alone.
 
-                    if (!IsPartner(GameInfo.TrumpCaller!, GameInfo.Dealer!))
+                    if (!(GameInfo.TrumpCaller!.IsGoingAlone 
+                          && !IsPartner(GameInfo.TrumpCaller, GameInfo.Dealer!)))
                     {
                         GameInfo.Dealer!.DiscardForKitty(GameInfo.Kitty!);
                     }
@@ -425,7 +426,7 @@ public class EuchreGame
             // Check if the bidding team has the minimum they need to win and can't get anymore points.
             //  Or if the opposition team has enough tricks to end the round.
 
-            if (trickNum < MAX_NUMBER_OF_TRICKS && CanEndRound())
+            if (trickNum >= MIN_NUMBER_TRICKS_TO_SCORE && trickNum < MAX_NUMBER_OF_TRICKS && CanEndRound())
             {
                 break;
             }
@@ -438,6 +439,11 @@ public class EuchreGame
         GameInfo.SaveGameDataAsync();
     }
 
+    /// <summary>
+    /// Determines if conditions are met where one of the team has already achieved their points and cannot
+    /// get any more points.
+    /// </summary>
+    /// <returns>True to indicate the round can be stopped and false if not.</returns>
     private bool CanEndRound()
     {
         bool endRound = false;

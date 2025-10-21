@@ -7,9 +7,7 @@ using Euchre.UILogic;
 using Euchre.UILogic.Interfaces;
 using Euchre.UserControls;
 using Euchre.Windows;
-using System.Numerics;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 using Extensions = Euchre.Logic.Helpers.Extensions;
 
 namespace Euchre;

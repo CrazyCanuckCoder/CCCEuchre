@@ -81,10 +81,10 @@ internal class DataManager
             (int)gameStateManager.LastCompletedStage,
             gameStateManager.CurrentTrickNumber);
 
+        // Save the dataset to the file.
+
         lock (_lockObject)
         {
-            // Save the dataset to the file.
-
             if (File.Exists(FILE_NAME))
             {
                 File.Delete(FILE_NAME);
@@ -110,28 +110,61 @@ internal class DataManager
         GameStateManager gameStateManager = new();
         GameStateDS stateDS = new();
         stateDS.ReadXml(FILE_NAME);
+        var gameDataRow = stateDS.GameData.First();
 
-        // Add the players first.
+        AddPlayers(gameStateManager, stateDS);
+        AddPlayerBasedProperties(gameStateManager, stateDS, gameDataRow);
+        AddRemainingProperties(gameStateManager, gameDataRow);
+        AddPlayedTricks(gameStateManager, stateDS);
+        AddTeamScores(gameStateManager, stateDS);
 
-        gameStateManager.Players = new IPlayer[Constants.NUMBER_OF_PLAYERS];
-        int playerIdx = 0;
-        foreach (var playerRow in stateDS.Player)
+        return gameStateManager;
+    }
+
+    private static void AddTeamScores(GameStateManager gameStateManager, GameStateDS stateDS)
+    {
+        gameStateManager.TeamScores = new int[Constants.NUMBER_OF_TEAMS];
+        foreach (var scoreRow in stateDS.TeamScores)
         {
-            gameStateManager.Players[playerIdx] = CreatePlayerFromDataRow(playerRow, gameStateManager);
-            var foundCards = stateDS.Hand.Where(h => h.PlayerID == playerRow.PlayerID);
+            gameStateManager.TeamScores[scoreRow.TeamIndex] = scoreRow.TeamScore;
+        }
+    }
+
+    private static void AddRemainingProperties(GameStateManager gameStateManager, 
+        GameStateDS.GameDataRow gameDataRow)
+    {
+        gameStateManager.Kitty = new Card((Suit)gameDataRow.KittySuit, (Rank)gameDataRow.KittyRank);
+        gameStateManager.Trump = (Suit?)gameDataRow.TrumpSuit;
+        gameStateManager.LastCompletedStage = (RoundStage)gameDataRow.LastCompletedStage;
+        gameStateManager.CurrentTrickNumber = gameDataRow.CurrentTrickNumber;
+    }
+
+    private static void AddPlayedTricks(GameStateManager gameStateManager, GameStateDS stateDS)
+    {
+        gameStateManager.ResetTricksWonByPlayers();
+        gameStateManager.CurrentRoundTricks = [];
+        foreach (var trickRow in stateDS.Trick)
+        {
+            Trick newTrick = new((Suit)trickRow.TrumpSuit);
+            var foundCards = stateDS.TrickCards.Where(tc => tc.TrickID == trickRow.TrickID);
             foreach (var cardRow in foundCards)
             {
-                gameStateManager.Players[playerIdx].AddCard(new Card((Suit)cardRow.Suit, (Rank)cardRow.Rank));
+                var player = gameStateManager.Players!
+                    .First(p => p.Name == stateDS.Player
+                        .First(r => r.PlayerID == cardRow.PlayerID).Name);
+                newTrick.AddCard(player, new Card((Suit)cardRow.Suit, (Rank)cardRow.Rank));
             }
-            playerIdx++;
+            gameStateManager.CurrentRoundTricks.Add(newTrick);
+            gameStateManager.TricksWonByPlayers[newTrick.GetWinner().PlayerIndex]++;
         }
+    }
 
-        // Now that we have the players, add the properties based on the players.
-
-        var gameDataRow = stateDS.GameData.First();
+    private static void AddPlayerBasedProperties(GameStateManager gameStateManager, GameStateDS stateDS, 
+        GameStateDS.GameDataRow gameDataRow)
+    {
         if (gameDataRow.DealerID > 0)
         {
-            gameStateManager.Dealer = GetPlayerFromPlayerID(gameStateManager, stateDS, 
+            gameStateManager.Dealer = GetPlayerFromPlayerID(gameStateManager, stateDS,
                 gameDataRow.DealerID);
         }
         if (gameDataRow.TrumpCallerID > 0)
@@ -149,44 +182,24 @@ internal class DataManager
             gameStateManager.NextTrickPlayer = GetPlayerFromPlayerID(gameStateManager, stateDS,
                 gameDataRow.NextTrickPlayerID);
         }
-        gameStateManager.GoingAlone = gameStateManager.TrumpCaller != null 
+        gameStateManager.GoingAlone = gameStateManager.TrumpCaller != null
             && gameStateManager.TrumpCaller.IsGoingAlone;
+    }
 
-        // Setup the tricks for the current round.
-
-        gameStateManager.ResetTricksWonByPlayers();
-        gameStateManager.CurrentRoundTricks = [];
-        foreach (var trickRow in stateDS.Trick)
+    private static void AddPlayers(GameStateManager gameStateManager, GameStateDS stateDS)
+    {
+        gameStateManager.Players = new IPlayer[Constants.NUMBER_OF_PLAYERS];
+        int playerIdx = 0;
+        foreach (var playerRow in stateDS.Player)
         {
-            Trick newTrick = new((Suit)trickRow.TrumpSuit);
-            var foundCards = stateDS.TrickCards.Where(tc => tc.TrickID == trickRow.TrickID);
+            gameStateManager.Players[playerIdx] = CreatePlayerFromDataRow(playerRow, gameStateManager);
+            var foundCards = stateDS.Hand.Where(h => h.PlayerID == playerRow.PlayerID);
             foreach (var cardRow in foundCards)
             {
-                var player = gameStateManager.Players
-                    .First(p => p.Name == stateDS.Player
-                        .First(r => r.PlayerID == cardRow.PlayerID).Name);
-                newTrick.AddCard(player, new Card((Suit)cardRow.Suit, (Rank)cardRow.Rank));
+                gameStateManager.Players[playerIdx].AddCard(new Card((Suit)cardRow.Suit, (Rank)cardRow.Rank));
             }
-            gameStateManager.CurrentRoundTricks.Add(newTrick);
-            gameStateManager.TricksWonByPlayers[newTrick.GetWinner().PlayerIndex]++;
+            playerIdx++;
         }
-
-        // Setup the team scores.
-
-        gameStateManager.TeamScores = new int[Constants.NUMBER_OF_TEAMS];
-        foreach (var scoreRow in stateDS.TeamScores)
-        {
-            gameStateManager.TeamScores[scoreRow.TeamIndex] = scoreRow.TeamScore;
-        }
-
-        // Setup the remaining properties.
-
-        gameStateManager.Kitty = new Card((Suit)gameDataRow.KittySuit, (Rank)gameDataRow.KittyRank);
-        gameStateManager.Trump = (Suit?)gameDataRow.TrumpSuit;
-        gameStateManager.LastCompletedStage = (RoundStage)gameDataRow.LastCompletedStage;
-        gameStateManager.CurrentTrickNumber = gameDataRow.CurrentTrickNumber;
-
-        return gameStateManager;
     }
 
     /// <summary>

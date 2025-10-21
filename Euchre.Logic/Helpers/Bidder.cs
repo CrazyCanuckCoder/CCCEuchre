@@ -11,12 +11,11 @@ public class Bidder : IBidder
 {
     public Bidder(IPlayer player)
     {
-        _player = player ?? 
-            throw new ArgumentNullException(nameof(player), "Player's hand cannot be null.");
+        _player = player ?? throw new ArgumentNullException(nameof(player), "Player cannot be null.");
     }
 
     /// <summary>
-    /// The list of cards in the player's hand.
+    /// A reference to the player in order to access the cards in their hand.
     /// </summary>
     private readonly IPlayer _player;
 
