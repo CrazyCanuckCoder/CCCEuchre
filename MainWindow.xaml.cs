@@ -223,26 +223,17 @@ public partial class MainWindow : Window
 
     private void CurrentGame_KittyWasTurnedDown(object? sender, EventArgs e)
     {
-        UIHelpers.RunOnUIThread(() =>
-        {
-            ViewModel.KittyWasTurnedDown();
-        });
+        UIHelpers.RunOnUIThread(ViewModel.KittyWasTurnedDown);
     }
 
     private void CurrentGame_TrumpCalled(object? sender, EventArgs e)
     {
-        UIHelpers.RunOnUIThread(() =>
-        {
-            ViewModel.TrumpCalled();
-        });
+        UIHelpers.RunOnUIThread(ViewModel.TrumpCalled);
     }
 
     private void CurrentGame_NoTrumpCalled(object? sender, EventArgs e)
     {
-        UIHelpers.RunOnUIThread(() =>
-        {
-            ViewModel.NoTrumpWasCalled();
-        });
+        UIHelpers.RunOnUIThread(ViewModel.NoTrumpWasCalled);
     }
 
     private void CurrentGame_CardPlayedByPlayer(object? sender, CardPlayedByPlayerEventArgs e)
