@@ -490,11 +490,13 @@ public class MainWindowViewModel : DependencyObject
         _mainWindowController.ClearPlayedCards();
     }
 
-    public void EndOfRoundUpdate(List<string> winningPlayers)
+    public void EndOfRoundUpdate(List<string> winningPlayers, int points, ScoringReason reasonForPoints)
     {
+        string message = DetermineEndOfRoundMessage(winningPlayers, points, reasonForPoints);
+
         // Display the winning round message to the user.
 
-        UpdateGameInformation($"{winningPlayers.ToListedString()} won the round.");
+        DialogBoxes.CustomInformationDialog(message, _mainWindow, "End of Round");
 
         // The round is over, reset the board for the next round.
 
@@ -504,6 +506,34 @@ public class MainWindowViewModel : DependencyObject
         _mainWindowController.ResetTrickCounters();
         _mainWindowController.ResetPlayerTrumpSuitIcon(CurrentGame!.GameInfo.TrumpCaller!.PlayerIndex);
         _mainWindowController.ResetTricksTrumpAndBidInformation();
+    }
+
+    private string DetermineEndOfRoundMessage(List<string> winningPlayers, int points, 
+        ScoringReason reasonForPoints)
+    {
+        string message = string.Empty;
+
+        switch (reasonForPoints)
+        {
+            case ScoringReason.WonHand:
+                message = $"{winningPlayers.ToListedString()} won the round.";
+                break;
+
+            case ScoringReason.GotAllTricks:
+                message = $"{winningPlayers.ToListedString()} won all the tricks for {points} points.";
+                break;
+
+            case ScoringReason.Euchred:
+                message = $"{winningPlayers.ToListedString()} euchred the other team for {points} points.";
+                break;
+
+            case ScoringReason.GotAllTricksAlone:
+                message = 
+                    $"{CurrentGame!.GameInfo.AlonePlayer!.Name} went alone and won all the tricks for {points} points.";
+                break;
+        }
+
+        return message;
     }
 
     public void EndOfGameUpdate(GameStateManager gameInfo)

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Euchre.Windows;
+using System.Windows;
 
 namespace Euchre.UILogic.Classes;
 
@@ -18,6 +19,24 @@ public static class DialogBoxes
         string title = "Test")
     {
         return ShowDialog(message, title, MessageBoxImage.Information, owner);
+    }
+
+    /// <summary>
+    /// Shows a custom dialog box to display information text.
+    /// </summary>
+    /// <param name="message">The information text to display to the user.</param>
+    /// <param name="owner">An optional Window that owns the dialog box.</param>
+    /// <param name="title">The title text to display on the dialog box.</param>
+    /// <returns>True to indicate the user closed the dialog box.</returns>
+    public static bool CustomInformationDialog(string message, Window? owner = null,
+        string title = "Test")
+    {
+        InformationWindow informationWindow = new(message, title)
+        {
+            Owner = owner,
+        };
+
+        return informationWindow.ShowDialog() == true;
     }
 
     /// <summary>

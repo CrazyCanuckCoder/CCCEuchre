@@ -529,24 +529,38 @@ public class EuchreGame
         int numCallerTricks = callerTeamIndex == 0 ? numTeam0Tricks : numTeam1Tricks;
         int winningTeamIndex = callerTeamIndex;
 
+        ScoringReason reasonForPoints = ScoringReason.WonHand;
+        int numPoints = NUM_POINTS_FOR_WIN;
+
         if (numCallerTricks >= MIN_NUMBER_TRICKS_TO_SCORE)
         {
-            GameInfo.TeamScores[callerTeamIndex] += numCallerTricks == MAX_NUMBER_OF_TRICKS
-                ? (GameInfo.GoingAlone ? NUM_POINTS_FOR_ALL_TRICKS_GOING_ALONE : NUM_POINTS_FOR_ALL_TRICKS)
-                : NUM_POINTS_FOR_WIN;
+            if (numCallerTricks == MAX_NUMBER_OF_TRICKS)
+            {
+                reasonForPoints = GameInfo.GoingAlone 
+                    ? ScoringReason.GotAllTricksAlone 
+                    : ScoringReason.GotAllTricks;
+                numPoints = GameInfo.GoingAlone 
+                    ? NUM_POINTS_FOR_ALL_TRICKS_GOING_ALONE 
+                    : NUM_POINTS_FOR_ALL_TRICKS;
+            }
+            GameInfo.TeamScores[callerTeamIndex] += numPoints;
         }
         else
         {
             int opposingTeamIndex = callerTeamIndex ^ 1;
-            GameInfo.TeamScores[opposingTeamIndex] += NUM_POINTS_FOR_EUCHRE;
+            numPoints = NUM_POINTS_FOR_EUCHRE;
+            GameInfo.TeamScores[opposingTeamIndex] += numPoints;
             winningTeamIndex = opposingTeamIndex;
+            reasonForPoints = ScoringReason.Euchred;
         }
 
         DeclareRoundWinningPlayers?.Invoke(this, 
             new DeclareRoundWinningPlayersEventArgs(
                   from player in GameInfo.Players
                  where player.TeamIndex == winningTeamIndex
-                select player.Name));
+                select player.Name, 
+                  numPoints, 
+                  reasonForPoints));
 
         // Record that scoring is done.
 

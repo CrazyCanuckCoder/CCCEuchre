@@ -193,7 +193,7 @@ public partial class MainWindow : Window
     {
         UIHelpers.RunOnUIThread(() =>
         {
-            ViewModel.EndOfRoundUpdate(e.WinningPlayers);
+            ViewModel.EndOfRoundUpdate(e.WinningPlayers, e.Points, e.ReasonForPoints);
         });
     }
 
