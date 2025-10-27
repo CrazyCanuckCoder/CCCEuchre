@@ -25,6 +25,9 @@ public class MainWindowViewModel : DependencyObject
     /// </summary>
     private MainWindow _mainWindow;
 
+    /// <summary>
+    /// The class that directly updates the main window.
+    /// </summary>
     private MainWindowController _mainWindowController;
 
     #endregion Fields

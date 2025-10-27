@@ -333,8 +333,9 @@ public class EuchreGame
 
                     // Dealer picks up kitty unless their partner went alone.
 
-                    if (!(GameInfo.TrumpCaller!.IsGoingAlone 
-                          && !IsPartner(GameInfo.TrumpCaller, GameInfo.Dealer!)))
+                    if (!GameInfo.TrumpCaller!.IsGoingAlone ||
+                        (GameInfo.TrumpCaller!.IsGoingAlone && 
+                        !IsPartner(GameInfo.TrumpCaller, GameInfo.Dealer!)))
                     {
                         GameInfo.Dealer!.DiscardForKitty(GameInfo.Kitty!);
                     }
