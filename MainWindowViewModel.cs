@@ -7,6 +7,7 @@ using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using Euchre.Windows;
 using System.Windows;
+using static CrazyCanuckCoder.Library.Common.Emails;
 using Extensions = Euchre.Logic.Helpers.Extensions;
 
 namespace Euchre;
@@ -492,7 +493,7 @@ public class MainWindowViewModel : DependencyObject
 
     public void EndOfRoundUpdate(List<string> winningPlayers, int points, ScoringReason reasonForPoints)
     {
-        string message = DetermineEndOfRoundMessage(winningPlayers, points, reasonForPoints);
+        string message = BuildEndOfRoundMessage(winningPlayers, points, reasonForPoints);
 
         // Display the winning round message to the user.
 
@@ -508,34 +509,6 @@ public class MainWindowViewModel : DependencyObject
         _mainWindowController.ResetTricksTrumpAndBidInformation();
     }
 
-    private string DetermineEndOfRoundMessage(List<string> winningPlayers, int points, 
-        ScoringReason reasonForPoints)
-    {
-        string message = string.Empty;
-
-        switch (reasonForPoints)
-        {
-            case ScoringReason.WonHand:
-                message = $"{winningPlayers.ToListedString()} won the round.";
-                break;
-
-            case ScoringReason.GotAllTricks:
-                message = $"{winningPlayers.ToListedString()} won all the tricks for {points} points.";
-                break;
-
-            case ScoringReason.Euchred:
-                message = $"{winningPlayers.ToListedString()} euchred the other team for {points} points.";
-                break;
-
-            case ScoringReason.GotAllTricksAlone:
-                message = 
-                    $"{CurrentGame!.GameInfo.AlonePlayer!.Name} went alone and won all the tricks for {points} points.";
-                break;
-        }
-
-        return message;
-    }
-
     public void EndOfGameUpdate(GameStateManager gameInfo)
     {
         int winningTeamIndex = gameInfo.TeamScores[0] > gameInfo.TeamScores[1] ? 0 : 1;
@@ -545,7 +518,8 @@ public class MainWindowViewModel : DependencyObject
              select player.Name)
             .ToList()
             .ToListedString();
-        UpdateGameInformation($"Game is over! {gameWinners} are the winners!", 5);
+        DialogBoxes.CustomInformationDialog($"Game is over! {gameWinners} are the winners!", _mainWindow,
+            "Game Over");
         ContinueMenuVisibility = Visibility.Collapsed;
         ResetGameUI();
     }
@@ -922,5 +896,40 @@ public class MainWindowViewModel : DependencyObject
             c => Player3CardDisplayUserControlVisibility = c);
         _mainWindowController.SetPlayerCardDisplayControlVisibility(3,
             c => Player4CardDisplayUserControlVisibility = c);
+    }
+
+    /// <summary>
+    /// Creates a string outlining which players gained points for this round and how they won the points.
+    /// </summary>
+    /// <param name="winningPlayers">A list of the round winning players.</param>
+    /// <param name="points">The number of points the winners are awarded.</param>
+    /// <param name="reasonForPoints">An enumeration of the method for winning the points.</param>
+    /// <returns>A string with the generated text.</returns>
+    private string BuildEndOfRoundMessage(List<string> winningPlayers, int points,
+        ScoringReason reasonForPoints)
+    {
+        string message = string.Empty;
+
+        switch (reasonForPoints)
+        {
+            case ScoringReason.WonHand:
+                message = $"{winningPlayers.ToListedString()} won the round.";
+                break;
+
+            case ScoringReason.GotAllTricks:
+                message = $"{winningPlayers.ToListedString()} won all the tricks for {points} points.";
+                break;
+
+            case ScoringReason.Euchred:
+                message = $"{winningPlayers.ToListedString()} euchred the other team for {points} points.";
+                break;
+
+            case ScoringReason.GotAllTricksAlone:
+                message =
+                    $"{CurrentGame!.GameInfo.AlonePlayer!.Name} went alone and won all the tricks for {points} points.";
+                break;
+        }
+
+        return message;
     }
 }
