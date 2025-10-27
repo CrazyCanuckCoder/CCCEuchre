@@ -356,7 +356,7 @@ public partial class MainWindow : Window
             new Card(Suit.Spades, Rank.King),
         };
 
-        ChooseDiscardWindow cardWindow = new(playerCards)
+        ChooseDiscardWindow cardWindow = new(playerCards, new Card(Suit.Clubs, Rank.Nine))
         {
             Owner = this
         };

@@ -1,7 +1,9 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.Interfaces;
+using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Euchre.Windows;
 
@@ -10,11 +12,22 @@ namespace Euchre.Windows;
 /// </summary>
 public partial class ChooseDiscardWindow : Window
 {
-    public ChooseDiscardWindow(List<Card> cards)
+    public ChooseDiscardWindow(List<Card> cards, Card kitty)
     {
         InitializeComponent();
+        KittyImage = new Image()
+        {
+            Source = UIHelpers.GenerateImageSource(
+                $"pack://application:,,,/Euchre;component/images/cards/{kitty.ToString()?.ToLower()}.png")
+        };
         cardDisplayControl.GetDiscard(cards);
+        DataContext = this;
     }
+
+    /// <summary>
+    /// The image of the card that the user will pick up.
+    /// </summary>
+    public Image KittyImage { get; private set; } 
 
     /// <summary>
     /// Gets the card chosen by the user.

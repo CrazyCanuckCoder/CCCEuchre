@@ -563,7 +563,7 @@ public class MainWindowViewModel : DependencyObject
     {
         Card? discard = null;
 
-        ChooseDiscardWindow cardWindow = new(player.Hand)
+        ChooseDiscardWindow cardWindow = new(player.Hand, CurrentGame!.GameInfo.Kitty!)
         {
             Owner = _mainWindow,
         };

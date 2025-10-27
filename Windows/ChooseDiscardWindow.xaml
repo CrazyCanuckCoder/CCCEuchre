@@ -12,9 +12,11 @@
     SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
-    
+
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="20" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
@@ -24,6 +26,8 @@
             <RowDefinition Height="45" />
         </Grid.RowDefinitions>
 
+        <!--  Kitty Card Display  -->
+
         <Border
             Grid.Row="0"
             Grid.Column="0"
@@ -32,10 +36,38 @@
             BorderThickness="0.5">
             <StackPanel>
 
+                <!--  Kitty Label  -->
+
+                <Label HorizontalAlignment="Center" FontSize="16">
+                    Card to Pick Up
+                </Label>
+
+                <!--  Kitty Card  -->
+
+                <Image
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Width="98"
+                    Height="134"
+                    Margin="20,10"
+                    Source="{Binding KittyImage.Source}" />
+
+            </StackPanel>
+        </Border>
+
+        <!--  Card Selection Controls  -->
+
+        <Border
+            Grid.Row="0"
+            Grid.Column="3"
+            Background="AliceBlue"
+            BorderBrush="Black"
+            BorderThickness="0.5">
+            <StackPanel>
+
                 <!--  Select Bid Label  -->
 
-                <Label
-                    FontSize="16">
+                <Label FontSize="16">
                     Choose a card to discard.
                 </Label>
 
@@ -54,6 +86,7 @@
         <Button
             Grid.Row="2"
             Grid.Column="0"
+            Grid.ColumnSpan="3"
             Click="ButtonSelect_Click"
             Content="_Select"
             IsDefault="True"
