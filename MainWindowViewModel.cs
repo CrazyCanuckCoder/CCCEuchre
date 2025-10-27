@@ -361,6 +361,10 @@ public class MainWindowViewModel : DependencyObject
         }
     }
 
+    /// <summary>
+    /// Inform the players the name of the dealer.
+    /// </summary>
+    /// <param name="dealer">The player that currently is the dealer.</param>
     public void DeclareDealer(IPlayer dealer)
     {
         _mainWindowController.SetPlayerDealerIconVisibility(dealer.PlayerIndex, true);
@@ -371,6 +375,12 @@ public class MainWindowViewModel : DependencyObject
         UpdateGameInformation($"{dealer.Name} is the dealer.");
     }
 
+    /// <summary>
+    /// Shows a specified number of cards being dealt to a player.
+    /// </summary>
+    /// <param name="indexOfPlayer">The index from the list of players indicating which player is receiving
+    /// the dealt cards.</param>
+    /// <param name="numberOfCardsDealt">The number of cards to display.</param>
     public void DealCardsToPlayer(int indexOfPlayer, int numberOfCardsDealt)
     {
         _mainWindowController.DealCardsToPlayer(indexOfPlayer, numberOfCardsDealt);
@@ -384,11 +394,20 @@ public class MainWindowViewModel : DependencyObject
         UpdatePlayersHandAfterDeal(indexOfPlayer, numberOfCardsDealt);
     }
 
+    /// <summary>
+    /// Displays the card on top of the kitty pile in the user interface.
+    /// </summary>
+    /// <param name="kitty">The card at the top of the kitty pile.</param>
     public void SetKittyCard(Card kitty)
     {
         _mainWindowController.DisplayKittyCard(kitty);
     }
 
+    /// <summary>
+    /// Updates the user interface to indicate a specified player passed.
+    /// </summary>
+    /// <param name="player">The player who passed.</param>
+    /// <param name="isKittyRound">True to indicate it is the kitty round.</param>
     public void PlayerPassed(IPlayer player, bool isKittyRound)
     {
         string message = "Pass";
@@ -401,6 +420,9 @@ public class MainWindowViewModel : DependencyObject
         DisplayPlayerMessage(player, message, 1, false);
     }
 
+    /// <summary>
+    /// Update the interface with the information that the kitty card was turned down.
+    /// </summary>
     public void KittyWasTurnedDown()
     {
         UpdateGameInformation("The kitty card was turned down.");
@@ -408,6 +430,9 @@ public class MainWindowViewModel : DependencyObject
         ClearPlayerMessages();
     }
 
+    /// <summary>
+    /// Not used currently but could be useful in the future.
+    /// </summary>
     public void TrumpCalled()
     {
         //foreach (IPlayer player in CurrentGame!.GameInfo.Players!)
@@ -416,6 +441,9 @@ public class MainWindowViewModel : DependencyObject
         //}
     }
 
+    /// <summary>
+    /// Let the interface no that trump was not called so a redeal will happen with the next dealer.
+    /// </summary>
     public void NoTrumpWasCalled()
     {
         ClearPlayerMessages();
@@ -427,6 +455,13 @@ public class MainWindowViewModel : DependencyObject
         }
     }
 
+    /// <summary>
+    /// Set up the interface with the information about trump that a player made.
+    /// </summary>
+    /// <param name="player">The player who called trump.</param>
+    /// <param name="trump">The suit set as trump.</param>
+    /// <param name="isGoingAlone">True to indicate the player is going alone.</param>
+    /// <param name="isKittyRound">True to indicate the dealer will pick up the kitty card.</param>
     public void PlayerMadeTrump(IPlayer player, Suit? trump, bool isGoingAlone, bool isKittyRound)
     {
         string message = string.Empty;
@@ -458,6 +493,11 @@ public class MainWindowViewModel : DependencyObject
         ClearPlayerMessages();
     }
 
+    /// <summary>
+    /// Updates the user interface with the card played by a specific player.
+    /// </summary>
+    /// <param name="player">The player that played the card.</param>
+    /// <param name="cardPlayed">The card played by the player.</param>
     public void DisplayCardPlayedByPlayer(IPlayer player, ICard cardPlayed)
     {
         if (player is HumanPlayer)
@@ -479,7 +519,10 @@ public class MainWindowViewModel : DependencyObject
         PauseGame(2);
     }
 
-
+    /// <summary>
+    /// Informs the players who won the current trick.
+    /// </summary>
+    /// <param name="trickWinningPlayer">The player that won the trick.</param>
     public void EndOfTrick(IPlayer trickWinningPlayer)
     {
         _mainWindowController.UpdatePlayersNumberOfTricksWon(trickWinningPlayer.PlayerIndex);
@@ -491,6 +534,12 @@ public class MainWindowViewModel : DependencyObject
         _mainWindowController.ClearPlayedCards();
     }
 
+    /// <summary>
+    /// Lets the players know who won the round and with how many points.
+    /// </summary>
+    /// <param name="winningPlayers">The names of the players of the winning team.</param>
+    /// <param name="points">The amount of points awarded to the winning team.</param>
+    /// <param name="reasonForPoints">Why the team won the points.</param>
     public void EndOfRoundUpdate(List<string> winningPlayers, int points, ScoringReason reasonForPoints)
     {
         string message = BuildEndOfRoundMessage(winningPlayers, points, reasonForPoints);
@@ -509,6 +558,10 @@ public class MainWindowViewModel : DependencyObject
         _mainWindowController.ResetTricksTrumpAndBidInformation();
     }
 
+    /// <summary>
+    /// Lets the players know who won the game.
+    /// </summary>
+    /// <param name="gameInfo">The reference to the game information.</param>
     public void EndOfGameUpdate(GameStateManager gameInfo)
     {
         int winningTeamIndex = gameInfo.TeamScores[0] > gameInfo.TeamScores[1] ? 0 : 1;
@@ -524,6 +577,12 @@ public class MainWindowViewModel : DependencyObject
         ResetGameUI();
     }
 
+    /// <summary>
+    /// Asks the user if they want to order up the kitty card.
+    /// </summary>
+    /// <param name="kitty">The card at the top of the kitty pile.</param>
+    /// <param name="goAlone">True to indicate the user wants to go alone.</param>
+    /// <returns>True to indicate the user ordered up the kitty card.</returns>
     public bool PromptUserToOrderUp(Card kitty, out bool goAlone)
     {
         goAlone = false;
@@ -543,6 +602,12 @@ public class MainWindowViewModel : DependencyObject
         return orderedUp;
     }
 
+    /// <summary>
+    /// Asks the user if they want to make a suit trump.
+    /// </summary>
+    /// <param name="kitty">The card on the kitty pile which has a suit that cannot be picked as trump.</param>
+    /// <param name="goAlone">True to indicate the user wants to go alone.</param>
+    /// <returns>The suit that the user wants to make trump; null to indicate the user wants to pass.</returns>
     public Suit? PromptUserForTrump(Card kitty, out bool goAlone)
     {
         goAlone = false;
@@ -563,6 +628,11 @@ public class MainWindowViewModel : DependencyObject
         return chosenSuit;
     }
 
+    /// <summary>
+    /// Ask the user which card to discard since they have to pick up the kitty card.
+    /// </summary>
+    /// <param name="player">The user reference to get the cards in their hand.</param>
+    /// <returns>The card the user chose to discard.</returns>
     public Card? PromptUserForDiscard(HumanPlayer player)
     {
         Card? discard = null;
@@ -579,11 +649,22 @@ public class MainWindowViewModel : DependencyObject
         return discard;
     }
 
+    /// <summary>
+    /// Redisplays the hand of a human player to make sure the cards are sorted correctly.
+    /// </summary>
+    /// <param name="player">The reference to the player.</param>
     public void RedisplayUserHand(HumanPlayer player)
     {
         _mainWindowController.SetupPlayerCards(player);
     }
 
+    /// <summary>
+    /// Gets the card to play from the user.
+    /// </summary>
+    /// <param name="user">The player that is the user.</param>
+    /// <param name="trickSuit">The suit first lead in the trick.</param>
+    /// <param name="trump">The suit that is trump for the current round.</param>
+    /// <returns>The card the user wants to play.</returns>
     public Card? GetCardFromUser(IPlayer user, Suit? trickSuit, Suit trump)
     {
         // Let the user know they need to play a card.
