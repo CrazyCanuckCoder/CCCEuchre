@@ -21,70 +21,70 @@ internal class DataManager
     /// <exception cref="ArgumentException"></exception>
     public static void SaveGameState(GameStateManager gameStateManager)
     {
-        // Validate the input parameter.
-
-        ArgumentNullException.ThrowIfNull(gameStateManager);
-
-        if (gameStateManager.Players is null || gameStateManager.Players.Length == 0)
-        {
-            throw new ArgumentException("No players exist in the game state manager.");
-        }
-
-        GameStateDS stateDS = new();
-
-        // Add the players and their hands to the dataset.
-
-        foreach (var player in gameStateManager.Players)
-        {
-            int playerID = stateDS.Player.AddPlayerRow(player.Name, player.IsHuman, player.TeamIndex,
-                player.PlayerIndex, player.IsGoingAlone, player.AvatarNumber).PlayerID;
-            foreach (var card in player.Hand)
-            {
-                stateDS.Hand.AddHandRow(playerID, (int)card.Suit, (int)card.Rank);
-            }
-        }
-
-        // Save the trick information to the dataset.
-
-        foreach (var trick in gameStateManager.CurrentRoundTricks)
-        {
-            int trickID = stateDS.Trick.AddTrickRow((int)trick.LeadSuit, (int)trick.Trump).TrickID;
-            foreach (var playerCard in trick.Cards)
-            {
-                int playerID = stateDS.Player.Where(p => p.Name == playerCard.Key.Name).First().PlayerID;
-                stateDS.TrickCards.AddTrickCardsRow(trickID, playerID, (int)playerCard.Value.Suit,
-                    (int)playerCard.Value.Rank);
-            }
-        }
-
-        // Add the team scores to the dataset.
-
-        for (int idx = 0; idx < gameStateManager.TeamScores.Length; idx++)
-        {
-            stateDS.TeamScores.AddTeamScoresRow(idx, gameStateManager.TeamScores[idx]);
-        }
-
-        // Add the remaining game state information to the dataset.
-
-        stateDS.GameData.AddGameDataRow(
-            gameStateManager.Kitty is null ? 0 : (int)gameStateManager.Kitty.Suit,
-            gameStateManager.Kitty is null ? 0 : (int)gameStateManager.Kitty.Rank,
-            gameStateManager.Trump is null ? 0 : (int)gameStateManager.Trump,
-            gameStateManager.Dealer is null ? 0 :
-                stateDS.Player.First(p => p.Name == gameStateManager.Dealer.Name).PlayerID,
-            gameStateManager.TrumpCaller is null ? 0 :
-                stateDS.Player.First(p => p.Name == gameStateManager.TrumpCaller.Name).PlayerID,
-            gameStateManager.AlonePlayer is null ? 0 :
-                stateDS.Player.First(p => p.Name == gameStateManager.AlonePlayer.Name).PlayerID,
-            gameStateManager.NextTrickPlayer is null ? 0 :
-                stateDS.Player.First(p => p.Name == gameStateManager.NextTrickPlayer.Name).PlayerID,
-            (int)gameStateManager.LastCompletedStage,
-            gameStateManager.CurrentTrickNumber);
-
-        // Save the dataset to the file.
-
         lock (_lockObject)
         {
+            // Validate the input parameter.
+
+            ArgumentNullException.ThrowIfNull(gameStateManager);
+
+            if (gameStateManager.Players is null || gameStateManager.Players.Length == 0)
+            {
+                throw new ArgumentException("No players exist in the game state manager.");
+            }
+
+            GameStateDS stateDS = new();
+
+            // Add the players and their hands to the dataset.
+
+            foreach (var player in gameStateManager.Players)
+            {
+                int playerID = stateDS.Player.AddPlayerRow(player.Name, player.IsHuman, player.TeamIndex,
+                    player.PlayerIndex, player.IsGoingAlone, player.AvatarNumber).PlayerID;
+                foreach (var card in player.Hand)
+                {
+                    stateDS.Hand.AddHandRow(playerID, (int)card.Suit, (int)card.Rank);
+                }
+            }
+
+            // Save the trick information to the dataset.
+
+            foreach (var trick in gameStateManager.CurrentRoundTricks)
+            {
+                int trickID = stateDS.Trick.AddTrickRow((int)trick.LeadSuit, (int)trick.Trump).TrickID;
+                foreach (var playerCard in trick.Cards)
+                {
+                    int playerID = stateDS.Player.Where(p => p.Name == playerCard.Key.Name).First().PlayerID;
+                    stateDS.TrickCards.AddTrickCardsRow(trickID, playerID, (int)playerCard.Value.Suit,
+                        (int)playerCard.Value.Rank);
+                }
+            }
+
+            // Add the team scores to the dataset.
+
+            for (int idx = 0; idx < gameStateManager.TeamScores.Length; idx++)
+            {
+                stateDS.TeamScores.AddTeamScoresRow(idx, gameStateManager.TeamScores[idx]);
+            }
+
+            // Add the remaining game state information to the dataset.
+
+            stateDS.GameData.AddGameDataRow(
+                gameStateManager.Kitty is null ? 0 : (int)gameStateManager.Kitty.Suit,
+                gameStateManager.Kitty is null ? 0 : (int)gameStateManager.Kitty.Rank,
+                gameStateManager.Trump is null ? 0 : (int)gameStateManager.Trump,
+                gameStateManager.Dealer is null ? 0 :
+                    stateDS.Player.First(p => p.Name == gameStateManager.Dealer.Name).PlayerID,
+                gameStateManager.TrumpCaller is null ? 0 :
+                    stateDS.Player.First(p => p.Name == gameStateManager.TrumpCaller.Name).PlayerID,
+                gameStateManager.AlonePlayer is null ? 0 :
+                    stateDS.Player.First(p => p.Name == gameStateManager.AlonePlayer.Name).PlayerID,
+                gameStateManager.NextTrickPlayer is null ? 0 :
+                    stateDS.Player.First(p => p.Name == gameStateManager.NextTrickPlayer.Name).PlayerID,
+                (int)gameStateManager.LastCompletedStage,
+                gameStateManager.CurrentTrickNumber);
+
+            // Save the dataset to the file.
+
             if (File.Exists(FILE_NAME))
             {
                 File.Delete(FILE_NAME);
@@ -121,6 +121,11 @@ internal class DataManager
         return gameStateManager;
     }
 
+    /// <summary>
+    /// Updates the team scores in the game state manager with the scores from the dataset.
+    /// </summary>
+    /// <param name="gameStateManager">The reference to the game state manager.</param>
+    /// <param name="stateDS">The reference to the dataset containing the information to load.</param>
     private static void AddTeamScores(GameStateManager gameStateManager, GameStateDS stateDS)
     {
         gameStateManager.TeamScores = new int[Constants.NUMBER_OF_TEAMS];
@@ -130,6 +135,11 @@ internal class DataManager
         }
     }
 
+    /// <summary>
+    /// Adds the properties that are not associated to a specific section of the game state manager.
+    /// </summary>
+    /// <param name="gameStateManager">The reference to the game state manager.</param>
+    /// <param name="gameDataRow">A reference to the single row in the GameData table.</param>
     private static void AddRemainingProperties(GameStateManager gameStateManager, 
         GameStateDS.GameDataRow gameDataRow)
     {
@@ -139,6 +149,11 @@ internal class DataManager
         gameStateManager.CurrentTrickNumber = gameDataRow.CurrentTrickNumber;
     }
 
+    /// <summary>
+    /// Loads the tricks from the dataset to the game state manager.
+    /// </summary>
+    /// <param name="gameStateManager">The reference to the game state manager.</param>
+    /// <param name="stateDS">The reference to the dataset containing the information to load.</param>
     private static void AddPlayedTricks(GameStateManager gameStateManager, GameStateDS stateDS)
     {
         gameStateManager.ResetTricksWonByPlayers();
@@ -159,6 +174,12 @@ internal class DataManager
         }
     }
 
+    /// <summary>
+    /// Adds the data that is player related to the game state manager.
+    /// </summary>
+    /// <param name="gameStateManager">The reference to the game state manager.</param>
+    /// <param name="stateDS">The reference to the dataset containing the information to load.</param>
+    /// <param name="gameDataRow">A reference to the single row in the GameData table.</param>
     private static void AddPlayerBasedProperties(GameStateManager gameStateManager, GameStateDS stateDS, 
         GameStateDS.GameDataRow gameDataRow)
     {
@@ -186,6 +207,11 @@ internal class DataManager
             && gameStateManager.TrumpCaller.IsGoingAlone;
     }
 
+    /// <summary>
+    /// Adds the players information to the game state manager.
+    /// </summary>
+    /// <param name="gameStateManager">The reference to the game state manager.</param>
+    /// <param name="stateDS">The reference to the dataset containing the information to load.</param>
     private static void AddPlayers(GameStateManager gameStateManager, GameStateDS stateDS)
     {
         gameStateManager.Players = new IPlayer[Constants.NUMBER_OF_PLAYERS];
@@ -232,12 +258,13 @@ internal class DataManager
 
         if (playerRow.IsHuman)
         {
-            newPlayer = new HumanPlayer(playerRow.Name, playerRow.TeamIndex, playerRow.PlayerIndex, playerRow.AvatarNumber);
+            newPlayer = new HumanPlayer(playerRow.Name, playerRow.TeamIndex, playerRow.PlayerIndex, 
+                playerRow.AvatarNumber);
         }
         else
         {
-            newPlayer = new AutomatedPlayer(playerRow.Name, playerRow.TeamIndex, playerRow.PlayerIndex, gameStateManager, 
-                playerRow.AvatarNumber);
+            newPlayer = new AutomatedPlayer(playerRow.Name, playerRow.TeamIndex, playerRow.PlayerIndex, 
+                gameStateManager, playerRow.AvatarNumber);
         }
 
         newPlayer.IsGoingAlone = playerRow.IsGoingAlone;
