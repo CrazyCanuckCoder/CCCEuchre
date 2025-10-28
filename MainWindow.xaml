@@ -267,7 +267,7 @@
                     <RowDefinition Height="10" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
                     <RowDefinition Height="5" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="10" />
@@ -350,10 +350,12 @@
                     <UserControls:CardDisplayUserControl
                         x:Name="Player3DealtCardsDisplayUserControl"
                         Grid.Row="0"
+                        Grid.RowSpan="2"
                         Grid.Column="1"
                         Grid.ColumnSpan="2"
                         Height="140"
                         HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
                         Visibility="{Binding Player3DealtCardsDisplayUserControlVisibility, RelativeSource={RelativeSource AncestorType=Window}}" />
 
 
@@ -362,10 +364,12 @@
                     <UserControls:CardDisplayUserControl
                         x:Name="Player3PlayedCardsDisplayUserControl"
                         Grid.Row="0"
+                        Grid.RowSpan="2"
                         Grid.Column="1"
                         Grid.ColumnSpan="2"
                         Height="140"
                         HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
                         Visibility="{Binding Player3PlayedCardsDisplayUserControlVisibility, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                     <!--  Player 3 Text Display Box  -->
@@ -478,22 +482,26 @@
 
                     <UserControls:CardDisplayUserControl
                         x:Name="Player1DealtCardsDisplayUserControl"
-                        Grid.Row="3"
+                        Grid.Row="2"
+                        Grid.RowSpan="2"
                         Grid.Column="1"
                         Grid.ColumnSpan="2"
                         Height="140"
                         HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
                         Visibility="{Binding Player1DealtCardsDisplayUserControlVisibility, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                     <!--  Player 1 Played Cards Display  -->
 
                     <UserControls:CardDisplayUserControl
                         x:Name="Player1PlayedCardsDisplayUserControl"
-                        Grid.Row="3"
+                        Grid.Row="2"
+                        Grid.RowSpan="2"
                         Grid.Column="1"
                         Grid.ColumnSpan="2"
                         Height="140"
                         HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
                         Visibility="{Binding Player1PlayedCardsDisplayUserControlVisibility, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                     <!--  Player 1 Text Display Box  -->

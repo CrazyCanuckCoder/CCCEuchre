@@ -442,7 +442,7 @@ public class MainWindowViewModel : DependencyObject
     }
 
     /// <summary>
-    /// Let the interface no that trump was not called so a redeal will happen with the next dealer.
+    /// Let the interface know that trump was not called so the cards will be redealt.
     /// </summary>
     public void NoTrumpWasCalled()
     {
@@ -464,7 +464,7 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="isKittyRound">True to indicate the dealer will pick up the kitty card.</param>
     public void PlayerMadeTrump(IPlayer player, Suit? trump, bool isGoingAlone, bool isKittyRound)
     {
-        string message = string.Empty;
+        string message;
 
         if (isKittyRound)
         {
