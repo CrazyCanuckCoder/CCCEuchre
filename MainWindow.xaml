@@ -8,10 +8,10 @@
     xmlns:local="clr-namespace:Euchre"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Euchre"
-    Width="1440"
-    Height="1000"
-    MinWidth="1440"
-    MinHeight="1000"
+    Width="1240"
+    Height="950"
+    MinWidth="1240"
+    MinHeight="950"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
@@ -295,7 +295,6 @@
                             Margin="5,5,5,0" />
                         <UserControls:CardDisplayUserControl
                             x:Name="Player3CardDisplayUserControl"
-                            Width="760"
                             Height="140"
                             Margin="5,0,5,5" />
                     </StackPanel>
@@ -318,12 +317,10 @@
                         <UserControls:VerticalPlayerDisplayUserControl
                             x:Name="Player2DisplayUserControl"
                             Width="120"
-                            Height="400"
                             Margin="5" />
                         <UserControls:VerticalCardDisplayUserControl
                             x:Name="Player2CardDisplayUserControl"
                             Width="150"
-                            Height="400"
                             Margin="5" />
                     </StackPanel>
                 </Border>
@@ -558,12 +555,10 @@
                         <UserControls:VerticalCardDisplayUserControl
                             x:Name="Player4CardDisplayUserControl"
                             Width="150"
-                            Height="400"
                             Margin="5" />
                         <UserControls:VerticalPlayerDisplayUserControl
                             x:Name="Player4DisplayUserControl"
                             Width="120"
-                            Height="400"
                             Margin="5" />
                     </StackPanel>
                 </Border>
@@ -584,7 +579,6 @@
                     <StackPanel>
                         <UserControls:CardDisplayUserControl
                             x:Name="Player1CardDisplayUserControl"
-                            Width="760"
                             Height="140"
                             Margin="5,5,5,0" />
                         <UserControls:HorizontalPlayerDisplayUserControl

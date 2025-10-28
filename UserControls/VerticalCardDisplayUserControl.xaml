@@ -9,24 +9,28 @@
     d:DesignWidth="150"
     mc:Ignorable="d">
 
-    <StackPanel Orientation="Vertical">
-        <ItemsControl ItemsSource="{Binding VerticalCardImages}">
+    <ItemsControl
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        VerticalContentAlignment="Center"
+        ItemsSource="{Binding VerticalCardImages}">
 
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <WrapPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Image
-                        Margin="{Binding CardMargin}"
-                        Source="{Binding ImageData.Source}"
-                        Stretch="Fill"
-                        Visibility="{Binding ImageVisibility}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </StackPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Image
+                    Width="136"
+                    Height="100"
+                    Margin="{Binding CardMargin}"
+                    Source="{Binding ImageData.Source}"
+                    Stretch="Fill"
+                    Visibility="{Binding ImageVisibility}" />
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
 </UserControl>
