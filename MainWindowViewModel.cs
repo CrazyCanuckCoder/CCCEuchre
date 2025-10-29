@@ -349,12 +349,8 @@ public class MainWindowViewModel : DependencyObject
     {
         _mainWindow = mainWindow;
         _mainWindowController = new(mainWindow, CurrentGame!.GameInfo);
-        _mainWindowController.SetupCurrentRoundInfoControl();
-        _mainWindowController.SetupCurrentScoreControl();
-        _mainWindowController.InitializeCardDisplayControlCollection();
         SetVisibilityActionsOfPlayerCardDisplayControl();
         ShowGameBoard();
-        _mainWindowController.SetupPlayerDisplayControls();
         if (CurrentGame!.GameInfo.RestartGame)
         {
             RestoreGameUI();

@@ -11,8 +11,9 @@ internal class MainWindowController
 {
     public MainWindowController(MainWindow mainWindow, GameStateManager gameStateManager)
     {
-        _mainWindow = mainWindow;
-        _gameStateManager = gameStateManager;
+        _mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
+        _gameStateManager = gameStateManager ?? throw new ArgumentNullException(nameof(gameStateManager));
+        Initialize();
     }
 
     /// <summary>
@@ -50,63 +51,6 @@ internal class MainWindowController
     /// </summary>
     private readonly Dictionary<int, Action<Visibility>> _playerCardDisplayControlsVisibility = [];
 
-
-    /// <summary>
-    /// Adds the players names to the correct teams on the current round information user control.
-    /// </summary>
-    public void SetupCurrentRoundInfoControl()
-    {
-        _mainWindow.CurrentRoundInfoUserControl.Team1List.Add(_gameStateManager.Players![0]);
-        _mainWindow.CurrentRoundInfoUserControl.Team1List.Add(_gameStateManager.Players[2]);
-        _mainWindow.CurrentRoundInfoUserControl.Team2List.Add(_gameStateManager.Players[1]);
-        _mainWindow.CurrentRoundInfoUserControl.Team2List.Add(_gameStateManager.Players[3]);
-        if (_gameStateManager.TrumpCaller != null)
-        {
-            _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(_gameStateManager.TrumpCaller,
-                _gameStateManager.Trump!.Value, _gameStateManager.TrumpCaller.IsGoingAlone);
-        }
-    }
-
-    /// <summary>
-    /// Initializes the control showing the teams scores.
-    /// </summary>
-    public void SetupCurrentScoreControl()
-    {
-        _mainWindow.CurrentPlayersScoresUserControl.SetTeamNames(
-            (   from player in _gameStateManager.Players!
-             orderby player.PlayerIndex
-              select player.Name).ToList()
-            );
-        _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(1, _gameStateManager.TeamScores[0]);
-        _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(2, _gameStateManager.TeamScores[1]);
-    }
-
-
-    /// <summary>
-    /// Updates the collection that references each player's card display control and the collection that
-    /// references each player's cards that are dealt to them.
-    /// </summary>
-    public void InitializeCardDisplayControlCollection()
-    {
-        if (_playerCardDisplayControls.Count == 0)
-        {
-            _playerCardDisplayControls.Add(0, _mainWindow.Player1CardDisplayUserControl);
-            _playerCardDisplayControls.Add(1, _mainWindow.Player2CardDisplayUserControl);
-            _playerCardDisplayControls.Add(2, _mainWindow.Player3CardDisplayUserControl);
-            _playerCardDisplayControls.Add(3, _mainWindow.Player4CardDisplayUserControl);
-
-            _playerDealtCardsDisplayControls.Add(0, _mainWindow.Player1DealtCardsDisplayUserControl);
-            _playerDealtCardsDisplayControls.Add(1, _mainWindow.Player2DealtCardsDisplayUserControl);
-            _playerDealtCardsDisplayControls.Add(2, _mainWindow.Player3DealtCardsDisplayUserControl);
-            _playerDealtCardsDisplayControls.Add(3, _mainWindow.Player4DealtCardsDisplayUserControl);
-
-            _playerPlayedCardsDisplayControls.Add(0, _mainWindow.Player1PlayedCardsDisplayUserControl);
-            _playerPlayedCardsDisplayControls.Add(1, _mainWindow.Player2PlayedCardsDisplayUserControl);
-            _playerPlayedCardsDisplayControls.Add(2, _mainWindow.Player3PlayedCardsDisplayUserControl);
-            _playerPlayedCardsDisplayControls.Add(3, _mainWindow.Player4PlayedCardsDisplayUserControl);
-        }
-    }
-
     /// <summary>
     /// Establishes an action to be used to set the display of a player's card control.
     /// </summary>
@@ -115,21 +59,6 @@ internal class MainWindowController
     public void SetPlayerCardDisplayControlVisibility(int controlIdx, Action<Visibility> visibilityAction)
     {
         _playerCardDisplayControlsVisibility.Add(controlIdx, visibilityAction);
-    }
-
-    /// <summary>
-    /// Sets each player's name and avatar on the main window.
-    /// </summary>
-    public void SetupPlayerDisplayControls()
-    {
-        _mainWindow.Player1DisplayUserControl.SetActivePlayer(_gameStateManager.Players![0],
-            _gameStateManager.Players[0].AvatarNumber);
-        _mainWindow.Player2DisplayUserControl.SetActivePlayer(_gameStateManager.Players[1],
-            _gameStateManager.Players[1].AvatarNumber);
-        _mainWindow.Player3DisplayUserControl.SetActivePlayer(_gameStateManager.Players[2],
-            _gameStateManager.Players[2].AvatarNumber);
-        _mainWindow.Player4DisplayUserControl.SetActivePlayer(_gameStateManager.Players[3],
-            _gameStateManager.Players[3].AvatarNumber);
     }
 
     /// <summary>
@@ -525,5 +454,86 @@ internal class MainWindowController
                     break;
             }
         }
+    }
+
+    /// <summary>
+    /// Sets up the references to the controls on the form and initializes some of the controls.
+    /// </summary>
+    private void Initialize()
+    {
+        SetupCurrentRoundInfoControl();
+        SetupCurrentScoreControl();
+        InitializeCardDisplayControlCollection();
+        SetupPlayerDisplayControls();
+    }
+
+    /// <summary>
+    /// Adds the players names to the correct teams on the current round information user control.
+    /// </summary>
+    private void SetupCurrentRoundInfoControl()
+    {
+        _mainWindow.CurrentRoundInfoUserControl.Team1List.Add(_gameStateManager.Players![0]);
+        _mainWindow.CurrentRoundInfoUserControl.Team1List.Add(_gameStateManager.Players[2]);
+        _mainWindow.CurrentRoundInfoUserControl.Team2List.Add(_gameStateManager.Players[1]);
+        _mainWindow.CurrentRoundInfoUserControl.Team2List.Add(_gameStateManager.Players[3]);
+        if (_gameStateManager.TrumpCaller != null)
+        {
+            _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(_gameStateManager.TrumpCaller,
+                _gameStateManager.Trump!.Value, _gameStateManager.TrumpCaller.IsGoingAlone);
+        }
+    }
+
+    /// <summary>
+    /// Initializes the control showing the teams scores.
+    /// </summary>
+    private void SetupCurrentScoreControl()
+    {
+        _mainWindow.CurrentPlayersScoresUserControl.SetTeamNames(
+            (from player in _gameStateManager.Players!
+             orderby player.PlayerIndex
+             select player.Name).ToList()
+            );
+        _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(1, _gameStateManager.TeamScores[0]);
+        _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(2, _gameStateManager.TeamScores[1]);
+    }
+
+    /// <summary>
+    /// Updates the collection that references each player's card display control and the collection that
+    /// references each player's cards that are dealt to them.
+    /// </summary>
+    private void InitializeCardDisplayControlCollection()
+    {
+        if (_playerCardDisplayControls.Count == 0)
+        {
+            _playerCardDisplayControls.Add(0, _mainWindow.Player1CardDisplayUserControl);
+            _playerCardDisplayControls.Add(1, _mainWindow.Player2CardDisplayUserControl);
+            _playerCardDisplayControls.Add(2, _mainWindow.Player3CardDisplayUserControl);
+            _playerCardDisplayControls.Add(3, _mainWindow.Player4CardDisplayUserControl);
+
+            _playerDealtCardsDisplayControls.Add(0, _mainWindow.Player1DealtCardsDisplayUserControl);
+            _playerDealtCardsDisplayControls.Add(1, _mainWindow.Player2DealtCardsDisplayUserControl);
+            _playerDealtCardsDisplayControls.Add(2, _mainWindow.Player3DealtCardsDisplayUserControl);
+            _playerDealtCardsDisplayControls.Add(3, _mainWindow.Player4DealtCardsDisplayUserControl);
+
+            _playerPlayedCardsDisplayControls.Add(0, _mainWindow.Player1PlayedCardsDisplayUserControl);
+            _playerPlayedCardsDisplayControls.Add(1, _mainWindow.Player2PlayedCardsDisplayUserControl);
+            _playerPlayedCardsDisplayControls.Add(2, _mainWindow.Player3PlayedCardsDisplayUserControl);
+            _playerPlayedCardsDisplayControls.Add(3, _mainWindow.Player4PlayedCardsDisplayUserControl);
+        }
+    }
+
+    /// <summary>
+    /// Sets each player's name and avatar on the main window.
+    /// </summary>
+    private void SetupPlayerDisplayControls()
+    {
+        _mainWindow.Player1DisplayUserControl.SetActivePlayer(_gameStateManager.Players![0],
+            _gameStateManager.Players[0].AvatarNumber);
+        _mainWindow.Player2DisplayUserControl.SetActivePlayer(_gameStateManager.Players[1],
+            _gameStateManager.Players[1].AvatarNumber);
+        _mainWindow.Player3DisplayUserControl.SetActivePlayer(_gameStateManager.Players[2],
+            _gameStateManager.Players[2].AvatarNumber);
+        _mainWindow.Player4DisplayUserControl.SetActivePlayer(_gameStateManager.Players[3],
+            _gameStateManager.Players[3].AvatarNumber);
     }
 }
