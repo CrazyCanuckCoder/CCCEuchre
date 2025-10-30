@@ -479,8 +479,8 @@ public class MainWindowViewModel : DependencyObject
         {
             UpdatePlayersHandAfterTrumpSet(updatePlayer.PlayerIndex, trump!.Value);
         }
-        _mainWindowController.SetTrump(trump!.Value);
-        _mainWindowController.SetBidInformation(player, trump.Value, isGoingAlone);
+        _mainWindowController.DisplayTrump(trump!.Value);
+        _mainWindowController.DisplayBidInformation(player, trump.Value, isGoingAlone);
         _mainWindowController.SetPlayerTrumpSuitIcon(player.PlayerIndex, trump.Value);
         if (isGoingAlone) 
         {
@@ -914,8 +914,8 @@ public class MainWindowViewModel : DependencyObject
         else if (CurrentGame.GameInfo.LastCompletedStage == RoundStage.TrumpChosen)
         {
             SetUIAfterCardsDealt();
-            _mainWindowController.SetTrump(CurrentGame.GameInfo.Trump!.Value);
-            _mainWindowController.SetBidInformation(CurrentGame.GameInfo.TrumpCaller!,
+            _mainWindowController.DisplayTrump(CurrentGame.GameInfo.Trump!.Value);
+            _mainWindowController.DisplayBidInformation(CurrentGame.GameInfo.TrumpCaller!,
                 CurrentGame.GameInfo.Trump.Value, CurrentGame.GameInfo.TrumpCaller!.IsGoingAlone);
             _mainWindowController.SetPlayerTrumpSuitIcon(CurrentGame.GameInfo.TrumpCaller.PlayerIndex, 
                 CurrentGame.GameInfo.Trump.Value);

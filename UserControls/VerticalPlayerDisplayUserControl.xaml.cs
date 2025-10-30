@@ -3,6 +3,7 @@ using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Classes;
+using Euchre.UILogic.Interfaces;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +14,7 @@ namespace Euchre.UserControls;
 /// <summary>
 /// Interaction logic for VerticalPlayerDisplayUserControl.xaml
 /// </summary>
-public partial class VerticalPlayerDisplayUserControl : UserControl
+public partial class VerticalPlayerDisplayUserControl : UserControl, IBasePlayerDisplay
 {
     public VerticalPlayerDisplayUserControl()
     {
@@ -86,7 +87,7 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
     /// <summary>
     /// The colour to use for the number of trick won by the player.
     /// </summary>
-    public SolidColorBrush TricksColour { get; }
+    public Brush TricksColour { get; }
 
     /// <summary>
     /// Contains the image of the suit that the player called trump.
@@ -105,6 +106,8 @@ public partial class VerticalPlayerDisplayUserControl : UserControl
         get => (Visibility)GetValue(SuitIconVisibilityProperty); 
         set => SetValue(SuitIconVisibilityProperty, value);
     }
+    public PlayerDisplay ActivePlayer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public Visibility DealerIconVisibility { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
 
     /// <summary>

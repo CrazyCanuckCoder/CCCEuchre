@@ -16,6 +16,8 @@ internal class MainWindowController
         Initialize();
     }
 
+    #region Fields
+
     /// <summary>
     /// A reference to the main window.
     /// </summary>
@@ -30,6 +32,11 @@ internal class MainWindowController
     /// Used for setting the visibility properties for each of the player cards user controls.
     /// </summary>
     private Action<Visibility>? _visibilitySetter;
+
+    /// <summary>
+    /// Tracks the control displaying the players' information.
+    /// </summary>
+    private readonly Dictionary<int, IBasePlayerDisplay> _playerDisplayControls = [];
 
     /// <summary>
     /// Tracks a cards display control to a player.
@@ -51,6 +58,8 @@ internal class MainWindowController
     /// </summary>
     private readonly Dictionary<int, Action<Visibility>> _playerCardDisplayControlsVisibility = [];
 
+    #endregion Fields
+
     /// <summary>
     /// Establishes an action to be used to set the display of a player's card control.
     /// </summary>
@@ -68,23 +77,9 @@ internal class MainWindowController
     /// <param name="isVisible">True to show the icon and false to hide it.</param>
     public void SetPlayerDealerIconVisibility(int playerIndex, bool isVisible)
     {
-        switch (playerIndex)
+        if (playerIndex >= 0)
         {
-            case 0:
-                _mainWindow.Player1DisplayUserControl.SetDealerIconVisibility(isVisible);
-                break;
-
-            case 1:
-                _mainWindow.Player2DisplayUserControl.SetDealerIconVisibility(isVisible);
-                break;
-
-            case 2:
-                _mainWindow.Player3DisplayUserControl.SetDealerIconVisibility(isVisible);
-                break;
-
-            case 3:
-                _mainWindow.Player4DisplayUserControl.SetDealerIconVisibility(isVisible);
-                break;
+            _playerDisplayControls[playerIndex].SetDealerIconVisibility(isVisible);
         }
     }
 
@@ -184,7 +179,7 @@ internal class MainWindowController
     /// Displays the trump suit on the main window.
     /// </summary>
     /// <param name="trump">The suit to display as trump.</param>
-    public void SetTrump(Suit trump)
+    public void DisplayTrump(Suit trump)
     {
         _mainWindow.TrumpDisplayUserControl.SetTrump(trump);
     }
@@ -195,7 +190,7 @@ internal class MainWindowController
     /// <param name="player">The player who called the bid.</param>
     /// <param name="trump">The suit called as trump.</param>
     /// <param name="isGoingAlone">True to indicate the player is going alone.</param>
-    public void SetBidInformation(IPlayer player, Suit trump, bool isGoingAlone)
+    public void DisplayBidInformation(IPlayer player, Suit trump, bool isGoingAlone)
     {
         _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(player, trump, isGoingAlone);
     }
@@ -207,24 +202,7 @@ internal class MainWindowController
     /// <param name="trump">The suit called as trump.</param>
     public void SetPlayerTrumpSuitIcon(int playerIndex, Suit trump)
     {
-        switch (playerIndex)
-        {
-            case 0:
-                _mainWindow.Player1DisplayUserControl.SetTrumpSuit(trump);
-                break;
-
-            case 1:
-                _mainWindow.Player2DisplayUserControl.SetTrumpSuit(trump);
-                break;
-
-            case 2:
-                _mainWindow.Player3DisplayUserControl.SetTrumpSuit(trump);
-                break;
-
-            case 3:
-                _mainWindow.Player4DisplayUserControl.SetTrumpSuit(trump);
-                break;
-        }
+        _playerDisplayControls[playerIndex].SetTrumpSuit(trump);
     }
 
     /// <summary>
@@ -282,33 +260,14 @@ internal class MainWindowController
         _playerPlayedCardsDisplayControls[playerIndex].SetupCards([(Card)cardPlayed]);
     }
 
+    /// <summary>
+    /// Displays the number of tricks won for a specified player.
+    /// </summary>
+    /// <param name="playerIndex">The index value of the player in the list of players.</param>
     public void UpdatePlayersNumberOfTricksWon(int playerIndex)
     {
-        // Update the trick winner's number of tricks won on the display for the user and the list of tricks
-        //  for each player for the game.
-
-        switch (playerIndex)
-        {
-            case 0:
-                _mainWindow.Player1DisplayUserControl.UpdateNumberOfTricks(
-                    _gameStateManager.TricksWonByPlayers[playerIndex]);
-                break;
-
-            case 1:
-                _mainWindow.Player2DisplayUserControl.UpdateNumberOfTricks(
-                    _gameStateManager.TricksWonByPlayers[playerIndex]);
-                break;
-
-            case 2:
-                _mainWindow.Player3DisplayUserControl.UpdateNumberOfTricks(
-                    _gameStateManager.TricksWonByPlayers[playerIndex]);
-                break;
-
-            case 3:
-                _mainWindow.Player4DisplayUserControl.UpdateNumberOfTricks(
-                    _gameStateManager.TricksWonByPlayers[playerIndex]);
-                break;
-        }
+        _playerDisplayControls[playerIndex].UpdateNumberOfTricks(
+            _gameStateManager.TricksWonByPlayers[playerIndex]);
     }
 
     /// <summary>
@@ -327,24 +286,7 @@ internal class MainWindowController
     {
         for (int playerIndex = 0; playerIndex < Constants.NUMBER_OF_PLAYERS; playerIndex++)
         {
-            switch (playerIndex)
-            {
-                case 0:
-                    _mainWindow.Player1DisplayUserControl.UpdateNumberOfTricks(0);
-                    break;
-
-                case 1:
-                    _mainWindow.Player2DisplayUserControl.UpdateNumberOfTricks(0);
-                    break;
-
-                case 2:
-                    _mainWindow.Player3DisplayUserControl.UpdateNumberOfTricks(0);
-                    break;
-
-                case 3:
-                    _mainWindow.Player4DisplayUserControl.UpdateNumberOfTricks(0);
-                    break;
-            }
+            _playerDisplayControls[playerIndex].UpdateNumberOfTricks(0);
         }
     }
 
@@ -354,24 +296,7 @@ internal class MainWindowController
     /// <param name="playerIndex">The index in the list of players for the player.</param>
     public void ResetPlayerTrumpSuitIcon(int playerIndex)
     {
-        switch (playerIndex)
-        {
-            case 0:
-                _mainWindow.Player1DisplayUserControl.ClearTrumpSuit();
-                break;
-
-            case 1:
-                _mainWindow.Player2DisplayUserControl.ClearTrumpSuit();
-                break;
-
-            case 2:
-                _mainWindow.Player3DisplayUserControl.ClearTrumpSuit();
-                break;
-
-            case 3:
-                _mainWindow.Player4DisplayUserControl.ClearTrumpSuit();
-                break;
-        }
+        _playerDisplayControls[playerIndex].ClearTrumpSuit();
     }
 
     /// <summary>
@@ -431,28 +356,8 @@ internal class MainWindowController
     {
         foreach (var player in _gameStateManager.Players!)
         {
-            switch (player.PlayerIndex)
-            {
-                case 0:
-                    _mainWindow.Player1DisplayUserControl.UpdateNumberOfTricks(
-                        _gameStateManager.TricksWonByPlayers[player.PlayerIndex]);
-                    break;
-
-                case 1:
-                    _mainWindow.Player2DisplayUserControl.UpdateNumberOfTricks(
-                        _gameStateManager.TricksWonByPlayers[player.PlayerIndex]);
-                    break;
-
-                case 2:
-                    _mainWindow.Player3DisplayUserControl.UpdateNumberOfTricks(
-                        _gameStateManager.TricksWonByPlayers[player.PlayerIndex]);
-                    break;
-
-                case 3:
-                    _mainWindow.Player4DisplayUserControl.UpdateNumberOfTricks(
-                        _gameStateManager.TricksWonByPlayers[player.PlayerIndex]);
-                    break;
-            }
+            _playerDisplayControls[player.PlayerIndex].UpdateNumberOfTricks(
+                _gameStateManager.TricksWonByPlayers[player.PlayerIndex]);
         }
     }
 
@@ -510,6 +415,11 @@ internal class MainWindowController
             _playerCardDisplayControls.Add(2, _mainWindow.Player3CardDisplayUserControl);
             _playerCardDisplayControls.Add(3, _mainWindow.Player4CardDisplayUserControl);
 
+            _playerDisplayControls.Add(0, _mainWindow.Player1DisplayUserControl);
+            _playerDisplayControls.Add(1, _mainWindow.Player2DisplayUserControl);
+            _playerDisplayControls.Add(2, _mainWindow.Player3DisplayUserControl);
+            _playerDisplayControls.Add(3, _mainWindow.Player4DisplayUserControl);
+
             _playerDealtCardsDisplayControls.Add(0, _mainWindow.Player1DealtCardsDisplayUserControl);
             _playerDealtCardsDisplayControls.Add(1, _mainWindow.Player2DealtCardsDisplayUserControl);
             _playerDealtCardsDisplayControls.Add(2, _mainWindow.Player3DealtCardsDisplayUserControl);
@@ -527,13 +437,10 @@ internal class MainWindowController
     /// </summary>
     private void SetupPlayerDisplayControls()
     {
-        _mainWindow.Player1DisplayUserControl.SetActivePlayer(_gameStateManager.Players![0],
-            _gameStateManager.Players[0].AvatarNumber);
-        _mainWindow.Player2DisplayUserControl.SetActivePlayer(_gameStateManager.Players[1],
-            _gameStateManager.Players[1].AvatarNumber);
-        _mainWindow.Player3DisplayUserControl.SetActivePlayer(_gameStateManager.Players[2],
-            _gameStateManager.Players[2].AvatarNumber);
-        _mainWindow.Player4DisplayUserControl.SetActivePlayer(_gameStateManager.Players[3],
-            _gameStateManager.Players[3].AvatarNumber);
+        for (int playerIndex = 0; playerIndex < Constants.NUMBER_OF_PLAYERS; playerIndex++)
+        {
+            _playerDisplayControls[playerIndex].SetActivePlayer(_gameStateManager.Players![playerIndex],
+                _gameStateManager.Players[playerIndex].AvatarNumber);
+        }
     }
 }

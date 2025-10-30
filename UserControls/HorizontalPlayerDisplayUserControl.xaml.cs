@@ -3,6 +3,7 @@ using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Classes;
+using Euchre.UILogic.Interfaces;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +14,7 @@ namespace Euchre.UserControls;
 /// <summary>
 /// Interaction logic for HorizontalPlayerDisplayUserControl.xaml
 /// </summary>
-public partial class HorizontalPlayerDisplayUserControl : UserControl
+public partial class HorizontalPlayerDisplayUserControl : UserControl, IBasePlayerDisplay
 {
     public HorizontalPlayerDisplayUserControl()
     {
@@ -43,7 +44,7 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl
     /// Using a DependencyProperty as the backing store for SuitImage.
     /// </summary>
     public static readonly DependencyProperty SuitImageProperty =
-        DependencyProperty.Register(nameof(SuitImage), typeof(Image), 
+        DependencyProperty.Register(nameof(SuitImage), typeof(Image),
             typeof(HorizontalPlayerDisplayUserControl), new PropertyMetadata(null));
 
     /// <summary>
@@ -76,7 +77,7 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl
     /// Sets the visibility of the icon displaying the suit that the player called trump.
     /// </summary>
     public Visibility SuitIconVisibility
-    { 
+    {
         get => (Visibility)GetValue(SuitIconVisibilityProperty);
         set => SetValue(SuitIconVisibilityProperty, value);
     }
