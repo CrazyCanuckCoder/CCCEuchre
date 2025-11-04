@@ -578,13 +578,13 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="kitty">The card at the top of the kitty pile.</param>
     /// <param name="goAlone">True to indicate the user wants to go alone.</param>
     /// <returns>True to indicate the user ordered up the kitty card.</returns>
-    public bool PromptUserToOrderUp(Card kitty, out bool goAlone)
+    public bool PromptUserToOrderUp(Card kitty, HumanPlayer player, out bool goAlone)
     {
         goAlone = false;
         bool orderedUp = false;
 
         List<Suit> suits = [kitty.Suit];
-        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits)
+        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits, player, CurrentGame!.GameInfo.Dealer!, true)
         {
             Owner = _mainWindow
         };
@@ -603,14 +603,14 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="kitty">The card on the kitty pile which has a suit that cannot be picked as trump.</param>
     /// <param name="goAlone">True to indicate the user wants to go alone.</param>
     /// <returns>The suit that the user wants to make trump; null to indicate the user wants to pass.</returns>
-    public Suit? PromptUserForTrump(Card kitty, out bool goAlone)
+    public Suit? PromptUserForTrump(Card kitty, HumanPlayer player, out bool goAlone)
     {
         goAlone = false;
         Suit? chosenSuit = null;
 
         List<Suit> suits = Extensions.GetComplementarySuits(kitty.Suit);
         suits.Remove(kitty.Suit);
-        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits)
+        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits, player, CurrentGame!.GameInfo.Dealer!, false)
         {
             Owner = _mainWindow
         };

@@ -109,6 +109,7 @@
             Content="Go Alone"
             FontSize="16"
             IsChecked="{Binding GoAlone, Mode=TwoWay}"
+            IsEnabled="{Binding IsGoAloneCheckBoxEnabled}"
             ToolTip="Check to go alone when calling trump" />
 
         <!--  Pass Button  -->
