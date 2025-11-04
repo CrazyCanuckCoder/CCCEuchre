@@ -1,0 +1,128 @@
+﻿<Window
+    x:Class="Euchre.Windows.PickTrumpSuitWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Euchre.Windows"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Choose Trump"
+    Width="400"
+    Height="300"
+    Background="#FFF7F0"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Grid Margin="20">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="45" />
+        </Grid.RowDefinitions>
+
+        <!--  Suit Buttons  -->
+
+        <Border
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="5"
+            Background="AliceBlue"
+            BorderBrush="Black"
+            BorderThickness="1">
+
+            <WrapPanel
+                Margin="0,0,0,8"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <Button
+                    x:Name="HeartsButton"
+                    Width="100"
+                    Height="100"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="HeartsButton_Click"
+                    ToolTip="Select Hearts as trump"
+                    Visibility="{Binding HeartsVisibility}">
+                    <Image Source="/images/suits/Hearts.png" />
+                </Button>
+                <Button
+                    x:Name="ClubsButton"
+                    Width="100"
+                    Height="100"
+                    Margin="8,0,0,0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="ClubsButton_Click"
+                    ToolTip="Select Clubs as trump"
+                    Visibility="{Binding ClubsVisibility}">
+                    <Image Source="/images/suits/Clubs.png" />
+                </Button>
+                <Button
+                    x:Name="DiamondsButton"
+                    Width="100"
+                    Height="100"
+                    Margin="8,0,0,0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="DiamondsButton_Click"
+                    ToolTip="Select Diamonds as trump"
+                    Visibility="{Binding DiamondsVisibility}">
+                    <Image Source="/images/suits/Diamonds.png" />
+                </Button>
+                <Button
+                    x:Name="SpadesButton"
+                    Width="100"
+                    Height="100"
+                    Margin="8,0,0,0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="SpadesButton_Click"
+                    ToolTip="Select Spades as trump"
+                    Visibility="{Binding SpadesVisibility}">
+                    <Image Source="/images/suits/Spades.png" />
+                </Button>
+            </WrapPanel>
+        </Border>
+
+        <!--  Alone CheckBox  -->
+
+        <CheckBox
+            x:Name="AloneCheckBox"
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="5"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            VerticalContentAlignment="Center"
+            Content="Go Alone"
+            FontSize="16"
+            IsChecked="{Binding GoAlone, Mode=TwoWay}"
+            ToolTip="Check to go alone when calling trump" />
+
+        <!--  Pass Button  -->
+
+        <Button
+            x:Name="PassButton"
+            Grid.Row="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="5"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Click="PassButton_Click"
+            Content="Pass"
+            FontSize="16"
+            Style="{DynamicResource SubmitButtonStyle}" />
+    </Grid>
+</Window>

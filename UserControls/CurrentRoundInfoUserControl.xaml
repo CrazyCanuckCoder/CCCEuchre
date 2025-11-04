@@ -1,0 +1,134 @@
+﻿<UserControl
+    x:Class="Euchre.UserControls.CurrentRoundInfoUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Euchre.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    MinWidth="230"
+    d:DesignHeight="291"
+    d:DesignWidth="281"
+    mc:Ignorable="d">
+
+    <Border
+        Background="#FFF7F0"
+        BorderBrush="Black"
+        BorderThickness="1">
+        <Grid Margin="20">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*" />
+                <ColumnDefinition Width="50*" />
+                <ColumnDefinition Width="20" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="5" />
+                <RowDefinition />
+                <RowDefinition Height="5" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+
+            <!--  Bidding Information Label  -->
+
+            <Border
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Background="White"
+                BorderBrush="Black"
+                BorderThickness="1">
+                <TextBlock
+                    Padding="5,2,2,2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    FontSize="16"
+                    Text="{Binding BidInfo, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="Wrap" />
+            </Border>
+
+            <!--  Teams Label  -->
+
+            <Label
+                Grid.Row="2"
+                Grid.Column="0"
+                Content="Teams"
+                FontSize="16" />
+
+            <!--  Team 1 List  -->
+
+            <ListBox
+                Grid.Row="4"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                MinWidth="218"
+                BorderBrush="Black"
+                BorderThickness="1"
+                ItemsSource="{Binding Team1List, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Focusable" Value="False" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label
+                            Height="26"
+                            VerticalContentAlignment="Center"
+                            Content="{Binding Name}"
+                            FontSize="13" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!--  First Team Colour  -->
+
+            <Label
+                Grid.Row="4"
+                Grid.Column="2"
+                Width="20"
+                Background="{Binding Team1Colour}" />
+
+            <!--  Team 2 List  -->
+
+            <ListBox
+                Grid.Row="6"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                MinWidth="218"
+                BorderBrush="Black"
+                BorderThickness="1"
+                ItemsSource="{Binding Team2List, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Focusable" Value="False" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label
+                            Height="26"
+                            VerticalContentAlignment="Center"
+                            Content="{Binding Name}"
+                            FontSize="13" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!--  Second Team Colour  -->
+
+            <Label
+                Grid.Row="6"
+                Grid.Column="2"
+                Width="20"
+                Background="{Binding Team2Colour}" />
+        </Grid>
+    </Border>
+</UserControl>

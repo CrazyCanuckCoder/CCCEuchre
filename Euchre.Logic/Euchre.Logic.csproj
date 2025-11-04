@@ -18,6 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Data\GameSettingsDS.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GameSettingsDS.xsd</DependentUpon>
+    </Compile>
     <Compile Update="Data\GameStateDS.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -26,6 +31,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\GameSettings.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\GameSettingsDS.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>GameSettingsDS.Designer.cs</LastGenOutput>
+    </None>
     <None Update="Data\GameStateDS.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>GameStateDS.Designer.cs</LastGenOutput>

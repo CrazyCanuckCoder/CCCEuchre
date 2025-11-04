@@ -10,7 +10,6 @@ namespace Euchre.Logic.Helpers;
 /// <summary>
 /// Manages the game state, including player information, deck, scores, and current hand tricks.
 /// </summary>
-[Serializable]
 public class GameStateManager
 {
     public GameStateManager()
@@ -95,6 +94,11 @@ public class GameStateManager
     public int CurrentTrickNumber { get; internal set; } = 0;
 
     /// <summary>
+    /// Tracks the number of tricks won by each player for the current round.
+    /// </summary>
+    public int[] TricksWonByPlayers { get; set; } = new int[NUMBER_OF_PLAYERS];
+
+    /// <summary>
     /// Helper to reset checkpoint info when a brand‑new round begins.
     /// </summary>
     public void ResetRoundCheckpoint()
@@ -105,11 +109,24 @@ public class GameStateManager
     }
 
     /// <summary>
+    /// Resets the tricks won by players property for the next round.
+    /// </summary>
+    public void ResetTricksWonByPlayers()
+    {
+        ArgumentNullException.ThrowIfNull(nameof(Players));
+
+        for (int index = 0; index < NUMBER_OF_PLAYERS; index++)
+        {
+            TricksWonByPlayers[index] = 0;
+        }
+    }
+
+    /// <summary>
     /// Saves the current game data to a file.
     /// </summary>
-    public void SaveGameData()
+    public async void SaveGameDataAsync()
     {
-        DataManager.SaveGameState(this);
+        await Task.Run(() => DataManager.SaveGameState(this));
     }
 
     /// <summary>

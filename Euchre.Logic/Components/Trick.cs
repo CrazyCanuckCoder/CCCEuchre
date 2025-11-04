@@ -53,8 +53,6 @@ public class Trick
     /// <exception cref="TrickIncompleteException"></exception>
     public IPlayer GetWinner()
     {
-        if (!IsComplete) throw new TrickIncompleteException();
-
         return GetHighestCardInTrick().Key;
     }
 

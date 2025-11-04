@@ -1,0 +1,168 @@
+﻿<UserControl
+    x:Class="Euchre.UserControls.VerticalPlayerDisplayUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Euchre.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="400"
+    d:DesignWidth="120"
+    Background="#FFF7F0"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="TextLabel" TargetType="Label">
+            <Style.Setters>
+                <Setter Property="BorderBrush" Value="Black" />
+                <Setter Property="BorderThickness" Value="0.5" />
+                <Setter Property="Background" Value="White" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Height" Value="38" />
+                <Setter Property="Width" Value="120" />
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="42" />
+            <RowDefinition />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+
+        <Border
+            Grid.Row="0"
+            Grid.Column="0"
+            Padding="1"
+            Background="White"
+            BorderBrush="Black"
+            BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="38" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <!--  Player Name  -->
+
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    BorderThickness="0"
+                    Content="{Binding VerticalActivePlayer.Player.Name, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
+                    FontSize="16"
+                    Style="{DynamicResource TextLabel}" />
+
+                <!--  Dealer Indicator Image  -->
+
+                <Image
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Width="30"
+                    Height="30"
+                    Margin="2,0,2,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Source="/Euchre;component/images/icons/dealer.png"
+                    Visibility="{Binding VerticalDealerIconVisibility, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </Border>
+
+        <!--  Avatar Image  -->
+
+        <local:AvatarUserControl
+            Grid.Row="1"
+            Grid.Column="0"
+            Width="100"
+            Height="100"
+            AvatarNumber="{Binding VerticalActivePlayer.AvatarNumber, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
+            HasBorder="False" />
+
+        <!--  Number of Tricks  -->
+
+        <Border
+            Grid.Row="2"
+            Grid.Column="0"
+            Background="White"
+            BorderBrush="Black"
+            BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="2" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="2" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="2" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="2" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="10" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="6" />
+                    <RowDefinition Height="24" />
+                    <RowDefinition Height="6" />
+                </Grid.RowDefinitions>
+
+                <!--  Suit Indicator Image  -->
+
+                <Image
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Width="24"
+                    Height="24"
+                    Margin="2,0,24,0"
+                    VerticalAlignment="Top"
+                    Source="{Binding SuitImage.Source}"
+                    Stretch="Fill"
+                    Visibility="{Binding SuitIconVisibility, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}" />
+
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Background="{Binding TricksColour}"
+                    ToolTip="The number of tricks won by the player."
+                    Visibility="{Binding TrickIconsVisibility[4]}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="4"
+                    Background="{Binding TricksColour}"
+                    ToolTip="The number of tricks won by the player."
+                    Visibility="{Binding TrickIconsVisibility[3]}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="6"
+                    Background="{Binding TricksColour}"
+                    ToolTip="The number of tricks won by the player."
+                    Visibility="{Binding TrickIconsVisibility[2]}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="8"
+                    Background="{Binding TricksColour}"
+                    ToolTip="The number of tricks won by the player."
+                    Visibility="{Binding TrickIconsVisibility[1]}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="10"
+                    Background="{Binding TricksColour}"
+                    ToolTip="The number of tricks won by the player."
+                    Visibility="{Binding TrickIconsVisibility[0]}" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

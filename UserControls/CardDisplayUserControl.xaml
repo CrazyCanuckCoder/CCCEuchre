@@ -1,0 +1,71 @@
+﻿<UserControl
+    x:Class="Euchre.UserControls.CardDisplayUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Euchre.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="138"
+    d:DesignWidth="835"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style TargetType="ToggleButton">
+            <Style.Setters>
+                <Setter Property="Width" Value="100" />
+                <Setter Property="Height" Value="136" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Background" Value="Transparent" />
+            </Style.Setters>
+
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Background" Value="Transparent" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <!--  The control to show all the cards in the player's hand.  -->
+
+    <ItemsControl
+        HorizontalAlignment="Center"
+        HorizontalContentAlignment="Center"
+        ItemsSource="{Binding CardImages}">
+
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <WrapPanel Orientation="Vertical" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <StackPanel>
+
+                    <!--  ToggleButton with card image  -->
+
+                    <ToggleButton
+                        Margin="{Binding CardMargin}"
+                        Checked="ToggleButton_Checked"
+                        IsEnabled="{Binding IsEnabled}"
+                        Tag="{Binding Card}"
+                        Visibility="{Binding CardVisibility}">
+                        <Image Source="{Binding ImageData.Source}" Stretch="Fill" />
+                    </ToggleButton>
+
+                    <!--  Card image displayed when disabled  -->
+
+                    <Image
+                        Width="100"
+                        Height="136"
+                        Margin="{Binding CardMargin}"
+                        Source="{Binding ImageData.Source}"
+                        Stretch="Fill"
+                        Visibility="{Binding ImageVisibility}" />
+                </StackPanel>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

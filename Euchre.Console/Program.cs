@@ -12,11 +12,17 @@ public class Program
             // If so, load the saved game.
 
             var game = new EuchreGame();
-            await game.RestartGameAsync();
+            await game.PlayGameAsync();
         }
         else
         {
-            List<string> playerNames = ["Stephen", "Alice", "Charlie", "Diana"];
+            List<AutomatedPlayerAvatar> playerNames = 
+                [
+                    new AutomatedPlayerAvatar() { PlayerName = "Stephen", AvatarNumber = 0 },
+                    new AutomatedPlayerAvatar() { PlayerName = "Alice",   AvatarNumber = 0 },
+                    new AutomatedPlayerAvatar() { PlayerName = "Charlie", AvatarNumber = 0 },
+                    new AutomatedPlayerAvatar() { PlayerName = "Diana",   AvatarNumber = 0 }
+                ];
             var game = new EuchreGame(playerNames);
             await game.PlayGameAsync();
         }

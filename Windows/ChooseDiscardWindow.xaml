@@ -1,0 +1,96 @@
+﻿<Window
+    x:Class="Euchre.Windows.ChooseDiscardWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:UserControls="clr-namespace:Euchre.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Euchre.Windows"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Choose Discard"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="45" />
+        </Grid.RowDefinitions>
+
+        <!--  Kitty Card Display  -->
+
+        <Border
+            Grid.Row="0"
+            Grid.Column="0"
+            Background="AliceBlue"
+            BorderBrush="Black"
+            BorderThickness="0.5">
+            <StackPanel>
+
+                <!--  Kitty Label  -->
+
+                <Label HorizontalAlignment="Center" FontSize="16">
+                    Card to Pick Up
+                </Label>
+
+                <!--  Kitty Card  -->
+
+                <Image
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Width="98"
+                    Height="134"
+                    Margin="20,10"
+                    Source="{Binding KittyImage.Source}" />
+
+            </StackPanel>
+        </Border>
+
+        <!--  Card Selection Controls  -->
+
+        <Border
+            Grid.Row="0"
+            Grid.Column="3"
+            Background="AliceBlue"
+            BorderBrush="Black"
+            BorderThickness="0.5">
+            <StackPanel>
+
+                <!--  Select Bid Label  -->
+
+                <Label FontSize="16">
+                    Choose a card to discard.
+                </Label>
+
+                <!--  Card Display Control  -->
+
+                <UserControls:CardDisplayUserControl
+                    x:Name="cardDisplayControl"
+                    Height="160"
+                    Margin="20,10"
+                    HorizontalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+        <!--  Select Button  -->
+
+        <Button
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Click="ButtonSelect_Click"
+            Content="_Select"
+            IsDefault="True"
+            Style="{DynamicResource SubmitButtonStyle}" />
+
+    </Grid>
+</Window>

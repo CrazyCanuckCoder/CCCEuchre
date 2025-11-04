@@ -1,12 +1,14 @@
 ﻿using CrazyCanuckCoder.Library.Common;
 using Euchre.Logic.Components;
+using System.Linq;
+using System.Windows.Controls.Primitives;
 
 namespace Euchre.Logic.Helpers;
 
 /// <summary>
 /// Finds a card or cards in a collection based on various criteria.
 /// </summary>
-public static class CardFinder
+internal static class CardFinder
 {
     /// <summary>
     /// Determines whether the specified collection of cards contains at least one card of the given suit.
@@ -14,9 +16,9 @@ public static class CardFinder
     /// <param name="cards">The collection of cards to search. Cannot be <see langword="null"/>.</param>
     /// <param name="suit">The suit to check for in the collection.</param>
     /// <returns>True if the collection contains at least one card of the specified suit; otherwise, false.</returns>
-    public static bool HasACardOfSuit(List<Card> cards, Suit suit)
+    public static bool HasACardOfSuit(List<Card> cards, Suit suit, Suit trump)
     {
-        return cards.Any(c => c.Suit == suit);
+        return cards.Any(c => c.EffectiveSuit(trump) == suit);
     }
 
     /// <summary>
@@ -91,7 +93,10 @@ public static class CardFinder
     /// <returns>The highest ranked card of the trump suit, or null if no such card exists.</returns>
     public static Card? GetHighestTrumpCard(List<Card> cards, Suit trump)
     {
-        return cards.OrderByDescending(c => c.GetTrickValue(trump, trump)).FirstOrNull();
+        return cards
+                .Where(c => c.EffectiveSuit(trump) == trump)
+                .OrderByDescending(c => c.GetTrickValue(trump, trump))
+                .FirstOrNull();
     }
 
     /// <summary>
@@ -102,7 +107,10 @@ public static class CardFinder
     /// <returns>The lowest ranked card of the trump suit, or null if no such card exists.</returns>
     public static Card? GetLowestTrumpCard(List<Card> cards, Suit trump)
     {
-        return cards.OrderByDescending(c => c.GetTrickValue(trump, trump)).LastOrNull();
+        return cards
+                .Where(c => c.EffectiveSuit(trump) == trump)
+                .OrderBy(c => c.GetTrickValue(trump, trump))
+                .FirstOrNull();
     }
 
     /// <summary>
@@ -111,10 +119,10 @@ public static class CardFinder
     /// <param name="cards">The list of cards to evaluate. Cannot be null.</param>
     /// <param name="suit">The suit of the card to look for.</param>
     /// <returns>The highest ranked card of the specified suit, or null if no such card exists.</returns>
-    public static Card? GetHighestCardOfSuit(List<Card> cards, Suit? suit)
+    public static Card? GetHighestCardOfSuit(List<Card> cards, Suit? suit, Suit trump)
     {
         return cards
-                .Where(c => c.Suit == suit)
+                .Where(c => c.EffectiveSuit(trump) == suit)
                 .OrderByDescending(c => (int)c.Rank)
                 .FirstOrNull();
     }
@@ -134,14 +142,14 @@ public static class CardFinder
     }
 
     /// <summary>
-    /// Counts the number of cards in the specified list that match the given suit.
+    /// Counts the number of cards in the specified list that match the given suit except for the Jacks.
     /// </summary>
     /// <param name="cards">The list of cards to evaluate. Cannot be null.</param>
     /// <param name="suit">The suit of the cards to count.  Does not work for trump.</param>
     /// <returns>The number of cards found for the specified suit.</returns>
-    public static int CountCardsOfSuit(List<Card> cards, Suit suit)
+    public static int CountCardsOfSuitLessJacks(List<Card> cards, Suit suit)
     {
-        return cards.Count(c => c.Suit == suit);
+        return cards.Count(c => c.Suit == suit && c.Rank != Rank.Jack);
     }
 
     /// <summary>
@@ -198,11 +206,28 @@ public static class CardFinder
     /// <param name="cards">The list of cards containing bowers.</param>
     /// <param name="trump">The suit that is considered trump.</param>
     /// <returns>A List containing non bower trump cards.</returns>
-    public static List<Card> GetNonBowers(List<Card> cards, Suit trump)
+    public static List<Card> GetNonBowerTrump(List<Card> cards, Suit trump)
     {
         return cards
-                .Where(c => !c.IsBower(trump))
+                .Where(c => !c.IsBower(trump) && c.EffectiveSuit(trump) == trump)
                 .OrderByDescending(c => c.GetTrickValue(trump, trump))
                 .ToList();
+    }
+
+    /// <summary>
+    /// Returns the next highest trump card compared to a specified card.
+    /// </summary>
+    /// <param name="cards">The list of cards to find the next highest trump card.</param>
+    /// <param name="trump">The trump suit.</param>
+    /// <param name="winningCard">The trump card to compare to.</param>
+    /// <returns>A Card that is higher in value compared to the winning card.</returns>
+    public static Card? GetNextHighestTrump(List<Card> cards, Suit trump, Card winningCard)
+    {
+        return (   from card in cards
+                  where card.EffectiveSuit(trump) == trump
+                     && card.GetTrickValue(trump, trump) > winningCard.GetTrickValue(trump, trump)
+                orderby card.GetTrickValue(trump, trump)
+                 select card)
+               .FirstOrNull();
     }
 }

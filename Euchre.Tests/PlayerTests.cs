@@ -11,7 +11,7 @@ public class PlayerTests
     [SetUp]
     public void Setup()
     {
-        _player = new AutomatedPlayer("TestPlayer", 0, new());
+        _player = new AutomatedPlayer("TestPlayer", 0, 0, new(), 0);
     }
 
     [TearDown]

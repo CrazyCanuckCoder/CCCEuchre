@@ -1,0 +1,220 @@
+﻿<UserControl
+    x:Class="Euchre.UserControls.PreviousTricksUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Euchre.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    MinWidth="230"
+    d:DesignHeight="265"
+    d:DesignWidth="290"
+    mc:Ignorable="d">
+
+    <!--  A Style to set the height and width of the card images.  -->
+
+    <UserControl.Resources>
+        <Style x:Key="CardImageStyle" TargetType="Image">
+            <Style.Setters>
+                <Setter Property="Width" Value="58" />
+                <Setter Property="Height" Value="75" />
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--  Title String  -->
+
+        <Border
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="15"
+            Background="#FFF7F0"
+            BorderBrush="Black"
+            BorderThickness="1">
+            <TextBlock
+                Margin="5,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="16">
+                Played Tricks
+            </TextBlock>
+        </Border>
+
+        <!--  Content Display  -->
+
+        <Border
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Background="White"
+            BorderBrush="Black"
+            BorderThickness="1,0,1,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="10" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10" />
+                    <RowDefinition Height="16" />
+                    <RowDefinition Height="16" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="16" />
+                    <RowDefinition />
+                    <RowDefinition Height="16" />
+                    <RowDefinition />
+                    <RowDefinition Height="16" />
+                    <RowDefinition Height="16" />
+                    <RowDefinition Height="16" />
+                    <RowDefinition Height="10" />
+                </Grid.RowDefinitions>
+
+                <!--  Previous Button  -->
+
+                <Button
+                    Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    BorderThickness="0"
+                    Click="PreviousButton_Click"
+                    IsEnabled="{Binding PreviousTrickButtonEnabled}">
+                    <Image Source="/Euchre;component/images/icons/arrow left.png" />
+                </Button>
+
+                <!--  Player 3 Trick Won Indicator  -->
+
+                <Image
+                    Grid.Row="1"
+                    Grid.Column="5"
+                    Source="{Binding ThirdPlayerTrickWonIndicator.Source}"
+                    ToolTip="Trick Winning Card" />
+
+                <!--  Player 3 Card Display  -->
+
+                <Image
+                    Grid.Row="1"
+                    Grid.RowSpan="5"
+                    Grid.Column="7"
+                    VerticalAlignment="Top"
+                    Source="{Binding ThirdPlayerImage.Source}"
+                    Style="{DynamicResource CardImageStyle}" />
+
+                <!--  Player 3 Card Lead Indicator  -->
+
+                <Image
+                    Grid.Row="1"
+                    Grid.Column="9"
+                    Source="{Binding ThirdPlayerCardLeadIndicator.Source}"
+                    ToolTip="First Card Lead" />
+
+                <!--  Next Button  -->
+
+                <Button
+                    Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Grid.Column="12"
+                    Grid.ColumnSpan="2"
+                    BorderThickness="0"
+                    Click="NextButton_Click"
+                    IsEnabled="{Binding NextTrickButtonEnabled}">
+                    <Image Source="/Euchre;component/images/icons/arrow right.png" />
+                </Button>
+
+                <!--  Player 2 Second Indicator  -->
+
+                <Image
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Source="{Binding SecondPlayerSecondIndicator.Source}" />
+
+                <!--  Player 2 First Indicator  -->
+
+                <Image
+                    Grid.Row="4"
+                    Grid.Column="2"
+                    Source="{Binding SecondPlayerFirstIndicator.Source}" />
+
+                <!--  Player 2 Card Display  -->
+
+                <Image
+                    Grid.Row="4"
+                    Grid.RowSpan="4"
+                    Grid.Column="4"
+                    Source="{Binding SecondPlayerImage.Source}"
+                    Style="{DynamicResource CardImageStyle}" />
+
+                <!--  Player 4 Card Display  -->
+
+                <Image
+                    Grid.Row="4"
+                    Grid.RowSpan="4"
+                    Grid.Column="10"
+                    Source="{Binding FourthPlayerImage.Source}"
+                    Style="{DynamicResource CardImageStyle}" />
+
+                <!--  Player 4 First Indicator  -->
+
+                <Image
+                    Grid.Row="4"
+                    Grid.Column="12"
+                    Source="{Binding FourthPlayerFirstIndicator.Source}" />
+
+                <!--  Player 4 Second Indicator  -->
+
+                <Image
+                    Grid.Row="4"
+                    Grid.Column="13"
+                    Source="{Binding FourthPlayerSecondIndicator.Source}" />
+
+                <!--  Player 1 Card Display  -->
+
+                <Image
+                    Grid.Row="7"
+                    Grid.RowSpan="4"
+                    Grid.Column="7"
+                    Source="{Binding FirstPlayerImage.Source}"
+                    Style="{DynamicResource CardImageStyle}" />
+
+                <!--  Player 1 Trick Won Indicator  -->
+
+                <Image
+                    Grid.Row="10"
+                    Grid.Column="5"
+                    Source="{Binding FirstPlayerTrickWonIndicator.Source}"
+                    ToolTip="Trick Winning Card" />
+
+                <!--  Player 1 Card Lead Indicator  -->
+
+                <Image
+                    Grid.Row="10"
+                    Grid.Column="9"
+                    Source="{Binding FirstPlayerCardLeadIndicator.Source}"
+                    ToolTip="First Card Lead" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic.Exceptions;
+using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using static Euchre.Logic.Helpers.Constants;
 
@@ -15,13 +16,26 @@ public abstract class Player : IPlayer
     /// <param name="name">The name of the player.</param>
     /// <param name="teamIndex"> The index of the team this player is associated with, starting from 0.</param>
     /// <param name="isHuman">True if the player is a human and false for automated players.</param>
-    public Player(string name, int teamIndex, bool isHuman)
+    /// <param name="avatarNumber">The number indicating which avatar the user is represented by in the UI.</param>
+    public Player(string name, int teamIndex, int playerIndex, bool isHuman, int avatarNumber)
     {
         Name = name;
         Hand = [];
         TeamIndex = teamIndex;
+        PlayerIndex = playerIndex;
         IsHuman = isHuman;
+        AvatarNumber = avatarNumber;
     }
+
+    /// <summary>
+    /// The name of the player.
+    /// </summary>
+    public string Name { get; protected set; }
+
+    /// <summary>
+    /// The number representing the avatar to display on the UI for the player.
+    /// </summary>
+    public int AvatarNumber { get; protected set; }
 
     /// <summary>
     /// The cards in the player's hand.
@@ -34,14 +48,14 @@ public abstract class Player : IPlayer
     public bool IsHuman { get; protected set; }
 
     /// <summary>
-    /// The name of the player.
-    /// </summary>
-    public string Name { get; protected set; }
-
-    /// <summary>
     /// Gets the index of the team associated with this player.
     /// </summary>
     public int TeamIndex { get; protected set; }
+
+    /// <summary>
+    /// Gets/sets the index number of the player in the list of players.
+    /// </summary>
+    public int PlayerIndex { get; protected set; }
 
     /// <summary>
     /// Gets a value indicating whether the individual is going alone.
@@ -75,6 +89,15 @@ public abstract class Player : IPlayer
     public void ClearHand()
     {
         Hand.Clear();
+    }
+
+    /// <summary>
+    /// Resorts the player's hand based on a specified trump suit.
+    /// </summary>
+    /// <param name="trump">The suit set as trump.  Null indicates no trump set.</param>
+    public void SortPlayerCards(Suit? trump)
+    {
+        Hand = Hand.Sort(trump);
     }
 
     /// <summary>

@@ -9,6 +9,7 @@ public interface ICard
     int ShuffleValue { get; }
     Suit Suit { get; }
 
+    ICard Clone();
     Suit EffectiveSuit(Suit trump);
     int GetTrickValue(Suit trump, Suit leadSuit);
     bool IsBower(Suit trump);

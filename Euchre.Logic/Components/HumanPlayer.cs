@@ -13,7 +13,8 @@ namespace Euchre.Logic.Components;
 /// necessary user interface for input.</remarks>
 public class HumanPlayer : Player
 {
-    public HumanPlayer(string name, int teamIndex) : base(name, teamIndex, true) 
+    public HumanPlayer(string name, int teamIndex, int playerIndex, int avatarNumber) : 
+        base(name, teamIndex, playerIndex, true, avatarNumber) 
     { 
     }
 
@@ -52,6 +53,12 @@ public class HumanPlayer : Player
     public event EventHandler<PromptForCardToPlayEventArgs>? PromptForCardToPlay;
 
     /// <summary>
+    /// Fired when the player's hand has been updated.  Currently called after the user discards a card when
+    /// adding the kitty card.
+    /// </summary>
+    public event EventHandler<System.EventArgs>? UserHandUpdated;
+
+    /// <summary>
     /// Prompts the user on whether to order up the given card during the bidding phase.
     /// </summary>
     /// <param name="kitty">The card being considered for ordering up.</param>
@@ -86,6 +93,8 @@ public class HumanPlayer : Player
             }
             Hand.Remove(args.DiscardedCard);
             Hand.Add(kitty);
+            SortPlayerCards(kitty.Suit);
+            UserHandUpdated?.Invoke(this, new System.EventArgs());
         }
         else
         {

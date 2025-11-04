@@ -52,10 +52,10 @@ public class Card : ICard
         if (!IsJack) return false;
         return trump switch
         {
-            Suit.Hearts => Suit == Suit.Diamonds,
+            Suit.Hearts   => Suit == Suit.Diamonds,
             Suit.Diamonds => Suit == Suit.Hearts,
-            Suit.Clubs => Suit == Suit.Spades,
-            Suit.Spades => Suit == Suit.Clubs,
+            Suit.Clubs    => Suit == Suit.Spades,
+            Suit.Spades   => Suit == Suit.Clubs,
             _ => false
         };
     }
@@ -124,5 +124,17 @@ public class Card : ICard
     public override string ToString()
     {
         return $"{Rank} of {Suit}";
+    }
+
+    /// <summary>
+    /// Returns a new card cloned from this card.
+    /// </summary>
+    /// <returns>An ICard with the values from this card.</returns>
+    public ICard Clone()
+    {
+        return new Card(Suit, Rank)
+        {
+            ShuffleValue = ShuffleValue,
+        };
     }
 }
