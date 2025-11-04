@@ -42,18 +42,13 @@ public partial class ChooseAvatarWindow : Window
 
         for (int avatarNumber = 1; avatarNumber <= UIConstants.MaximumNumberOfAvatars; avatarNumber++)
         {
-            // Set the file name for the avatar.
-
-            string avatarFilename = $"avatar{avatarNumber}.png";
-
             // Add the image to the collection of images.
 
             AvatarImages.Add(new AvatarDisplay()
             {
                 ImageData = new Image()
                 {
-                    Source = UIHelpers.GenerateImageSource(
-                        $"pack://application:,,,/Euchre;component/images/avatars/{avatarFilename}")
+                    Source = UIHelpers.GenerateAvatarImageSource(avatarNumber)
                 },
                 AvatarNumber = avatarNumber,
             });

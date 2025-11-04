@@ -7,7 +7,6 @@ using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using Euchre.Windows;
 using System.Windows;
-using static CrazyCanuckCoder.Library.Common.Emails;
 using Extensions = Euchre.Logic.Helpers.Extensions;
 
 namespace Euchre;
@@ -505,7 +504,7 @@ public class MainWindowViewModel : DependencyObject
 #if DEBUG
             _mainWindowController.SetupPlayerCards(player);
 #else
-            _playerCardDisplayControls[player.PlayerIndex].RemoveCard();
+            _mainWindowController.RemovePlayerCard(player);
 #endif
         }
         SetPlayersPlayedCardDisplayControlVisibility(player.PlayerIndex, Visibility.Visible);
@@ -765,7 +764,7 @@ public class MainWindowViewModel : DependencyObject
                 _mainWindowController.SetupPlayerCards(automatedPlayer);
             }
 #else
-            _playerCardDisplayControls[indexOfPlayer].AddCards(numberOfCardsDealt);
+            _mainWindowController.AddPlayerCards(indexOfPlayer, numberOfCardsDealt);
 #endif
         }
     }

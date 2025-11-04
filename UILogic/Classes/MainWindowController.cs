@@ -126,27 +126,9 @@ internal class MainWindowController
     {
         for (int playerIndex = 0; playerIndex < Constants.NUMBER_OF_PLAYERS; playerIndex++)
         {
-            if (_playerCardDisplayControlsVisibility.ContainsKey(playerIndex))
+            if (_playerCardDisplayControlsVisibility.TryGetValue(playerIndex, out Action<Visibility>? value))
             {
-                switch (playerIndex)
-                {
-                    case 0:
-                        _playerCardDisplayControls[playerIndex] = _mainWindow.Player1CardDisplayUserControl;
-                        break;
-
-                    case 1:
-                        _playerCardDisplayControls[playerIndex] = _mainWindow.Player2CardDisplayUserControl;
-                        break;
-
-                    case 2:
-                        _playerCardDisplayControls[playerIndex] = _mainWindow.Player3CardDisplayUserControl;
-                        break;
-
-                    case 3:
-                        _playerCardDisplayControls[playerIndex] = _mainWindow.Player4CardDisplayUserControl;
-                        break;
-                }
-                _visibilitySetter = _playerCardDisplayControlsVisibility[playerIndex];
+                _visibilitySetter = value;
                 _visibilitySetter(Visibility.Visible);
             }
         }
@@ -248,6 +230,25 @@ internal class MainWindowController
             _playerCardDisplayControls[player.PlayerIndex].SetupCards(player.Hand,
                 _gameStateManager.Trump!.Value);
         }
+    }
+
+    /// <summary>
+    /// Removes a card from an automated player's hand.
+    /// </summary>
+    /// <param name="player">The automated player whose hand will lose a card.</param>
+    public void RemovePlayerCard(IPlayer player)
+    {
+        _playerCardDisplayControls[player.PlayerIndex].RemoveCard();
+    }
+
+    /// <summary>
+    /// Adds a specified number of cards to an automated player's hand.
+    /// </summary>
+    /// <param name="indexOfPlayer">The index value of the player.</param>
+    /// <param name="numberOfCardsDealt">The number of cards to add to the player's hand.</param>
+    public void AddPlayerCards(int indexOfPlayer, int numberOfCardsDealt)
+    {
+        _playerCardDisplayControls[indexOfPlayer].AddCards(numberOfCardsDealt);
     }
 
     /// <summary>

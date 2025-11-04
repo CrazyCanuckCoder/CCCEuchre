@@ -128,8 +128,7 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl, IBasePlay
     {
         SuitImage = new Image()
         {
-            Source = UIHelpers.GenerateImageSource(
-                $"pack://application:,,,/Euchre;component/images/suits/{trump}.png")
+            Source = UIHelpers.GenerateSuitImageSource(trump)
         };
         SuitIconVisibility = Visibility.Visible;
     }

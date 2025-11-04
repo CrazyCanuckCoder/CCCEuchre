@@ -17,8 +17,7 @@ public partial class ChooseDiscardWindow : Window
         InitializeComponent();
         KittyImage = new Image()
         {
-            Source = UIHelpers.GenerateImageSource(
-                $"pack://application:,,,/Euchre;component/images/cards/{kitty.ToString()?.ToLower()}.png")
+            Source = UIHelpers.GenerateCardImageSource(kitty, false, false)
         };
         cardDisplayControl.GetDiscard(cards);
         DataContext = this;

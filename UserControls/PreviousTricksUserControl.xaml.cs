@@ -390,8 +390,7 @@ public partial class PreviousTricksUserControl : UserControl
     /// <returns>A BitmapImage containing the image for the card.</returns>
     private BitmapImage GenerateCardImage(Card cardPlayed)
     {
-        return UIHelpers.GenerateImageSource(
-            $"pack://application:,,,/Euchre;component/images/cards/{cardPlayed.ToString()?.ToLower()}.png");
+        return UIHelpers.GenerateCardImageSource(cardPlayed, false, false);
     }
 
     /// <summary>

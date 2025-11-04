@@ -1,5 +1,6 @@
 ﻿using CrazyCanuckCoder.Library.Common;
 using Euchre.Logic.Components;
+using System.Linq;
 using System.Windows.Controls.Primitives;
 
 namespace Euchre.Logic.Helpers;
@@ -211,5 +212,22 @@ internal static class CardFinder
                 .Where(c => !c.IsBower(trump) && c.EffectiveSuit(trump) == trump)
                 .OrderByDescending(c => c.GetTrickValue(trump, trump))
                 .ToList();
+    }
+
+    /// <summary>
+    /// Returns the next highest trump card compared to a specified card.
+    /// </summary>
+    /// <param name="cards">The list of cards to find the next highest trump card.</param>
+    /// <param name="trump">The trump suit.</param>
+    /// <param name="winningCard">The trump card to compare to.</param>
+    /// <returns>A Card that is higher in value compared to the winning card.</returns>
+    public static Card? GetNextHighestTrump(List<Card> cards, Suit trump, Card winningCard)
+    {
+        return (   from card in cards
+                  where card.EffectiveSuit(trump) == trump
+                     && card.GetTrickValue(trump, trump) > winningCard.GetTrickValue(trump, trump)
+                orderby card.GetTrickValue(trump, trump)
+                 select card)
+               .FirstOrNull();
     }
 }

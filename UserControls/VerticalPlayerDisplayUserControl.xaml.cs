@@ -129,8 +129,7 @@ public partial class VerticalPlayerDisplayUserControl : UserControl, IBasePlayer
     {
         SuitImage = new Image()
         {
-            Source = UIHelpers.GenerateImageSource(
-                $"pack://application:,,,/Euchre;component/images/suits/{trump}.png")
+            Source = UIHelpers.GenerateSuitImageSource(trump)
         };
         SuitIconVisibility = Visibility.Visible;
     }

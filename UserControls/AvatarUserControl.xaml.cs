@@ -80,11 +80,9 @@ public partial class AvatarUserControl : UserControl
             throw new ArgumentOutOfRangeException(nameof(avatarNumber));
         }
 
-        string imageFilename = $"avatar{avatarNumber}.png";
         AvatarImage = new Image()
         {
-            Source = UIHelpers.GenerateImageSource(
-                $"pack://application:,,,/Euchre;component/images/avatars/{imageFilename}")
+            Source = UIHelpers.GenerateAvatarImageSource(avatarNumber)
         };
     }
 

@@ -80,10 +80,6 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
 
             for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
             {
-                string cardFilename = Cards[cardIndex].ToString()?.ToLower() + ".png";
-                BitmapImage source = UIHelpers.GenerateImageSource(
-                    $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}");
-
                 // Determine the margin to use for the current card.
 
                 Thickness cardMargin = new(0);
@@ -101,7 +97,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
                 {
                     ImageData = new Image()
                     {
-                        Source = source
+                        Source = UIHelpers.GenerateCardImageSource(Cards[cardIndex], false, false),
                     },
                     CardVisibility = Visibility.Collapsed,
                     ImageVisibility = Visibility.Visible,
@@ -200,10 +196,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
                 {
                     disableCard = disabledSuits.Contains(Cards[cardIndex].EffectiveSuit(trumpSuit));
                 }
-                string cardFilename = Cards[cardIndex].ToString()?.ToLower() +
-                    (disableCard ? " disabled" : "") + ".png";
-                BitmapImage source = UIHelpers.GenerateImageSource(
-                    $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}");
+                BitmapImage source = UIHelpers.GenerateCardImageSource(Cards[cardIndex], false, disableCard);
 
                 // Determine the margin to use for the current card.
 
@@ -307,11 +300,6 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
 
             for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
             {
-                // Load the image for the card.
-
-                string cardFilename = Cards[cardIndex].ToString()?.ToLower() + ".png";
-                string imageName = $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}";
-
                 // Determine the margin to use for the current card.
 
                 Thickness cardMargin = new(0);
@@ -329,7 +317,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
                 {
                     ImageData = new Image()
                     {
-                        Source = UIHelpers.GenerateImageSource(imageName)
+                        Source = UIHelpers.GenerateCardImageSource(Cards[cardIndex], false, false)
                     },
                     CardVisibility = Visibility.Visible,
                     ImageVisibility = Visibility.Collapsed,
@@ -382,9 +370,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
             {
                 ImageData = new Image()
                 {
-                    Source = UIHelpers.GenerateImageSource(
-                        "pack://application:,,,/Euchre;component/images/cardbacks/" + 
-                        GameSettingsManager.Instance.SelectedCardBack)
+                    Source = UIHelpers.GenerateCardBackImageSource(false, false)
                 },
                 CardVisibility = Visibility.Collapsed,
                 ImageVisibility = Visibility.Visible,
@@ -399,9 +385,6 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
 
         // Load each card back for the specified number of cards.
 
-        string cardFile = Path.GetFileNameWithoutExtension(GameSettingsManager.Instance.SelectedCardBack) +
-            " disabled.png";
-
         for (int cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
         {
             // Add the image to the collection of images and set it visible.
@@ -410,8 +393,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
             {
                 ImageData = new Image()
                 {
-                    Source = UIHelpers.GenerateImageSource(
-                        "pack://application:,,,/Euchre;component/images/cardbacks/" + cardFile)
+                    Source = UIHelpers.GenerateCardBackImageSource(false, true)
                 },
                 CardVisibility = Visibility.Collapsed,
                 ImageVisibility = Visibility.Visible,
@@ -449,9 +431,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
             {
                 // Load the image for the card.
 
-                string cardFilename = Cards[cardIndex].ToString()?.ToLower() + " disabled.png";
-                BitmapImage source = UIHelpers.GenerateImageSource(
-                    $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}");
+                BitmapImage source = UIHelpers.GenerateCardImageSource(Cards[cardIndex], false, true);
 
                 // Determine the margin to use for the current card.
 

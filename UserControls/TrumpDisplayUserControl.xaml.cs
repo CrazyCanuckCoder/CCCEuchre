@@ -57,8 +57,7 @@ public partial class TrumpDisplayUserControl : UserControl
     /// <param name="kitty">The card on top of the kitty.</param>
     public void SetKittyCard(Card kitty)
     {
-        TrumpImage.Source = UIHelpers.GenerateImageSource(
-            $"pack://application:,,,/Euchre;component/images/cards/{kitty.ToString()?.ToLower()}.png");
+        TrumpImage.Source = UIHelpers.GenerateCardImageSource(kitty, false, false);
         TitleText = "Kitty";
     }
 
@@ -68,26 +67,7 @@ public partial class TrumpDisplayUserControl : UserControl
     /// <param name="trumpSuit">The suit to display as trump.</param>
     public void SetTrump(Suit trumpSuit)
     {
-        string uriSource = "pack://application:,,,/Euchre;component/images/suits/";
-        switch (trumpSuit)
-        {
-            case Suit.Clubs:
-                uriSource += "Clubs";
-                break;
-
-            case Suit.Diamonds:
-                uriSource += "Diamonds";
-                break;
-
-            case Suit.Hearts:
-                uriSource += "Hearts";
-                break;
-
-            case Suit.Spades:
-                uriSource += "Spades";
-                break;
-        }
-        TrumpImage.Source = UIHelpers.GenerateImageSource(uriSource + ".png");
+        TrumpImage.Source = UIHelpers.GenerateSuitImageSource(trumpSuit);
         TitleText = "Trump";
     }
 

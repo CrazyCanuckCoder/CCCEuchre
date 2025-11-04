@@ -335,7 +335,7 @@ public class PlayManager : IPlayManager
             {
                 // If yes, play the next highest trump.
 
-                cardToPlay = playersHighestTrump;
+                cardToPlay = CardFinder.GetNextHighestTrump(_player.Hand, trump, winningCard);
             }
             else
             {

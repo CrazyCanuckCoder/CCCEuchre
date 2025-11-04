@@ -68,18 +68,13 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
 
             for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
             {
-                // Generate the file name for the card.
-
-                string cardFilename = Cards[cardIndex].ToString()?.ToLower() + " rotated.png";
-
                 // Add the image to the collection of images.
 
                 VerticalCardImages.Add(new CardDisplay()
                 {
                     ImageData = new Image()
                     {
-                        Source = UIHelpers.GenerateImageSource(
-                            $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}")
+                        Source = UIHelpers.GenerateCardImageSource(Cards[cardIndex], true, false)
                     },
                     Card = Cards[cardIndex],
                     CardVisibility = Visibility.Collapsed,
@@ -127,9 +122,6 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
     /// <param name="numberOfCards">The number of card back images to show on the control.</param>
     public void DisplayCards(int numberOfCards)
     {
-        string cardFilename = GameSettingsManager.Instance.SelectedCardBack;
-        cardFilename = cardFilename.Insert(cardFilename.LastIndexOf('.'), " rotated");
-
         // Load each card back for the specified number cards.
 
         for (int cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
@@ -140,8 +132,7 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
             {
                 ImageData = new Image()
                 {
-                    Source = UIHelpers.GenerateImageSource(
-                        $"pack://application:,,,/Euchre;component/images/cardbacks/{cardFilename}")
+                    Source = UIHelpers.GenerateCardBackImageSource(true, false)
                 },
                 CardVisibility = Visibility.Collapsed,
                 ImageVisibility = Visibility.Visible,
@@ -152,8 +143,7 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
 
     public void DisableCards(int numberOfCards)
     {
-        string cardFilename = GameSettingsManager.Instance.SelectedCardBack;
-        cardFilename = cardFilename.Insert(cardFilename.LastIndexOf('.'), " rotated disabled");
+        ClearCards();
 
         // Load each card back for the specified number cards.
 
@@ -165,8 +155,7 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
             {
                 ImageData = new Image()
                 {
-                    Source = UIHelpers.GenerateImageSource(
-                        $"pack://application:,,,/Euchre;component/images/cardbacks/{cardFilename}")
+                    Source = UIHelpers.GenerateCardBackImageSource(true, true)
                 },
                 CardVisibility = Visibility.Collapsed,
                 ImageVisibility = Visibility.Visible,
@@ -192,18 +181,13 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
 
             for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
             {
-                // Generate the file name for the card.
-
-                string cardFilename = Cards[cardIndex].ToString()?.ToLower() + " rotated disabled.png";
-
                 // Add the image to the collection of images.
 
                 VerticalCardImages.Add(new CardDisplay()
                 {
                     ImageData = new Image()
                     {
-                        Source = UIHelpers.GenerateImageSource(
-                            $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}")
+                        Source = UIHelpers.GenerateCardImageSource(Cards[cardIndex], true, true)
                     },
                     Card = Cards[cardIndex],
                     CardVisibility = Visibility.Collapsed,
