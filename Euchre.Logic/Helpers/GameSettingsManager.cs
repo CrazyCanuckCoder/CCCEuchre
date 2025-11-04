@@ -100,11 +100,11 @@ public sealed class GameSettingsManager
     /// <returns>An IEnumerable with the automated players information.</returns>
     public IEnumerable<AutomatedPlayerAvatar> GetAutomatedPlayers()
     {
-        return   from player in _settingsDS.AutoPlayers
+        return   from playerRow in _settingsDS.AutoPlayers
                select new AutomatedPlayerAvatar()
                {
-                   PlayerName = player.Name,
-                   AvatarNumber = player.AvatarID
+                   PlayerName = playerRow.Name,
+                   AvatarNumber = playerRow.AvatarID
                };
     }
 
