@@ -80,7 +80,21 @@ public class AutomatedPlayer : Player
     /// <see langword="false"/>.</returns>
     public override bool OrderUp(Card kitty, bool isDealer)
     {
-        return _bidder.DetermineWhetherToOrderUp(kitty, isDealer, out _goAlone);
+        bool orderUp = _bidder.DetermineWhetherToOrderUp(kitty, isDealer, out _goAlone);
+
+        // Check for the Canadian loner rule.  If ordering up your partner, you have to go alone.
+
+        if (orderUp && GameSettingsManager.Instance.CanadianLonerRule)
+        {
+            // If ordering up their partner, the goAlone flag will indicate whether to order them up.
+
+            if (this != _dataManager.Dealer && TeamIndex == _dataManager.Dealer!.TeamIndex)
+            {
+                orderUp = _goAlone;
+            }
+        }
+
+        return orderUp;
     }
 
     /// <summary>
