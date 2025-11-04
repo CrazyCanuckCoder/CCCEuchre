@@ -20,4 +20,5 @@ public interface IPlayer
     bool OrderUp(Card kitty, bool isDealer);
     Card PlayCard(int index);
     Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit);
+    IPlayer Clone();
 }

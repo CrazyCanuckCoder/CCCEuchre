@@ -80,4 +80,16 @@ public class Deck
         
         return _cardStack.Pop();
     }
+
+    /// <summary>
+    /// Creates a copy of the Deck.
+    /// </summary>
+    /// <returns>A Deck with the same properties as this Deck.</returns>
+    internal Deck Clone()
+    {
+        return new Deck()
+        {
+            Cards = [.. Cards],
+        };
+    }
 }

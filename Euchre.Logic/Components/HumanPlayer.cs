@@ -1,5 +1,6 @@
 ﻿using Euchre.Logic.EventArgs;
 using Euchre.Logic.Exceptions;
+using Euchre.Logic.Interfaces;
 
 namespace Euchre.Logic.Components;
 
@@ -13,9 +14,9 @@ namespace Euchre.Logic.Components;
 /// necessary user interface for input.</remarks>
 public class HumanPlayer : Player
 {
-    public HumanPlayer(string name, int teamIndex, int playerIndex, int avatarNumber) : 
-        base(name, teamIndex, playerIndex, true, avatarNumber) 
-    { 
+    public HumanPlayer(string name, int teamIndex, int playerIndex, int avatarNumber) :
+        base(name, teamIndex, playerIndex, true, avatarNumber)
+    {
     }
 
     /// <summary>
@@ -143,5 +144,18 @@ public class HumanPlayer : Player
         }
 
         return args.PlayedCard;
+    }
+
+    /// <summary>
+    /// Copies the values of this object.
+    /// </summary>
+    /// <returns>An IPlayer containing the same properties as this object.</returns>
+    public override IPlayer Clone()
+    {
+        return new HumanPlayer(Name, TeamIndex, PlayerIndex, AvatarNumber)
+        {
+            Hand = [.. Hand],
+            IsGoingAlone = IsGoingAlone,
+        };
     }
 }
