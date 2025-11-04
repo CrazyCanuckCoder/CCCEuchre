@@ -1,3 +1,4 @@
+using Euchre.Logic.Data;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 
@@ -18,6 +19,7 @@ public class AutomatedPlayer : Player
         base(name, teamIndex, playerIndex, false, avatarNumber) 
     {
         _bidder = new Bidder(this);
+        _dataManager = dataManager;
         _playManager = new PlayManager(dataManager, this);
     }
 
@@ -36,6 +38,7 @@ public class AutomatedPlayer : Player
         GameStateManager dataManager, int avatarNumber) : base(name, teamIndex, playerIndex, false, avatarNumber)
     {
         _bidder = bidder ?? new Bidder(this);
+        _dataManager = dataManager;
         _playManager = playManager ?? new PlayManager(dataManager, this);
     }
 
@@ -48,6 +51,11 @@ public class AutomatedPlayer : Player
     /// Represents the play manager used to handle play-related operations.
     /// </summary>
     private readonly IPlayManager _playManager;
+
+    /// <summary>
+    /// Represents the state manager used for handling the state of the game.
+    /// </summary>
+    private readonly GameStateManager _dataManager;
 
     /// <summary>
     /// True to indicate the individual is going alone; otherwise, false.
@@ -107,5 +115,18 @@ public class AutomatedPlayer : Player
     public override Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit)
     {
         return _playManager.DetermineCardToPlay(trick, trump, leadSuit);
+    }
+
+    /// <summary>
+    /// Copies the values of this object.
+    /// </summary>
+    /// <returns>An IPlayer containing the same properties as this object.</returns>
+    public override IPlayer Clone()
+    {
+        return new AutomatedPlayer(Name, TeamIndex, PlayerIndex, _dataManager, AvatarNumber)
+        {
+            Hand = [.. Hand],
+            IsGoingAlone = IsGoingAlone,
+        };
     }
 }

@@ -150,4 +150,10 @@ public abstract class Player : IPlayer
     /// been led yet.</param>
     /// <returns>The card selected to play in the current trick.</returns>
     public abstract Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit);
+
+    /// <summary>
+    /// Copies the values of this object.
+    /// </summary>
+    /// <returns>An IPlayer containing the same properties as this object.</returns>
+    public abstract IPlayer Clone();
 }

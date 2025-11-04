@@ -126,7 +126,8 @@ public class GameStateManager
     /// </summary>
     public async void SaveGameDataAsync()
     {
-        await Task.Run(() => DataManager.SaveGameState(this));
+        GameStateManager gsManagerClone = Clone();
+        await Task.Run(() => DataManager.SaveGameState(gsManagerClone));
     }
 
     /// <summary>
@@ -156,5 +157,31 @@ public class GameStateManager
         {
             File.Delete(DataManager.FILE_NAME);
         }
+    }
+
+    /// <summary>
+    /// Clones the values of this class and creates a new instance.
+    /// </summary>
+    /// <returns>A new instance of this class with the same values.</returns>
+    private GameStateManager Clone()
+    {
+        return new GameStateManager()
+        {
+            Players = (IPlayer[])Players!.Clone(),
+            Deck = Deck.Clone(),
+            Kitty = (Card?)Kitty?.Clone(),
+            Trump = Trump,
+            Dealer = Dealer?.Clone(),
+            TrumpCaller = TrumpCaller?.Clone(),
+            TeamScores = (int[])TeamScores.Clone(),
+            CurrentRoundTricks = [.. CurrentRoundTricks],
+            GoingAlone = GoingAlone,
+            AlonePlayer = AlonePlayer?.Clone(),
+            NextTrickPlayer = NextTrickPlayer?.Clone(),
+            RestartGame = RestartGame,
+            LastCompletedStage = LastCompletedStage,
+            CurrentTrickNumber = CurrentTrickNumber,
+            TricksWonByPlayers = (int[])TricksWonByPlayers.Clone(),
+        };
     }
 }
