@@ -29,5 +29,6 @@
 		<PlayLastCardInHumansHand>true</PlayLastCardInHumansHand>
 		<UseStandardMenu>false</UseStandardMenu>
 		<UseCanadianLonerRule>true</UseCanadianLonerRule>
+		<MustHaveSuitToCall>true</MustHaveSuitToCall>
 	</Settings>
 </GameSettingsDS>

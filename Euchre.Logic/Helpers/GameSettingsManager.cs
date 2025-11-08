@@ -60,6 +60,11 @@ public sealed class GameSettingsManager
     public bool CanadianLonerRule { get; set; }
 
     /// <summary>
+    /// True to indicate the player must have a card in a suit to call it as trump.
+    /// </summary>
+    public bool MustHaveSuitToCall { get; set; }
+
+    /// <summary>
     /// Reads the current XML file and loads the information into the GameDataSet property.
     /// </summary>
     /// <exception cref="FileNotFoundException"></exception>
@@ -73,6 +78,7 @@ public sealed class GameSettingsManager
             SelectedCardBack = settingsRow.SelectedCardBackFile;
             UseStandardMenu = settingsRow.UseStandardMenu;
             CanadianLonerRule = settingsRow.UseCanadianLonerRule;
+            MustHaveSuitToCall = settingsRow.MustHaveSuitToCall;
         }
         else
         {
@@ -96,6 +102,7 @@ public sealed class GameSettingsManager
         settingsRow.SelectedCardBackFile = SelectedCardBack;
         settingsRow.UseStandardMenu = UseStandardMenu;
         settingsRow.UseCanadianLonerRule = CanadianLonerRule;
+        settingsRow.MustHaveSuitToCall = MustHaveSuitToCall;
         _settingsDS.AcceptChanges();
         _settingsDS.WriteXml(FILE_NAME);
 
