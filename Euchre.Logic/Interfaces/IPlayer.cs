@@ -13,7 +13,7 @@ public interface IPlayer
     int PlayerIndex { get; }
 
     void AddCard(Card card);
-    Suit? CallTrump(Card kitty);
+    Suit? CallTrump(Card kitty, bool isDealer);
     void SortPlayerCards(Suit? trump);
     void ClearHand();
     void DiscardForKitty(Card kitty);

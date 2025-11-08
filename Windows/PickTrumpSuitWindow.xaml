@@ -11,6 +11,7 @@
     Background="#FFF7F0"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterOwner"
+    Closing="Window_Closing"
     mc:Ignorable="d">
 
     <Grid Margin="20">
@@ -124,6 +125,7 @@
             Click="PassButton_Click"
             Content="Pass"
             FontSize="16"
+            IsEnabled="{Binding IsPassButtonEnabled}"
             Style="{DynamicResource SubmitButtonStyle}" />
     </Grid>
 </Window>

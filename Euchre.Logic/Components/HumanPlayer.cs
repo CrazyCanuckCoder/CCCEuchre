@@ -109,7 +109,7 @@ public class HumanPlayer : Player
     /// <param name="kitty">The card from the kitty indicating which suit cannot be called trump.</param>
     /// <returns>The trump suit selected by the user, or <see langword="null"/> if no trump suit is 
     /// selected which indicates the automated player will pass.</returns>
-    public override Suit? CallTrump(Card kitty)
+    public override Suit? CallTrump(Card kitty, bool isDealer)
     {
         PromptForTrumpSuitEventArgs args = new(kitty);
         PromptForTrumpSuit?.Invoke(this, args);

@@ -124,7 +124,7 @@ public abstract class Player : IPlayer
     /// <param name="kitty">The card from the kitty indicating which suit cannot be called trump.</param>
     /// <returns>The trump suit selected by the user, or <see langword="null"/> if no trump suit is 
     /// selected which indicates the automated player will pass.</returns>
-    public abstract Suit? CallTrump(Card kitty);
+    public abstract Suit? CallTrump(Card kitty, bool isDealer);
 
     /// <summary>
     /// Determines which card in the player's hand will be replaced by the kitty's upturned card.
