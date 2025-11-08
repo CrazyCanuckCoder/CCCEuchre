@@ -28,5 +28,6 @@
 		<SelectedCardBackFile>Grid Blue Card Back.png</SelectedCardBackFile>
 		<PlayLastCardInHumansHand>true</PlayLastCardInHumansHand>
 		<UseStandardMenu>false</UseStandardMenu>
+		<UseCanadianLonerRule>true</UseCanadianLonerRule>
 	</Settings>
 </GameSettingsDS>

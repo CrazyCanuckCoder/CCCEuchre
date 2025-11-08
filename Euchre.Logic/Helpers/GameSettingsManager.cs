@@ -54,6 +54,12 @@ public sealed class GameSettingsManager
     public bool UseStandardMenu { get; set; }
 
     /// <summary>
+    /// True to indicate the Canadian Lone rule (if you order up your partner, you have to go alone) is in
+    /// effect.
+    /// </summary>
+    public bool CanadianLonerRule { get; set; }
+
+    /// <summary>
     /// Reads the current XML file and loads the information into the GameDataSet property.
     /// </summary>
     /// <exception cref="FileNotFoundException"></exception>
@@ -66,6 +72,7 @@ public sealed class GameSettingsManager
             PlayLastCardInHand = settingsRow.PlayLastCardInHumansHand;
             SelectedCardBack = settingsRow.SelectedCardBackFile;
             UseStandardMenu = settingsRow.UseStandardMenu;
+            CanadianLonerRule = settingsRow.UseCanadianLonerRule;
         }
         else
         {
@@ -88,6 +95,7 @@ public sealed class GameSettingsManager
         settingsRow.PlayLastCardInHumansHand = PlayLastCardInHand;
         settingsRow.SelectedCardBackFile = SelectedCardBack;
         settingsRow.UseStandardMenu = UseStandardMenu;
+        settingsRow.UseCanadianLonerRule = CanadianLonerRule;
         _settingsDS.AcceptChanges();
         _settingsDS.WriteXml(FILE_NAME);
 

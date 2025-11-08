@@ -1,4 +1,6 @@
 ﻿using Euchre.Logic.Components;
+using Euchre.Logic.Helpers;
+using Euchre.Logic.Interfaces;
 using System.Windows;
 
 namespace Euchre.Windows;
@@ -8,9 +10,14 @@ namespace Euchre.Windows;
 /// </summary>
 public partial class PickTrumpSuitWindow : Window
 {
-    public PickTrumpSuitWindow(List<Suit> allowedSuits)
+    public PickTrumpSuitWindow(List<Suit> allowedSuits, IPlayer currentPlayer, IPlayer dealer, 
+        bool isKittyRound)
     {
         InitializeComponent();
+        if (isKittyRound)
+        {
+            CheckForCanadianLoner(currentPlayer, dealer);
+        }
         SetTrumpButtonsVisibility(allowedSuits);
         DataContext = this;
     }
@@ -56,6 +63,13 @@ public partial class PickTrumpSuitWindow : Window
     public static readonly DependencyProperty GoAloneProperty =
         DependencyProperty.Register(nameof(GoAlone), typeof(bool), typeof(PickTrumpSuitWindow),
             new PropertyMetadata(false));
+
+    /// <summary>
+    /// Using a DependencyProperty as the backing store for IsGoAloneCheckBoxEnabled.
+    /// </summary>
+    public static readonly DependencyProperty IsGoAloneCheckBoxEnabledProperty =
+        DependencyProperty.Register(nameof(IsGoAloneCheckBoxEnabled), typeof(bool),
+            typeof(PickTrumpSuitWindow), new PropertyMetadata(true));
 
     /// <summary>
     /// Shows/hides the button to select hearts as trump.
@@ -111,8 +125,19 @@ public partial class PickTrumpSuitWindow : Window
         set => SetValue(GoAloneProperty, value); 
     }
 
+    /// <summary>
+    /// True to indicate the Go Alone checkbox should be enabled.
+    /// </summary>
+    public bool IsGoAloneCheckBoxEnabled
+    {
+        get => (bool)GetValue(IsGoAloneCheckBoxEnabledProperty); 
+        set => SetValue(IsGoAloneCheckBoxEnabledProperty, value);
+    }
 
-
+    /// <summary>
+    /// Sets the visibility of each suit if it exists in a list of suits.
+    /// </summary>
+    /// <param name="allowedSuits">The suits to set as visible.</param>
     private void SetTrumpButtonsVisibility(List<Suit> allowedSuits)
     {
         foreach (Suit suit in allowedSuits)
@@ -134,6 +159,23 @@ public partial class PickTrumpSuitWindow : Window
                 case Suit.Spades:
                     SpadesVisibility = Visibility.Visible;
                     break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Sets the properties on the form when the Canadian Loner rule is set.
+    /// </summary>
+    /// <param name="currentPlayer">The player that is prompted to order the kitty card up.</param>
+    /// <param name="dealer">The player that is the dealer for the current round.</param>
+    private void CheckForCanadianLoner(IPlayer currentPlayer, IPlayer dealer)
+    {
+        if (GameSettingsManager.Instance.CanadianLonerRule)
+        {
+            if (currentPlayer.TeamIndex == dealer.TeamIndex && currentPlayer != dealer)
+            {
+                GoAlone = true;
+                IsGoAloneCheckBoxEnabled = false;
             }
         }
     }

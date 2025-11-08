@@ -250,8 +250,11 @@ public partial class MainWindow : Window
     {
         UIHelpers.RunOnUIThread(() =>
         {
-            e.OrderedUp = ViewModel.PromptUserToOrderUp(e.Kitty, out bool goAlone);
-            e.GoAlone = goAlone;
+            if (sender is HumanPlayer player)
+            {
+                e.OrderedUp = ViewModel.PromptUserToOrderUp(e.Kitty, player, out bool goAlone);
+                e.GoAlone = goAlone;
+            }
         });
     }
 
@@ -259,8 +262,11 @@ public partial class MainWindow : Window
     {
         UIHelpers.RunOnUIThread(() =>
         {
-            e.TrumpSuit = ViewModel.PromptUserForTrump(e.Kitty, out bool goAlone);
-            e.GoAlone = goAlone;
+            if (sender is HumanPlayer player)
+            {
+                e.TrumpSuit = ViewModel.PromptUserForTrump(e.Kitty, player, out bool goAlone);
+                e.GoAlone = goAlone;
+            }
         });
     }
 
@@ -330,7 +336,10 @@ public partial class MainWindow : Window
             //Suit.Diamonds,
             Suit.Spades,
         ];
-        PickTrumpSuitWindow pickTrump = new(trumpSuits)
+        PickTrumpSuitWindow pickTrump = new(trumpSuits, 
+                                        new HumanPlayer("human", 0, 0, 0), 
+                                        new AutomatedPlayer("auto", 0, 0, null, 0), 
+                                        false)
         {
             Owner = this,
         };
