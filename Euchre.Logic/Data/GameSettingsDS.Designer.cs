@@ -587,6 +587,8 @@ namespace Euchre.Logic.Data {
             
             private global::System.Data.DataColumn columnUseCanadianLonerRule;
             
+            private global::System.Data.DataColumn columnMustHaveSuitToCall;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public SettingsDataTable() {
@@ -656,6 +658,14 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn MustHaveSuitToCallColumn {
+                get {
+                    return this.columnMustHaveSuitToCall;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -691,13 +701,14 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public SettingsRow AddSettingsRow(string SelectedCardBackFile, bool PlayLastCardInHumansHand, bool UseStandardMenu, bool UseCanadianLonerRule) {
+            public SettingsRow AddSettingsRow(string SelectedCardBackFile, bool PlayLastCardInHumansHand, bool UseStandardMenu, bool UseCanadianLonerRule, bool MustHaveSuitToCall) {
                 SettingsRow rowSettingsRow = ((SettingsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         SelectedCardBackFile,
                         PlayLastCardInHumansHand,
                         UseStandardMenu,
-                        UseCanadianLonerRule};
+                        UseCanadianLonerRule,
+                        MustHaveSuitToCall};
                 rowSettingsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowSettingsRow);
                 return rowSettingsRow;
@@ -724,6 +735,7 @@ namespace Euchre.Logic.Data {
                 this.columnPlayLastCardInHumansHand = base.Columns["PlayLastCardInHumansHand"];
                 this.columnUseStandardMenu = base.Columns["UseStandardMenu"];
                 this.columnUseCanadianLonerRule = base.Columns["UseCanadianLonerRule"];
+                this.columnMustHaveSuitToCall = base.Columns["MustHaveSuitToCall"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -737,6 +749,8 @@ namespace Euchre.Logic.Data {
                 base.Columns.Add(this.columnUseStandardMenu);
                 this.columnUseCanadianLonerRule = new global::System.Data.DataColumn("UseCanadianLonerRule", typeof(bool), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnUseCanadianLonerRule);
+                this.columnMustHaveSuitToCall = new global::System.Data.DataColumn("MustHaveSuitToCall", typeof(bool), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnMustHaveSuitToCall);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1014,6 +1028,22 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public bool MustHaveSuitToCall {
+                get {
+                    try {
+                        return ((bool)(this[this.tableSettings.MustHaveSuitToCallColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'MustHaveSuitToCall\' in table \'Settings\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSettings.MustHaveSuitToCallColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public bool IsSelectedCardBackFileNull() {
                 return this.IsNull(this.tableSettings.SelectedCardBackFileColumn);
             }
@@ -1058,6 +1088,18 @@ namespace Euchre.Logic.Data {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public void SetUseCanadianLonerRuleNull() {
                 this[this.tableSettings.UseCanadianLonerRuleColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public bool IsMustHaveSuitToCallNull() {
+                return this.IsNull(this.tableSettings.MustHaveSuitToCallColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public void SetMustHaveSuitToCallNull() {
+                this[this.tableSettings.MustHaveSuitToCallColumn] = global::System.Convert.DBNull;
             }
         }
         

@@ -14,6 +14,7 @@ public partial class PickTrumpSuitWindow : Window
         bool isKittyRound)
     {
         InitializeComponent();
+        _playerHand = currentPlayer.Hand;
         if (isKittyRound)
         {
             CheckForCanadianLoner(currentPlayer, dealer);
@@ -21,6 +22,11 @@ public partial class PickTrumpSuitWindow : Window
         SetTrumpButtonsVisibility(allowedSuits);
         DataContext = this;
     }
+
+    /// <summary>
+    /// Reference to the cards in the player's hand.
+    /// </summary>
+    private List<Card> _playerHand;
 
     /// <summary>
     /// Using a DependencyProperty as the backing store for HeartsVisibility.
@@ -140,6 +146,10 @@ public partial class PickTrumpSuitWindow : Window
     /// <param name="allowedSuits">The suits to set as visible.</param>
     private void SetTrumpButtonsVisibility(List<Suit> allowedSuits)
     {
+        if (GameSettingsManager.Instance.MustHaveSuitToCall)
+        {
+            allowedSuits = CheckForSuitExistence(allowedSuits);
+        }
         foreach (Suit suit in allowedSuits)
         {
             switch (suit)
@@ -178,6 +188,21 @@ public partial class PickTrumpSuitWindow : Window
                 IsGoAloneCheckBoxEnabled = false;
             }
         }
+    }
+
+    private List<Suit> CheckForSuitExistence(List<Suit> allowedSuits)
+    {
+        List<Suit> newAllowed = [];
+
+        foreach (Suit suit in allowedSuits)
+        {
+            if (_playerHand.Where(c => c.Suit == suit).Any())
+            {
+                newAllowed.Add(suit);
+            }
+        }
+
+        return newAllowed;
     }
 
     private void HeartsButton_Click(object? sender, RoutedEventArgs e)
