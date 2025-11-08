@@ -65,6 +65,12 @@ public sealed class GameSettingsManager
     public bool MustHaveSuitToCall { get; set; }
 
     /// <summary>
+    /// True to indicate the player must call suit if they are the dealer and no trump has been called in the
+    /// second round.
+    /// </summary>
+    public bool StickTheDealer { get; set; }
+
+    /// <summary>
     /// Reads the current XML file and loads the information into the GameDataSet property.
     /// </summary>
     /// <exception cref="FileNotFoundException"></exception>
@@ -79,6 +85,7 @@ public sealed class GameSettingsManager
             UseStandardMenu = settingsRow.UseStandardMenu;
             CanadianLonerRule = settingsRow.UseCanadianLonerRule;
             MustHaveSuitToCall = settingsRow.MustHaveSuitToCall;
+            StickTheDealer = settingsRow.StickTheDealer;
         }
         else
         {
@@ -103,6 +110,7 @@ public sealed class GameSettingsManager
         settingsRow.UseStandardMenu = UseStandardMenu;
         settingsRow.UseCanadianLonerRule = CanadianLonerRule;
         settingsRow.MustHaveSuitToCall = MustHaveSuitToCall;
+        settingsRow.StickTheDealer = StickTheDealer;
         _settingsDS.AcceptChanges();
         _settingsDS.WriteXml(FILE_NAME);
 

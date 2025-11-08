@@ -1,6 +1,7 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
+using Euchre.UILogic.Classes;
 using System.Windows;
 
 namespace Euchre.Windows;
@@ -19,6 +20,10 @@ public partial class PickTrumpSuitWindow : Window
         {
             CheckForCanadianLoner(currentPlayer, dealer);
         }
+        else
+        {
+            CheckForStickTheDealer(currentPlayer, dealer);
+        }
         SetTrumpButtonsVisibility(allowedSuits);
         DataContext = this;
     }
@@ -27,6 +32,12 @@ public partial class PickTrumpSuitWindow : Window
     /// Reference to the cards in the player's hand.
     /// </summary>
     private List<Card> _playerHand;
+
+    /// <summary>
+    /// True to indicate that the user cannot pass when they are the dealer and the second bidding round has
+    /// not produced a trump suit.
+    /// </summary>
+    private bool _stickTheDealer;
 
     /// <summary>
     /// Using a DependencyProperty as the backing store for HeartsVisibility.
@@ -76,6 +87,13 @@ public partial class PickTrumpSuitWindow : Window
     public static readonly DependencyProperty IsGoAloneCheckBoxEnabledProperty =
         DependencyProperty.Register(nameof(IsGoAloneCheckBoxEnabled), typeof(bool),
             typeof(PickTrumpSuitWindow), new PropertyMetadata(true));
+
+    /// <summary>
+    /// Using a DependencyProperty as the backing store for IsPassButtonEnabled.
+    /// </summary>
+    public static readonly DependencyProperty IsPassButtonEnabledProperty =
+        DependencyProperty.Register(nameof(IsPassButtonEnabled), typeof(bool), typeof(PickTrumpSuitWindow),
+            new PropertyMetadata(true));
 
     /// <summary>
     /// Shows/hides the button to select hearts as trump.
@@ -141,6 +159,17 @@ public partial class PickTrumpSuitWindow : Window
     }
 
     /// <summary>
+    /// True to indicate the Pass button can be enabled.
+    /// </summary>
+    public bool IsPassButtonEnabled
+    {
+        get => (bool)GetValue(IsPassButtonEnabledProperty); 
+        set => SetValue(IsPassButtonEnabledProperty, value);
+    }
+
+
+
+    /// <summary>
     /// Sets the visibility of each suit if it exists in a list of suits.
     /// </summary>
     /// <param name="allowedSuits">The suits to set as visible.</param>
@@ -190,6 +219,12 @@ public partial class PickTrumpSuitWindow : Window
         }
     }
 
+    /// <summary>
+    /// Checks the player's hand for cards that match the suit in a list of suits.
+    /// </summary>
+    /// <param name="allowedSuits">A list of all possible suits that could be called trump.</param>
+    /// <returns>A list of suits derived from the allowed suits indicating which suits that the player has
+    /// cards for.</returns>
     private List<Suit> CheckForSuitExistence(List<Suit> allowedSuits)
     {
         List<Suit> newAllowed = [];
@@ -203,6 +238,18 @@ public partial class PickTrumpSuitWindow : Window
         }
 
         return newAllowed;
+    }
+
+    /// <summary>
+    /// Checks the conditions for sticking the dealer.  Assumes that it is not being called when it is the
+    /// kitty round.
+    /// </summary>
+    /// <param name="player">A reference to the user.</param>
+    /// <param name="dealer">A reference to the player that is the dealer.</param>
+    private void CheckForStickTheDealer(IPlayer player, IPlayer dealer)
+    {
+        _stickTheDealer = GameSettingsManager.Instance.StickTheDealer && player == dealer;
+        IsPassButtonEnabled = !_stickTheDealer;
     }
 
     private void HeartsButton_Click(object? sender, RoutedEventArgs e)
@@ -237,5 +284,20 @@ public partial class PickTrumpSuitWindow : Window
     {
         DialogResult = true;
         Close();
+    }
+
+    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+        if (_stickTheDealer)
+        {
+            if (SelectedSuit == null)
+            {
+                DialogBoxes.InformationDialog(
+                    "This dialog box cannot close until a trump suit has been chosen.", 
+                    this, 
+                    "Stick the Dealer");
+                e.Cancel = true;
+            }
+        }
     }
 }

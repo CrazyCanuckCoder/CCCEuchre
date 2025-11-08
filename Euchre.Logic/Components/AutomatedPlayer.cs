@@ -103,9 +103,9 @@ public class AutomatedPlayer : Player
     /// <param name="kitty">The card from the kitty indicating which suit cannot be called trump.</param>
     /// <returns>The trump suit selected for the game, or <see langword="null"/> if no trump suit is 
     /// determined which indicates the automated player will pass.</returns>
-    public override Suit? CallTrump(Card kitty)
+    public override Suit? CallTrump(Card kitty, bool isDealer)
     {
-        return _bidder.DetermineTrump(kitty, out _goAlone);
+        return _bidder.DetermineTrump(kitty, isDealer, out _goAlone);
     }
 
     /// <summary>

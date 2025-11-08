@@ -147,7 +147,7 @@ internal static class CardFinder
     /// <param name="cards">The list of cards to evaluate. Cannot be null.</param>
     /// <param name="suit">The suit of the cards to count.  Does not work for trump.</param>
     /// <returns>The number of cards found for the specified suit.</returns>
-    public static int CountCardsOfSuitLessJacks(List<Card> cards, Suit suit)
+    public static int CountCardsOfSuitExceptForTheJack(List<Card> cards, Suit suit)
     {
         return cards.Count(c => c.Suit == suit && c.Rank != Rank.Jack);
     }

@@ -352,7 +352,7 @@ public class EuchreGame
             }
             else
             {
-                var calledSuit = player.CallTrump(GameInfo.Kitty!);
+                var calledSuit = player.CallTrump(GameInfo.Kitty!, isDealer);
                 if (calledSuit.HasValue)
                 {
                     SetGameToPlayersBid(calledSuit.Value, player);

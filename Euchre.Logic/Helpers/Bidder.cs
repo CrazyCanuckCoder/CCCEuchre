@@ -47,7 +47,7 @@ public class Bidder : IBidder
     /// <param name="kitty">The card that was the kitty to ensure that suit cannot be called.</param>
     /// <param name="goAlone">Indicates whether the player should go alone when calling trump.</param>
     /// <returns>The suit to be used for trump, or null to indicate the player wants to pass.</returns>
-    public Suit? DetermineTrump(Card kitty, out bool goAlone)
+    public Suit? DetermineTrump(Card kitty, bool isDealer, out bool goAlone)
     {
         var suitCounts = new Dictionary<Suit, int>();
 
@@ -55,7 +55,7 @@ public class Bidder : IBidder
 
         foreach (Suit suit in Enum.GetValues<Suit>().Where(s => s != kitty.Suit))
         {
-            suitCounts[suit] = CardFinder.CountCardsOfSuitLessJacks(_player.Hand, suit) +
+            suitCounts[suit] = CardFinder.CountCardsOfSuitExceptForTheJack(_player.Hand, suit) +
                 CardFinder.CountBowers(_player.Hand, suit);
         }
 
@@ -75,7 +75,10 @@ public class Bidder : IBidder
 
         goAlone = false;
 
-        return null;
+        // Check for the stick the dealer condition and return the strongest suit as trump.
+        //  If not, return null to indicate the user will pass.
+
+        return GameSettingsManager.Instance.StickTheDealer && isDealer ? suitsByNumber.First().Key : null;
     }
 
     /// <summary>

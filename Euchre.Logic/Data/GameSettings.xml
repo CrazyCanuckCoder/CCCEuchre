@@ -30,5 +30,6 @@
 		<UseStandardMenu>false</UseStandardMenu>
 		<UseCanadianLonerRule>true</UseCanadianLonerRule>
 		<MustHaveSuitToCall>true</MustHaveSuitToCall>
+		<StickTheDealer>true</StickTheDealer>
 	</Settings>
 </GameSettingsDS>
