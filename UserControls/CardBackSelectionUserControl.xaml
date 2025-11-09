@@ -1,0 +1,73 @@
+﻿<UserControl x:Class="Euchre.UserControls.CardBackSelectionUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Euchre.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="250" d:DesignWidth="870">
+
+    <UserControl.Resources>
+        <Style x:Key="Card" TargetType="ToggleButton">
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="False">
+                    <Setter Property="Opacity" Value="0.7"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- The border surrounding the control. -->
+
+    <Border BorderThickness="1" BorderBrush="Black">
+
+        <!-- The control containing the card backs to select. -->
+
+        <ItemsControl HorizontalAlignment="Left"
+            ItemsSource="{Binding CardBacks, RelativeSource={RelativeSource AncestorType=UserControl}}" >
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+
+                        <ToggleButton Style="{StaticResource Card}" BorderThickness="0" 
+                                      Background="Transparent" Checked="ToggleButton_Checked"
+                                      IsChecked="{Binding IsSelected, Mode=TwoWay}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="20"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20"></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition Height="30"></RowDefinition>
+                                    <RowDefinition Height="20"></RowDefinition>
+                                </Grid.RowDefinitions>
+
+                                <!-- The Card Back Image -->
+
+                                <Image Grid.Row="1" Grid.Column="1" Stretch="Fill" Width="100" Height="136" 
+                                       Source="{Binding ImageData.Source}" />
+
+                                <!-- The Card Back Description Label -->
+
+                                <Label Grid.Row="2" Grid.Column="1" Content="{Binding ImageName}" 
+                                       VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                                       />
+                            </Grid>
+                        </ToggleButton>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Border>
+</UserControl>

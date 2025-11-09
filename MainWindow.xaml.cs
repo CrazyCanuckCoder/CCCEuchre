@@ -382,7 +382,11 @@ public partial class MainWindow : Window
 
     private void MenuToolsOptions_Click(object sender, RoutedEventArgs e)
     {
-
+        OptionsWindow optionsWindow = new OptionsWindow()
+        {
+            Owner = this
+        };
+        optionsWindow.ShowDialog();
     }
 
     private void MenuHelpAbout_Click(object sender, RoutedEventArgs e)
