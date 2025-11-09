@@ -8,11 +8,14 @@ using Euchre.UILogic.Classes;
 using Euchre.Windows;
 using System.Windows;
 using Extensions = Euchre.Logic.Helpers.Extensions;
+using log4net;
 
 namespace Euchre;
 
 public class MainWindowViewModel : DependencyObject
 {
+    private static readonly ILog Log = LogManager.GetLogger(typeof(MainWindowViewModel));
+
     #region Fields
 
     /// <summary>
@@ -335,6 +338,7 @@ public class MainWindowViewModel : DependencyObject
     /// </summary>
     public void Initialize()
     {
+        Log.Debug("MainWindowViewModel.Initialize: checking saved game and settings.");
         ContinueMenuVisibility = GameStateManager.DataExists() ? Visibility.Visible : Visibility.Collapsed;
         SetMenuVisibility();
         PlayLastCardInHand = GameSettingsManager.Instance.PlayLastCardInHand;
@@ -346,12 +350,14 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="mainWindow">A reference to the main window to update.</param>
     public void SetupUserInterface(MainWindow mainWindow)
     {
+        Log.Debug("MainWindowViewModel.SetupUserInterface: setting up UI and controller.");
         _mainWindow = mainWindow;
         _mainWindowController = new(mainWindow, CurrentGame!.GameInfo);
         SetVisibilityActionsOfPlayerCardDisplayControl();
         ShowGameBoard();
         if (CurrentGame!.GameInfo.RestartGame)
         {
+            Log.Info("Restoring UI for resumed game.");
             RestoreGameUI();
         }
     }
@@ -362,6 +368,7 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="dealer">The player that currently is the dealer.</param>
     public void DeclareDealer(IPlayer dealer)
     {
+        Log.DebugFormat("DeclareDealer: {0} (index {1})", dealer.Name, dealer.PlayerIndex);
         _mainWindowController.SetPlayerDealerIconVisibility(dealer.PlayerIndex, true);
         _mainWindowController.SetPlayerDealerIconVisibility(_previousDealerPlayerIndex, false);
 
@@ -373,11 +380,9 @@ public class MainWindowViewModel : DependencyObject
     /// <summary>
     /// Shows a specified number of cards being dealt to a player.
     /// </summary>
-    /// <param name="indexOfPlayer">The index from the list of players indicating which player is receiving
-    /// the dealt cards.</param>
-    /// <param name="numberOfCardsDealt">The number of cards to display.</param>
     public void DealCardsToPlayer(int indexOfPlayer, int numberOfCardsDealt)
     {
+        Log.DebugFormat("DealCardsToPlayer: playerIndex={0}, count={1}", indexOfPlayer, numberOfCardsDealt);
         _mainWindowController.DealCardsToPlayer(indexOfPlayer, numberOfCardsDealt);
         SetPlayerVisibility(indexOfPlayer, Visibility.Visible, Visibility.Collapsed);
 
@@ -459,6 +464,7 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="isKittyRound">True to indicate the dealer will pick up the kitty card.</param>
     public void PlayerMadeTrump(IPlayer player, Suit? trump, bool isGoingAlone, bool isKittyRound)
     {
+        Log.InfoFormat("PlayerMadeTrump: {0} trump={1} goingAlone={2} kittyRound={3}", player.Name, trump, isGoingAlone, isKittyRound);
         string message;
 
         if (isKittyRound)
@@ -495,6 +501,7 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="cardPlayed">The card played by the player.</param>
     public void DisplayCardPlayedByPlayer(IPlayer player, ICard cardPlayed)
     {
+        Log.DebugFormat("DisplayCardPlayedByPlayer: {0} played {1}", player.Name, cardPlayed);
         if (player is HumanPlayer)
         {
             _mainWindowController.SetupPlayerCards(player);
@@ -559,6 +566,7 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="gameInfo">The reference to the game information.</param>
     public void EndOfGameUpdate(GameStateManager gameInfo)
     {
+        Log.Info("EndOfGameUpdate: game finished, showing winner dialog.");
         int winningTeamIndex = gameInfo.TeamScores[0] > gameInfo.TeamScores[1] ? 0 : 1;
         string gameWinners =
             (  from player in CurrentGame!.GameInfo.Players!

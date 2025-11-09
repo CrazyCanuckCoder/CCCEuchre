@@ -4,13 +4,17 @@ using Euchre.Logic.Interfaces;
 using Euchre.UILogic.Interfaces;
 using Euchre.UserControls;
 using System.Windows;
+using log4net;
 
 namespace Euchre.UILogic.Classes;
 
 internal class MainWindowController
 {
+    private static readonly ILog Log = LogManager.GetLogger(typeof(MainWindowController));
+
     public MainWindowController(MainWindow mainWindow, GameStateManager gameStateManager)
     {
+        Log.Debug("MainWindowController: initializing controller.");
         _mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
         _gameStateManager = gameStateManager ?? throw new ArgumentNullException(nameof(gameStateManager));
         Initialize();
@@ -79,6 +83,7 @@ internal class MainWindowController
     {
         if (playerIndex >= 0)
         {
+            Log.DebugFormat("SetPlayerDealerIconVisibility: player={0}, visible={1}", playerIndex, isVisible);
             _playerDisplayControls[playerIndex].SetDealerIconVisibility(isVisible);
         }
     }
@@ -90,6 +95,7 @@ internal class MainWindowController
     /// <param name="numberOfCardsDealt">The number of cards to display on the control.</param>
     public void DealCardsToPlayer(int indexOfPlayer, int numberOfCardsDealt)
     {
+        Log.DebugFormat("DealCardsToPlayer: player={0}, count={1}", indexOfPlayer, numberOfCardsDealt);
         _playerDealtCardsDisplayControls[indexOfPlayer].DisplayCards(numberOfCardsDealt);
     }
 
@@ -108,6 +114,7 @@ internal class MainWindowController
     /// <param name="kitty">The card at the top of the kitty pile.</param>
     public void DisplayKittyCard(Card kitty)
     {
+        Log.DebugFormat("DisplayKittyCard: {0}", kitty);
         _mainWindow.TrumpDisplayUserControl.SetKittyCard(kitty);
     }
 
@@ -194,6 +201,7 @@ internal class MainWindowController
     /// <param name="player">The player going alone.</param>
     public void SetPartnerDisabled(IPlayer player)
     {
+        Log.DebugFormat("SetPartnerDisabled: player={0}", player.Name);
         var partner = (  from anyPlayer in _gameStateManager.Players
                         where anyPlayer.TeamIndex == player.TeamIndex
                            && anyPlayer.PlayerIndex != player.PlayerIndex
@@ -367,6 +375,7 @@ internal class MainWindowController
     /// </summary>
     private void Initialize()
     {
+        Log.Debug("MainWindowController.Initialize: attaching controls and initializing UI.");
         SetupCurrentRoundInfoControl();
         SetupCurrentScoreControl();
         InitializeCardDisplayControlCollection();

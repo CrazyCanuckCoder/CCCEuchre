@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.15" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
   </ItemGroup>
 
@@ -41,6 +42,9 @@
     <None Update="Data\GameStateDS.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>GameStateDS.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
