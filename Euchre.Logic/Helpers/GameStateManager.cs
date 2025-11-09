@@ -124,10 +124,10 @@ public class GameStateManager
     /// <summary>
     /// Saves the current game data to a file.
     /// </summary>
-    public async void SaveGameDataAsync()
+    public void SaveGameData()
     {
         GameStateManager gsManagerClone = Clone();
-        await Task.Run(() => DataManager.SaveGameState(gsManagerClone));
+        DataManager.SaveGameState(gsManagerClone);
     }
 
     /// <summary>
