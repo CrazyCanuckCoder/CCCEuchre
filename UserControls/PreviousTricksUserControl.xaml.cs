@@ -416,22 +416,10 @@ public partial class PreviousTricksUserControl : UserControl
         // The Image properties will be null until a trump suit is called.  One of them will be null when a
         //  player goes alone.
 
-        if (FirstPlayerImage != null)
-        {
-            FirstPlayerImage.Source = null;
-        }
-        if (SecondPlayerImage != null)
-        {
-            SecondPlayerImage.Source = null;
-        }
-        if (ThirdPlayerImage != null)
-        {
-            ThirdPlayerImage.Source = null;
-        }
-        if (FourthPlayerImage != null)
-        {
-            FourthPlayerImage.Source = null;
-        }
+        FirstPlayerImage?.Source = null;
+        SecondPlayerImage?.Source = null;
+        ThirdPlayerImage?.Source = null;
+        FourthPlayerImage?.Source = null;
     }
 
     /// <summary>

@@ -1,34 +1,79 @@
 ﻿using Euchre.Logic.Components;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Euchre.Logic.Helpers;
 
 public static class Extensions
 {
-    /// <summary>
-    /// Determines if the list of cards has any cards of a particular suit that haven't been played. 
-    /// </summary>
-    /// <remarks>Does not look at trump cards.  Use the HasAnyTrump() method to determine if the cards have
-    /// any trump cards.
-    /// </remarks>
-    /// <param name="cards">The list of cards to check.</param>
-    /// <param name="suitToFind">The suit of the cards to find.</param>
-    /// <returns>True indicating the list has at least one card in the specified suit.</returns>
-    public static bool HasAnyOfSuit(this List<Card> cards, Suit suitToFind, Suit trump)
-    {
-        return CardFinder.HasACardOfSuit(cards, suitToFind, trump);
-    }
+    // New .NET 10 syntax.
 
-    /// <summary>
-    /// Determines if the list of cards has any trump cards regardless of whether or not they have been 
-    /// played.
-    /// </summary>
-    /// <param name="cards">The list of cards to check.</param>
-    /// <returns>True indicating the list has at least one trump card.</returns>
-    public static bool HasAnyTrump(this List<Card> cards, Suit trumpSuit)
+    extension(List<Card> cards)
     {
-        return CardFinder.HasTrump(cards, trumpSuit);
+        /// <summary>
+        /// Determines if the list of cards has any cards of a particular suit that haven't been played. 
+        /// </summary>
+        /// <remarks>Does not look at trump cards.  Use the HasAnyTrump() method to determine if the cards have
+        /// any trump cards.
+        /// </remarks>
+        /// <param name="cards">The list of cards to check.</param>
+        /// <param name="suitToFind">The suit of the cards to find.</param>
+        /// <returns>True indicating the list has at least one card in the specified suit.</returns>
+        public bool HasAnyOfSuit(Suit suitToFind, Suit trump)
+        {
+            return CardFinder.HasACardOfSuit(cards, suitToFind, trump);
+        }
+
+        /// <summary>
+        /// Determines if the list of cards has any trump cards regardless of whether or not they have been 
+        /// played.
+        /// </summary>
+        /// <param name="cards">The list of cards to check.</param>
+        /// <returns>True indicating the list has at least one trump card.</returns>
+        public bool HasAnyTrump(Suit trumpSuit)
+        {
+            return CardFinder.HasTrump(cards, trumpSuit);
+        }
+
+        /// <summary>
+        /// Sorts the list of cards according to the trump suit.
+        /// </summary>
+        /// <param name="cards">A list of cards to sort.</param>
+        /// <param name="trump">The trump suit, null to indicate no trump has been set.</param>
+        /// <returns>A List of Cards that have been sorted by suit and rank.</returns>
+        public List<Card> Sort(Suit? trump)
+        {
+            List<Card> sortedCards = [];
+
+            var suitOrder = GetComplementarySuits(trump);
+
+            foreach (Suit suit in suitOrder)
+            {
+                if (trump.HasValue)
+                {
+                    sortedCards.AddRange(from card in cards
+                                         where card.EffectiveSuit(trump.Value) == suit
+                                         orderby card.GetTrickValue(trump.Value, suit) descending
+                                         select card);
+                }
+                else
+                {
+                    sortedCards.AddRange(from card in cards
+                                         where card.Suit == suit
+                                         orderby card.Rank descending
+                                         select card);
+                }
+            }
+
+            return sortedCards;
+        }
+
+        /// <summary>
+        /// Generates a string containing the cards in a list separated by a comma and a space character.
+        /// </summary>
+        /// <returns>A string containing the newly generated text.</returns>
+        public string PrettyPrint()
+        {
+            return string.Join(", ", cards);
+        }
     }
 
     /// <summary>
@@ -40,44 +85,6 @@ public static class Extensions
     public static bool IsTrump(this Card card, Suit trumpSuit)
     {
         return card.EffectiveSuit(trumpSuit) == trumpSuit;
-    }
-
-    /// <summary>
-    /// Sorts the list of cards according to the trump suit.
-    /// </summary>
-    /// <param name="cards">A list of cards to sort.</param>
-    /// <param name="trump">The trump suit, null to indicate no trump has been set.</param>
-    /// <returns>A List of Cards that have been sorted by suit and rank.</returns>
-    public static List<Card> Sort(this List<Card> cards, Suit? trump)
-    {
-        List<Card> sortedCards = [];
-
-        var suitOrder = GetComplementarySuits(trump);
-
-        foreach (Suit suit in suitOrder)
-        {
-            if (trump.HasValue)
-            {
-                sortedCards.AddRange(    from card in cards
-                                        where card.EffectiveSuit(trump.Value) == suit
-                                      orderby card.GetTrickValue(trump.Value, suit) descending
-                                       select card);
-            }
-            else
-            {
-                sortedCards.AddRange(   from card in cards
-                                       where card.Suit == suit
-                                     orderby card.Rank descending
-                                      select card);
-            }
-        }
-
-        return sortedCards;
-    }
-
-    public static string PrettyPrint(this List<Card> cards)
-    {
-        return string.Join(", ", cards);
     }
 
     /// <summary>
