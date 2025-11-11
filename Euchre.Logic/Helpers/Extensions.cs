@@ -1,5 +1,6 @@
 ﻿using Euchre.Logic.Components;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Euchre.Logic.Helpers;
 
@@ -41,6 +42,12 @@ public static class Extensions
         return card.EffectiveSuit(trumpSuit) == trumpSuit;
     }
 
+    /// <summary>
+    /// Sorts the list of cards according to the trump suit.
+    /// </summary>
+    /// <param name="cards">A list of cards to sort.</param>
+    /// <param name="trump">The trump suit, null to indicate no trump has been set.</param>
+    /// <returns>A List of Cards that have been sorted by suit and rank.</returns>
     public static List<Card> Sort(this List<Card> cards, Suit? trump)
     {
         List<Card> sortedCards = [];
@@ -66,6 +73,11 @@ public static class Extensions
         }
 
         return sortedCards;
+    }
+
+    public static string PrettyPrint(this List<Card> cards)
+    {
+        return string.Join(", ", cards);
     }
 
     /// <summary>

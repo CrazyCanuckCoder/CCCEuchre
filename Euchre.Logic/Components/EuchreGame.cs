@@ -4,16 +4,53 @@ using Euchre.Logic.Exceptions;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using static Euchre.Logic.Helpers.Constants;
+using log4net;
+using log4net.Config;
+using System.IO;
 
 namespace Euchre.Logic.Components;
 
 public class EuchreGame
 {
     /// <summary>
+    /// Logger for this class.
+    /// </summary>
+    private static readonly ILog Log = LogManager.GetLogger(typeof(EuchreGame));
+
+    /// <summary>
+    /// Static constructor to configure logging once per app domain using external config
+    /// </summary>
+    static EuchreGame()
+    {
+        try
+        {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory();
+            var configPath = Path.Combine(baseDir, "log4net.config");
+            if (File.Exists(configPath))
+            {
+                XmlConfigurator.ConfigureAndWatch(new FileInfo(configPath));
+                Log.Info("log4net configured from file: " + configPath);
+            }
+            else
+            {
+                // If config not found, fallback to default basic configuration to avoid silent failures.
+                // Caller should ensure the file is copied to output.
+                Log.Warn("log4net configuration file not found: " + configPath);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to configure log4net: {ex}");
+        }
+    }
+
+    /// <summary>
     /// Use this constructor when loading a saved game.
     /// </summary>
     public EuchreGame()
     {
+        Log.Info("Initializing EuchreGame from saved game.");
+
         // Load persisted state.
 
         GameInfo = GameStateManager.LoadGameData()
@@ -31,8 +68,11 @@ public class EuchreGame
     /// <exception cref="InvalidNumberOfPlayersException" />
     public EuchreGame(List<AutomatedPlayerAvatar> playerNames)
     {
+        Log.Info("Initializing EuchreGame for a new game.");
+
         if (playerNames.Count != NUMBER_OF_PLAYERS)
         {
+            Log.Error("Invalid number of player names provided to constructor.");
             throw new InvalidNumberOfPlayersException();
         }
 
@@ -54,6 +94,8 @@ public class EuchreGame
         GameInfo.Players = players;
         GameInfo.Dealer = players[0];
         GameInfo.SaveGameData();
+
+        Log.Debug("New game initialized and saved initial state.");
     }
 
     /// <summary>
@@ -131,13 +173,18 @@ public class EuchreGame
     /// <exception cref="InvalidGameConditionException" />
     public async Task PlayGameAsync()
     {
+        Log.Info("PlayGameAsync started.");
+
         // The main game loop is synchronous, but this method is asynchronous for UI integration.
 
         while (GameInfo.TeamScores[0] < WINNING_SCORE && GameInfo.TeamScores[1] < WINNING_SCORE)
         {
+            Log.Debug(
+                $"Starting a new round. Scores: Team0={GameInfo.TeamScores[0]}, Team1={GameInfo.TeamScores[1]}");
             await Task.Run(PlayRound);
         }
 
+        Log.Info("Winning condition reached, ending game.");
         EndGame();
     }
 
@@ -151,6 +198,8 @@ public class EuchreGame
     /// <exception cref="InvalidGameConditionException" />
     private void PlayRound()
     {
+        Log.Debug($"PlayRound starting from checkpoint: {GameInfo.LastCompletedStage}");
+
         //  Determine where we left off and jump to the next step.
         
         switch (GameInfo.LastCompletedStage)
@@ -194,6 +243,7 @@ public class EuchreGame
                 break;
 
             default:
+                Log.Error("Unknown round checkpoint.");
                 throw new InvalidGameConditionException("Unknown round checkpoint.");
         }
     }
@@ -206,6 +256,8 @@ public class EuchreGame
     /// properties. It also updates the game checkpoint and persists the current game state.</remarks>
     private void ResetRound()
     {
+        Log.Debug("ResetRound: clearing round state.");
+
         // Reset for new round.
 
         GameInfo.CurrentRoundTricks.Clear();
@@ -227,6 +279,7 @@ public class EuchreGame
     /// </summary>
     private void DealCards()
     {
+        Log.Info("Dealing cards.");
         DeclareDealer?.Invoke(this, new DeclareDealerEventArgs(GameInfo.Dealer!));
         GameInfo.Deck.Shuffle();
         
@@ -251,9 +304,15 @@ public class EuchreGame
             }
         }
 
+        foreach (var player in GameInfo.Players!)
+        {
+            Log.Debug($"Player {player.PlayerIndex + 1}'s Hand: {player.Hand.PrettyPrint()}");
+        }
+
         // Set turned up card.
 
         GameInfo.Kitty = GameInfo.Deck.Deal();
+        Log.Debug($"Kitty card for this round: {GameInfo.Kitty}");
         DeclareKittyCard?.Invoke(this, new DeclareKittyCardEventArgs(GameInfo.Kitty));
 
         // Record that dealing is done.
@@ -268,10 +327,14 @@ public class EuchreGame
     /// <returns>True to indicate the players made a bid.  False indicates the round should be re-dealt.</returns>
     private bool PlayersChoseTrump()
     {
+        Log.Debug("PlayersChoseTrump: starting bidding rounds.");
+
         // Round 1 - Bid for Kitty suit.
 
         if (BiddingRound(1, GameInfo.Kitty!.Suit))
         {
+            Log.Debug(
+                $"Trump chosen in round 1: {GameInfo.Trump}{(GameInfo.GoingAlone ? " Alone" : "")} by {GameInfo.TrumpCaller?.Name}");
             TrumpCalled?.Invoke(this, new System.EventArgs());
             GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
             GameInfo.SaveGameData();
@@ -284,6 +347,8 @@ public class EuchreGame
 
         if (BiddingRound(2, null))
         {
+            Log.Debug(
+                $"Trump chosen in round 2: {GameInfo.Trump}{(GameInfo.GoingAlone ? " Alone" : "")} by {GameInfo.TrumpCaller?.Name}");
             TrumpCalled?.Invoke(this, new System.EventArgs());
             GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
             GameInfo.SaveGameData();
@@ -294,6 +359,7 @@ public class EuchreGame
 
         NoTrumpCalled?.Invoke(this, new System.EventArgs());
         AdvanceDealer();
+        Log.Debug("No trump called in either round; advancing dealer.");
         return false;
     }
 
@@ -341,6 +407,8 @@ public class EuchreGame
                     }
                     GameInfo.SaveGameData();
 
+                    Log.Debug(
+                        $"Player {player.Name} ordered up {forcedSuit} (IsDealer={isDealer}, GoingAlone={player.IsGoingAlone})");
                     return true;
                 }
                 else
@@ -348,6 +416,7 @@ public class EuchreGame
                     // Inform UI that the player is passing.
 
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, true));
+                    Log.Debug($"Player {player.Name} passed on ordering up.");
                 }
             }
             else
@@ -364,6 +433,8 @@ public class EuchreGame
 
                     GameInfo.SaveGameData();
 
+                    Log.Debug(
+                        $"Player {player.Name} called trump {calledSuit} (IsDealer={isDealer}, GoingAlone={player.IsGoingAlone})");
                     return true;
                 }
                 else
@@ -371,6 +442,7 @@ public class EuchreGame
                     // Inform UI that the player is passing.
 
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, false));
+                    Log.Debug($"Player {player.Name} passed on calling trump.");
                 }
             }
         }
@@ -386,6 +458,7 @@ public class EuchreGame
     /// going alone and update related game state.</param>
     private void SetGameToPlayersBid(Suit bidSuit, IPlayer player)
     {
+        Log.Debug($"SetGameToPlayersBid: {bidSuit} by {player.Name} (GoingAlone={player.IsGoingAlone})");
         GameInfo.Trump = bidSuit;
         GameInfo.TrumpCaller = player;
         GameInfo.GoingAlone = player.IsGoingAlone;
@@ -400,6 +473,8 @@ public class EuchreGame
     /// </param>
     private void PlayTricksForRound(int resumeFrom = 0)
     {
+        Log.Debug($"PlayTricksForRound starting (resumeFrom={resumeFrom}).");
+
         // Determine who leads the first trick.
 
         GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.Dealer!);
@@ -419,6 +494,9 @@ public class EuchreGame
             GameInfo.TricksWonByPlayers[GameInfo.NextTrickPlayer.PlayerIndex]++;
             DeclareTrickWinner?.Invoke(this, new DeclareTrickWinnerEventArgs(GameInfo.NextTrickPlayer));
 
+            Log.Debug(
+                $"Trick {trickNum} won by {GameInfo.NextTrickPlayer.Name} (Team {GameInfo.NextTrickPlayer.TeamIndex}).");
+
             // Update checkpoint after each trick – this allows us to resume mid-round.
 
             GameInfo.CurrentTrickNumber = trickNum; // remember where we stopped
@@ -429,6 +507,7 @@ public class EuchreGame
 
             if (trickNum >= MIN_NUMBER_TRICKS_TO_SCORE && trickNum < MAX_NUMBER_OF_TRICKS && CanEndRound())
             {
+                Log.Debug("Early termination condition met for round; stopping trick play.");
                 break;
             }
         }
@@ -466,6 +545,8 @@ public class EuchreGame
             endRound = numOppositionTricks == MIN_NUMBER_TRICKS_TO_SCORE;
         }
 
+        Log.Debug(
+            $"CanEndRound check: bidderTricks={numBidderTricks}, oppositionTricks={numOppositionTricks}, result={endRound}");
         return endRound;
     }
 
@@ -507,6 +588,8 @@ public class EuchreGame
             CardPlayedByPlayer?.Invoke(this, 
                 new CardPlayedByPlayerEventArgs(GameInfo.NextTrickPlayer, playedCard));
 
+            Log.Debug($"{GameInfo.NextTrickPlayer.Name} played {playedCard} (TrickLead={leadSuit}).");
+
             GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.NextTrickPlayer);
         }
         
@@ -518,6 +601,8 @@ public class EuchreGame
     /// </summary>
     private void ScoreRound()
     {
+        Log.Info("Scoring round.");
+
         var tricksByTeam = GameInfo.CurrentRoundTricks
             .GroupBy(t => t.GetWinner().TeamIndex)
             .ToDictionary(g => g.Key, g => g.Count());
@@ -562,6 +647,9 @@ public class EuchreGame
                   numPoints, 
                   reasonForPoints));
 
+        Log.Debug(
+            $"Round scored. WinningTeam={winningTeamIndex}, Points={numPoints}, Reason={reasonForPoints}. Scores: Team0={GameInfo.TeamScores[0]}, Team1={GameInfo.TeamScores[1]}");
+
         // Record that scoring is done.
 
         GameInfo.LastCompletedStage = RoundStage.Scored;
@@ -576,6 +664,8 @@ public class EuchreGame
     /// consistency.</remarks>
     private void EndGame()
     {
+        Log.Info("EndGame: game over.");
+
         // Let the UI know the game is over.
 
         GameOver?.Invoke(this, new GameOverEventArgs(GameInfo));
@@ -604,6 +694,8 @@ public class EuchreGame
         GameInfo.Dealer = GetNextPlayer(GameInfo.Dealer!);
         GameInfo.LastCompletedStage = RoundStage.None; // ready for next round
         GameInfo.SaveGameData();
+
+        Log.Debug($"AdvanceDealer: new dealer is {GameInfo.Dealer.Name} (index {GameInfo.Dealer.PlayerIndex}).");
     }
 
     /// <summary>
