@@ -1,4 +1,3 @@
-using Euchre.Logic.Data;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 

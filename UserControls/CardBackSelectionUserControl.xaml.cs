@@ -99,10 +99,7 @@ public partial class CardBackSelectionUserControl : UserControl
                                                                     StringComparison.OrdinalIgnoreCase)
                                   select cardBack)
                                .FirstOrNull();
-        if (selectedCardBack != null)
-        {
-            selectedCardBack.IsSelected = true;
-        }
+        selectedCardBack?.IsSelected = true;
     }
 
     /// <summary>

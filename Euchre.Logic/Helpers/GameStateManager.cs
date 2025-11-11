@@ -113,8 +113,6 @@ public class GameStateManager
     /// </summary>
     public void ResetTricksWonByPlayers()
     {
-        ArgumentNullException.ThrowIfNull(nameof(Players));
-
         for (int index = 0; index < NUMBER_OF_PLAYERS; index++)
         {
             TricksWonByPlayers[index] = 0;

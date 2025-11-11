@@ -312,7 +312,7 @@ public partial class MainWindow : Window
         var playerNames = GetPlayerNamesFromUser();
         if (playerNames != null)
         {
-            ViewModel.CurrentGame = new(playerNames.ToList());
+            ViewModel.CurrentGame = new([.. playerNames]);
             await StartGame();
         }
     }
