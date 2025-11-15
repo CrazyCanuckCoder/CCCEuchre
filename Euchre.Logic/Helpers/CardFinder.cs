@@ -215,6 +215,19 @@ internal static class CardFinder
     }
 
     /// <summary>
+    /// Returns the number of trump cards in the list of cards.
+    /// </summary>
+    /// <param name="cards">the list of cards to count trump.</param>
+    /// <param name="trump">The suit that is considered trump.</param>
+    /// <returns>An int with the number of trump in the list of cards.</returns>
+    public static int CountTrump(List<Card> cards, Suit trump)
+    {
+        return cards
+                .Where(c => c.IsTrump(trump))
+                .Count();
+    }
+
+    /// <summary>
     /// Returns the next highest trump card compared to a specified card.
     /// </summary>
     /// <param name="cards">The list of cards to find the next highest trump card.</param>

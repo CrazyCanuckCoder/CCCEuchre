@@ -3,10 +3,14 @@ using Euchre.Logic.EventArgs;
 using Euchre.Logic.Exceptions;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
-using static Euchre.Logic.Helpers.Constants;
 using log4net;
 using log4net.Config;
 using System.IO;
+using System.Linq;
+using System.Security.Policy;
+using System.Windows;
+using System.Windows.Shapes;
+using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Components;
 
@@ -517,6 +521,69 @@ public class EuchreGame
         GameInfo.CurrentTrickNumber = 0;
         GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
         GameInfo.SaveGameData();
+    }
+
+    // TODO: Convert back to private method.
+    public bool PlayerCanWinRemainingTricks(IPlayer leadingPlayer)
+    {
+        bool canWinRest = false;
+
+        // The player has all trump left in their hand.
+
+        if (CardFinder.CountTrump(leadingPlayer.Hand, GameInfo.Trump!.Value) == leadingPlayer.Hand.Count)
+        {
+            // Is it all the highest trump?
+
+            var highestTrumpCards = CardHelper.CreateHighestTrumpHand(GameInfo.Trump.Value);
+            if (leadingPlayer.Hand == highestTrumpCards.Take(leadingPlayer.Hand.Count).ToList())
+            {
+                // The rest are mine!
+
+                canWinRest = true;
+            }
+            else
+            {
+                // Has all the trump higher than the trump in their hand been played?
+
+                if (CardHelper.TrumpCardsAreSequential(leadingPlayer.Hand, GameInfo.Trump.Value))
+                {
+                    var highestTrumpInHand = CardFinder.GetHighestTrumpCard(leadingPlayer.Hand, GameInfo.Trump.Value);
+                    var playedTrumpCards = from trick in GameInfo.CurrentRoundTricks
+                                             from card in trick.Cards
+                                            where card.Value.EffectiveSuit(GameInfo.Trump.Value) == GameInfo.Trump.Value
+                                           select card.Value;
+                    if (CardHelper.AllCardsAreHigherThanTrumpCard(playedTrumpCards, highestTrumpInHand!))
+                    {
+                        // The rest are mine!
+
+                        canWinRest = true;
+                    }
+                    else
+                    {
+                        // 		If not, did the last trick where trump was lead by the player have only one trump? (The card lead by the player.)
+                        // 			If so, the rest are mine!
+                    }
+                } 
+            }
+        }
+        else
+        {
+            // The player has trump and high cards in his hand.
+            //    Is the trump, the highest of the remaining trump?
+            // 		If so, are the remaining cards in the player's hand Aces?
+            // 			If so, the rest are mine!
+            // 		If not, is the trump in the player's hand, the only remaining trump?
+            // 			If so, are the remaining cards in the player's hand Aces?
+            // 				If so, the rest are mine!
+            // The player has no trump left in their hand.
+            // 	  Has all the trump been played?
+            // 		If so, are the remaining cards in the player's hand Aces?
+            // 			If so, the rest are mine!
+            // 		If not, are the remaining cards in the player's hand the highest that are left?
+            // 			If so, the rest are mine!
+        }
+
+            return canWinRest;
     }
 
     /// <summary>
