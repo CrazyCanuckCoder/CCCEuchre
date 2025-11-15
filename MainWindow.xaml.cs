@@ -377,7 +377,11 @@ public partial class MainWindow : Window
 
     private void menuChooseCards_Click(object sender, RoutedEventArgs e)
     {
-
+        ChooseCardsForPlayersWindow chooseCardsWindow = new()
+        {
+            Owner = this
+        };
+        chooseCardsWindow.ShowDialog();
     }
 
     private void MenuToolsOptions_Click(object sender, RoutedEventArgs e)
