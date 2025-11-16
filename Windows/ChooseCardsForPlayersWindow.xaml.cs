@@ -157,13 +157,42 @@ public partial class ChooseCardsForPlayersWindow : Window
 
     private void AddCardToKitty(ICard draggedCard)
     {
-        // TODO: Ensure only one card can be added to the kitty.
+        // Ensure only one card can be added to the kitty.
+
+        if (KittyCardImage.Count > 0)
+        {
+            ReturnKittyCardToItsCollection();
+            KittyCardImage.Clear();
+        }
 
         GetDisplayCardReferences(draggedCard,
             out ObservableCollection<CardDisplay>? availableCardsCollectionRef,
             out CardDisplay? foundCard);
 
         MoveCardFromAvailableCardToKitty(draggedCard, availableCardsCollectionRef, foundCard);
+    }
+
+    private void ReturnKittyCardToItsCollection()
+    {
+        KittyCardImage.First().CardMargin = _availableCardMargin;
+        switch (KittyCard.Suit)
+        {
+            case Suit.Clubs:
+                Clubs.Add(KittyCardImage.First());
+                break;
+
+            case Suit.Hearts:
+                Hearts.Add(KittyCardImage.First());
+                break;
+
+            case Suit.Spades:
+                Spades.Add(KittyCardImage.First());
+                break;
+
+            case Suit.Diamonds:
+                Diamonds.Add(KittyCardImage.First());
+                break;
+        }
     }
 
     private void MoveCardFromAvailableCardToKitty(ICard cardRef, 
