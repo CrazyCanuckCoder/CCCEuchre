@@ -21,6 +21,7 @@ public partial class ChooseCardsForPlayersWindow : Window
         DataContext = this;
     }
 
+    private const string CardClipBoardDataFormat = "Card";
     private readonly Thickness _availableCardMargin = new(5, 0, 0, 0);
     private readonly Thickness _playerCardMargin = new(5, 8, 0, 0);
 
@@ -375,14 +376,14 @@ public partial class ChooseCardsForPlayersWindow : Window
         if (sender is Image clickedImage)
         {
             var data = new DataObject();
-            data.SetData("Card", clickedImage.Tag);
+            data.SetData(CardClipBoardDataFormat, clickedImage.Tag);
             DragDrop.DoDragDrop(clickedImage, data, DragDropEffects.Move);
         }
     }
 
     private void Player1ItemsControl_Drop(object sender, DragEventArgs e)
     {
-        if (e.Data.GetData("Card") is ICard draggedCard)
+        if (e.Data.GetData(CardClipBoardDataFormat) is ICard draggedCard)
         {
             AddCardToPlayersHand(Player1CardImages, Player1Cards, draggedCard);
         }
@@ -390,7 +391,7 @@ public partial class ChooseCardsForPlayersWindow : Window
 
     private void Player2ItemsControl_Drop(object sender, DragEventArgs e)
     {
-        if (e.Data.GetData("Card") is ICard draggedCard)
+        if (e.Data.GetData(CardClipBoardDataFormat) is ICard draggedCard)
         {
             AddCardToPlayersHand(Player2CardImages, Player2Cards, draggedCard);
         }
@@ -398,7 +399,7 @@ public partial class ChooseCardsForPlayersWindow : Window
 
     private void Player3ItemsControl_Drop(object sender, DragEventArgs e)
     {
-        if (e.Data.GetData("Card") is ICard draggedCard)
+        if (e.Data.GetData(CardClipBoardDataFormat) is ICard draggedCard)
         {
             AddCardToPlayersHand(Player3CardImages, Player3Cards, draggedCard);
         }
@@ -406,7 +407,7 @@ public partial class ChooseCardsForPlayersWindow : Window
 
     private void Player4ItemsControl_Drop(object sender, DragEventArgs e)
     {
-        if (e.Data.GetData("Card") is ICard draggedCard)
+        if (e.Data.GetData(CardClipBoardDataFormat) is ICard draggedCard)
         {
             AddCardToPlayersHand(Player4CardImages, Player4Cards, draggedCard);
         }
@@ -419,7 +420,7 @@ public partial class ChooseCardsForPlayersWindow : Window
 
     private void KittyItemsControl_Drop(object sender, DragEventArgs e)
     {
-        if (e.Data.GetData("Card") is ICard draggedCard)
+        if (e.Data.GetData(CardClipBoardDataFormat) is ICard draggedCard)
         {
             AddCardToKitty(draggedCard);
         }
