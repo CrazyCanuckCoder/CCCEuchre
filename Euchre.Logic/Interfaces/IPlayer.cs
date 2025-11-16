@@ -21,4 +21,5 @@ public interface IPlayer
     Card PlayCard(int index);
     Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit);
     IPlayer Clone();
+    void ReceiveSeveralCards(List<ICard> cards);
 }

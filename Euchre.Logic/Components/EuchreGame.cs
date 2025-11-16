@@ -162,6 +162,25 @@ public class EuchreGame
     /// </remarks>
     public event EventHandler<GameOverEventArgs>? GameOver;
 
+#if DEBUG
+
+    /// <summary>
+    /// Fired to get a response from the user to determine if the cards should be chosen instead of dealt to
+    /// them in normal fashion.
+    /// </summary>
+    public event EventHandler<PromptToChooseCardsForPlayersEventArgs>? PromptToChooseCardsForPlayers;
+
+    /// <summary>
+    /// Fired to get the cards for each player chosen by the user.
+    /// </summary>
+    public event EventHandler<GetPlayersCardsEventArgs>? GetPlayersCards;
+
+    /// <summary>
+    /// Fired to alert the UI that the player's hands need to be updated.
+    /// </summary>
+    public event EventHandler<System.EventArgs>? UpdatePlayersHands;
+#endif
+
     /// <summary>
     /// Asynchronously runs the main game loop until one of the teams reaches the winning score.
     /// </summary>
@@ -208,7 +227,14 @@ public class EuchreGame
 
             case RoundStage.None:
                 ResetRound();
-                DealCards();
+#if DEBUG
+                if (!CardsChosenForUsers())
+                {
+#endif
+                    DealCards();
+#if DEBUG
+                }
+#endif
                 if (PlayersChoseTrump())
                 {
                     PlayTricksForRound();
@@ -218,7 +244,14 @@ public class EuchreGame
                 break;
 
             case RoundStage.ResetRoundDone:
-                DealCards();
+#if DEBUG
+                if (!CardsChosenForUsers())
+                {
+#endif
+                    DealCards();
+#if DEBUG
+                }
+#endif
                 goto case RoundStage.CardsDealt;
 
             case RoundStage.CardsDealt:
@@ -708,4 +741,50 @@ public class EuchreGame
     {
         return player1.TeamIndex == player2.TeamIndex && player1 != player2;
     }
+
+#if DEBUG
+
+    /// <summary>
+    /// Prompts the user whether to choose cards for all the players instead of dealing cards to them.
+    /// </summary>
+    /// <returns>True to indicate the cards were manually chosen for the players.</returns>
+    private bool CardsChosenForUsers()
+    {
+        // Prompt to see if the cards should be chosen for the players during testing.
+
+        PromptToChooseCardsForPlayersEventArgs e = new();
+        PromptToChooseCardsForPlayers?.Invoke(this, e);
+        if (e.ChooseCardsForPlayers)
+        {
+            GetPlayersCardsEventArgs eventArgs = new();
+            GetPlayersCards?.Invoke(this, eventArgs);
+            if (eventArgs.Player1Cards != null)
+            {
+                DealChosenCardsToPlayers(eventArgs);
+            }
+        }
+
+        return e.ChooseCardsForPlayers;
+    }
+
+
+    /// <summary>
+    /// Takes the cards chosen for each player and puts them in their hand.
+    /// </summary>
+    /// <param name="eventArgs">Contains the cards chosen for each player.</param>
+    private void DealChosenCardsToPlayers(GetPlayersCardsEventArgs eventArgs)
+    {
+        GameInfo.Players![0].ReceiveSeveralCards(eventArgs.Player1Cards);
+        GameInfo.Players[1].ReceiveSeveralCards(eventArgs.Player2Cards);
+        GameInfo.Players[2].ReceiveSeveralCards(eventArgs.Player3Cards);
+        GameInfo.Players[3].ReceiveSeveralCards(eventArgs.Player4Cards);
+
+        UpdatePlayersHands?.Invoke(this, new());
+
+        // TODO: Set the kitty card to the one chosen by the user.
+
+        GameInfo.LastCompletedStage = RoundStage.CardsDealt;
+        GameInfo.SaveGameData();
+    }
+#endif
 }
