@@ -1,0 +1,467 @@
+﻿<Window
+    x:Class="Euchre.Windows.ChooseCardsForPlayersWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Euchre.Windows"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Select Cards For Each Player"
+    Width="1250"
+    Height="800"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*" />
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="40*" />
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="140" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Available Cards  -->
+
+        <Border
+            Grid.Row="0"
+            Grid.Column="0"
+            Background="#FFF7F0"
+            BorderBrush="Black"
+            BorderThickness="0.5">
+            <Label Content="Available Cards" FontSize="14" />
+        </Border>
+        <Border
+            Grid.Row="1"
+            Grid.Column="0"
+            BorderBrush="Black"
+            BorderThickness="0.5,0,0.5,0.5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="20" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+
+                <!--  Clubs  -->
+
+                <ItemsControl
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    ItemsSource="{Binding Clubs}">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Image
+                                Width="74"
+                                Height="100"
+                                Margin="{Binding CardMargin}"
+                                MouseDown="Image_MouseDown"
+                                Source="{Binding ImageData.Source}"
+                                Stretch="Fill"
+                                Tag="{Binding Card}"
+                                Visibility="{Binding ImageVisibility}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--  Hearts  -->
+
+                <ItemsControl
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    ItemsSource="{Binding Hearts}">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Image
+                                Width="74"
+                                Height="100"
+                                Margin="{Binding CardMargin}"
+                                MouseDown="Image_MouseDown"
+                                Source="{Binding ImageData.Source}"
+                                Stretch="Fill"
+                                Tag="{Binding Card}"
+                                Visibility="{Binding ImageVisibility}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--  Spades  -->
+
+                <ItemsControl
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    ItemsSource="{Binding Spades}">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Image
+                                Width="74"
+                                Height="100"
+                                Margin="{Binding CardMargin}"
+                                MouseDown="Image_MouseDown"
+                                Source="{Binding ImageData.Source}"
+                                Stretch="Fill"
+                                Tag="{Binding Card}"
+                                Visibility="{Binding ImageVisibility}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--  Diamonds  -->
+
+                <ItemsControl
+                    Grid.Row="7"
+                    Grid.Column="1"
+                    ItemsSource="{Binding Diamonds}">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Image
+                                Width="74"
+                                Height="100"
+                                Margin="{Binding CardMargin}"
+                                MouseDown="Image_MouseDown"
+                                Source="{Binding ImageData.Source}"
+                                Stretch="Fill"
+                                Tag="{Binding Card}"
+                                Visibility="{Binding ImageVisibility}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Border>
+
+        <!--  Players' Hands  -->
+
+        <Border
+            Grid.Row="0"
+            Grid.Column="2"
+            Background="#FFF7F0"
+            BorderBrush="Black"
+            BorderThickness="0.5">
+            <Label Content="Players' Hands" FontSize="14" />
+        </Border>
+        <Border
+            Grid.Row="1"
+            Grid.Column="2"
+            BorderBrush="Black"
+            BorderThickness="0.5,0,0.5,0.5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="20" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+
+                <!--  Player 1's Cards  -->
+
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Content="Player 1 (Human)"
+                    FontSize="14" />
+                <Border
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    BorderBrush="Black"
+                    BorderThickness="0.5">
+                    <ItemsControl
+                        AllowDrop="True"
+                        Background="Transparent"
+                        Drop="Player1ItemsControl_Drop"
+                        ItemsSource="{Binding Player1CardImages}">
+
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Image
+                                    Width="74"
+                                    Height="100"
+                                    Margin="{Binding CardMargin}"
+                                    Source="{Binding ImageData.Source}"
+                                    Stretch="Fill"
+                                    Visibility="{Binding ImageVisibility}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+
+                <!--  Player 2's Cards  -->
+
+                <Label
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Content="Player 2"
+                    FontSize="14" />
+                <Border
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    BorderBrush="Black"
+                    BorderThickness="0.5">
+                    <ItemsControl
+                        AllowDrop="True"
+                        Background="Transparent"
+                        Drop="Player2ItemsControl_Drop"
+                        ItemsSource="{Binding Player2CardImages}">
+
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Image
+                                    Width="74"
+                                    Height="100"
+                                    Margin="{Binding CardMargin}"
+                                    Source="{Binding ImageData.Source}"
+                                    Stretch="Fill"
+                                    Visibility="{Binding ImageVisibility}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+
+                <!--  Player 3's Cards  -->
+
+                <Label
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Content="Player 3"
+                    FontSize="14" />
+                <Border
+                    Grid.Row="6"
+                    Grid.Column="1"
+                    BorderBrush="Black"
+                    BorderThickness="0.5">
+                    <ItemsControl
+                        AllowDrop="True"
+                        Background="Transparent"
+                        Drop="Player3ItemsControl_Drop"
+                        ItemsSource="{Binding Player3CardImages}">
+
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Image
+                                    Width="74"
+                                    Height="100"
+                                    Margin="{Binding CardMargin}"
+                                    Source="{Binding ImageData.Source}"
+                                    Stretch="Fill"
+                                    Visibility="{Binding ImageVisibility}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+
+                <!--  Player 4's Cards  -->
+
+                <Label
+                    Grid.Row="7"
+                    Grid.Column="1"
+                    Content="Player 4"
+                    FontSize="14" />
+                <Border
+                    Grid.Row="8"
+                    Grid.Column="1"
+                    BorderBrush="Black"
+                    BorderThickness="0.5">
+                    <ItemsControl
+                        AllowDrop="True"
+                        Background="Transparent"
+                        Drop="Player4ItemsControl_Drop"
+                        ItemsSource="{Binding Player4CardImages}">
+
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Image
+                                    Width="74"
+                                    Height="100"
+                                    Margin="{Binding CardMargin}"
+                                    Source="{Binding ImageData.Source}"
+                                    Stretch="Fill"
+                                    Visibility="{Binding ImageVisibility}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!--  Kitty Card  -->
+
+        <Border
+            Grid.Row="0"
+            Grid.Column="4"
+            Background="#FFF7F0"
+            BorderBrush="Black"
+            BorderThickness="0.5">
+            <Label Content="Kitty" FontSize="14" />
+        </Border>
+        <Border
+            Grid.Row="1"
+            Grid.Column="4"
+            BorderBrush="Black"
+            BorderThickness="0.5,0,0.5,0.5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="20" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+
+                <!--  Kitty Card  -->
+
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Content="Kitty Card"
+                    FontSize="14" />
+                <Border
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    BorderBrush="Black"
+                    BorderThickness="0.5">
+                    <ItemsControl
+                        AllowDrop="True"
+                        Background="Transparent"
+                        Drop="KittyItemsControl_Drop"
+                        ItemsSource="{Binding KittyCardImage}">
+
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Image
+                                    Width="74"
+                                    Height="100"
+                                    Source="{Binding ImageData.Source}"
+                                    Stretch="Fill"
+                                    Visibility="{Binding ImageVisibility}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!--  Random Dealing Button  -->
+
+        <Button
+            Grid.Row="3"
+            Grid.Column="0"
+            Width="150"
+            HorizontalAlignment="Left"
+            Click="RandomlyDealButton_Click"
+            Content="Deal Remaining Cards"
+            Style="{DynamicResource SubmitButtonStyle}" />
+
+        <!--  OK Button  -->
+
+        <Button
+            Grid.Row="3"
+            Grid.Column="4"
+            HorizontalAlignment="Right"
+            Click="OkButton_Click"
+            Content="OK"
+            Style="{DynamicResource SubmitButtonStyle}" />
+    </Grid>
+</Window>

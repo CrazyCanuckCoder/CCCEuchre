@@ -84,6 +84,20 @@ public abstract class Player : IPlayer
     }
 
     /// <summary>
+    /// Adds a list of cards to the player's hand.
+    /// </summary>
+    /// <param name="cardList">A list of playing cards.</param>
+    /// <returns>True to indicate all of the cards were added to the player's hand.</returns>
+    /// <exception cref="DuplicateCardException"></exception>
+    public void ReceiveSeveralCards(List<ICard> cardList)
+    {
+        foreach (ICard card in cardList)
+        {
+            AddCard((Card)card);
+        }
+    }
+
+    /// <summary>
     /// Clears the player's hand, removing all cards.
     /// </summary>
     public void ClearHand()

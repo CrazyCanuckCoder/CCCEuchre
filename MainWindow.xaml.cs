@@ -74,6 +74,12 @@ public partial class MainWindow : Window
         ViewModel.CurrentGame.DeclareTrickWinner += CurrentGame_DeclareTrickWinner;
         ViewModel.CurrentGame.GameOver += CurrentGame_GameOver;
         ViewModel.CurrentGame.PlayerBidResult += CurrentGame_PlayerBidResult;
+
+#if DEBUG
+        ViewModel.CurrentGame.PromptToChooseCardsForPlayers += CurrentGame_PromptToChooseCardsForPlayers;
+        ViewModel.CurrentGame.GetPlayersCards += CurrentGame_GetPlayersCards;
+        ViewModel.CurrentGame.UpdatePlayersHands += CurrentGame_UpdatePlayersHands;
+#endif
     }
 
     /// <summary>
@@ -105,6 +111,12 @@ public partial class MainWindow : Window
         ViewModel.CurrentGame.DeclareTrickWinner -= CurrentGame_DeclareTrickWinner;
         ViewModel.CurrentGame.GameOver -= CurrentGame_GameOver;
         ViewModel.CurrentGame.PlayerBidResult -= CurrentGame_PlayerBidResult;
+
+#if DEBUG
+        ViewModel.CurrentGame.PromptToChooseCardsForPlayers -= CurrentGame_PromptToChooseCardsForPlayers;
+        ViewModel.CurrentGame.GetPlayersCards -= CurrentGame_GetPlayersCards;
+        ViewModel.CurrentGame.UpdatePlayersHands -= CurrentGame_UpdatePlayersHands;
+#endif
     }
 
     /// <summary>
@@ -146,6 +158,50 @@ public partial class MainWindow : Window
     #region EventHandlers
 
     // The event handlers for the main window.
+
+#if DEBUG
+
+    private void CurrentGame_PromptToChooseCardsForPlayers(object? sender, PromptToChooseCardsForPlayersEventArgs e)
+    {
+        UIHelpers.RunOnUIThread(() =>
+        {
+            e.ChooseCardsForPlayers =
+                DialogBoxes.YesOrNoDialog("Do you want to set up the cards for each player?", this) ==
+                MessageBoxResult.Yes;
+        });
+    }
+
+    private void CurrentGame_GetPlayersCards(object? sender, GetPlayersCardsEventArgs e)
+    {
+        UIHelpers.RunOnUIThread(() =>
+        {
+            ChooseCardsForPlayersWindow chooseCardsForPlayers = new()
+            {
+                Owner = this
+            };
+            if (chooseCardsForPlayers.ShowDialog() == true)
+            {
+                e.Player1Cards = chooseCardsForPlayers.Player1Cards;
+                e.Player2Cards = chooseCardsForPlayers.Player2Cards;
+                e.Player3Cards = chooseCardsForPlayers.Player3Cards;
+                e.Player4Cards = chooseCardsForPlayers.Player4Cards;
+                e.KittyCard = (Card)chooseCardsForPlayers.KittyCard;
+            }
+        });
+    }
+
+    private void CurrentGame_UpdatePlayersHands(object? sender, EventArgs e)
+    {
+        UIHelpers.RunOnUIThread(() =>
+        {
+            for (int playersIndex = 0; playersIndex < Constants.NUMBER_OF_PLAYERS; playersIndex++)
+            {
+                ViewModel.UpdatePlayersHandAfterDeal(playersIndex, 0);
+            }
+        });
+    }
+
+#endif
 
     private void CurrentGame_PlayerBidResult(object? sender, PlayerBidEventArgs e)
     {
@@ -377,7 +433,11 @@ public partial class MainWindow : Window
 
     private void menuChooseCards_Click(object sender, RoutedEventArgs e)
     {
-
+        ChooseCardsForPlayersWindow chooseCardsWindow = new()
+        {
+            Owner = this
+        };
+        chooseCardsWindow.ShowDialog();
     }
 
     private void MenuToolsOptions_Click(object sender, RoutedEventArgs e)

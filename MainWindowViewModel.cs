@@ -756,7 +756,7 @@ public class MainWindowViewModel : DependencyObject
     /// </summary>
     /// <param name="indexOfPlayer">The index of the player from the GameStateManager's Players list.</param>
     /// <param name="numberOfCardsDealt">The number of cards dealt to an automated player.</param>
-    private void UpdatePlayersHandAfterDeal(int indexOfPlayer, int numberOfCardsDealt)
+    public void UpdatePlayersHandAfterDeal(int indexOfPlayer, int numberOfCardsDealt)
     {
         if (CurrentGame!.GameInfo.Players![indexOfPlayer] is HumanPlayer humanPlayer)
         {
