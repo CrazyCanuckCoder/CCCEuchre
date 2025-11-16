@@ -1,4 +1,5 @@
-﻿using Euchre.Logic.Interfaces;
+﻿using Euchre.Logic.Components;
+using Euchre.Logic.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,4 +27,9 @@ public class GetPlayersCardsEventArgs : System.EventArgs
     /// The list of cards for player 4.
     /// </summary>
     public List<ICard> Player4Cards { get; set; }
+
+    /// <summary>
+    /// The card to be used as the kitty.
+    /// </summary>
+    public Card KittyCard { get; set; }
 }

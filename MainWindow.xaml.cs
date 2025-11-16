@@ -185,6 +185,7 @@ public partial class MainWindow : Window
                 e.Player2Cards = chooseCardsForPlayers.Player2Cards;
                 e.Player3Cards = chooseCardsForPlayers.Player3Cards;
                 e.Player4Cards = chooseCardsForPlayers.Player4Cards;
+                e.KittyCard = (Card)chooseCardsForPlayers.KittyCard;
             }
         });
     }

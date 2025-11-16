@@ -315,7 +315,7 @@ public class EuchreGame
         Log.Info("Dealing cards.");
         DeclareDealer?.Invoke(this, new DeclareDealerEventArgs(GameInfo.Dealer!));
         GameInfo.Deck.Shuffle();
-        
+
         // Clear hands.
 
         foreach (var player in GameInfo.Players!)
@@ -331,7 +331,7 @@ public class EuchreGame
             for (int playerCount = 0; playerCount < NUMBER_OF_PLAYERS; playerCount++)
             {
                 GameInfo.Players[currentPlayerIndex].AddCard(GameInfo.Deck.Deal());
-                CardsDealtToPlayer?.Invoke(this, 
+                CardsDealtToPlayer?.Invoke(this,
                     new CardsDealtToPlayerEventArgs(GameInfo.Players[currentPlayerIndex], 1));
                 currentPlayerIndex = GetNextPlayer(GameInfo.Players[currentPlayerIndex]).PlayerIndex;
             }
@@ -344,9 +344,7 @@ public class EuchreGame
 
         // Set turned up card.
 
-        GameInfo.Kitty = GameInfo.Deck.Deal();
-        Log.Debug($"Kitty card for this round: {GameInfo.Kitty}");
-        DeclareKittyCard?.Invoke(this, new DeclareKittyCardEventArgs(GameInfo.Kitty));
+        SetKittyCard(GameInfo.Deck.Deal());
 
         // Record that dealing is done.
 
@@ -681,7 +679,8 @@ public class EuchreGame
                   reasonForPoints));
 
         Log.Debug(
-            $"Round scored. WinningTeam={winningTeamIndex}, Points={numPoints}, Reason={reasonForPoints}. Scores: Team0={GameInfo.TeamScores[0]}, Team1={GameInfo.TeamScores[1]}");
+            $"Round scored. WinningTeam={winningTeamIndex}, Points={numPoints}, Reason={reasonForPoints}." +
+            $" Scores: Team0={GameInfo.TeamScores[0]}, Team1={GameInfo.TeamScores[1]}");
 
         // Record that scoring is done.
 
@@ -706,6 +705,17 @@ public class EuchreGame
         // Game over – delete saved state data.
 
         GameStateManager.ClearSavedGameData();
+    }
+
+    /// <summary>
+    /// Sets the kitty card for the current round and raises the appropriate event to inform listeners.
+    /// </summary>
+    /// <param name="kittyCard">The card to set as the kitty card.</param>
+    private void SetKittyCard(Card kittyCard)
+    {
+        GameInfo.Kitty = kittyCard;
+        Log.Debug($"Kitty card for this round: {GameInfo.Kitty}");
+        DeclareKittyCard?.Invoke(this, new DeclareKittyCardEventArgs(GameInfo.Kitty));
     }
 
     /// <summary>
@@ -781,7 +791,7 @@ public class EuchreGame
 
         UpdatePlayersHands?.Invoke(this, new());
 
-        // TODO: Set the kitty card to the one chosen by the user.
+        SetKittyCard(eventArgs.KittyCard);
 
         GameInfo.LastCompletedStage = RoundStage.CardsDealt;
         GameInfo.SaveGameData();
