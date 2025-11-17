@@ -53,127 +53,160 @@
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="20" />
+                    <RowDefinition Height="30" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="20" />
+                    <RowDefinition Height="30" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="20" />
+                    <RowDefinition Height="30" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="20" />
+                    <RowDefinition Height="30" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
 
                 <!--  Clubs  -->
 
-                <ItemsControl
+                <Label
                     Grid.Row="1"
                     Grid.Column="1"
-                    ItemsSource="{Binding Clubs}">
+                    Content="Clubs"
+                    FontSize="14" />
+                <Border
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    BorderBrush="Black"
+                    BorderThickness="0.5">
+                    <ItemsControl ItemsSource="{Binding Clubs}">
 
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Vertical" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Image
-                                Width="74"
-                                Height="100"
-                                Margin="{Binding CardMargin}"
-                                MouseDown="Image_MouseDown"
-                                Source="{Binding ImageData.Source}"
-                                Stretch="Fill"
-                                Tag="{Binding Card}"
-                                Visibility="{Binding ImageVisibility}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Image
+                                    Width="74"
+                                    Height="100"
+                                    Margin="{Binding CardMargin}"
+                                    MouseDown="Image_MouseDown"
+                                    Source="{Binding ImageData.Source}"
+                                    Stretch="Fill"
+                                    Tag="{Binding Card}"
+                                    Visibility="{Binding ImageVisibility}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
 
                 <!--  Hearts  -->
 
-                <ItemsControl
+                <Label
                     Grid.Row="3"
                     Grid.Column="1"
-                    ItemsSource="{Binding Hearts}">
+                    Content="Hearts"
+                    FontSize="14" />
+                <Border
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    BorderBrush="Black"
+                    BorderThickness="0.5">
+                    <ItemsControl ItemsSource="{Binding Hearts}">
 
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Vertical" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Image
-                                Width="74"
-                                Height="100"
-                                Margin="{Binding CardMargin}"
-                                MouseDown="Image_MouseDown"
-                                Source="{Binding ImageData.Source}"
-                                Stretch="Fill"
-                                Tag="{Binding Card}"
-                                Visibility="{Binding ImageVisibility}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Image
+                                    Width="74"
+                                    Height="100"
+                                    Margin="{Binding CardMargin}"
+                                    MouseDown="Image_MouseDown"
+                                    Source="{Binding ImageData.Source}"
+                                    Stretch="Fill"
+                                    Tag="{Binding Card}"
+                                    Visibility="{Binding ImageVisibility}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
 
                 <!--  Spades  -->
 
-                <ItemsControl
+                <Label
                     Grid.Row="5"
                     Grid.Column="1"
-                    ItemsSource="{Binding Spades}">
+                    Content="Spades"
+                    FontSize="14" />
+                <Border
+                    Grid.Row="6"
+                    Grid.Column="1"
+                    BorderBrush="Black"
+                    BorderThickness="0.5">
+                    <ItemsControl ItemsSource="{Binding Spades}">
 
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Vertical" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Image
-                                Width="74"
-                                Height="100"
-                                Margin="{Binding CardMargin}"
-                                MouseDown="Image_MouseDown"
-                                Source="{Binding ImageData.Source}"
-                                Stretch="Fill"
-                                Tag="{Binding Card}"
-                                Visibility="{Binding ImageVisibility}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Image
+                                    Width="74"
+                                    Height="100"
+                                    Margin="{Binding CardMargin}"
+                                    MouseDown="Image_MouseDown"
+                                    Source="{Binding ImageData.Source}"
+                                    Stretch="Fill"
+                                    Tag="{Binding Card}"
+                                    Visibility="{Binding ImageVisibility}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
 
                 <!--  Diamonds  -->
 
-                <ItemsControl
+                <Label
                     Grid.Row="7"
                     Grid.Column="1"
-                    ItemsSource="{Binding Diamonds}">
+                    Content="Diamonds"
+                    FontSize="14" />
+                <Border
+                    Grid.Row="8"
+                    Grid.Column="1"
+                    BorderBrush="Black"
+                    BorderThickness="0.5">
+                    <ItemsControl ItemsSource="{Binding Diamonds}">
 
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Vertical" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Image
-                                Width="74"
-                                Height="100"
-                                Margin="{Binding CardMargin}"
-                                MouseDown="Image_MouseDown"
-                                Source="{Binding ImageData.Source}"
-                                Stretch="Fill"
-                                Tag="{Binding Card}"
-                                Visibility="{Binding ImageVisibility}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Image
+                                    Width="74"
+                                    Height="100"
+                                    Margin="{Binding CardMargin}"
+                                    MouseDown="Image_MouseDown"
+                                    Source="{Binding ImageData.Source}"
+                                    Stretch="Fill"
+                                    Tag="{Binding Card}"
+                                    Visibility="{Binding ImageVisibility}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
             </Grid>
         </Border>
 
