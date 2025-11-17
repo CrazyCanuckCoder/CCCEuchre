@@ -21,9 +21,15 @@ public partial class ChooseCardsForPlayersWindow : Window
         DataContext = this;
     }
 
+    /// <summary>
+    /// Specifies the clipboard data format name used for card objects.
+    /// </summary>
     private const string CardClipBoardDataFormat = "Card";
-    private readonly Thickness _availableCardMargin = new(5, 0, 0, 0);
-    private readonly Thickness _playerCardMargin = new(5, 8, 0, 0);
+
+    /// <summary>
+    /// The margin to apply to each card.
+    /// </summary>
+    private readonly Thickness _cardMargin = new(5, 8, 0, 0);
 
     /// <summary>
     /// Contains the images for the cards in the Clubs suit.
@@ -85,10 +91,19 @@ public partial class ChooseCardsForPlayersWindow : Window
     /// </summary>
     public List<ICard> Player4Cards { get; private set; } = [];
 
+    /// <summary>
+    /// Contains the image of the card selected for the kitty.
+    /// </summary>
     public ObservableCollection<CardDisplay> KittyCardImage { get; private set; } = [];
 
+    /// <summary>
+    /// Gets the card designated as the kitty card.
+    /// </summary>
     public ICard KittyCard { get; private set; }
 
+    /// <summary>
+    /// Initializes the collections of available cards for each suit using a new deck.
+    /// </summary>
     private void SetupAvailableCards()
     {
         Deck deck = new();
@@ -127,7 +142,7 @@ public partial class ChooseCardsForPlayersWindow : Window
                 CardVisibility = Visibility.Visible,
                 ImageVisibility = Visibility.Visible,
                 Card = eachCard,
-                CardMargin = _availableCardMargin,
+                CardMargin = _cardMargin,
                 IsEnabled = true
             });
         }
@@ -156,6 +171,10 @@ public partial class ChooseCardsForPlayersWindow : Window
         return foundCard;
     }
 
+    /// <summary>
+    /// Adds the specified card to the kitty, replacing any existing card if present.
+    /// </summary>
+    /// <param name="draggedCard">The card to add to the kitty.</param>
     private void AddCardToKitty(ICard draggedCard)
     {
         // Ensure only one card can be added to the kitty.
@@ -173,9 +192,11 @@ public partial class ChooseCardsForPlayersWindow : Window
         MoveCardFromAvailableCardToKitty(draggedCard, availableCardsCollectionRef, foundCard);
     }
 
+    /// <summary>
+    /// Returns the existing kitty card to its original suit collection.
+    /// </summary>
     private void ReturnKittyCardToItsCollection()
     {
-        KittyCardImage.First().CardMargin = _availableCardMargin;
         switch (KittyCard.Suit)
         {
             case Suit.Clubs:
@@ -196,12 +217,19 @@ public partial class ChooseCardsForPlayersWindow : Window
         }
     }
 
+    /// <summary>
+    /// Moves the specified card from the available cards collection to the kitty.
+    /// </summary>
+    /// <param name="cardRef">A reference to the card to be moved to the kitty.</param>
+    /// <param name="availableCardsCollectionRef">The collection of available cards from which the card will
+    /// be removed. If null, the operation is not performed.</param>
+    /// <param name="cardDisplayRef">The display representation of the card to move. If null, the operation 
+    /// is not performed.</param>
     private void MoveCardFromAvailableCardToKitty(ICard cardRef, 
         ObservableCollection<CardDisplay>? availableCardsCollectionRef, CardDisplay? cardDisplayRef)
     {
         if (availableCardsCollectionRef != null && cardDisplayRef != null)
         {
-            cardDisplayRef.CardMargin = _playerCardMargin;
             KittyCardImage.Add(cardDisplayRef);
             KittyCard = cardRef;
 
@@ -233,6 +261,18 @@ public partial class ChooseCardsForPlayersWindow : Window
         }
     }
 
+    /// <summary>
+    /// Moves a card from the available cards collection to the specified player's collections.
+    /// </summary>
+    /// <param name="playerImagesCollection">The collection of card display objects representing the player's 
+    /// visible cards. The specified card display will be added to this collection.</param>
+    /// <param name="playerCardList">The list of card data objects representing the player's hand. The 
+    /// specified card will be added to this list.</param>
+    /// <param name="cardRef">The card to move from the available cards to the player's hand.</param>
+    /// <param name="availableCardsCollectionRef">The collection of available card display objects. If not
+    /// null, the specified card display will be removed from this collection.</param>
+    /// <param name="cardDisplayRef">The card display object to move. If not null, this object will be added
+    /// to the player's collection and removed from the available cards collection.</param>
     private void MoveCardFromAvailableCardToPlayer(
         ObservableCollection<CardDisplay> playerImagesCollection, List<ICard> playerCardList,
         ICard cardRef, ObservableCollection<CardDisplay>? availableCardsCollectionRef,
@@ -240,7 +280,6 @@ public partial class ChooseCardsForPlayersWindow : Window
     {
         if (availableCardsCollectionRef != null && cardDisplayRef != null)
         {
-            cardDisplayRef.CardMargin = _playerCardMargin;
             playerImagesCollection.Add(cardDisplayRef);
             playerCardList.Add(cardRef);
 
@@ -295,6 +334,9 @@ public partial class ChooseCardsForPlayersWindow : Window
         }
     }
 
+    /// <summary>
+    /// Distributes any remaining cards from each suit to the players.
+    /// </summary>
     private void DealRemainingCardsToPlayers()
     {
         if (Clubs.Count > 0)
@@ -315,6 +357,11 @@ public partial class ChooseCardsForPlayersWindow : Window
         }
     }
 
+    /// <summary>
+    /// Distributes a collection of available cards among all players in the game.
+    /// </summary>
+    /// <param name="availableCardsCollectionRef">A reference to the collection of cards available to be 
+    /// dealt. The collection is modified as cards are distributed to each player.</param>
     private void DealCardCollectionToPlayers(
         ObservableCollection<CardDisplay> availableCardsCollectionRef)
     {
@@ -324,6 +371,16 @@ public partial class ChooseCardsForPlayersWindow : Window
         DealCardsToSpecificPlayer(availableCardsCollectionRef, Player4Cards, Player4CardImages);
     }
 
+    /// <summary>
+    /// Transfers cards from the available cards collection to a specific player's hand until the player has 
+    /// the maximum allowed number of cards or there are no more available cards.
+    /// </summary>
+    /// <param name="cardsCollectionRef">The collection of available card displays to be dealt to the player. 
+    /// Cards are removed from this collection as they are dealt.</param>
+    /// <param name="playerCards">The list representing the player's current hand. Cards are added to this 
+    /// list until it reaches the maximum allowed per player.</param>
+    /// <param name="playerCardImages">The collection that holds the visual representations of the player's 
+    /// cards. Card displays are added here as cards are dealt.</param>
     private void DealCardsToSpecificPlayer(ObservableCollection<CardDisplay> cardsCollectionRef,
         List<ICard> playerCards, ObservableCollection<CardDisplay> playerCardImages)
     {
@@ -426,4 +483,3 @@ public partial class ChooseCardsForPlayersWindow : Window
         }
     }
 }
-
