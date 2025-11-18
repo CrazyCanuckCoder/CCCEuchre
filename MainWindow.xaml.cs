@@ -442,7 +442,7 @@ public partial class MainWindow : Window
 
     private void MenuToolsOptions_Click(object sender, RoutedEventArgs e)
     {
-        OptionsWindow optionsWindow = new OptionsWindow()
+        OptionsWindow optionsWindow = new()
         {
             Owner = this
         };

@@ -841,6 +841,15 @@ public class EuchreGame
     /// <param name="eventArgs">Contains the cards chosen for each player.</param>
     private void DealChosenCardsToPlayers(GetPlayersCardsEventArgs eventArgs)
     {
+        // Clear each player's hand.
+
+        foreach (var player in GameInfo.Players!)
+        {
+            player.ClearHand();
+        }
+
+        // Give each player their chosen cards.
+
         GameInfo.Players![0].ReceiveSeveralCards(eventArgs.Player1Cards);
         GameInfo.Players[1].ReceiveSeveralCards(eventArgs.Player2Cards);
         GameInfo.Players[2].ReceiveSeveralCards(eventArgs.Player3Cards);
