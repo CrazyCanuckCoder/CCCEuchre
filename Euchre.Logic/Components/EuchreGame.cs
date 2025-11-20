@@ -145,6 +145,11 @@ public class EuchreGame
     public event EventHandler<CardPlayedByPlayerEventArgs>? CardPlayedByPlayer;
 
     /// <summary>
+    /// Fired when a player can take the remaining tricks of a round.
+    /// </summary>
+    public event EventHandler<PlayerCanTakeRemainingTricksEventArgs>? PlayerCanTakeRemainingTricks;
+
+    /// <summary>
     /// Fired to indicate which player won the most recent trick.
     /// </summary>
     public event EventHandler<DeclareTrickWinnerEventArgs>? DeclareTrickWinner;
