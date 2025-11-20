@@ -582,7 +582,7 @@ public class EuchreGame
             // Is it all the highest trump?
 
             var highestTrumpCards = CardHelper.CreateHighestTrumpHand(GameInfo.Trump.Value);
-            if (leadingPlayer.Hand == highestTrumpCards.Take(leadingPlayer.Hand.Count).ToList())
+            if (CardHelper.CardListsAreEqual(leadingPlayer.Hand, highestTrumpCards.Take(leadingPlayer.Hand.Count).ToList()))
             {
                 // The rest are mine!
 

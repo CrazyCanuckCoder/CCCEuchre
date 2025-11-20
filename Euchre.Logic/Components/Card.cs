@@ -115,6 +115,17 @@ public class Card : ICard
         return $"{Rank} of {Suit}";
     }
 
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as Card);
+    }
+
+    public bool Equals(Card? other)
+    {
+        if (other is null) return false;
+        return Suit == other.Suit && Rank == other.Rank;
+    }
+
     /// <summary>
     /// Returns a new card cloned from this card.
     /// </summary>

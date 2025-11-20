@@ -1,6 +1,4 @@
-﻿
-
-using Euchre.Logic.Helpers;
+﻿using Euchre.Logic.Helpers;
 
 namespace Euchre.Logic.Components;
 
@@ -131,7 +129,8 @@ internal class CardHelper
         var lastTrickWithTrumpLead = (  from trick in currentTricks.Reverse<Trick>()
                                        where trick.LeadSuit == trump
                                       select trick).FirstOrDefault();
-        return CardFinder.CountTrump(lastTrickWithTrumpLead!.Cards.Values.ToList(), trump) == 1;
+        return lastTrickWithTrumpLead != null
+            && CardFinder.CountTrump(lastTrickWithTrumpLead.Cards.Values.ToList(), trump) == 1;
     }
 
     /// <summary>
@@ -168,5 +167,30 @@ internal class CardHelper
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Determines whether two lists of cards contain the same elements, regardless of order.
+    /// </summary>
+    /// <param name="firstList">The first list of cards to compare. Cannot be null.</param>
+    /// <param name="secondList">The second list of cards to compare. Cannot be null.</param>
+    /// <returns>True if both lists contain the same cards and have the same number of elements.</returns>
+    public static bool CardListsAreEqual(List<Card> firstList, List<Card> secondList)
+    {
+        bool areEqual = firstList.Count == secondList.Count;
+
+        if (areEqual)
+        {
+            foreach (var card in firstList)
+            {
+                if (!secondList.Contains(card))
+                {
+                    areEqual = false;
+                    break;
+                }
+            }
+        }
+
+        return areEqual;
     }
 }
