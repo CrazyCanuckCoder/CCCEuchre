@@ -678,6 +678,20 @@ public class MainWindowViewModel : DependencyObject
     }
 
     /// <summary>
+    /// Informs the UI that the specified player is taking the remaining tricks in the round.
+    /// </summary>
+    /// <param name="playerToTakeTricks">The player that will take the remaining tricks.</param>
+    public void PlayerTakesRemainingTricks(IPlayer playerToTakeTricks)
+    {
+        Log.Debug($"PlayerTakesRemainingTricks: {playerToTakeTricks.Name}");
+        UpdateGameInformation(playerToTakeTricks.IsHuman
+            ? "The rest are mine!"
+            : $"{playerToTakeTricks.Name} will take the remaining tricks.");
+        _mainWindowController.UpdatePlayersNumberOfTricksWon(playerToTakeTricks.PlayerIndex);
+        ForciblyDisplayPlayersHands();
+    }
+
+    /// <summary>
     /// Displays the game board and hides the menus.
     /// </summary>
     private void ShowGameBoard()
@@ -1017,8 +1031,14 @@ public class MainWindowViewModel : DependencyObject
         return message;
     }
 
-    internal void PlayerTakesRemainingTricks(IPlayer playerToTakeTricks)
+    /// <summary>
+    /// Displays the hands of all players, used when a player takes the remaining tricks.
+    /// </summary>
+    private void ForciblyDisplayPlayersHands()
     {
-        throw new NotImplementedException();
+        foreach (IPlayer player in CurrentGame!.GameInfo.Players!)
+        {
+            _mainWindowController.SetupPlayerCards(player);
+        }
     }
 }
