@@ -1016,4 +1016,9 @@ public class MainWindowViewModel : DependencyObject
 
         return message;
     }
+
+    internal void PlayerTakesRemainingTricks(IPlayer playerToTakeTricks)
+    {
+        throw new NotImplementedException();
+    }
 }

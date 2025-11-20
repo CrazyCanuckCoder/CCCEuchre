@@ -524,6 +524,21 @@ public class EuchreGame
 
         for (int trickNum = resumeFrom + 1; trickNum <= MAX_NUMBER_OF_TRICKS; trickNum++)
         {
+            if (trickNum < MAX_NUMBER_OF_TRICKS)
+            {
+                if (PlayerCanWinRemainingTricks(GameInfo.NextTrickPlayer!))
+                {
+                    GameInfo.TricksWonByPlayers[GameInfo.NextTrickPlayer.PlayerIndex] +=
+                        MAX_NUMBER_OF_TRICKS - (trickNum - 1);
+                    Log.Debug(
+                        $"{GameInfo.NextTrickPlayer.Name} can take all remaining tricks; raising event.");
+                    PlayerCanTakeRemainingTricks?.Invoke(this,
+                        new PlayerCanTakeRemainingTricksEventArgs(GameInfo.NextTrickPlayer));
+                    break;
+                }
+            }
+
+            Log.Debug($"Starting Trick {trickNum}.");
             var trick = PlayTrick();
             GameInfo.CurrentRoundTricks.Add(trick);
             GameInfo.NextTrickPlayer = trick.GetWinner();
