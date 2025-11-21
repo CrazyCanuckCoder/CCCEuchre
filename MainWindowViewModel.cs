@@ -684,11 +684,13 @@ public class MainWindowViewModel : DependencyObject
     public void PlayerTakesRemainingTricks(IPlayer playerToTakeTricks)
     {
         Log.Debug($"PlayerTakesRemainingTricks: {playerToTakeTricks.Name}");
-        UpdateGameInformation(playerToTakeTricks.IsHuman
-            ? "The rest are mine!"
-            : $"{playerToTakeTricks.Name} will take the remaining tricks.");
         _mainWindowController.UpdatePlayersNumberOfTricksWon(playerToTakeTricks.PlayerIndex);
         ForciblyDisplayPlayersHands();
+        DialogBoxes.CustomInformationDialog(
+            playerToTakeTricks.IsHuman
+            ? "The rest are mine!"
+            : $"{playerToTakeTricks.Name} will take the remaining tricks.",
+            _mainWindow, "Taking Remaining Tricks");
     }
 
     /// <summary>
