@@ -711,9 +711,22 @@ public class EuchreGame
     {
         Log.Info("Scoring round.");
 
-        var tricksByTeam = GameInfo.CurrentRoundTricks
-            .GroupBy(t => t.GetWinner().TeamIndex)
-            .ToDictionary(g => g.Key, g => g.Count());
+        // Tally tricks by team through the number of tricks won by each player.
+
+        var tricksByTeam = new Dictionary<int, int>();
+        foreach (var player in GameInfo.Players!)
+        {
+            int teamIndex = player.TeamIndex;
+            int tricksWon = GameInfo.TricksWonByPlayers[player.PlayerIndex];
+            if (tricksByTeam.ContainsKey(teamIndex))
+            {
+                tricksByTeam[teamIndex] += tricksWon;
+            }
+            else
+            {
+                tricksByTeam[teamIndex] = tricksWon;
+            }
+        }
 
         int numTeam0Tricks = tricksByTeam.GetValueOrDefault(0, 0);
         int numTeam1Tricks = tricksByTeam.GetValueOrDefault(1, 0);
