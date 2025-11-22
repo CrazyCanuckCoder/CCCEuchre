@@ -74,6 +74,7 @@ public partial class MainWindow : Window
         ViewModel.CurrentGame.DeclareTrickWinner += CurrentGame_DeclareTrickWinner;
         ViewModel.CurrentGame.GameOver += CurrentGame_GameOver;
         ViewModel.CurrentGame.PlayerBidResult += CurrentGame_PlayerBidResult;
+        ViewModel.CurrentGame.PlayerCanTakeRemainingTricks += CurrentGame_PlayerCanTakeRemainingTricks;
 
 #if DEBUG
         ViewModel.CurrentGame.PromptToChooseCardsForPlayers += CurrentGame_PromptToChooseCardsForPlayers;
@@ -111,6 +112,7 @@ public partial class MainWindow : Window
         ViewModel.CurrentGame.DeclareTrickWinner -= CurrentGame_DeclareTrickWinner;
         ViewModel.CurrentGame.GameOver -= CurrentGame_GameOver;
         ViewModel.CurrentGame.PlayerBidResult -= CurrentGame_PlayerBidResult;
+        ViewModel.CurrentGame.PlayerCanTakeRemainingTricks -= CurrentGame_PlayerCanTakeRemainingTricks;
 
 #if DEBUG
         ViewModel.CurrentGame.PromptToChooseCardsForPlayers -= CurrentGame_PromptToChooseCardsForPlayers;
@@ -242,6 +244,14 @@ public partial class MainWindow : Window
         UIHelpers.RunOnUIThread(() =>
         {
             ViewModel.EndOfTrick(e.TrickWinningPlayer);
+        });
+    }
+
+    private void CurrentGame_PlayerCanTakeRemainingTricks(object? sender, PlayerCanTakeRemainingTricksEventArgs e)
+    {
+        UIHelpers.RunOnUIThread(() =>
+        {
+            ViewModel.PlayerTakesRemainingTricks(e.PlayerToTakeTricks);
         });
     }
 
@@ -442,7 +452,7 @@ public partial class MainWindow : Window
 
     private void MenuToolsOptions_Click(object sender, RoutedEventArgs e)
     {
-        OptionsWindow optionsWindow = new OptionsWindow()
+        OptionsWindow optionsWindow = new()
         {
             Owner = this
         };

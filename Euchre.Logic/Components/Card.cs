@@ -47,18 +47,7 @@ public class Card : ICard
     /// <param name="trump">The trump suit to evaluate against.</param>
     /// <returns><see langword="true"/> if the card is the left bower for the specified trump suit; 
     /// otherwise, <see langword="false"/>.</returns>
-    public bool IsLeftBower(Suit trump)
-    {
-        if (!IsJack) return false;
-        return trump switch
-        {
-            Suit.Hearts   => Suit == Suit.Diamonds,
-            Suit.Diamonds => Suit == Suit.Hearts,
-            Suit.Clubs    => Suit == Suit.Spades,
-            Suit.Spades   => Suit == Suit.Clubs,
-            _ => false
-        };
-    }
+    public bool IsLeftBower(Suit trump) => IsJack && CardHelper.GetLeftBowerSuit(trump) == Suit;
 
     /// <summary>
     /// Determines whether the current card is a Bower (either the Right Bower or the Left Bower) based on 
@@ -124,6 +113,17 @@ public class Card : ICard
     public override string ToString()
     {
         return $"{Rank} of {Suit}";
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as Card);
+    }
+
+    public bool Equals(Card? other)
+    {
+        if (other is null) return false;
+        return Suit == other.Suit && Rank == other.Rank;
     }
 
     /// <summary>

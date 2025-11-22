@@ -3,10 +3,10 @@ using Euchre.Logic.EventArgs;
 using Euchre.Logic.Exceptions;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
-using static Euchre.Logic.Helpers.Constants;
 using log4net;
 using log4net.Config;
 using System.IO;
+using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Components;
 
@@ -143,6 +143,11 @@ public class EuchreGame
     /// Fired when the player has played a card.
     /// </summary>
     public event EventHandler<CardPlayedByPlayerEventArgs>? CardPlayedByPlayer;
+
+    /// <summary>
+    /// Fired when a player can take the remaining tricks of a round.
+    /// </summary>
+    public event EventHandler<PlayerCanTakeRemainingTricksEventArgs>? PlayerCanTakeRemainingTricks;
 
     /// <summary>
     /// Fired to indicate which player won the most recent trick.
@@ -519,6 +524,21 @@ public class EuchreGame
 
         for (int trickNum = resumeFrom + 1; trickNum <= MAX_NUMBER_OF_TRICKS; trickNum++)
         {
+            if (trickNum < MAX_NUMBER_OF_TRICKS)
+            {
+                if (PlayerCanWinRemainingTricks(GameInfo.NextTrickPlayer!))
+                {
+                    GameInfo.TricksWonByPlayers[GameInfo.NextTrickPlayer.PlayerIndex] +=
+                        MAX_NUMBER_OF_TRICKS - (trickNum - 1);
+                    Log.Debug(
+                        $"{GameInfo.NextTrickPlayer.Name} can take all remaining tricks; raising event.");
+                    PlayerCanTakeRemainingTricks?.Invoke(this,
+                        new PlayerCanTakeRemainingTricksEventArgs(GameInfo.NextTrickPlayer));
+                    break;
+                }
+            }
+
+            Log.Debug($"Starting Trick {trickNum}.");
             var trick = PlayTrick();
             GameInfo.CurrentRoundTricks.Add(trick);
             GameInfo.NextTrickPlayer = trick.GetWinner();
@@ -548,6 +568,63 @@ public class EuchreGame
         GameInfo.CurrentTrickNumber = 0;
         GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
         GameInfo.SaveGameData();
+    }
+
+    // TODO: Convert back to private method.
+    public bool PlayerCanWinRemainingTricks(IPlayer leadingPlayer)
+    {
+        bool canWinRest = false;
+
+        // Does the player has all trump left in their hand.
+
+        if (CardFinder.CountTrump(leadingPlayer.Hand, GameInfo.Trump!.Value) == leadingPlayer.Hand.Count)
+        {
+            // Is it all the highest trump?
+
+            var highestTrumpCards = CardHelper.CreateHighestTrumpHand(GameInfo.Trump.Value);
+            if (CardHelper.CardListsAreEqual(leadingPlayer.Hand, highestTrumpCards.Take(leadingPlayer.Hand.Count).ToList()))
+            {
+                // The rest are mine!
+
+                canWinRest = true;
+            }
+            else if (CardHelper.TrumpCardsAreSequential(leadingPlayer.Hand, GameInfo.Trump.Value))
+            {
+                // Has all the trump higher than the trump in their hand been played?
+
+                var highestTrumpInHand = CardFinder.GetHighestTrumpCard(leadingPlayer.Hand, 
+                    GameInfo.Trump.Value);
+                var playedTrumpCards = from trick in GameInfo.CurrentRoundTricks
+                                        from card in trick.Cards
+                                        where card.Value.EffectiveSuit(GameInfo.Trump.Value) == GameInfo.Trump.Value
+                                       select card.Value;
+                if (CardHelper.AllCardsAreHigherThanTrumpCard(playedTrumpCards, highestTrumpInHand!))
+                {
+                    // The rest are mine!
+
+                    canWinRest = true;
+                }
+                else if (CardHelper.NoMoreTrumpRemaining(GameInfo.CurrentRoundTricks, GameInfo.Trump.Value))
+                {
+                    // The rest are mine!
+
+                    canWinRest = true;
+                }
+            } 
+        }
+        else if (CardHelper.PlayerHasTrumpAndAces(leadingPlayer.Hand, GameInfo.Trump!.Value))
+        {
+            // Is the trump in the player's hand, the only remaining trump?
+
+            if (CardHelper.NoMoreTrumpRemaining(GameInfo.CurrentRoundTricks, GameInfo.Trump.Value))
+            {
+                // The rest are mine!
+
+                canWinRest = true;
+            }
+        }
+
+        return canWinRest;
     }
 
     /// <summary>
@@ -634,9 +711,22 @@ public class EuchreGame
     {
         Log.Info("Scoring round.");
 
-        var tricksByTeam = GameInfo.CurrentRoundTricks
-            .GroupBy(t => t.GetWinner().TeamIndex)
-            .ToDictionary(g => g.Key, g => g.Count());
+        // Tally tricks by team through the number of tricks won by each player.
+
+        var tricksByTeam = new Dictionary<int, int>();
+        foreach (var player in GameInfo.Players!)
+        {
+            int teamIndex = player.TeamIndex;
+            int tricksWon = GameInfo.TricksWonByPlayers[player.PlayerIndex];
+            if (tricksByTeam.ContainsKey(teamIndex))
+            {
+                tricksByTeam[teamIndex] += tricksWon;
+            }
+            else
+            {
+                tricksByTeam[teamIndex] = tricksWon;
+            }
+        }
 
         int numTeam0Tricks = tricksByTeam.GetValueOrDefault(0, 0);
         int numTeam1Tricks = tricksByTeam.GetValueOrDefault(1, 0);
@@ -784,6 +874,15 @@ public class EuchreGame
     /// <param name="eventArgs">Contains the cards chosen for each player.</param>
     private void DealChosenCardsToPlayers(GetPlayersCardsEventArgs eventArgs)
     {
+        // Clear each player's hand.
+
+        foreach (var player in GameInfo.Players!)
+        {
+            player.ClearHand();
+        }
+
+        // Give each player their chosen cards.
+
         GameInfo.Players![0].ReceiveSeveralCards(eventArgs.Player1Cards);
         GameInfo.Players[1].ReceiveSeveralCards(eventArgs.Player2Cards);
         GameInfo.Players[2].ReceiveSeveralCards(eventArgs.Player3Cards);
