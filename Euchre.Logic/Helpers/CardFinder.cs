@@ -1,5 +1,6 @@
 ﻿using CrazyCanuckCoder.Library.Common;
 using Euchre.Logic.Components;
+using Euchre.Logic.Interfaces;
 using System.Linq;
 using System.Windows.Controls.Primitives;
 
@@ -118,12 +119,28 @@ internal static class CardFinder
     /// </summary>
     /// <param name="cards">The list of cards to evaluate. Cannot be null.</param>
     /// <param name="suit">The suit of the card to look for.</param>
+    /// <param name="trump">The suit designated as trump.</param>
     /// <returns>The highest ranked card of the specified suit, or null if no such card exists.</returns>
     public static Card? GetHighestCardOfSuit(List<Card> cards, Suit? suit, Suit trump)
     {
         return cards
                 .Where(c => c.EffectiveSuit(trump) == suit)
                 .OrderByDescending(c => (int)c.Rank)
+                .FirstOrNull();
+    }
+
+    /// <summary>
+    /// Retrieves the lowest ranked card of the specified suit from the given list of cards.
+    /// </summary>
+    /// <param name="cards">The list of cards to evaluate. Cannot be null.</param>
+    /// <param name="suit">The suit of the card to look for.</param>
+    /// <param name="trump">The suit designated as trump.</param>
+    /// <returns>The lowest ranked card of the specified suit, or null if no such card exists.</returns>
+    public static Card? GetLowestCardOfSuit(List<Card> cards, Suit suit, Suit trump)
+    {
+        return cards
+                .Where(c => c.EffectiveSuit(trump) == suit)
+                .OrderBy(c => (int)c.Rank)
                 .FirstOrNull();
     }
 
