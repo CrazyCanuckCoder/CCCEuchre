@@ -224,7 +224,8 @@ public class PlayManager : IPlayManager
 
         cardToPlay = leadSuit == trump
             ? DetermineCardToPlayWhenTrumpLead(trump, winningPlayer, hasTrump, highestTrickCard)
-            : DetermineCardToPlayWhenOffSuitLead(trump, leadSuit.Value, winningPlayer, hasTrump, hasOffSuit);
+            : DetermineCardToPlayWhenOffSuitLead(trump, leadSuit.Value, winningPlayer, hasTrump, hasOffSuit,
+                highestTrickCard);
 
         return cardToPlay ??
             throw new InvalidGameConditionException("No card was found for the player to play!");
@@ -272,15 +273,21 @@ public class PlayManager : IPlayManager
     /// <param name="hasOffSuit">True to indicate the player has non trump cards in their hand.</param>
     /// <returns>A card to play or null to indicate one could not be chosen.</returns>
     private Card? DetermineCardToPlayWhenOffSuitLead(Suit trump, Suit leadSuit, IPlayer winningPlayer, 
-        bool hasTrump, bool hasOffSuit)
+        bool hasTrump, bool hasOffSuit, ICard highestTrickCard)
     {
         Card? cardToPlay;
 
         if (CardFinder.HasACardOfSuit(_player.Hand, leadSuit, trump))
         {
-            // If the player has a card of the lead suit, play the highest card of that suit.
+            // If the player has a card of the lead suit, check if they have a card that can win the trick.
+            //   If so, play the highest card of the lead suit. If not, play the lowest card of the lead suit.
 
-            cardToPlay = CardFinder.GetHighestCardOfSuit(_player.Hand, leadSuit, trump);
+            Card playersHighestCard = CardFinder.GetHighestCardOfSuit(_player.Hand, leadSuit, trump)!;
+            bool hasHigherLeadSuitCard = playersHighestCard.GetTrickValue(trump, leadSuit) > 
+                highestTrickCard.GetTrickValue(trump, leadSuit);
+            cardToPlay = hasHigherLeadSuitCard
+                ? playersHighestCard
+                : CardFinder.GetLowestCardOfSuit(_player.Hand, leadSuit, trump);
         }
         else
         {
