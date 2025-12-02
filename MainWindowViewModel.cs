@@ -813,6 +813,9 @@ public class MainWindowViewModel : DependencyObject
                 automatedPlayer.SortPlayerCards(trump);
                 _mainWindowController.SetupPlayerCards(automatedPlayer);
             }
+#else
+            _mainWindowController.AddPlayerCards(indexOfPlayer, 
+                CurrentGame!.GameInfo.Players![indexOfPlayer].Hand.Count);
 #endif
         }
     }
