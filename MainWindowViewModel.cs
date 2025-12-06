@@ -417,6 +417,7 @@ public class MainWindowViewModel : DependencyObject
             message = "Turning down the kitty card.";
         }
 
+        Log.Debug($"PlayerPassed: {player.Name} ({message})");
         DisplayPlayerMessage(player, message, 1, false);
     }
 
@@ -446,6 +447,7 @@ public class MainWindowViewModel : DependencyObject
     /// </summary>
     public void NoTrumpWasCalled()
     {
+        Log.Debug("No Trump was called: resetting UI for new deal.");
         ClearPlayerMessages();
         _mainWindowController.ResetCardDisplayControlsVisibility();
         _mainWindowController.ClearPlayersHands();
@@ -464,7 +466,7 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="isKittyRound">True to indicate the dealer will pick up the kitty card.</param>
     public void PlayerMadeTrump(IPlayer player, Suit? trump, bool isGoingAlone, bool isKittyRound)
     {
-        Log.InfoFormat("PlayerMadeTrump: {0} trump={1} goingAlone={2} kittyRound={3}", player.Name, trump, isGoingAlone, isKittyRound);
+        Log.Debug($"PlayerMadeTrump: {player.Name} trump={trump} goingAlone={isGoingAlone} kittyRound={isKittyRound}");
         string message;
 
         if (isKittyRound)
@@ -501,7 +503,7 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="cardPlayed">The card played by the player.</param>
     public void DisplayCardPlayedByPlayer(IPlayer player, ICard cardPlayed)
     {
-        Log.DebugFormat("DisplayCardPlayedByPlayer: {0} played {1}", player.Name, cardPlayed);
+        Log.Debug($"DisplayCardPlayedByPlayer: {player.Name} played {cardPlayed}");
         if (player is HumanPlayer)
         {
             _mainWindowController.SetupPlayerCards(player);
@@ -527,6 +529,8 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="trickWinningPlayer">The player that won the trick.</param>
     public void EndOfTrick(IPlayer trickWinningPlayer)
     {
+        Log.Debug($"EndOfTrick: {trickWinningPlayer.Name} won the trick.");
+
         _mainWindowController.UpdatePlayersNumberOfTricksWon(trickWinningPlayer.PlayerIndex);
         UpdateGameInformation($"{trickWinningPlayer.Name} won the trick.");
 
@@ -544,6 +548,8 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="reasonForPoints">Why the team won the points.</param>
     public void EndOfRoundUpdate(List<string> winningPlayers, int points, ScoringReason reasonForPoints)
     {
+        Log.Debug("EndOfRoundUpdate: round finished, showing winning round dialog.");
+
         string message = BuildEndOfRoundMessage(winningPlayers, points, reasonForPoints);
 
         // Display the winning round message to the user.
@@ -588,6 +594,8 @@ public class MainWindowViewModel : DependencyObject
     /// <returns>True to indicate the user ordered up the kitty card.</returns>
     public bool PromptUserToOrderUp(Card kitty, HumanPlayer player, out bool goAlone)
     {
+        Log.Debug("PromptUserToOrderUp: prompting user to order up.");
+
         goAlone = false;
         bool orderedUp = false;
 
@@ -602,6 +610,8 @@ public class MainWindowViewModel : DependencyObject
             goAlone = pickTrumpSuitWindow.GoAlone;
         }
 
+        Log.Debug($"After prompting user to orderUp: orderedUp={orderedUp}, goAlone={goAlone}");
+
         return orderedUp;
     }
 
@@ -613,6 +623,8 @@ public class MainWindowViewModel : DependencyObject
     /// <returns>The suit that the user wants to make trump; null to indicate the user wants to pass.</returns>
     public Suit? PromptUserForTrump(Card kitty, HumanPlayer player, out bool goAlone)
     {
+        Log.Debug("PromptUserForTrump: prompting user to pick trump suit.");
+
         goAlone = false;
         Suit? chosenSuit = null;
 
@@ -628,6 +640,8 @@ public class MainWindowViewModel : DependencyObject
             goAlone = pickTrumpSuitWindow.GoAlone;
         }
 
+        Log.Debug($"After prompting user for trump: chosenSuit={chosenSuit}, goAlone={goAlone}");
+
         return chosenSuit;
     }
 
@@ -638,6 +652,8 @@ public class MainWindowViewModel : DependencyObject
     /// <returns>The card the user chose to discard.</returns>
     public Card? PromptUserForDiscard(HumanPlayer player)
     {
+        Log.Debug("PromptUserForDiscard: prompting user to discard a card.");
+
         Card? discard = null;
 
         ChooseDiscardWindow cardWindow = new(player.Hand, CurrentGame!.GameInfo.Kitty!)
@@ -648,6 +664,8 @@ public class MainWindowViewModel : DependencyObject
         {
             discard = (Card?)cardWindow.ChosenCard;
         }
+
+        Log.Debug($"After prompting user for discard, they selected: {discard}");
 
         return discard;
     }
@@ -670,6 +688,8 @@ public class MainWindowViewModel : DependencyObject
     /// <returns>The card the user wants to play.</returns>
     public Card? GetCardFromUser(IPlayer user, Suit? trickSuit, Suit trump)
     {
+        Log.Debug("GetCardFromUser: prompting user to play a card.");
+
         // Let the user know they need to play a card.
 
         DisplayPlayerMessage(user, "It's your turn.", 2, true);
@@ -684,6 +704,7 @@ public class MainWindowViewModel : DependencyObject
     public void PlayerTakesRemainingTricks(IPlayer playerToTakeTricks)
     {
         Log.Debug($"PlayerTakesRemainingTricks: {playerToTakeTricks.Name}");
+
         _mainWindowController.UpdatePlayersNumberOfTricksWon(playerToTakeTricks.PlayerIndex);
         ForciblyDisplayPlayersHands();
         DialogBoxes.CustomInformationDialog(
@@ -709,6 +730,8 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="numSeconds">The number of seconds to pause.</param>
     private static void PauseGame(int numSeconds)
     {
+        Log.Debug($"Pausing game for {numSeconds} seconds.");
+
         var waitTime = TimeSpan.FromSeconds(numSeconds);
         DateTime start = DateTime.Now;
 
@@ -774,6 +797,8 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="numberOfCardsDealt">The number of cards dealt to an automated player.</param>
     public void UpdatePlayersHandAfterDeal(int indexOfPlayer, int numberOfCardsDealt)
     {
+        Log.Debug($"Updating {CurrentGame!.GameInfo.Players![indexOfPlayer].Name}'s hand after a deal.");
+
         if (CurrentGame!.GameInfo.Players![indexOfPlayer] is HumanPlayer humanPlayer)
         {
             humanPlayer.SortPlayerCards(trump: null);
@@ -800,6 +825,8 @@ public class MainWindowViewModel : DependencyObject
     /// <param name="trump">The suit designated as the trump suit.</param>
     private void UpdatePlayersHandAfterTrumpSet(int indexOfPlayer, Suit trump)
     {
+        Log.Debug($"Updating {CurrentGame!.GameInfo.Players![indexOfPlayer].Name}'s hand after trump set.");
+
         if (CurrentGame!.GameInfo.Players![indexOfPlayer] is HumanPlayer humanPlayer)
         {
             humanPlayer.SortPlayerCards(trump);
@@ -926,6 +953,8 @@ public class MainWindowViewModel : DependencyObject
     /// </summary>
     private void RestoreGameUI()
     {
+        Log.Debug("Restoring game UI after loading saved game.");
+
         if (CurrentGame!.GameInfo.LastCompletedStage == RoundStage.CardsDealt)
         {
             SetUIAfterCardsDealt();
