@@ -56,7 +56,7 @@ public class EuchreGame
         GameInfo = GameStateManager.LoadGameData()
                      ?? throw new InvalidGameConditionException("No saved game found.");
 
-        // Flag that we are resuming – the UI can react accordingly.
+        // Flag that we are resuming â€“ the UI can react accordingly.
 
         GameInfo.RestartGame = true;
     }
@@ -286,7 +286,7 @@ public class EuchreGame
         
         switch (GameInfo.LastCompletedStage)
         {
-            // Fresh round – run everything from the top.
+            // Fresh round â€“ run everything from the top.
 
             case RoundStage.None:
                 ResetRound();
@@ -437,7 +437,7 @@ public class EuchreGame
 
         KittyWasTurnedDown?.Invoke(this, new System.EventArgs());
 
-        // Second round – bid any other suit.
+        // Second round â€“ bid any other suit.
 
         if (BiddingRound(2, null))
         {
@@ -449,7 +449,7 @@ public class EuchreGame
             return true;
         }
 
-        // Nobody called trump – round ends, dealer advances.
+        // Nobody called trump â€“ round ends, dealer advances.
 
         NoTrumpCalled?.Invoke(this, new System.EventArgs());
         AdvanceDealer();
@@ -563,7 +563,7 @@ public class EuchreGame
     /// Plays all tricks for the current round.
     /// </summary>
     /// <param name="resumeFrom">
-    /// If > 0, we start at that trick number (1-based) – used when resuming after a crash.
+    /// If > 0, we start at that trick number (1-based) â€“ used when resuming after a crash.
     /// </param>
     private void PlayTricksForRound(int resumeFrom = 0)
     {
@@ -606,7 +606,7 @@ public class EuchreGame
             Log.Debug(
                 $"Trick {trickNum} won by {GameInfo.NextTrickPlayer.Name} (Team {GameInfo.NextTrickPlayer.TeamIndex}).");
 
-            // Update checkpoint after each trick – this allows us to resume mid-round.
+            // Update checkpoint after each trick â€“ this allows us to resume mid-round.
 
             GameInfo.CurrentTrickNumber = trickNum; // remember where we stopped
             GameInfo.SaveGameData();
@@ -621,7 +621,7 @@ public class EuchreGame
             }
         }
 
-        // All tricks done – reset the per-round trick counter.
+        // All tricks done â€“ reset the per-round trick counter.
 
         GameInfo.CurrentTrickNumber = 0;
         GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
@@ -850,7 +850,7 @@ public class EuchreGame
 
         GameOver?.Invoke(this, new GameOverEventArgs(GameInfo));
 
-        // Game over – delete saved state data.
+        // Game over â€“ delete saved state data.
 
         GameStateManager.ClearSavedGameData();
     }
