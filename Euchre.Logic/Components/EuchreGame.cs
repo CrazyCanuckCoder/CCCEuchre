@@ -388,17 +388,7 @@ public class EuchreGame
 
         // Deal 5 cards to each player.
 
-        for (int round = 0; round < CARDS_PER_PLAYER; round++)
-        {
-            int currentPlayerIndex = GetNextPlayer(GameInfo.Dealer!).PlayerIndex;
-            for (int playerCount = 0; playerCount < NUMBER_OF_PLAYERS; playerCount++)
-            {
-                GameInfo.Players[currentPlayerIndex].AddCard(GameInfo.Deck.Deal());
-                CardsDealtToPlayer?.Invoke(this,
-                    new CardsDealtToPlayerEventArgs(GameInfo.Players[currentPlayerIndex], 1));
-                currentPlayerIndex = GetNextPlayer(GameInfo.Players[currentPlayerIndex]).PlayerIndex;
-            }
-        }
+        DealToPlayers();
 
         foreach (var player in GameInfo.Players!)
         {
@@ -416,6 +406,24 @@ public class EuchreGame
     }
 
     /// <summary>
+    /// Deals the cards to each player in the game.
+    /// </summary>
+    private void DealToPlayers()
+    {
+        for (int round = 0; round < CARDS_PER_PLAYER; round++)
+        {
+            int currentPlayerIndex = GetNextPlayer(GameInfo.Dealer!).PlayerIndex;
+            for (int playerCount = 0; playerCount < NUMBER_OF_PLAYERS; playerCount++)
+            {
+                GameInfo.Players![currentPlayerIndex].AddCard(GameInfo.Deck.Deal());
+                CardsDealtToPlayer?.Invoke(this,
+                    new CardsDealtToPlayerEventArgs(GameInfo.Players[currentPlayerIndex], 1));
+                currentPlayerIndex = GetNextPlayer(GameInfo.Players[currentPlayerIndex]).PlayerIndex;
+            }
+        }
+    }
+
+    /// <summary>
     /// Prompts the players to choose the trump suit through a bidding process.
     /// </summary>
     /// <returns>True to indicate the players made a bid.  False indicates the round should be re-dealt.</returns>
@@ -429,10 +437,7 @@ public class EuchreGame
         {
             Log.Debug(
                 $"Trump chosen in round 1: {GameInfo.Trump}{(GameInfo.GoingAlone ? " Alone" : "")} by {GameInfo.TrumpCaller?.Name}");
-            TrumpCalled?.Invoke(this, new System.EventArgs());
-            GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
-            GameInfo.SaveGameData();
-            return true;
+            return TrumpWasCalled();
         }
 
         KittyWasTurnedDown?.Invoke(this, new System.EventArgs());
@@ -443,10 +448,7 @@ public class EuchreGame
         {
             Log.Debug(
                 $"Trump chosen in round 2: {GameInfo.Trump}{(GameInfo.GoingAlone ? " Alone" : "")} by {GameInfo.TrumpCaller?.Name}");
-            TrumpCalled?.Invoke(this, new System.EventArgs());
-            GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
-            GameInfo.SaveGameData();
-            return true;
+            return TrumpWasCalled();
         }
 
         // Nobody called trump – round ends, dealer advances.
@@ -455,6 +457,18 @@ public class EuchreGame
         AdvanceDealer();
         Log.Debug("No trump called in either round; advancing dealer.");
         return false;
+    }
+
+    /// <summary>
+    /// Inform the UI that trump was called and update game state accordingly.
+    /// </summary>
+    /// <returns>True to indicate that trump was called by a player.</returns>
+    private bool TrumpWasCalled()
+    {
+        TrumpCalled?.Invoke(this, new System.EventArgs());
+        GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
+        GameInfo.SaveGameData();
+        return true;
     }
 
     /// <summary>
@@ -628,8 +642,12 @@ public class EuchreGame
         GameInfo.SaveGameData();
     }
 
-    // TODO: Convert back to private method.
-    public bool PlayerCanWinRemainingTricks(IPlayer leadingPlayer)
+    /// <summary>
+    /// Determines if the specified player can win all the remaining tricks in the round based on their hand.
+    /// </summary>
+    /// <param name="leadingPlayer">The current player with the lead.</param>
+    /// <returns>True to indicate the player can win the remaining tricks.</returns>
+    private bool PlayerCanWinRemainingTricks(IPlayer leadingPlayer)
     {
         bool canWinRest = false;
 
