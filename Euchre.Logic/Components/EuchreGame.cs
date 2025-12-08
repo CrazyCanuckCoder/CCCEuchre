@@ -56,7 +56,7 @@ public class EuchreGame
         GameInfo = GameStateManager.LoadGameData()
                      ?? throw new InvalidGameConditionException("No saved game found.");
 
-        // Flag that we are resuming – the UI can react accordingly.
+        // Flag that we are resuming â€“ the UI can react accordingly.
 
         GameInfo.RestartGame = true;
     }
@@ -186,30 +186,88 @@ public class EuchreGame
     public event EventHandler<System.EventArgs>? UpdatePlayersHands;
 #endif
 
+    private CancellationTokenSource? _shutdownCts;
+    private Task? _gameLoopTask;
+
     /// <summary>
-    /// Asynchronously runs the main game loop until one of the teams reaches the winning score.
+    /// Request cooperative shutdown of the running game loop.
     /// </summary>
-    /// <remarks>This method is asynchronous to support integration with user interfaces or other 
-    /// asynchronous workflows. The game loop continues until either team achieves the required winning 
-    /// score.</remarks>
-    /// <returns>A task that represents the asynchronous operation. The task completes when the game has
-    /// finished.</returns>
-    /// <exception cref="InvalidGameConditionException" />
-    public async Task PlayGameAsync()
+    public void RequestStop()
     {
-        Log.Debug("PlayGameAsync started.");
-
-        // The main game loop is synchronous, but this method is asynchronous for UI integration.
-
-        while (GameInfo.TeamScores[0] < WINNING_SCORE && GameInfo.TeamScores[1] < WINNING_SCORE)
+        try
         {
-            Log.Debug(
-                $"Starting a new round. Scores: Team0={GameInfo.TeamScores[0]}, Team1={GameInfo.TeamScores[1]}");
-            await Task.Run(PlayRound);
+            Log.Debug("RequestStop called - signalling game loop to stop.");
+            _shutdownCts ??= new CancellationTokenSource();
+            _shutdownCts.Cancel();
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Error while requesting game stop", ex);
+        }
+    }
+
+    /// <summary>
+    /// Run game loop with optional cancellation support.  Replaces previous PlayGameAsync signature.
+    /// </summary>
+    public async Task PlayGameAsync(CancellationToken externalToken = default)
+    {
+        Log.Debug("PlayGameAsync started (cancellable).");
+
+        // create linked token that we can cancel locally
+        _shutdownCts ??= new CancellationTokenSource();
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(_shutdownCts.Token, externalToken);
+        var ct = linkedCts.Token;
+
+        // store the running task so callers (UI) can await it if needed
+        _gameLoopTask = Task.Run(async () =>
+        {
+            try
+            {
+                while (!ct.IsCancellationRequested &&
+                       GameInfo.TeamScores[0] < WINNING_SCORE &&
+                       GameInfo.TeamScores[1] < WINNING_SCORE)
+                {
+                    // run a synchronous round on thread pool but observe cancellation
+                    await Task.Run(() => PlayRound(), ct).ConfigureAwait(false);
+
+                    // small cooperative check point
+                    if (ct.IsCancellationRequested) break;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                Log.Debug("PlayGameAsync cancelled via token.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Unhandled exception in PlayGameAsync loop.", ex);
+                throw;
+            }
+        }, ct);
+
+        try
+        {
+            await _gameLoopTask.ConfigureAwait(false);
+        }
+        finally
+        {
+            // ensure state saved on graceful stop
+            try
+            {
+                GameInfo.SaveGameData();
+                Log.Debug("Game state saved after PlayGameAsync exit.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Failed to save game state during shutdown.", ex);
+            }
         }
 
-        Log.Debug("Winning condition reached, ending game.");
-        EndGame();
+        // call EndGame if finished normally
+        if (GameInfo.TeamScores[0] >= WINNING_SCORE || GameInfo.TeamScores[1] >= WINNING_SCORE)
+        {
+            EndGame();
+        }
     }
 
     /// <summary>
@@ -228,7 +286,7 @@ public class EuchreGame
         
         switch (GameInfo.LastCompletedStage)
         {
-            // Fresh round – run everything from the top.
+            // Fresh round â€“ run everything from the top.
 
             case RoundStage.None:
                 ResetRound();
@@ -379,7 +437,7 @@ public class EuchreGame
 
         KittyWasTurnedDown?.Invoke(this, new System.EventArgs());
 
-        // Second round – bid any other suit.
+        // Second round â€“ bid any other suit.
 
         if (BiddingRound(2, null))
         {
@@ -391,7 +449,7 @@ public class EuchreGame
             return true;
         }
 
-        // Nobody called trump – round ends, dealer advances.
+        // Nobody called trump â€“ round ends, dealer advances.
 
         NoTrumpCalled?.Invoke(this, new System.EventArgs());
         AdvanceDealer();
@@ -505,7 +563,7 @@ public class EuchreGame
     /// Plays all tricks for the current round.
     /// </summary>
     /// <param name="resumeFrom">
-    /// If > 0, we start at that trick number (1-based) – used when resuming after a crash.
+    /// If > 0, we start at that trick number (1-based) â€“ used when resuming after a crash.
     /// </param>
     private void PlayTricksForRound(int resumeFrom = 0)
     {
@@ -548,7 +606,7 @@ public class EuchreGame
             Log.Debug(
                 $"Trick {trickNum} won by {GameInfo.NextTrickPlayer.Name} (Team {GameInfo.NextTrickPlayer.TeamIndex}).");
 
-            // Update checkpoint after each trick – this allows us to resume mid-round.
+            // Update checkpoint after each trick â€“ this allows us to resume mid-round.
 
             GameInfo.CurrentTrickNumber = trickNum; // remember where we stopped
             GameInfo.SaveGameData();
@@ -563,7 +621,7 @@ public class EuchreGame
             }
         }
 
-        // All tricks done – reset the per-round trick counter.
+        // All tricks done â€“ reset the per-round trick counter.
 
         GameInfo.CurrentTrickNumber = 0;
         GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
@@ -792,7 +850,7 @@ public class EuchreGame
 
         GameOver?.Invoke(this, new GameOverEventArgs(GameInfo));
 
-        // Game over – delete saved state data.
+        // Game over â€“ delete saved state data.
 
         GameStateManager.ClearSavedGameData();
     }

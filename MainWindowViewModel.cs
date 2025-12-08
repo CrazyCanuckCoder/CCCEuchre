@@ -832,14 +832,21 @@ public class MainWindowViewModel : DependencyObject
             humanPlayer.SortPlayerCards(trump);
             _mainWindowController.SetupPlayerCards(humanPlayer);
         }
+#if DEBUG
         else
         {
-#if DEBUG
             if (CurrentGame.GameInfo.Players[indexOfPlayer] is AutomatedPlayer automatedPlayer)
             {
                 automatedPlayer.SortPlayerCards(trump);
                 _mainWindowController.SetupPlayerCards(automatedPlayer);
             }
+#else
+        else if (CurrentGame.GameInfo.RestartGame)
+        {
+            // The cards need to be displayed when the game is restored from a saved state.
+
+            _mainWindowController.AddPlayerCards(indexOfPlayer, 
+                CurrentGame!.GameInfo.Players![indexOfPlayer].Hand.Count);
 #endif
         }
     }
