@@ -6,7 +6,6 @@ using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using Euchre.Windows;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Windows;
 using static Euchre.Logic.Helpers.Constants;
 
@@ -476,17 +475,19 @@ public partial class MainWindow : Window
         {
             if (DataContext is MainWindowViewModel vm && vm.CurrentGame != null)
             {
+                // Detect in-progress: both teams below winning score.
+
                 var game = vm.CurrentGame;
-                // Detect in-progress: both teams below winning score
                 bool inProgress = game.GameInfo.TeamScores[0] < WINNING_SCORE
                                   && game.GameInfo.TeamScores[1] < WINNING_SCORE;
 
                 if (inProgress)
                 {
-                    // Prompt user: Yes = Save & Exit, No = Exit without saving, Cancel = keep playing
+                    // Prompt user: Yes = Save & Exit, No = Exit without saving, Cancel = keep playing.
+
                     var result = MessageBox.Show(
-                        "A game is in progress. Do you want to save and exit?\n\n" +
-                        "Yes = Save and exit\nNo = Exit without saving\nCancel = Continue playing",
+                        $"A game is in progress. Do you want to save and exit?{Environment.NewLine}{Environment.NewLine}" +
+                        $"Yes = Save and exit{Environment.NewLine}No = Exit without saving{Environment.NewLine}Cancel = Continue playing",
                         "Exit Game",
                         MessageBoxButton.YesNoCancel,
                         MessageBoxImage.Question);
@@ -500,10 +501,12 @@ public partial class MainWindow : Window
                     if (result == MessageBoxResult.Yes)
                     {
                         // Ask game to stop cooperatively, save state, then allow close.
+
                         game.RequestStop();
 
-                        // Wait up to a short timeout for the loop to stop to allow graceful save persistence
+                        // Wait up to a short timeout for the loop to stop to allow graceful save persistence.
                         // If you exposed a Task, await it here; otherwise give a short delay.
+
                         if (game is { } && game.GetType().GetProperty("_gameLoopTask", 
                                                 System.Reflection.BindingFlags.NonPublic 
                                                 | System.Reflection.BindingFlags.Instance) is null)
@@ -519,20 +522,21 @@ public partial class MainWindow : Window
                         {
                             // ignore save errors at shutdown (already logged inside SaveGameData if it logs)
                         }
-                        // allow close
+                        
                         return;
                     }
 
-                    // No => exit without saving: clear persisted save and stop background work
+                    // No => exit without saving: clear persisted save and stop background work.
+
                     GameStateManager.ClearSavedGameData();
                     game.RequestStop();
-                    // allow close
                 }
             }
         }
         catch (Exception ex)
         {
-            // Fallback: log and allow close to avoid blocking shutdown
+            // Fallback: log and allow close to avoid blocking shutdown.
+
             log4net.LogManager.GetLogger(typeof(MainWindow)).Error("Error during Closing handler", ex);
         }
     }

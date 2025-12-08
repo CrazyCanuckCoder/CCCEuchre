@@ -6,7 +6,6 @@ using Euchre.Logic.Interfaces;
 using log4net;
 using log4net.Config;
 using System.IO;
-using System.Threading;
 using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Components;
@@ -30,7 +29,7 @@ public class EuchreGame
             if (File.Exists(configPath))
             {
                 XmlConfigurator.ConfigureAndWatch(new FileInfo(configPath));
-                Log.Info("log4net configured from file: " + configPath);
+                Log.Debug("log4net configured from file: " + configPath);
             }
             else
             {
@@ -50,7 +49,7 @@ public class EuchreGame
     /// </summary>
     public EuchreGame()
     {
-        Log.Info("Initializing EuchreGame from saved game.");
+        Log.Debug("Initializing EuchreGame from saved game.");
 
         // Load persisted state.
 
@@ -69,7 +68,7 @@ public class EuchreGame
     /// <exception cref="InvalidNumberOfPlayersException" />
     public EuchreGame(List<AutomatedPlayerAvatar> playerNames)
     {
-        Log.Info("Initializing EuchreGame for a new game.");
+        Log.Debug("Initializing EuchreGame for a new game.");
 
         if (playerNames.Count != NUMBER_OF_PLAYERS)
         {
@@ -197,11 +196,8 @@ public class EuchreGame
     {
         try
         {
-            Log.Info("RequestStop called - signalling game loop to stop.");
-            if (_shutdownCts == null)
-            {
-                _shutdownCts = new CancellationTokenSource();
-            }
+            Log.Debug("RequestStop called - signalling game loop to stop.");
+            _shutdownCts ??= new CancellationTokenSource();
             _shutdownCts.Cancel();
         }
         catch (Exception ex)
@@ -379,7 +375,7 @@ public class EuchreGame
     /// </summary>
     private void DealCards()
     {
-        Log.Info("Dealing cards.");
+        Log.Debug("Dealing cards.");
         DeclareDealer?.Invoke(this, new DeclareDealerEventArgs(GameInfo.Dealer!));
         GameInfo.Deck.Shuffle();
 
@@ -771,7 +767,7 @@ public class EuchreGame
     /// </summary>
     private void ScoreRound()
     {
-        Log.Info("Scoring round.");
+        Log.Debug("Scoring round.");
 
         // Tally tricks by team through the number of tricks won by each player.
 
@@ -848,7 +844,7 @@ public class EuchreGame
     /// consistency.</remarks>
     private void EndGame()
     {
-        Log.Info("EndGame: game over.");
+        Log.Debug("EndGame: game over.");
 
         // Let the UI know the game is over.
 
