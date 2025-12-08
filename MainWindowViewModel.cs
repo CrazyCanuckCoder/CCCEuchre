@@ -6,9 +6,10 @@ using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using Euchre.Windows;
-using System.Windows;
-using Extensions = Euchre.Logic.Helpers.Extensions;
 using log4net;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using Extensions = Euchre.Logic.Helpers.Extensions;
 
 namespace Euchre;
 
@@ -840,15 +841,8 @@ public class MainWindowViewModel : DependencyObject
                 automatedPlayer.SortPlayerCards(trump);
                 _mainWindowController.SetupPlayerCards(automatedPlayer);
             }
-#else
-        else if (CurrentGame.GameInfo.RestartGame)
-        {
-            // The cards need to be displayed when the game is restored from a saved state.
-
-            _mainWindowController.AddPlayerCards(indexOfPlayer, 
-                CurrentGame!.GameInfo.Players![indexOfPlayer].Hand.Count);
-#endif
         }
+#endif
     }
 
     /// <summary>
@@ -1015,7 +1009,29 @@ public class MainWindowViewModel : DependencyObject
     {
         foreach (var player in CurrentGame!.GameInfo.Players!)
         {
-            UpdatePlayersHandAfterTrumpSet(player.PlayerIndex, CurrentGame.GameInfo.Trump!.Value);
+            if (CurrentGame!.GameInfo.Players![player.PlayerIndex] is HumanPlayer humanPlayer)
+            {
+                humanPlayer.SortPlayerCards(CurrentGame.GameInfo.Trump!.Value);
+                _mainWindowController.SetupPlayerCards(humanPlayer);
+            }
+#if DEBUG
+            else
+            {
+                if (CurrentGame.GameInfo.Players[player.PlayerIndex] is AutomatedPlayer automatedPlayer)
+                {
+                    automatedPlayer.SortPlayerCards(CurrentGame.GameInfo.Trump!.Value);
+                    _mainWindowController.SetupPlayerCards(automatedPlayer);
+                }
+#else
+            else if (CurrentGame.GameInfo.RestartGame)
+            {
+                // The cards need to be displayed when the game is restored from a saved state.
+
+                _mainWindowController.AddPlayerCards(player.PlayerIndex, 
+                    CurrentGame!.GameInfo.Players![player.PlayerIndex].Hand.Count);
+#endif
+            }
+
         }
     }
 
