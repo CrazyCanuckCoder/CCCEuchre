@@ -9,18 +9,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove=".github\**" />
     <Compile Remove="Docs\**" />
     <Compile Remove="Euchre.Console\**" />
     <Compile Remove="Euchre.Logic\**" />
     <Compile Remove="Euchre.Tests\**" />
+    <EmbeddedResource Remove=".github\**" />
     <EmbeddedResource Remove="Docs\**" />
     <EmbeddedResource Remove="Euchre.Console\**" />
     <EmbeddedResource Remove="Euchre.Logic\**" />
     <EmbeddedResource Remove="Euchre.Tests\**" />
+    <None Remove=".github\**" />
     <None Remove="Docs\**" />
     <None Remove="Euchre.Console\**" />
     <None Remove="Euchre.Logic\**" />
     <None Remove="Euchre.Tests\**" />
+    <Page Remove=".github\**" />
     <Page Remove="Docs\**" />
     <Page Remove="Euchre.Console\**" />
     <Page Remove="Euchre.Logic\**" />
@@ -248,10 +252,6 @@
     <None Remove="images\suits\Diamonds.png" />
     <None Remove="images\suits\Hearts.png" />
     <None Remove="images\suits\Spades.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -496,6 +496,14 @@
     <Resource Include="images\suits\Diamonds.png" />
     <Resource Include="images\suits\Hearts.png" />
     <Resource Include="images\suits\Spades.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include=".github\upgrades\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
 </Project>
