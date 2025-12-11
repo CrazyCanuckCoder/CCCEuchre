@@ -1,5 +1,6 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.Helpers;
+using Euchre.Logic.Interfaces;
 
 namespace Euchre.Tests;
 
@@ -17,13 +18,13 @@ public class BidderTests
              
             // Player's hand.
 
-            new List<Card>
+            new List<ICard>
             {
-                new(Suit.Hearts, Rank.Ace),
-                new(Suit.Hearts, Rank.King),
-                new(Suit.Hearts, Rank.Queen),
-                new(Suit.Diamonds, Rank.King),
-                new(Suit.Diamonds, Rank.Queen)
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.King),
+                new Card(Suit.Hearts, Rank.Queen),
+                new Card(Suit.Diamonds, Rank.King),
+                new Card(Suit.Diamonds, Rank.Queen)
             },
 
             // Kitty card.
@@ -50,13 +51,13 @@ public class BidderTests
 
             // Player's hand.
 
-            new List<Card>
+            new List<ICard>
             {
-                new(Suit.Clubs, Rank.Ace),
-                new(Suit.Clubs, Rank.King),
-                new(Suit.Hearts, Rank.Queen),
-                new(Suit.Diamonds, Rank.King),
-                new(Suit.Diamonds, Rank.Queen)
+                new Card(Suit.Clubs, Rank.Ace),
+                new Card(Suit.Clubs, Rank.King),
+                new Card(Suit.Hearts, Rank.Queen),
+                new Card(Suit.Diamonds, Rank.King),
+                new Card(Suit.Diamonds, Rank.Queen)
             },
 
             // Kitty card.
@@ -84,13 +85,13 @@ public class BidderTests
 
             // Player's hand.
 
-            new List<Card>
+            new List<ICard>
             {
-                new(Suit.Clubs, Rank.Ace),
-                new(Suit.Clubs, Rank.King),
-                new(Suit.Hearts, Rank.Queen),
-                new(Suit.Diamonds, Rank.King),
-                new(Suit.Diamonds, Rank.Queen)
+                new Card(Suit.Clubs, Rank.Ace),
+                new Card(Suit.Clubs, Rank.King),
+                new Card(Suit.Hearts, Rank.Queen),
+                new Card(Suit.Diamonds, Rank.King),
+                new Card(Suit.Diamonds, Rank.Queen)
             },
 
             // Kitty card.
@@ -113,16 +114,18 @@ public class BidderTests
 
     [Test, TestCaseSource(nameof(GetOrderUpInformation))]
     public void GivenPlayingConditions_DetermineWhetherToOrderUp_ShouldReturnCorrectResult(
-        List<Card> playerHand, Card kitty, bool isDealer, bool expectedGoAlone, bool expectedResult)
+        List<ICard> playerHand, Card kitty, bool isDealer, bool expectedGoAlone, bool expectedResult)
     {
-        var bidder = new Bidder(new AutomatedPlayer("", 0, 0, new GameStateManager(), 1));
+        var player = new AutomatedPlayer("TestPlayer", 0, 0, new GameStateManager(), 1);
+        player.ReceiveSeveralCards(playerHand);
+        var bidder = new Bidder(player);
         bool result = bidder.DetermineWhetherToOrderUp(kitty, isDealer, out bool goAlone);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Is.EqualTo(expectedResult));
             Assert.That(goAlone, Is.EqualTo(expectedGoAlone));
-        });
+        }
     }
 
 }
