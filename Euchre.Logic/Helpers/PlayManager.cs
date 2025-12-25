@@ -31,23 +31,6 @@ public class PlayManager : IPlayManager
     private Trick _currentTrick;
 
     /// <summary>
-    /// Determines the valid cards that can be played based on the lead suit and trump suit.
-    /// </summary>
-    /// <remarks>This method enforces the rule that players must follow the lead suit if they have cards of
-    /// that suit. If no cards match the lead suit, the player may play any card from their hand.</remarks>
-    /// <param name="leadSuit">The suit of the card that was led in the current trick.</param>
-    /// <param name="trump">The trump suit for the game, which may affect card behaviour.</param>
-    /// <returns>A list of valid cards from the player's hand. If the hand contains cards matching the lead 
-    /// suit, those cards are returned. Otherwise, all cards in the hand are considered valid.</returns>
-    public List<Card> GetValidCards(Suit leadSuit, Suit trump)
-    {
-        if (_player.Hand.Count == 0) return [];
-
-        var leadCards = _player.Hand.Where(c => c.EffectiveSuit(trump) == leadSuit).ToList();
-        return leadCards.Count > 0 ? leadCards : [.. _player.Hand];
-    }
-
-    /// <summary>
     /// Determines the card to play for the current trick based on the lead suit, trump suit, and the cards
     /// in the player's hand.
     /// </summary>
