@@ -1,5 +1,6 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.Exceptions;
+using Euchre.Logic.Helpers;
 
 namespace Euchre.Tests;
 
@@ -11,7 +12,7 @@ public class PlayerTests
     [SetUp]
     public void Setup()
     {
-        _player = new AutomatedPlayer("TestPlayer", 0, 0, new(), 0);
+        _player = new AutomatedPlayer("TestPlayer", 0, 0, new GameStateManager(), 0);
     }
 
     [TearDown]

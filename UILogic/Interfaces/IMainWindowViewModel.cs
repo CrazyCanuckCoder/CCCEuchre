@@ -9,7 +9,7 @@ namespace Euchre.UILogic.Interfaces;
 public interface IMainWindowViewModel
 {
     Visibility ContinueMenuVisibility { get; set; }
-    EuchreGame? CurrentGame { get; set; }
+    IEuchreGame? CurrentGame { get; set; }
     Visibility GameBoardVisibility { get; set; }
     string GameInformation { get; set; }
     Visibility GameInformationVisibility { get; set; }
@@ -40,7 +40,7 @@ public interface IMainWindowViewModel
     void DealCardsToPlayer(int indexOfPlayer, int numberOfCardsDealt);
     void DeclareDealer(IPlayer dealer);
     void DisplayCardPlayedByPlayer(IPlayer player, ICard cardPlayed);
-    void EndOfGameUpdate(GameStateManager gameInfo);
+    void EndOfGameUpdate(IGameStateManager gameInfo);
     void EndOfRoundUpdate(List<string> winningPlayers, int points, ScoringReason reasonForPoints);
     void EndOfTrick(IPlayer trickWinningPlayer);
     Card? GetCardFromUser(IPlayer user, Suit? trickSuit, Suit trump);
@@ -55,7 +55,7 @@ public interface IMainWindowViewModel
     bool PromptUserToOrderUp(Card kitty, HumanPlayer player, out bool goAlone);
     void RedisplayUserHand(HumanPlayer player);
     void SetKittyCard(Card kitty);
-    void SetupUserInterface(MainWindow mainWindow);
+    void SetupUserInterface();
     void TrumpCalled();
     void UpdatePlayersHandAfterDeal(int indexOfPlayer, int numberOfCardsDealt);
 }

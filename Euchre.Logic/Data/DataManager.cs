@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Euchre.Logic.Data;
 
-internal class DataManager : IDataManager
+public class DataManager : IDataManager
 {
     /// <summary>
     /// The name of the file where game data is saved and loaded from.

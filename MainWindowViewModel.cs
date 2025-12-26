@@ -330,7 +330,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     /// <summary>
     /// The reference to the object running the game logic.
     /// </summary>
-    public EuchreGame? CurrentGame { get; set; }
+    public IEuchreGame? CurrentGame { get; set; }
 
     #endregion Properties
 
@@ -569,7 +569,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     /// Lets the players know who won the game.
     /// </summary>
     /// <param name="gameInfo">The reference to the game information.</param>
-    public void EndOfGameUpdate(GameStateManager gameInfo)
+    public void EndOfGameUpdate(IGameStateManager gameInfo)
     {
         Log.Info("EndOfGameUpdate: game finished, showing winner dialog.");
         int winningTeamIndex = gameInfo.TeamScores[0] > gameInfo.TeamScores[1] ? 0 : 1;

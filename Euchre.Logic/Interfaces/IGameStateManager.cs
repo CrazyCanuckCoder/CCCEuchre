@@ -21,9 +21,6 @@ public interface IGameStateManager
     Suit? Trump { get; set; }
     IPlayer? TrumpCaller { get; set; }
 
-    static abstract void ClearSavedGameData();
-    static abstract bool DataExists();
-    static abstract IGameStateManager LoadGameData();
     void ResetRoundCheckpoint();
     void ResetTricksWonByPlayers();
     void SaveGameData();

@@ -6,6 +6,7 @@ using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using Euchre.UILogic.Interfaces;
 using Euchre.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
 using System.Windows;
 using static Euchre.Logic.Helpers.Constants;
@@ -15,7 +16,7 @@ namespace Euchre;
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window, IMainWindow
+public partial class MainWindow : Window
 {
 
     public MainWindow(IMainWindowViewModel mainWindowViewModel)
@@ -55,7 +56,7 @@ public partial class MainWindow : Window, IMainWindow
 
         // Set up the elements on the game board.
 
-        ViewModel.SetupUserInterface(this);
+        ViewModel.SetupUserInterface();
 
         // Start the game.
 
@@ -379,17 +380,17 @@ public partial class MainWindow : Window, IMainWindow
 
     private async void MenuNewGame_Click(object sender, RoutedEventArgs e)
     {
-        var playerNames = GetPlayerNamesFromUser();
+        var playerNames = GetPlayerNamesFromUser().ToList();
         if (playerNames != null)
         {
-            ViewModel.CurrentGame = new([.. playerNames]);
+            ViewModel.CurrentGame = App.Services.GetService<IEuchreGame>();
             await StartGame();
         }
     }
 
     private async void MenuContinue_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.CurrentGame = new();
+        ViewModel.CurrentGame = App.Services.GetService<IEuchreGame>();
         await StartGame();
     }
 

@@ -23,7 +23,7 @@ public class Program
                     new AutomatedPlayerAvatar() { PlayerName = "Charlie", AvatarNumber = 0 },
                     new AutomatedPlayerAvatar() { PlayerName = "Diana",   AvatarNumber = 0 }
                 ];
-            var game = new EuchreGame(playerNames);
+            var game = new EuchreGame(playerNames, new GameStateManager());
             await game.PlayGameAsync();
         }
     }

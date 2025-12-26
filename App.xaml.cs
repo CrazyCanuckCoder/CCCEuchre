@@ -1,8 +1,16 @@
 ﻿using System.IO;
 using System.Windows;
 using System.Windows.Threading;
+using Euchre.Logic.Components;
+using Euchre.Logic.Data;
+using Euchre.Logic.Helpers;
+using Euchre.Logic.Interfaces;
+using Euchre.UILogic.Classes;
+using Euchre.UILogic.Interfaces;
 using log4net;
 using log4net.Config;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Euchre;
 
@@ -12,12 +20,23 @@ namespace Euchre;
 public partial class App : Application
 {
     private static readonly ILog Log = LogManager.GetLogger(typeof(App));
+    private static IHost? _host;
+
+
+    /// <summary>
+    /// Gets services.
+    /// </summary>
+    public static IServiceProvider Services
+    {
+        get { return _host!.Services; }
+    }
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
-        // Configure log4net from file if present (safe to call multiple times).
+        // Configure log4net from file, if present.
+
         try
         {
             var baseDir = AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory();
@@ -35,13 +54,45 @@ public partial class App : Application
         catch (Exception ex)
         {
             // Do not block startup if logging configuration fails.
+
             System.Diagnostics.Debug.WriteLine($"Failed to configure log4net: {ex}");
         }
 
-        // Global exception handlers
+        // Global exception handlers.
+
         DispatcherUnhandledException += App_DispatcherUnhandledException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+
+        // Start application services.
+
+        _host = Host.CreateDefaultBuilder()
+            .ConfigureServices((context, services) =>
+            {
+                services.AddSingleton<MainWindow>();
+                services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
+                services.AddSingleton<IMainWindowController, MainWindowController>();
+                services.AddSingleton<IGameStateManager, GameStateManager>();
+                services.AddSingleton<DataManager>();
+                services.AddTransient<IEuchreGame, EuchreGame>();
+            })
+            .Build();
+
+        _host.Start();
+
+        var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+        mainWindow.Show();
+    }
+
+    protected override async void OnExit(ExitEventArgs e)
+    {
+        if (_host is not null)
+        {
+            await _host.StopAsync();
+            _host.Dispose();
+        }
+
+        base.OnExit(e);
     }
 
     private void App_DispatcherUnhandledException(object? sender, DispatcherUnhandledExceptionEventArgs e)

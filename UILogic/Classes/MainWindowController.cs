@@ -12,7 +12,7 @@ internal class MainWindowController : IMainWindowController
 {
     private static readonly ILog Log = LogManager.GetLogger(typeof(MainWindowController));
 
-    public MainWindowController(IMainWindow mainWindow, IGameStateManager gameStateManager)
+    public MainWindowController(MainWindow mainWindow, IGameStateManager gameStateManager)
     {
         Log.Debug("MainWindowController: initializing controller.");
         _mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
@@ -25,7 +25,7 @@ internal class MainWindowController : IMainWindowController
     /// <summary>
     /// A reference to the main window.
     /// </summary>
-    private readonly IMainWindow _mainWindow;
+    private readonly MainWindow _mainWindow;
 
     /// <summary>
     /// A reference to the game state manager of the current game.
