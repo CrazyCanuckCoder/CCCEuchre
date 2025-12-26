@@ -1,11 +1,11 @@
 ﻿using Euchre.Logic.EventArgs;
-using Euchre.Logic.Helpers;
+using Euchre.Logic.Interfaces;
 
 namespace Euchre.Logic.Components;
 
 public interface IEuchreGame
 {
-    GameStateManager GameInfo { get; }
+    IGameStateManager GameInfo { get; }
 
     event EventHandler<CardPlayedByPlayerEventArgs>? CardPlayedByPlayer;
     event EventHandler<CardsDealtToPlayerEventArgs>? CardsDealtToPlayer;

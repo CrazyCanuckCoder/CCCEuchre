@@ -1,6 +1,5 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.Enums;
-using Euchre.Logic.Helpers;
 
 namespace Euchre.Logic.Interfaces;
 
@@ -24,7 +23,7 @@ public interface IGameStateManager
 
     static abstract void ClearSavedGameData();
     static abstract bool DataExists();
-    static abstract GameStateManager LoadGameData();
+    static abstract IGameStateManager LoadGameData();
     void ResetRoundCheckpoint();
     void ResetTricksWonByPlayers();
     void SaveGameData();

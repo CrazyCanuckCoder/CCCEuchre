@@ -141,7 +141,7 @@ public class GameStateManager : IGameStateManager
     /// Loads the game data from a file.
     /// </summary>
     /// <returns>An instance of this class with the loaded data.</returns>
-    public static GameStateManager LoadGameData()
+    public static IGameStateManager LoadGameData()
     {
         return DataManager.LoadGameState();
     }

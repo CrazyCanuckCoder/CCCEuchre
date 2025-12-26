@@ -66,7 +66,7 @@ public class EuchreGame : IEuchreGame
     /// </summary>
     /// <param name="playerNames">The list of names for the players where the first name is a human.</param>
     /// <exception cref="InvalidNumberOfPlayersException" />
-    public EuchreGame(List<AutomatedPlayerAvatar> playerNames)
+    public EuchreGame(List<AutomatedPlayerAvatar> playerNames, IGameStateManager gameStateManager)
     {
         Log.Debug("Initializing EuchreGame for a new game.");
 
@@ -76,7 +76,7 @@ public class EuchreGame : IEuchreGame
             throw new InvalidNumberOfPlayersException();
         }
 
-        GameInfo = new GameStateManager();
+        GameInfo = gameStateManager;
         var players = new IPlayer[NUMBER_OF_PLAYERS];
 
         // Add the human player as the first player.
@@ -101,7 +101,7 @@ public class EuchreGame : IEuchreGame
     /// <summary>
     /// Stores the game's state, including players, scores, dealer, and current round information.
     /// </summary>
-    public GameStateManager GameInfo { get; private set; }
+    public IGameStateManager GameInfo { get; private set; }
 
     /// <summary>
     /// The event that is raised after a player makes a bid during the bidding round.  This event is raised
