@@ -12,10 +12,11 @@ internal class MainWindowController : IMainWindowController
 {
     private static readonly ILog Log = LogManager.GetLogger(typeof(MainWindowController));
 
-    public MainWindowController(MainWindow mainWindow, IGameStateManager gameStateManager)
+    public MainWindowController(IGameStateManager gameStateManager)
     {
         Log.Debug("MainWindowController: initializing controller.");
-        _mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
+        _mainWindow = (MainWindow?)App.Services.GetService(typeof(MainWindow)) ??
+            throw new NullReferenceException("Unable to create reference to MainWindow.");
         _gameStateManager = gameStateManager ?? throw new ArgumentNullException(nameof(gameStateManager));
         Initialize();
     }
