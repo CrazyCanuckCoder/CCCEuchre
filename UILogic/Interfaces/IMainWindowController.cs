@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace Euchre.UILogic.Interfaces;
 
-internal interface IMainWindowController
+public interface IMainWindowController
 {
     void AddPlayerCards(int indexOfPlayer, int numberOfCardsDealt);
     void AddTrick(Trick trick);

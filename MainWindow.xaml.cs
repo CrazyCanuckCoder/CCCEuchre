@@ -18,12 +18,12 @@ namespace Euchre;
 public partial class MainWindow : Window, IMainWindow
 {
 
-    public MainWindow()
+    public MainWindow(IMainWindowViewModel mainWindowViewModel)
     {
         InitializeComponent();
         Closing += MainWindow_Closing;
         _placementManager = new WindowPlacementManager(this);
-        ViewModel = new MainWindowViewModel();
+        ViewModel = mainWindowViewModel;
         ViewModel.Initialize();
         DataContext = ViewModel;
     }

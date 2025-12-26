@@ -16,6 +16,11 @@ namespace Euchre;
 
 public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
 {
+    public MainWindowViewModel(IMainWindowController mainWindowController)
+    {
+        _mainWindowController = mainWindowController;
+    }
+
     private static readonly ILog Log = LogManager.GetLogger(typeof(MainWindowViewModel));
 
     #region Fields
@@ -26,14 +31,9 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     private int _previousDealerPlayerIndex = -1;
 
     /// <summary>
-    /// A reference to the main window.
-    /// </summary>
-    private MainWindow _mainWindow;
-
-    /// <summary>
     /// The class that directly updates the main window.
     /// </summary>
-    private MainWindowController _mainWindowController;
+    private IMainWindowController _mainWindowController;
 
     #endregion Fields
 
@@ -349,12 +349,9 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     /// <summary>
     /// Call this method to initialize the controls for the game on the main window.
     /// </summary>
-    /// <param name="mainWindow">A reference to the main window to update.</param>
-    public void SetupUserInterface(MainWindow mainWindow)
+    public void SetupUserInterface()
     {
         Log.Debug("MainWindowViewModel.SetupUserInterface: setting up UI and controller.");
-        _mainWindow = mainWindow;
-        _mainWindowController = new(mainWindow, CurrentGame!.GameInfo);
         SetVisibilityActionsOfPlayerCardDisplayControl();
         ShowGameBoard();
         if (CurrentGame!.GameInfo.RestartGame)
@@ -556,7 +553,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
 
         // Display the winning round message to the user.
 
-        DialogBoxes.CustomInformationDialog(message, _mainWindow, "End of Round");
+        DialogBoxes.CustomInformationDialog(message, null, "End of Round");
 
         // The round is over, reset the board for the next round.
 
@@ -582,7 +579,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
              select player.Name)
             .ToList()
             .ToListedString();
-        DialogBoxes.CustomInformationDialog($"Game is over! {gameWinners} are the winners!", _mainWindow,
+        DialogBoxes.CustomInformationDialog($"Game is over! {gameWinners} are the winners!", null,
             "Game Over");
         ContinueMenuVisibility = Visibility.Collapsed;
         ResetGameUI();
@@ -602,10 +599,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
         bool orderedUp = false;
 
         List<Suit> suits = [kitty.Suit];
-        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits, player, CurrentGame!.GameInfo.Dealer!, true)
-        {
-            Owner = _mainWindow
-        };
+        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits, player, CurrentGame!.GameInfo.Dealer!, true);
         if (pickTrumpSuitWindow.ShowDialog() == true)
         {
             orderedUp = pickTrumpSuitWindow.SelectedSuit != null;
@@ -632,10 +626,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
 
         List<Suit> suits = Extensions.GetComplementarySuits(kitty.Suit);
         suits.Remove(kitty.Suit);
-        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits, player, CurrentGame!.GameInfo.Dealer!, false)
-        {
-            Owner = _mainWindow
-        };
+        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits, player, CurrentGame!.GameInfo.Dealer!, false);
         if (pickTrumpSuitWindow.ShowDialog() == true)
         {
             chosenSuit = pickTrumpSuitWindow.SelectedSuit;
@@ -658,10 +649,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
 
         Card? discard = null;
 
-        ChooseDiscardWindow cardWindow = new(player.Hand, CurrentGame!.GameInfo.Kitty!)
-        {
-            Owner = _mainWindow,
-        };
+        ChooseDiscardWindow cardWindow = new(player.Hand, CurrentGame!.GameInfo.Kitty!);
         if (cardWindow.ShowDialog() == true)
         {
             discard = (Card?)cardWindow.ChosenCard;
@@ -713,7 +701,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
             playerToTakeTricks.IsHuman
             ? "The rest are mine!"
             : $"{playerToTakeTricks.Name} will take the remaining tricks.",
-            _mainWindow, "Taking Remaining Tricks");
+            null, "Taking Remaining Tricks");
     }
 
     /// <summary>

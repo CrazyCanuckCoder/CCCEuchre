@@ -280,7 +280,8 @@
                     x:Name="CurrentPlayersScoresUserControl"
                     Grid.Row="1"
                     Grid.Column="1"
-                    Width="312" />
+                    Width="312"
+                    x:FieldModifier="public" />
 
                 <!--  Player 3 Controls  -->
 
@@ -292,11 +293,13 @@
                         <UserControls:HorizontalPlayerDisplayUserControl
                             x:Name="Player3DisplayUserControl"
                             Height="110"
-                            Margin="5,5,5,0" />
+                            Margin="5,5,5,0"
+                            x:FieldModifier="public" />
                         <UserControls:CardDisplayUserControl
                             x:Name="Player3CardDisplayUserControl"
                             Height="140"
-                            Margin="5,0,5,5" />
+                            Margin="5,0,5,5"
+                            x:FieldModifier="public" />
                     </StackPanel>
                 </Border>
 
@@ -305,7 +308,8 @@
                 <UserControls:CurrentRoundInfoUserControl
                     x:Name="CurrentRoundInfoUserControl"
                     Grid.Row="1"
-                    Grid.Column="5" />
+                    Grid.Column="5"
+                    x:FieldModifier="public" />
 
                 <!--  Player 2 Controls  -->
 
@@ -317,11 +321,13 @@
                         <UserControls:VerticalPlayerDisplayUserControl
                             x:Name="Player2DisplayUserControl"
                             Width="120"
-                            Margin="5" />
+                            Margin="5"
+                            x:FieldModifier="public" />
                         <UserControls:VerticalCardDisplayUserControl
                             x:Name="Player2CardDisplayUserControl"
                             Width="150"
-                            Margin="5" />
+                            Margin="5"
+                            x:FieldModifier="public" />
                     </StackPanel>
                 </Border>
 
@@ -353,6 +359,7 @@
                         Height="140"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
+                        x:FieldModifier="public"
                         Visibility="{Binding Player3DealtCardsDisplayUserControlVisibility, RelativeSource={RelativeSource AncestorType=Window}}" />
 
 
@@ -367,6 +374,7 @@
                         Height="140"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
+                        x:FieldModifier="public"
                         Visibility="{Binding Player3PlayedCardsDisplayUserControlVisibility, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                     <!--  Player 3 Text Display Box  -->
@@ -399,6 +407,7 @@
                         Grid.Column="0"
                         Width="150"
                         VerticalAlignment="Center"
+                        x:FieldModifier="public"
                         Visibility="{Binding Player2DealtCardsDisplayUserControlVisibility, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                     <!--  Player 2 Played Cards Display  -->
@@ -411,6 +420,7 @@
                         Height="140"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
+                        x:FieldModifier="public"
                         Visibility="{Binding Player2PlayedCardsDisplayUserControlVisibility, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                     <!--  Player 2 Text Display Box  -->
@@ -442,6 +452,7 @@
                         Grid.Column="3"
                         Width="150"
                         VerticalAlignment="Center"
+                        x:FieldModifier="public"
                         Visibility="{Binding Player4DealtCardsDisplayUserControlVisibility, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                     <!--  Player 4 Played Cards Display  -->
@@ -453,6 +464,7 @@
                         Grid.Column="3"
                         Height="140"
                         VerticalAlignment="Center"
+                        x:FieldModifier="public"
                         Visibility="{Binding Player4PlayedCardsDisplayUserControlVisibility, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                     <!--  Player 4 Text Display Box  -->
@@ -486,6 +498,7 @@
                         Height="140"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
+                        x:FieldModifier="public"
                         Visibility="{Binding Player1DealtCardsDisplayUserControlVisibility, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                     <!--  Player 1 Played Cards Display  -->
@@ -499,6 +512,7 @@
                         Height="140"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
+                        x:FieldModifier="public"
                         Visibility="{Binding Player1PlayedCardsDisplayUserControlVisibility, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                     <!--  Player 1 Text Display Box  -->
@@ -555,11 +569,13 @@
                         <UserControls:VerticalCardDisplayUserControl
                             x:Name="Player4CardDisplayUserControl"
                             Width="150"
-                            Margin="5" />
+                            Margin="5"
+                            x:FieldModifier="public" />
                         <UserControls:VerticalPlayerDisplayUserControl
                             x:Name="Player4DisplayUserControl"
                             Width="120"
-                            Margin="5" />
+                            Margin="5"
+                            x:FieldModifier="public" />
                     </StackPanel>
                 </Border>
 
@@ -568,7 +584,8 @@
                 <UserControls:TrumpDisplayUserControl
                     x:Name="TrumpDisplayUserControl"
                     Grid.Row="5"
-                    Grid.Column="1" />
+                    Grid.Column="1"
+                    x:FieldModifier="public" />
 
                 <!--  Player 1 Controls  -->
 
@@ -580,11 +597,13 @@
                         <UserControls:CardDisplayUserControl
                             x:Name="Player1CardDisplayUserControl"
                             Height="140"
-                            Margin="5,5,5,0" />
+                            Margin="5,5,5,0"
+                            x:FieldModifier="public" />
                         <UserControls:HorizontalPlayerDisplayUserControl
                             x:Name="Player1DisplayUserControl"
                             Height="110"
-                            Margin="5,0,5,5" />
+                            Margin="5,0,5,5"
+                            x:FieldModifier="public" />
                     </StackPanel>
                 </Border>
 
@@ -593,7 +612,8 @@
                 <UserControls:PreviousTricksUserControl
                     x:Name="PreviousTricksUserControl"
                     Grid.Row="5"
-                    Grid.Column="5" />
+                    Grid.Column="5"
+                    x:FieldModifier="public" />
 
             </Grid>
         </Border>
