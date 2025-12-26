@@ -8,7 +8,7 @@ using log4net;
 
 namespace Euchre.UILogic.Classes;
 
-internal class MainWindowController
+internal class MainWindowController : IMainWindowController
 {
     private static readonly ILog Log = LogManager.GetLogger(typeof(MainWindowController));
 
@@ -202,9 +202,9 @@ internal class MainWindowController
     public void SetPartnerDisabled(IPlayer player)
     {
         Log.DebugFormat("SetPartnerDisabled: player={0}", player.Name);
-        var partner = (  from anyPlayer in _gameStateManager.Players
-                        where anyPlayer.TeamIndex == player.TeamIndex
-                           && anyPlayer.PlayerIndex != player.PlayerIndex
+        var partner = (from anyPlayer in _gameStateManager.Players
+                       where anyPlayer.TeamIndex == player.TeamIndex
+                          && anyPlayer.PlayerIndex != player.PlayerIndex
                        select anyPlayer)
                       .First();
         if (partner is HumanPlayer humanPlayer)
@@ -341,7 +341,7 @@ internal class MainWindowController
 
         if (_playerCardDisplayControls[user.PlayerIndex] is CardDisplayUserControl playerControl)
         {
-            playerControl.GetCardFromUser(user.Hand, trickSuit, trickSuit! == _gameStateManager.Trump!.Value, 
+            playerControl.GetCardFromUser(user.Hand, trickSuit, trickSuit! == _gameStateManager.Trump!.Value,
                 _gameStateManager.Trump.Value);
             chosenCard = playerControl.ChosenCard;
         }

@@ -4,6 +4,7 @@ using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
 using Euchre.UILogic;
 using Euchre.UILogic.Classes;
+using Euchre.UILogic.Interfaces;
 using Euchre.Windows;
 using System.ComponentModel;
 using System.Windows;
@@ -14,15 +15,15 @@ namespace Euchre;
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : Window, IMainWindow
 {
 
     public MainWindow()
     {
         InitializeComponent();
-        this.Closing += MainWindow_Closing;
+        Closing += MainWindow_Closing;
         _placementManager = new WindowPlacementManager(this);
-        ViewModel = new();
+        ViewModel = new MainWindowViewModel();
         ViewModel.Initialize();
         DataContext = ViewModel;
     }
@@ -32,7 +33,7 @@ public partial class MainWindow : Window
     /// <summary>
     /// The view model class to use to manage the data properties.
     /// </summary>
-    public MainWindowViewModel ViewModel { get; }
+    public IMainWindowViewModel ViewModel { get; }
 
     /// <summary>
     /// Starts the game of Euchre asynchronously.  Assumes the players have been created before the method
@@ -44,9 +45,9 @@ public partial class MainWindow : Window
         // Set up the event handlers for the main window and each human player.
 
         AddMainWindowEventHandlers();
-        var humanPlayers =    from player in ViewModel.CurrentGame!.GameInfo!.Players
-                             where player != null && player.IsHuman
-                            select player as HumanPlayer;
+        var humanPlayers = from player in ViewModel.CurrentGame!.GameInfo!.Players
+                           where player != null && player.IsHuman
+                           select player as HumanPlayer;
         foreach (var humanPlayer in humanPlayers)
         {
             AddHumanPlayerEventHandlers(humanPlayer);
@@ -232,8 +233,8 @@ public partial class MainWindow : Window
             // Remove the event handlers for the main window and each human player.
 
             RemoveMainWindowEventHandlers();
-            var humanPlayers =   from player in ViewModel.CurrentGame!.GameInfo!.Players
-                                where player != null && player.IsHuman
+            var humanPlayers = from player in ViewModel.CurrentGame!.GameInfo!.Players
+                               where player != null && player.IsHuman
                                select player as HumanPlayer;
             foreach (var humanPlayer in humanPlayers)
             {
@@ -405,9 +406,9 @@ public partial class MainWindow : Window
             //Suit.Diamonds,
             Suit.Spades,
         ];
-        PickTrumpSuitWindow pickTrump = new(trumpSuits, 
-                                        new HumanPlayer("human", 0, 0, 0), 
-                                        new AutomatedPlayer("auto", 0, 0, null, 0), 
+        PickTrumpSuitWindow pickTrump = new(trumpSuits,
+                                        new HumanPlayer("human", 0, 0, 0),
+                                        new AutomatedPlayer("auto", 0, 0, null, 0),
                                         false)
         {
             Owner = this,
@@ -507,8 +508,8 @@ public partial class MainWindow : Window
                         // Wait up to a short timeout for the loop to stop to allow graceful save persistence.
                         // If you exposed a Task, await it here; otherwise give a short delay.
 
-                        if (game is { } && game.GetType().GetProperty("_gameLoopTask", 
-                                                System.Reflection.BindingFlags.NonPublic 
+                        if (game is { } && game.GetType().GetProperty("_gameLoopTask",
+                                                System.Reflection.BindingFlags.NonPublic
                                                 | System.Reflection.BindingFlags.Instance) is null)
                         {
                             await Task.Delay(500).ConfigureAwait(true); // small grace period
@@ -522,7 +523,7 @@ public partial class MainWindow : Window
                         {
                             // ignore save errors at shutdown (already logged inside SaveGameData if it logs)
                         }
-                        
+
                         return;
                     }
 

@@ -1,4 +1,5 @@
 using Euchre.Logic.Exceptions;
+using Euchre.Logic.Interfaces;
 using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Components;
@@ -6,7 +7,7 @@ namespace Euchre.Logic.Components;
 /// <summary>
 /// Represents a standard deck of playing cards, providing functionality for shuffling and dealing cards.
 /// </summary>
-public class Deck
+public class Deck : IDeck
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Deck"/> class, creating a deck of cards for use in the 
@@ -77,7 +78,7 @@ public class Deck
     public Card Deal()
     {
         if (_cardStack.Count == 0) throw new EmptyDeckException();
-        
+
         return _cardStack.Pop();
     }
 
