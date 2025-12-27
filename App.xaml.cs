@@ -31,7 +31,7 @@ public partial class App : Application
         get { return _host!.Services; }
     }
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
@@ -78,8 +78,9 @@ public partial class App : Application
             })
             .Build();
 
-        _host.Start();
+        await _host.StartAsync();
 
+        // Gets stuck here.  Why?
         var mainWindow = _host.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();
     }
