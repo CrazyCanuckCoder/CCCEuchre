@@ -19,6 +19,7 @@ public interface IMainWindowController
     void DisplayPlayedCard(int playerIndex, ICard cardPlayed);
     void DisplayTrump(Suit trump);
     Card? GetCardFromUser(IPlayer user, Suit? trickSuit);
+    void Initialize();
     void RemovePlayerCard(IPlayer player);
     void ResetCardDisplayControlsVisibility();
     void ResetPlayerTrumpSuitIcon(int playerIndex);

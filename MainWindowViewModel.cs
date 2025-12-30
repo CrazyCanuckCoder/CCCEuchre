@@ -341,6 +341,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     public void Initialize()
     {
         Log.Debug("MainWindowViewModel.Initialize: checking saved game and settings.");
+
         ContinueMenuVisibility = GameStateManager.DataExists() ? Visibility.Visible : Visibility.Collapsed;
         SetMenuVisibility();
         PlayLastCardInHand = GameSettingsManager.Instance.PlayLastCardInHand;
@@ -352,6 +353,8 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     public void SetupUserInterface()
     {
         Log.Debug("MainWindowViewModel.SetupUserInterface: setting up UI and controller.");
+
+        _mainWindowController.Initialize();
         SetVisibilityActionsOfPlayerCardDisplayControl();
         ShowGameBoard();
         if (CurrentGame!.GameInfo.RestartGame)

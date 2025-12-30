@@ -69,18 +69,18 @@ public partial class App : Application
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) =>
             {
-                services.AddSingleton<MainWindow>();
-                services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
-                services.AddSingleton<IMainWindowController, MainWindowController>();
+                // Singleton services.
+
                 services.AddSingleton<IGameStateManager, GameStateManager>();
-                services.AddSingleton<DataManager>();
-                services.AddTransient<IEuchreGame, EuchreGame>();
+                services.AddSingleton<IMainWindowController, MainWindowController>();
+                services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
+                services.AddSingleton<MainWindow>();
             })
             .Build();
 
         await _host.StartAsync();
 
-        // Gets stuck here.  Why?
+        // Gets stuck here.  Why?  See OneNote for investigation notes.
         var mainWindow = _host.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();
     }

@@ -2,6 +2,7 @@
 using Euchre.Logic.Components;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
+using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using Euchre.UILogic.Interfaces;
@@ -46,8 +47,8 @@ public partial class MainWindow : Window
         // Set up the event handlers for the main window and each human player.
 
         AddMainWindowEventHandlers();
-        var humanPlayers = from player in ViewModel.CurrentGame!.GameInfo!.Players
-                           where player != null && player.IsHuman
+        var humanPlayers =   from player in ViewModel.CurrentGame!.GameInfo!.Players
+                            where player != null && player.IsHuman
                            select player as HumanPlayer;
         foreach (var humanPlayer in humanPlayers)
         {
@@ -234,8 +235,8 @@ public partial class MainWindow : Window
             // Remove the event handlers for the main window and each human player.
 
             RemoveMainWindowEventHandlers();
-            var humanPlayers = from player in ViewModel.CurrentGame!.GameInfo!.Players
-                               where player != null && player.IsHuman
+            var humanPlayers =   from player in ViewModel.CurrentGame!.GameInfo!.Players
+                                where player != null && player.IsHuman
                                select player as HumanPlayer;
             foreach (var humanPlayer in humanPlayers)
             {
@@ -380,17 +381,18 @@ public partial class MainWindow : Window
 
     private async void MenuNewGame_Click(object sender, RoutedEventArgs e)
     {
-        var playerNames = GetPlayerNamesFromUser().ToList();
+        var playerNames = GetPlayerNamesFromUser();
         if (playerNames != null)
         {
-            ViewModel.CurrentGame = App.Services.GetService<IEuchreGame>();
+            var playerList = playerNames.ToList();
+            ViewModel.CurrentGame = new EuchreGame(playerList, App.Services.GetService<IGameStateManager>());
             await StartGame();
         }
     }
 
     private async void MenuContinue_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.CurrentGame = App.Services.GetService<IEuchreGame>();
+        ViewModel.CurrentGame = new EuchreGame();
         await StartGame();
     }
 
@@ -409,7 +411,7 @@ public partial class MainWindow : Window
         ];
         PickTrumpSuitWindow pickTrump = new(trumpSuits,
                                         new HumanPlayer("human", 0, 0, 0),
-                                        new AutomatedPlayer("auto", 0, 0, null, 0),
+                                        new AutomatedPlayer("auto", 0, 0, new GameStateManager(), 0),
                                         false)
         {
             Owner = this,
@@ -427,14 +429,14 @@ public partial class MainWindow : Window
 
     private void menuChooseCard_Click(object sender, RoutedEventArgs e)
     {
-        List<Card> playerCards = new()
-        {
+        List<Card> playerCards =
+        [
             new Card(Suit.Clubs, Rank.Jack),
             new Card(Suit.Clubs, Rank.Ace),
             new Card(Suit.Clubs, Rank.King),
             new Card(Suit.Spades, Rank.Ace),
             new Card(Suit.Spades, Rank.King),
-        };
+        ];
 
         ChooseDiscardWindow cardWindow = new(playerCards, new Card(Suit.Clubs, Rank.Nine))
         {
@@ -518,7 +520,7 @@ public partial class MainWindow : Window
 
                         try
                         {
-                            game.GameInfo.SaveGameData(); // ensure last state persisted
+                            game?.GameInfo.SaveGameData(); // ensure last state persisted
                         }
                         catch
                         {
