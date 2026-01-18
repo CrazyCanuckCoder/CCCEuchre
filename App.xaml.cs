@@ -1,9 +1,4 @@
-﻿using System.IO;
-using System.Windows;
-using System.Windows.Threading;
-using Euchre.Logic.Components;
-using Euchre.Logic.Data;
-using Euchre.Logic.Helpers;
+﻿using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic.Classes;
 using Euchre.UILogic.Interfaces;
@@ -11,6 +6,9 @@ using log4net;
 using log4net.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.IO;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace Euchre;
 

@@ -9,7 +9,6 @@ using Euchre.UILogic.Interfaces;
 using Euchre.Windows;
 using log4net;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 using Extensions = Euchre.Logic.Helpers.Extensions;
 
 namespace Euchre;
