@@ -24,4 +24,5 @@ public interface IGameStateManager
     void ResetRoundCheckpoint();
     void ResetTricksWonByPlayers();
     void SaveGameData();
+    void CopyFrom(IGameStateManager other);
 }

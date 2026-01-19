@@ -391,7 +391,7 @@ public partial class MainWindow : Window
 
     private async void MenuContinue_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.CurrentGame = new EuchreGame();
+        ViewModel.CurrentGame = new EuchreGame(App.Services.GetService<IGameStateManager>());
         await StartGame();
     }
 

@@ -47,14 +47,16 @@ public class EuchreGame : IEuchreGame
     /// <summary>
     /// Use this constructor when loading a saved game.
     /// </summary>
-    public EuchreGame()
+    public EuchreGame(IGameStateManager gameStateManager)
     {
         Log.Debug("Initializing EuchreGame from saved game.");
 
         // Load persisted state.
 
-        GameInfo = GameStateManager.LoadGameData()
+        var tempGameManager = GameStateManager.LoadGameData()
                      ?? throw new InvalidGameConditionException("No saved game found.");
+        gameStateManager.CopyFrom(tempGameManager);
+        GameInfo = gameStateManager;
 
         // Flag that we are resuming – the UI can react accordingly.
 

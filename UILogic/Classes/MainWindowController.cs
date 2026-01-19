@@ -414,10 +414,12 @@ internal class MainWindowController : IMainWindowController
     private void SetupCurrentScoreControl()
     {
         MainWindowRef.CurrentPlayersScoresUserControl.SetTeamNames(
-            (from player in _gameStateManager.Players!
+            (   from player in _gameStateManager.Players!
              orderby player.PlayerIndex
-             select player.Name).ToList()
-            );
+              select player.Name
+            )
+            .ToList()
+        );
         MainWindowRef.CurrentPlayersScoresUserControl.UpdateTeamScore(1, _gameStateManager.TeamScores[0]);
         MainWindowRef.CurrentPlayersScoresUserControl.UpdateTeamScore(2, _gameStateManager.TeamScores[1]);
     }

@@ -11,7 +11,7 @@ public class Program
         {
             // If so, load the saved game.
 
-            var game = new EuchreGame();
+            var game = new EuchreGame(new GameStateManager());
             await game.PlayGameAsync();
         }
         else
