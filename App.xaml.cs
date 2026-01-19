@@ -33,6 +33,35 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        SetupLog4Net();
+        AddGlobalExceptionHandlers();
+
+        // Start application services.
+
+        _host = Host.CreateDefaultBuilder()
+            .ConfigureServices((context, services) =>
+            {
+                // Singleton services.
+
+                services.AddSingleton<IGameStateManager, GameStateManager>();
+                services.AddSingleton<IMainWindowController, MainWindowController>();
+                services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
+                services.AddSingleton<MainWindow>();
+            })
+            .Build();
+
+        await _host.StartAsync();
+
+        var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+        mainWindow.Show();
+    }
+
+    /// <summary>
+    /// Configures log4net logging for the application using the 'log4net.config' file if it is present in 
+    /// the application's base directory.
+    /// </summary>
+    private static void SetupLog4Net()
+    {
         // Configure log4net from file, if present.
 
         try
@@ -55,32 +84,16 @@ public partial class App : Application
 
             System.Diagnostics.Debug.WriteLine($"Failed to configure log4net: {ex}");
         }
+    }
 
-        // Global exception handlers.
-
+    /// <summary>
+    /// Set up the exception handlers for unhandled exceptions that may occur in the application.
+    /// </summary>
+    private void AddGlobalExceptionHandlers()
+    {
         DispatcherUnhandledException += App_DispatcherUnhandledException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-
-        // Start application services.
-
-        _host = Host.CreateDefaultBuilder()
-            .ConfigureServices((context, services) =>
-            {
-                // Singleton services.
-
-                services.AddSingleton<IGameStateManager, GameStateManager>();
-                services.AddSingleton<IMainWindowController, MainWindowController>();
-                services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
-                services.AddSingleton<MainWindow>();
-            })
-            .Build();
-
-        await _host.StartAsync();
-
-        // Gets stuck here.  Why?  See OneNote for investigation notes.
-        var mainWindow = _host.Services.GetRequiredService<MainWindow>();
-        mainWindow.Show();
     }
 
     protected override async void OnExit(ExitEventArgs e)
