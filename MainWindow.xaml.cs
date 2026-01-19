@@ -2,9 +2,12 @@
 using Euchre.Logic.Components;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
+using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Classes;
+using Euchre.UILogic.Interfaces;
 using Euchre.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
 using System.Windows;
 using static Euchre.Logic.Helpers.Constants;
@@ -16,13 +19,12 @@ namespace Euchre;
 /// </summary>
 public partial class MainWindow : Window
 {
-
-    public MainWindow()
+    public MainWindow(IMainWindowViewModel mainWindowViewModel)
     {
         InitializeComponent();
-        this.Closing += MainWindow_Closing;
+        Closing += MainWindow_Closing;
         _placementManager = new WindowPlacementManager(this);
-        ViewModel = new();
+        ViewModel = mainWindowViewModel;
         ViewModel.Initialize();
         DataContext = ViewModel;
     }
@@ -32,7 +34,7 @@ public partial class MainWindow : Window
     /// <summary>
     /// The view model class to use to manage the data properties.
     /// </summary>
-    public MainWindowViewModel ViewModel { get; }
+    public IMainWindowViewModel ViewModel { get; }
 
     /// <summary>
     /// Starts the game of Euchre asynchronously.  Assumes the players have been created before the method
@@ -44,9 +46,9 @@ public partial class MainWindow : Window
         // Set up the event handlers for the main window and each human player.
 
         AddMainWindowEventHandlers();
-        var humanPlayers =    from player in ViewModel.CurrentGame!.GameInfo!.Players
-                             where player != null && player.IsHuman
-                            select player as HumanPlayer;
+        var humanPlayers =   from player in ViewModel.CurrentGame!.GameInfo!.Players
+                            where player != null && player.IsHuman
+                           select player as HumanPlayer;
         foreach (var humanPlayer in humanPlayers)
         {
             AddHumanPlayerEventHandlers(humanPlayer);
@@ -54,7 +56,7 @@ public partial class MainWindow : Window
 
         // Set up the elements on the game board.
 
-        ViewModel.SetupUserInterface(this);
+        ViewModel.SetupUserInterface();
 
         // Start the game.
 
@@ -381,14 +383,15 @@ public partial class MainWindow : Window
         var playerNames = GetPlayerNamesFromUser();
         if (playerNames != null)
         {
-            ViewModel.CurrentGame = new([.. playerNames]);
+            var playerList = playerNames.ToList();
+            ViewModel.CurrentGame = new EuchreGame(playerList, App.Services.GetService<IGameStateManager>());
             await StartGame();
         }
     }
 
     private async void MenuContinue_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.CurrentGame = new();
+        ViewModel.CurrentGame = new EuchreGame(App.Services.GetService<IGameStateManager>());
         await StartGame();
     }
 
@@ -405,9 +408,9 @@ public partial class MainWindow : Window
             //Suit.Diamonds,
             Suit.Spades,
         ];
-        PickTrumpSuitWindow pickTrump = new(trumpSuits, 
-                                        new HumanPlayer("human", 0, 0, 0), 
-                                        new AutomatedPlayer("auto", 0, 0, null, 0), 
+        PickTrumpSuitWindow pickTrump = new(trumpSuits,
+                                        new HumanPlayer("human", 0, 0, 0),
+                                        new AutomatedPlayer("auto", 0, 0, new GameStateManager(), 0),
                                         false)
         {
             Owner = this,
@@ -425,14 +428,14 @@ public partial class MainWindow : Window
 
     private void menuChooseCard_Click(object sender, RoutedEventArgs e)
     {
-        List<Card> playerCards = new()
-        {
+        List<Card> playerCards =
+        [
             new Card(Suit.Clubs, Rank.Jack),
             new Card(Suit.Clubs, Rank.Ace),
             new Card(Suit.Clubs, Rank.King),
             new Card(Suit.Spades, Rank.Ace),
             new Card(Suit.Spades, Rank.King),
-        };
+        ];
 
         ChooseDiscardWindow cardWindow = new(playerCards, new Card(Suit.Clubs, Rank.Nine))
         {
@@ -507,8 +510,8 @@ public partial class MainWindow : Window
                         // Wait up to a short timeout for the loop to stop to allow graceful save persistence.
                         // If you exposed a Task, await it here; otherwise give a short delay.
 
-                        if (game is { } && game.GetType().GetProperty("_gameLoopTask", 
-                                                System.Reflection.BindingFlags.NonPublic 
+                        if (game is { } && game.GetType().GetProperty("_gameLoopTask",
+                                                System.Reflection.BindingFlags.NonPublic
                                                 | System.Reflection.BindingFlags.Instance) is null)
                         {
                             await Task.Delay(500).ConfigureAwait(true); // small grace period
@@ -516,13 +519,13 @@ public partial class MainWindow : Window
 
                         try
                         {
-                            game.GameInfo.SaveGameData(); // ensure last state persisted
+                            game?.GameInfo.SaveGameData(); // ensure last state persisted
                         }
                         catch
                         {
                             // ignore save errors at shutdown (already logged inside SaveGameData if it logs)
                         }
-                        
+
                         return;
                     }
 

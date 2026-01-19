@@ -14,7 +14,7 @@ public class AutomatedPlayer : Player
     /// <param name="name">The name of the automated player. This value cannot be null or empty.</param>
     /// <param name="dataManager">The <see cref="GameStateManager"/> instance that provides access to the 
     /// game's state.</param>
-    public AutomatedPlayer(string name, int teamIndex, int playerIndex, GameStateManager dataManager, int avatarNumber) : 
+    public AutomatedPlayer(string name, int teamIndex, int playerIndex, IGameStateManager dataManager, int avatarNumber) : 
         base(name, teamIndex, playerIndex, false, avatarNumber) 
     {
         _bidder = new Bidder(this);
@@ -34,7 +34,7 @@ public class AutomatedPlayer : Player
     /// <param name="dataManager">The <see cref="GameStateManager"/> instance that provides access to the 
     /// game's state.</param>
     public AutomatedPlayer(string name, int teamIndex, int playerIndex, IBidder bidder, IPlayManager playManager,
-        GameStateManager dataManager, int avatarNumber) : base(name, teamIndex, playerIndex, false, avatarNumber)
+        IGameStateManager dataManager, int avatarNumber) : base(name, teamIndex, playerIndex, false, avatarNumber)
     {
         _bidder = bidder ?? new Bidder(this);
         _dataManager = dataManager;
@@ -54,7 +54,7 @@ public class AutomatedPlayer : Player
     /// <summary>
     /// Represents the state manager used for handling the state of the game.
     /// </summary>
-    private readonly GameStateManager _dataManager;
+    private readonly IGameStateManager _dataManager;
 
     /// <summary>
     /// True to indicate the individual is going alone; otherwise, false.

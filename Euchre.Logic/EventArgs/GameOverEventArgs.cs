@@ -1,10 +1,10 @@
-﻿using Euchre.Logic.Helpers;
+﻿using Euchre.Logic.Interfaces;
 
 namespace Euchre.Logic.EventArgs;
 
 public class GameOverEventArgs
 {
-    public GameOverEventArgs(GameStateManager gameInfo)
+    public GameOverEventArgs(IGameStateManager gameInfo)
     {
         GameInfo = gameInfo;
     }
@@ -12,5 +12,5 @@ public class GameOverEventArgs
     /// <summary>
     /// Contains the final state of the game when it ends.
     /// </summary>
-    public GameStateManager GameInfo { get; set; }
+    public IGameStateManager GameInfo { get; set; }
 }

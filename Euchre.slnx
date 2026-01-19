@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Euchre.Console/Euchre.Console.csproj" />
+  <Project Path="Euchre.csproj" />
+  <Project Path="Euchre.Logic/Euchre.Logic.csproj" />
+  <Project Path="Euchre.Tests/Euchre.Tests.csproj" />
+</Solution>

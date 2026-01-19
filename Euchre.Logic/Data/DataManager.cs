@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Euchre.Logic.Data;
 
-internal class DataManager
+public class DataManager : IDataManager
 {
     /// <summary>
     /// The name of the file where game data is saved and loaded from.
@@ -140,7 +140,7 @@ internal class DataManager
     /// </summary>
     /// <param name="gameStateManager">The reference to the game state manager.</param>
     /// <param name="gameDataRow">A reference to the single row in the GameData table.</param>
-    private static void AddRemainingProperties(GameStateManager gameStateManager, 
+    private static void AddRemainingProperties(GameStateManager gameStateManager,
         GameStateDS.GameDataRow gameDataRow)
     {
         gameStateManager.Kitty = new Card((Suit)gameDataRow.KittySuit, (Rank)gameDataRow.KittyRank);
@@ -180,7 +180,7 @@ internal class DataManager
     /// <param name="gameStateManager">The reference to the game state manager.</param>
     /// <param name="stateDS">The reference to the dataset containing the information to load.</param>
     /// <param name="gameDataRow">A reference to the single row in the GameData table.</param>
-    private static void AddPlayerBasedProperties(GameStateManager gameStateManager, GameStateDS stateDS, 
+    private static void AddPlayerBasedProperties(GameStateManager gameStateManager, GameStateDS stateDS,
         GameStateDS.GameDataRow gameDataRow)
     {
         if (gameDataRow.DealerID > 0)
@@ -235,7 +235,7 @@ internal class DataManager
     /// <param name="stateDS">The database with the player ID.</param>
     /// <param name="playerID">The ID of the player to find.</param>
     /// <returns>A player matching the specified player ID.</returns>
-    private static IPlayer GetPlayerFromPlayerID(GameStateManager gameStateManager, GameStateDS stateDS, 
+    private static IPlayer GetPlayerFromPlayerID(GameStateManager gameStateManager, GameStateDS stateDS,
         int playerID)
     {
         return gameStateManager.Players!
@@ -251,19 +251,19 @@ internal class DataManager
     /// </param>
     /// <returns>An instance of either the HumanPlayer or AutomatedPlayer class depending on information from 
     /// the data row.</returns>
-    private static IPlayer CreatePlayerFromDataRow(GameStateDS.PlayerRow playerRow, 
+    private static IPlayer CreatePlayerFromDataRow(GameStateDS.PlayerRow playerRow,
         GameStateManager gameStateManager)
     {
         IPlayer newPlayer;
 
         if (playerRow.IsHuman)
         {
-            newPlayer = new HumanPlayer(playerRow.Name, playerRow.TeamIndex, playerRow.PlayerIndex, 
+            newPlayer = new HumanPlayer(playerRow.Name, playerRow.TeamIndex, playerRow.PlayerIndex,
                 playerRow.AvatarNumber);
         }
         else
         {
-            newPlayer = new AutomatedPlayer(playerRow.Name, playerRow.TeamIndex, playerRow.PlayerIndex, 
+            newPlayer = new AutomatedPlayer(playerRow.Name, playerRow.TeamIndex, playerRow.PlayerIndex,
                 gameStateManager, playerRow.AvatarNumber);
         }
 

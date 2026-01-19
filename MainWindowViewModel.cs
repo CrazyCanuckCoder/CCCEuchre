@@ -5,16 +5,21 @@ using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic;
 using Euchre.UILogic.Classes;
+using Euchre.UILogic.Interfaces;
 using Euchre.Windows;
 using log4net;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 using Extensions = Euchre.Logic.Helpers.Extensions;
 
 namespace Euchre;
 
-public class MainWindowViewModel : DependencyObject
+public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
 {
+    public MainWindowViewModel(IMainWindowController mainWindowController)
+    {
+        _mainWindowController = mainWindowController;
+    }
+
     private static readonly ILog Log = LogManager.GetLogger(typeof(MainWindowViewModel));
 
     #region Fields
@@ -25,14 +30,9 @@ public class MainWindowViewModel : DependencyObject
     private int _previousDealerPlayerIndex = -1;
 
     /// <summary>
-    /// A reference to the main window.
-    /// </summary>
-    private MainWindow _mainWindow;
-
-    /// <summary>
     /// The class that directly updates the main window.
     /// </summary>
-    private MainWindowController _mainWindowController;
+    private IMainWindowController _mainWindowController;
 
     #endregion Fields
 
@@ -41,95 +41,95 @@ public class MainWindowViewModel : DependencyObject
     #region Dependency Properties
 
     public static readonly DependencyProperty Player3CardDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player3CardDisplayUserControlVisibility), typeof(Visibility), 
+        DependencyProperty.Register(nameof(Player3CardDisplayUserControlVisibility), typeof(Visibility),
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
 
     public static readonly DependencyProperty Player4CardDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player4CardDisplayUserControlVisibility), typeof(Visibility), 
+        DependencyProperty.Register(nameof(Player4CardDisplayUserControlVisibility), typeof(Visibility),
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
 
     public static readonly DependencyProperty Player1DealtCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player1DealtCardsDisplayUserControlVisibility), 
+        DependencyProperty.Register(nameof(Player1DealtCardsDisplayUserControlVisibility),
             typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player2DealtCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player2DealtCardsDisplayUserControlVisibility), 
+        DependencyProperty.Register(nameof(Player2DealtCardsDisplayUserControlVisibility),
             typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player3DealtCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player3DealtCardsDisplayUserControlVisibility), 
+        DependencyProperty.Register(nameof(Player3DealtCardsDisplayUserControlVisibility),
             typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player4DealtCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player4DealtCardsDisplayUserControlVisibility), 
+        DependencyProperty.Register(nameof(Player4DealtCardsDisplayUserControlVisibility),
             typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player1PlayedCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player1PlayedCardsDisplayUserControlVisibility), 
+        DependencyProperty.Register(nameof(Player1PlayedCardsDisplayUserControlVisibility),
             typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player2PlayedCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player2PlayedCardsDisplayUserControlVisibility), 
+        DependencyProperty.Register(nameof(Player2PlayedCardsDisplayUserControlVisibility),
             typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player3PlayedCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player3PlayedCardsDisplayUserControlVisibility), 
+        DependencyProperty.Register(nameof(Player3PlayedCardsDisplayUserControlVisibility),
             typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player4PlayedCardsDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player4PlayedCardsDisplayUserControlVisibility), 
+        DependencyProperty.Register(nameof(Player4PlayedCardsDisplayUserControlVisibility),
             typeof(Visibility), typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty GameBoardVisibilityProperty =
-        DependencyProperty.Register(nameof(GameBoardVisibility), typeof(Visibility), 
+        DependencyProperty.Register(nameof(GameBoardVisibility), typeof(Visibility),
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty GameInformationProperty =
-        DependencyProperty.Register(nameof(GameInformation), typeof(string), typeof(MainWindowViewModel), 
+        DependencyProperty.Register(nameof(GameInformation), typeof(string), typeof(MainWindowViewModel),
             new PropertyMetadata(string.Empty));
 
     public static readonly DependencyProperty GameInformationVisibilityProperty =
-        DependencyProperty.Register(nameof(GameInformationVisibility), typeof(Visibility), 
+        DependencyProperty.Register(nameof(GameInformationVisibility), typeof(Visibility),
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player1TextVisibilityProperty =
-        DependencyProperty.Register(nameof(Player1TextVisibility), typeof(Visibility), 
+        DependencyProperty.Register(nameof(Player1TextVisibility), typeof(Visibility),
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player2TextVisibilityProperty =
-        DependencyProperty.Register(nameof(Player2TextVisibility), typeof(Visibility), 
+        DependencyProperty.Register(nameof(Player2TextVisibility), typeof(Visibility),
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player3TextVisibilityProperty =
-        DependencyProperty.Register(nameof(Player3TextVisibility), typeof(Visibility), 
+        DependencyProperty.Register(nameof(Player3TextVisibility), typeof(Visibility),
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player4TextVisibilityProperty =
-        DependencyProperty.Register(nameof(Player4TextVisibility), typeof(Visibility), 
+        DependencyProperty.Register(nameof(Player4TextVisibility), typeof(Visibility),
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty Player1TextProperty =
-        DependencyProperty.Register(nameof(Player1Text), typeof(string), typeof(MainWindowViewModel), 
+        DependencyProperty.Register(nameof(Player1Text), typeof(string), typeof(MainWindowViewModel),
             new PropertyMetadata(string.Empty));
 
     public static readonly DependencyProperty Player2TextProperty =
-        DependencyProperty.Register(nameof(Player2Text), typeof(string), typeof(MainWindowViewModel), 
+        DependencyProperty.Register(nameof(Player2Text), typeof(string), typeof(MainWindowViewModel),
             new PropertyMetadata(string.Empty));
 
     public static readonly DependencyProperty Player3TextProperty =
-        DependencyProperty.Register(nameof(Player3Text), typeof(string), typeof(MainWindowViewModel), 
+        DependencyProperty.Register(nameof(Player3Text), typeof(string), typeof(MainWindowViewModel),
             new PropertyMetadata(string.Empty));
 
     public static readonly DependencyProperty Player4TextProperty =
-        DependencyProperty.Register(nameof(Player4Text), typeof(string), typeof(MainWindowViewModel), 
+        DependencyProperty.Register(nameof(Player4Text), typeof(string), typeof(MainWindowViewModel),
             new PropertyMetadata(string.Empty));
 
     public static readonly DependencyProperty Player1CardDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player1CardDisplayUserControlVisibility), typeof(Visibility), 
+        DependencyProperty.Register(nameof(Player1CardDisplayUserControlVisibility), typeof(Visibility),
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
 
     public static readonly DependencyProperty Player2CardDisplayUserControlVisibilityProperty =
-        DependencyProperty.Register(nameof(Player2CardDisplayUserControlVisibility), typeof(Visibility), 
+        DependencyProperty.Register(nameof(Player2CardDisplayUserControlVisibility), typeof(Visibility),
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
 
     public static readonly DependencyProperty ContinueMenuVisibilityProperty =
@@ -137,15 +137,15 @@ public class MainWindowViewModel : DependencyObject
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty StandardMenuVisibilityProperty =
-        DependencyProperty.Register(nameof(StandardMenuVisibility), typeof(Visibility), 
+        DependencyProperty.Register(nameof(StandardMenuVisibility), typeof(Visibility),
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Visible));
 
     public static readonly DependencyProperty IconMenuVisibilityProperty =
-        DependencyProperty.Register(nameof(IconMenuVisibility), typeof(Visibility), 
+        DependencyProperty.Register(nameof(IconMenuVisibility), typeof(Visibility),
             typeof(MainWindowViewModel), new PropertyMetadata(Visibility.Collapsed));
 
     public static readonly DependencyProperty PlayLastCardInHandProperty =
-        DependencyProperty.Register(nameof(PlayLastCardInHand), typeof(bool), typeof(MainWindowViewModel), 
+        DependencyProperty.Register(nameof(PlayLastCardInHand), typeof(bool), typeof(MainWindowViewModel),
             new PropertyMetadata(false));
 
     #endregion Dependency Properties
@@ -293,7 +293,7 @@ public class MainWindowViewModel : DependencyObject
     /// Shows/hides the continue game menu option when a game data file exists.
     /// </summary>
     public Visibility ContinueMenuVisibility
-    { 
+    {
         get => (Visibility)GetValue(ContinueMenuVisibilityProperty);
         set => SetValue(ContinueMenuVisibilityProperty, value);
     }
@@ -329,7 +329,7 @@ public class MainWindowViewModel : DependencyObject
     /// <summary>
     /// The reference to the object running the game logic.
     /// </summary>
-    public EuchreGame? CurrentGame { get; set; }
+    public IEuchreGame? CurrentGame { get; set; }
 
     #endregion Properties
 
@@ -340,6 +340,7 @@ public class MainWindowViewModel : DependencyObject
     public void Initialize()
     {
         Log.Debug("MainWindowViewModel.Initialize: checking saved game and settings.");
+
         ContinueMenuVisibility = GameStateManager.DataExists() ? Visibility.Visible : Visibility.Collapsed;
         SetMenuVisibility();
         PlayLastCardInHand = GameSettingsManager.Instance.PlayLastCardInHand;
@@ -348,12 +349,11 @@ public class MainWindowViewModel : DependencyObject
     /// <summary>
     /// Call this method to initialize the controls for the game on the main window.
     /// </summary>
-    /// <param name="mainWindow">A reference to the main window to update.</param>
-    public void SetupUserInterface(MainWindow mainWindow)
+    public void SetupUserInterface()
     {
         Log.Debug("MainWindowViewModel.SetupUserInterface: setting up UI and controller.");
-        _mainWindow = mainWindow;
-        _mainWindowController = new(mainWindow, CurrentGame!.GameInfo);
+
+        _mainWindowController.Initialize();
         SetVisibilityActionsOfPlayerCardDisplayControl();
         ShowGameBoard();
         if (CurrentGame!.GameInfo.RestartGame)
@@ -490,7 +490,7 @@ public class MainWindowViewModel : DependencyObject
         _mainWindowController.DisplayTrump(trump!.Value);
         _mainWindowController.DisplayBidInformation(player, trump.Value, isGoingAlone);
         _mainWindowController.SetPlayerTrumpSuitIcon(player.PlayerIndex, trump.Value);
-        if (isGoingAlone) 
+        if (isGoingAlone)
         {
             _mainWindowController.SetPartnerDisabled(player);
         }
@@ -555,7 +555,7 @@ public class MainWindowViewModel : DependencyObject
 
         // Display the winning round message to the user.
 
-        DialogBoxes.CustomInformationDialog(message, _mainWindow, "End of Round");
+        DialogBoxes.CustomInformationDialog(message, null, "End of Round");
 
         // The round is over, reset the board for the next round.
 
@@ -571,17 +571,17 @@ public class MainWindowViewModel : DependencyObject
     /// Lets the players know who won the game.
     /// </summary>
     /// <param name="gameInfo">The reference to the game information.</param>
-    public void EndOfGameUpdate(GameStateManager gameInfo)
+    public void EndOfGameUpdate(IGameStateManager gameInfo)
     {
         Log.Info("EndOfGameUpdate: game finished, showing winner dialog.");
         int winningTeamIndex = gameInfo.TeamScores[0] > gameInfo.TeamScores[1] ? 0 : 1;
         string gameWinners =
-            (  from player in CurrentGame!.GameInfo.Players!
-              where player.TeamIndex == winningTeamIndex
+            (from player in CurrentGame!.GameInfo.Players!
+             where player.TeamIndex == winningTeamIndex
              select player.Name)
             .ToList()
             .ToListedString();
-        DialogBoxes.CustomInformationDialog($"Game is over! {gameWinners} are the winners!", _mainWindow,
+        DialogBoxes.CustomInformationDialog($"Game is over! {gameWinners} are the winners!", null,
             "Game Over");
         ContinueMenuVisibility = Visibility.Collapsed;
         ResetGameUI();
@@ -601,10 +601,7 @@ public class MainWindowViewModel : DependencyObject
         bool orderedUp = false;
 
         List<Suit> suits = [kitty.Suit];
-        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits, player, CurrentGame!.GameInfo.Dealer!, true)
-        {
-            Owner = _mainWindow
-        };
+        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits, player, CurrentGame!.GameInfo.Dealer!, true);
         if (pickTrumpSuitWindow.ShowDialog() == true)
         {
             orderedUp = pickTrumpSuitWindow.SelectedSuit != null;
@@ -631,10 +628,7 @@ public class MainWindowViewModel : DependencyObject
 
         List<Suit> suits = Extensions.GetComplementarySuits(kitty.Suit);
         suits.Remove(kitty.Suit);
-        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits, player, CurrentGame!.GameInfo.Dealer!, false)
-        {
-            Owner = _mainWindow
-        };
+        PickTrumpSuitWindow pickTrumpSuitWindow = new(suits, player, CurrentGame!.GameInfo.Dealer!, false);
         if (pickTrumpSuitWindow.ShowDialog() == true)
         {
             chosenSuit = pickTrumpSuitWindow.SelectedSuit;
@@ -657,10 +651,7 @@ public class MainWindowViewModel : DependencyObject
 
         Card? discard = null;
 
-        ChooseDiscardWindow cardWindow = new(player.Hand, CurrentGame!.GameInfo.Kitty!)
-        {
-            Owner = _mainWindow,
-        };
+        ChooseDiscardWindow cardWindow = new(player.Hand, CurrentGame!.GameInfo.Kitty!);
         if (cardWindow.ShowDialog() == true)
         {
             discard = (Card?)cardWindow.ChosenCard;
@@ -712,7 +703,7 @@ public class MainWindowViewModel : DependencyObject
             playerToTakeTricks.IsHuman
             ? "The rest are mine!"
             : $"{playerToTakeTricks.Name} will take the remaining tricks.",
-            _mainWindow, "Taking Remaining Tricks");
+            null, "Taking Remaining Tricks");
     }
 
     /// <summary>
@@ -970,7 +961,7 @@ public class MainWindowViewModel : DependencyObject
             _mainWindowController.DisplayTrump(CurrentGame.GameInfo.Trump!.Value);
             _mainWindowController.DisplayBidInformation(CurrentGame.GameInfo.TrumpCaller!,
                 CurrentGame.GameInfo.Trump.Value, CurrentGame.GameInfo.TrumpCaller!.IsGoingAlone);
-            _mainWindowController.SetPlayerTrumpSuitIcon(CurrentGame.GameInfo.TrumpCaller.PlayerIndex, 
+            _mainWindowController.SetPlayerTrumpSuitIcon(CurrentGame.GameInfo.TrumpCaller.PlayerIndex,
                 CurrentGame.GameInfo.Trump.Value);
             if (CurrentGame.GameInfo.TrumpCaller.IsGoingAlone)
             {

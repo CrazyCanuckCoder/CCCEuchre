@@ -8,16 +8,14 @@ using log4net;
 
 namespace Euchre.UILogic.Classes;
 
-internal class MainWindowController
+internal class MainWindowController : IMainWindowController
 {
     private static readonly ILog Log = LogManager.GetLogger(typeof(MainWindowController));
 
-    public MainWindowController(MainWindow mainWindow, GameStateManager gameStateManager)
+    public MainWindowController(IGameStateManager gameStateManager)
     {
         Log.Debug("MainWindowController: initializing controller.");
-        _mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
         _gameStateManager = gameStateManager ?? throw new ArgumentNullException(nameof(gameStateManager));
-        Initialize();
     }
 
     #region Fields
@@ -25,12 +23,22 @@ internal class MainWindowController
     /// <summary>
     /// A reference to the main window.
     /// </summary>
-    private readonly MainWindow _mainWindow;
+    private MainWindow? _mainWindow = null;
+
+    public MainWindow MainWindowRef 
+    { 
+        get
+        {
+            _mainWindow ??= (MainWindow?)App.Services.GetService(typeof(MainWindow)) ??
+                    throw new NullReferenceException("Unable to create reference to MainWindow.");
+            return _mainWindow;
+        }
+    }
 
     /// <summary>
     /// A reference to the game state manager of the current game.
     /// </summary>
-    private readonly GameStateManager _gameStateManager;
+    private readonly IGameStateManager _gameStateManager;
 
     /// <summary>
     /// Used for setting the visibility properties for each of the player cards user controls.
@@ -63,6 +71,20 @@ internal class MainWindowController
     private readonly Dictionary<int, Action<Visibility>> _playerCardDisplayControlsVisibility = [];
 
     #endregion Fields
+
+
+    /// <summary>
+    /// Sets up the references to the controls on the form and initializes some of the controls.
+    /// </summary>
+    public void Initialize()
+    {
+        Log.Debug("MainWindowController.Initialize: attaching controls and initializing UI.");
+
+        SetupCurrentRoundInfoControl();
+        SetupCurrentScoreControl();
+        InitializeCardDisplayControlCollection();
+        SetupPlayerDisplayControls();
+    }
 
     /// <summary>
     /// Establishes an action to be used to set the display of a player's card control.
@@ -115,7 +137,7 @@ internal class MainWindowController
     public void DisplayKittyCard(Card kitty)
     {
         Log.DebugFormat("DisplayKittyCard: {0}", kitty);
-        _mainWindow.TrumpDisplayUserControl.SetKittyCard(kitty);
+        MainWindowRef.TrumpDisplayUserControl.SetKittyCard(kitty);
     }
 
     /// <summary>
@@ -123,7 +145,7 @@ internal class MainWindowController
     /// </summary>
     public void ClearTrumpDisplay()
     {
-        _mainWindow.TrumpDisplayUserControl.ClearImage();
+        MainWindowRef.TrumpDisplayUserControl.ClearImage();
     }
 
     /// <summary>
@@ -170,7 +192,7 @@ internal class MainWindowController
     /// <param name="trump">The suit to display as trump.</param>
     public void DisplayTrump(Suit trump)
     {
-        _mainWindow.TrumpDisplayUserControl.SetTrump(trump);
+        MainWindowRef.TrumpDisplayUserControl.SetTrump(trump);
     }
 
     /// <summary>
@@ -181,7 +203,7 @@ internal class MainWindowController
     /// <param name="isGoingAlone">True to indicate the player is going alone.</param>
     public void DisplayBidInformation(IPlayer player, Suit trump, bool isGoingAlone)
     {
-        _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(player, trump, isGoingAlone);
+        MainWindowRef.CurrentRoundInfoUserControl.SetBidInformation(player, trump, isGoingAlone);
     }
 
     /// <summary>
@@ -202,9 +224,9 @@ internal class MainWindowController
     public void SetPartnerDisabled(IPlayer player)
     {
         Log.DebugFormat("SetPartnerDisabled: player={0}", player.Name);
-        var partner = (  from anyPlayer in _gameStateManager.Players
-                        where anyPlayer.TeamIndex == player.TeamIndex
-                           && anyPlayer.PlayerIndex != player.PlayerIndex
+        var partner = (from anyPlayer in _gameStateManager.Players
+                       where anyPlayer.TeamIndex == player.TeamIndex
+                          && anyPlayer.PlayerIndex != player.PlayerIndex
                        select anyPlayer)
                       .First();
         if (partner is HumanPlayer humanPlayer)
@@ -284,8 +306,8 @@ internal class MainWindowController
     /// </summary>
     public void UpdateGameScores()
     {
-        _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(1, _gameStateManager.TeamScores[0]);
-        _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(2, _gameStateManager.TeamScores[1]);
+        MainWindowRef.CurrentPlayersScoresUserControl.UpdateTeamScore(1, _gameStateManager.TeamScores[0]);
+        MainWindowRef.CurrentPlayersScoresUserControl.UpdateTeamScore(2, _gameStateManager.TeamScores[1]);
     }
 
     /// <summary>
@@ -313,9 +335,9 @@ internal class MainWindowController
     /// </summary>
     public void ResetTricksTrumpAndBidInformation()
     {
-        _mainWindow.PreviousTricksUserControl.ClearTricks();
-        _mainWindow.TrumpDisplayUserControl.ClearImage();
-        _mainWindow.CurrentRoundInfoUserControl.ResetBidInformation();
+        MainWindowRef.PreviousTricksUserControl.ClearTricks();
+        MainWindowRef.TrumpDisplayUserControl.ClearImage();
+        MainWindowRef.CurrentRoundInfoUserControl.ResetBidInformation();
     }
 
     /// <summary>
@@ -323,8 +345,8 @@ internal class MainWindowController
     /// </summary>
     public void ClearScoresAndBidInformation()
     {
-        _mainWindow.CurrentPlayersScoresUserControl.Reset();
-        _mainWindow.CurrentRoundInfoUserControl.Clear();
+        MainWindowRef.CurrentPlayersScoresUserControl.Reset();
+        MainWindowRef.CurrentRoundInfoUserControl.Clear();
     }
 
     /// <summary>
@@ -341,7 +363,7 @@ internal class MainWindowController
 
         if (_playerCardDisplayControls[user.PlayerIndex] is CardDisplayUserControl playerControl)
         {
-            playerControl.GetCardFromUser(user.Hand, trickSuit, trickSuit! == _gameStateManager.Trump!.Value, 
+            playerControl.GetCardFromUser(user.Hand, trickSuit, trickSuit! == _gameStateManager.Trump!.Value,
                 _gameStateManager.Trump.Value);
             chosenCard = playerControl.ChosenCard;
         }
@@ -355,7 +377,7 @@ internal class MainWindowController
     /// <param name="trick">The trick to add to the list of tricks that have been played.</param>
     public void AddTrick(Trick trick)
     {
-        _mainWindow.PreviousTricksUserControl.AddTrick(trick);
+        MainWindowRef.PreviousTricksUserControl.AddTrick(trick);
     }
 
     /// <summary>
@@ -371,29 +393,17 @@ internal class MainWindowController
     }
 
     /// <summary>
-    /// Sets up the references to the controls on the form and initializes some of the controls.
-    /// </summary>
-    private void Initialize()
-    {
-        Log.Debug("MainWindowController.Initialize: attaching controls and initializing UI.");
-        SetupCurrentRoundInfoControl();
-        SetupCurrentScoreControl();
-        InitializeCardDisplayControlCollection();
-        SetupPlayerDisplayControls();
-    }
-
-    /// <summary>
     /// Adds the players names to the correct teams on the current round information user control.
     /// </summary>
     private void SetupCurrentRoundInfoControl()
     {
-        _mainWindow.CurrentRoundInfoUserControl.Team1List.Add(_gameStateManager.Players![0]);
-        _mainWindow.CurrentRoundInfoUserControl.Team1List.Add(_gameStateManager.Players[2]);
-        _mainWindow.CurrentRoundInfoUserControl.Team2List.Add(_gameStateManager.Players[1]);
-        _mainWindow.CurrentRoundInfoUserControl.Team2List.Add(_gameStateManager.Players[3]);
+        MainWindowRef.CurrentRoundInfoUserControl.Team1List.Add(_gameStateManager.Players![0]);
+        MainWindowRef.CurrentRoundInfoUserControl.Team1List.Add(_gameStateManager.Players[2]);
+        MainWindowRef.CurrentRoundInfoUserControl.Team2List.Add(_gameStateManager.Players[1]);
+        MainWindowRef.CurrentRoundInfoUserControl.Team2List.Add(_gameStateManager.Players[3]);
         if (_gameStateManager.TrumpCaller != null)
         {
-            _mainWindow.CurrentRoundInfoUserControl.SetBidInformation(_gameStateManager.TrumpCaller,
+            MainWindowRef.CurrentRoundInfoUserControl.SetBidInformation(_gameStateManager.TrumpCaller,
                 _gameStateManager.Trump!.Value, _gameStateManager.TrumpCaller.IsGoingAlone);
         }
     }
@@ -403,13 +413,15 @@ internal class MainWindowController
     /// </summary>
     private void SetupCurrentScoreControl()
     {
-        _mainWindow.CurrentPlayersScoresUserControl.SetTeamNames(
-            (from player in _gameStateManager.Players!
+        MainWindowRef.CurrentPlayersScoresUserControl.SetTeamNames(
+            (   from player in _gameStateManager.Players!
              orderby player.PlayerIndex
-             select player.Name).ToList()
-            );
-        _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(1, _gameStateManager.TeamScores[0]);
-        _mainWindow.CurrentPlayersScoresUserControl.UpdateTeamScore(2, _gameStateManager.TeamScores[1]);
+              select player.Name
+            )
+            .ToList()
+        );
+        MainWindowRef.CurrentPlayersScoresUserControl.UpdateTeamScore(1, _gameStateManager.TeamScores[0]);
+        MainWindowRef.CurrentPlayersScoresUserControl.UpdateTeamScore(2, _gameStateManager.TeamScores[1]);
     }
 
     /// <summary>
@@ -420,25 +432,25 @@ internal class MainWindowController
     {
         if (_playerCardDisplayControls.Count == 0)
         {
-            _playerCardDisplayControls.Add(0, _mainWindow.Player1CardDisplayUserControl);
-            _playerCardDisplayControls.Add(1, _mainWindow.Player2CardDisplayUserControl);
-            _playerCardDisplayControls.Add(2, _mainWindow.Player3CardDisplayUserControl);
-            _playerCardDisplayControls.Add(3, _mainWindow.Player4CardDisplayUserControl);
+            _playerCardDisplayControls.Add(0, MainWindowRef.Player1CardDisplayUserControl);
+            _playerCardDisplayControls.Add(1, MainWindowRef.Player2CardDisplayUserControl);
+            _playerCardDisplayControls.Add(2, MainWindowRef.Player3CardDisplayUserControl);
+            _playerCardDisplayControls.Add(3, MainWindowRef.Player4CardDisplayUserControl);
 
-            _playerDisplayControls.Add(0, _mainWindow.Player1DisplayUserControl);
-            _playerDisplayControls.Add(1, _mainWindow.Player2DisplayUserControl);
-            _playerDisplayControls.Add(2, _mainWindow.Player3DisplayUserControl);
-            _playerDisplayControls.Add(3, _mainWindow.Player4DisplayUserControl);
+            _playerDisplayControls.Add(0, MainWindowRef.Player1DisplayUserControl);
+            _playerDisplayControls.Add(1, MainWindowRef.Player2DisplayUserControl);
+            _playerDisplayControls.Add(2, MainWindowRef.Player3DisplayUserControl);
+            _playerDisplayControls.Add(3, MainWindowRef.Player4DisplayUserControl);
 
-            _playerDealtCardsDisplayControls.Add(0, _mainWindow.Player1DealtCardsDisplayUserControl);
-            _playerDealtCardsDisplayControls.Add(1, _mainWindow.Player2DealtCardsDisplayUserControl);
-            _playerDealtCardsDisplayControls.Add(2, _mainWindow.Player3DealtCardsDisplayUserControl);
-            _playerDealtCardsDisplayControls.Add(3, _mainWindow.Player4DealtCardsDisplayUserControl);
+            _playerDealtCardsDisplayControls.Add(0, MainWindowRef.Player1DealtCardsDisplayUserControl);
+            _playerDealtCardsDisplayControls.Add(1, MainWindowRef.Player2DealtCardsDisplayUserControl);
+            _playerDealtCardsDisplayControls.Add(2, MainWindowRef.Player3DealtCardsDisplayUserControl);
+            _playerDealtCardsDisplayControls.Add(3, MainWindowRef.Player4DealtCardsDisplayUserControl);
 
-            _playerPlayedCardsDisplayControls.Add(0, _mainWindow.Player1PlayedCardsDisplayUserControl);
-            _playerPlayedCardsDisplayControls.Add(1, _mainWindow.Player2PlayedCardsDisplayUserControl);
-            _playerPlayedCardsDisplayControls.Add(2, _mainWindow.Player3PlayedCardsDisplayUserControl);
-            _playerPlayedCardsDisplayControls.Add(3, _mainWindow.Player4PlayedCardsDisplayUserControl);
+            _playerPlayedCardsDisplayControls.Add(0, MainWindowRef.Player1PlayedCardsDisplayUserControl);
+            _playerPlayedCardsDisplayControls.Add(1, MainWindowRef.Player2PlayedCardsDisplayUserControl);
+            _playerPlayedCardsDisplayControls.Add(2, MainWindowRef.Player3PlayedCardsDisplayUserControl);
+            _playerPlayedCardsDisplayControls.Add(3, MainWindowRef.Player4PlayedCardsDisplayUserControl);
         }
     }
 

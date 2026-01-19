@@ -10,7 +10,7 @@ using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Components;
 
-public class EuchreGame
+public class EuchreGame : IEuchreGame
 {
     /// <summary>
     /// Logger for this class.
@@ -47,14 +47,16 @@ public class EuchreGame
     /// <summary>
     /// Use this constructor when loading a saved game.
     /// </summary>
-    public EuchreGame()
+    public EuchreGame(IGameStateManager gameStateManager)
     {
         Log.Debug("Initializing EuchreGame from saved game.");
 
         // Load persisted state.
 
-        GameInfo = GameStateManager.LoadGameData()
+        var tempGameManager = GameStateManager.LoadGameData()
                      ?? throw new InvalidGameConditionException("No saved game found.");
+        gameStateManager.CopyFrom(tempGameManager);
+        GameInfo = gameStateManager;
 
         // Flag that we are resuming – the UI can react accordingly.
 
@@ -66,7 +68,7 @@ public class EuchreGame
     /// </summary>
     /// <param name="playerNames">The list of names for the players where the first name is a human.</param>
     /// <exception cref="InvalidNumberOfPlayersException" />
-    public EuchreGame(List<AutomatedPlayerAvatar> playerNames)
+    public EuchreGame(List<AutomatedPlayerAvatar> playerNames, IGameStateManager gameStateManager)
     {
         Log.Debug("Initializing EuchreGame for a new game.");
 
@@ -76,7 +78,7 @@ public class EuchreGame
             throw new InvalidNumberOfPlayersException();
         }
 
-        GameInfo = new GameStateManager();
+        GameInfo = gameStateManager;
         var players = new IPlayer[NUMBER_OF_PLAYERS];
 
         // Add the human player as the first player.
@@ -101,7 +103,7 @@ public class EuchreGame
     /// <summary>
     /// Stores the game's state, including players, scores, dealer, and current round information.
     /// </summary>
-    public GameStateManager GameInfo { get; private set; }
+    public IGameStateManager GameInfo { get; private set; }
 
     /// <summary>
     /// The event that is raised after a player makes a bid during the bidding round.  This event is raised
@@ -283,7 +285,7 @@ public class EuchreGame
         Log.Debug($"PlayRound starting from checkpoint: {GameInfo.LastCompletedStage}");
 
         //  Determine where we left off and jump to the next step.
-        
+
         switch (GameInfo.LastCompletedStage)
         {
             // Fresh round – run everything from the top.
@@ -362,7 +364,7 @@ public class EuchreGame
         GameInfo.GoingAlone = false;
         GameInfo.AlonePlayer = null;
         GameInfo.Kitty = null;
-        
+
         // Reset checkpoint for a brand-new round.
 
         GameInfo.ResetRoundCheckpoint();
@@ -493,7 +495,7 @@ public class EuchreGame
         {
             player = GetNextPlayer(player);
             bool isDealer = player == GameInfo.Dealer;
-            
+
             if (isRound1)
             {
                 if (player.OrderUp(GameInfo.Kitty!, isDealer))
@@ -508,7 +510,7 @@ public class EuchreGame
                     // Dealer picks up kitty unless their partner went alone.
 
                     if (!GameInfo.TrumpCaller!.IsGoingAlone ||
-                        (GameInfo.TrumpCaller!.IsGoingAlone && 
+                        (GameInfo.TrumpCaller!.IsGoingAlone &&
                         !IsPartner(GameInfo.TrumpCaller, GameInfo.Dealer!)))
                     {
                         GameInfo.Dealer!.DiscardForKitty(GameInfo.Kitty!);
@@ -554,7 +556,7 @@ public class EuchreGame
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -668,11 +670,11 @@ public class EuchreGame
             {
                 // Has all the trump higher than the trump in their hand been played?
 
-                var highestTrumpInHand = CardFinder.GetHighestTrumpCard(leadingPlayer.Hand, 
+                var highestTrumpInHand = CardFinder.GetHighestTrumpCard(leadingPlayer.Hand,
                     GameInfo.Trump.Value);
                 var playedTrumpCards = from trick in GameInfo.CurrentRoundTricks
-                                        from card in trick.Cards
-                                        where card.Value.EffectiveSuit(GameInfo.Trump.Value) == GameInfo.Trump.Value
+                                       from card in trick.Cards
+                                       where card.Value.EffectiveSuit(GameInfo.Trump.Value) == GameInfo.Trump.Value
                                        select card.Value;
                 if (CardHelper.AllCardsAreHigherThanTrumpCard(playedTrumpCards, highestTrumpInHand!))
                 {
@@ -686,7 +688,7 @@ public class EuchreGame
 
                     canWinRest = true;
                 }
-            } 
+            }
         }
         else if (CardHelper.PlayerHasTrumpAndAces(leadingPlayer.Hand, GameInfo.Trump!.Value))
         {
@@ -712,12 +714,12 @@ public class EuchreGame
     {
         bool endRound = false;
 
-        int numBidderTricks = (  from player in GameInfo.Players
-                                where player.TeamIndex == GameInfo.TrumpCaller!.TeamIndex
+        int numBidderTricks = (from player in GameInfo.Players
+                               where player.TeamIndex == GameInfo.TrumpCaller!.TeamIndex
                                select GameInfo.TricksWonByPlayers[player.PlayerIndex])
                               .Sum();
-        int numOppositionTricks = (  from player in GameInfo.Players
-                                    where player.TeamIndex != GameInfo.TrumpCaller!.TeamIndex
+        int numOppositionTricks = (from player in GameInfo.Players
+                                   where player.TeamIndex != GameInfo.TrumpCaller!.TeamIndex
                                    select GameInfo.TricksWonByPlayers[player.PlayerIndex])
                                   .Sum();
         if (numBidderTricks == MIN_NUMBER_TRICKS_TO_SCORE)
@@ -745,7 +747,7 @@ public class EuchreGame
     private Trick PlayTrick()
     {
         var trick = new Trick(GameInfo.Trump!.Value);
-        
+
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
             // Skip partner if going alone.
@@ -757,26 +759,26 @@ public class EuchreGame
             }
 
             Suit? leadSuit = trick.Cards.Count > 0 ? trick.LeadSuit : null;
-            
+
             var playedCard = GameInfo.NextTrickPlayer!.SelectCardToPlay(
-                trick, 
-                GameInfo.Trump.Value, 
+                trick,
+                GameInfo.Trump.Value,
                 leadSuit);
-            
+
             // Find the card in hand and play it.
 
             var cardIndex = GameInfo.NextTrickPlayer.Hand.IndexOf(playedCard);
             playedCard = GameInfo.NextTrickPlayer.PlayCard(cardIndex);
-            
+
             trick.AddCard(GameInfo.NextTrickPlayer, playedCard);
-            CardPlayedByPlayer?.Invoke(this, 
+            CardPlayedByPlayer?.Invoke(this,
                 new CardPlayedByPlayerEventArgs(GameInfo.NextTrickPlayer, playedCard));
 
             Log.Debug($"{GameInfo.NextTrickPlayer.Name} played {playedCard} (TrickLead={leadSuit}).");
 
             GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.NextTrickPlayer);
         }
-        
+
         return trick;
     }
 
@@ -818,11 +820,11 @@ public class EuchreGame
         {
             if (numCallerTricks == MAX_NUMBER_OF_TRICKS)
             {
-                reasonForPoints = GameInfo.GoingAlone 
-                    ? ScoringReason.GotAllTricksAlone 
+                reasonForPoints = GameInfo.GoingAlone
+                    ? ScoringReason.GotAllTricksAlone
                     : ScoringReason.GotAllTricks;
-                numPoints = GameInfo.GoingAlone 
-                    ? NUM_POINTS_FOR_ALL_TRICKS_GOING_ALONE 
+                numPoints = GameInfo.GoingAlone
+                    ? NUM_POINTS_FOR_ALL_TRICKS_GOING_ALONE
                     : NUM_POINTS_FOR_ALL_TRICKS;
             }
             GameInfo.TeamScores[callerTeamIndex] += numPoints;
@@ -836,12 +838,12 @@ public class EuchreGame
             reasonForPoints = ScoringReason.Euchred;
         }
 
-        DeclareRoundWinningPlayers?.Invoke(this, 
+        DeclareRoundWinningPlayers?.Invoke(this,
             new DeclareRoundWinningPlayersEventArgs(
                   from player in GameInfo.Players
-                 where player.TeamIndex == winningTeamIndex
-                select player.Name, 
-                  numPoints, 
+                  where player.TeamIndex == winningTeamIndex
+                  select player.Name,
+                  numPoints,
                   reasonForPoints));
 
         Log.Debug(

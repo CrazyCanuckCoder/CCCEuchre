@@ -10,7 +10,7 @@ namespace Euchre.Logic.Helpers;
 /// <summary>
 /// Manages the game state, including player information, deck, scores, and current hand tricks.
 /// </summary>
-public class GameStateManager
+public class GameStateManager : IGameStateManager
 {
     public GameStateManager()
     {
@@ -141,7 +141,7 @@ public class GameStateManager
     /// Loads the game data from a file.
     /// </summary>
     /// <returns>An instance of this class with the loaded data.</returns>
-    public static GameStateManager LoadGameData()
+    public static IGameStateManager LoadGameData()
     {
         return DataManager.LoadGameState();
     }
@@ -158,28 +158,43 @@ public class GameStateManager
     }
 
     /// <summary>
+    /// Copies the state from the specified game state manager into the current instance, overwriting all 
+    /// relevant properties.
+    /// </summary>
+    /// <remarks>This method performs a deep copy of the game state where possible, ensuring that changes to
+    /// the copied state do not affect the source instance. All properties related to players, deck, scores,
+    /// and round information are replaced with values from the specified source.</remarks>
+    /// <param name="other">The source <see cref="IGameStateManager"/> instance from which to copy the game 
+    /// state. Cannot be null.</param>
+    public void CopyFrom(IGameStateManager other)
+    {
+        ArgumentNullException.ThrowIfNull(other, nameof(other));
+
+        Players = (IPlayer[])other.Players!.Clone();
+        Deck = other.Deck.Clone();
+        Kitty = (Card?)other.Kitty?.Clone();
+        Trump = other.Trump;
+        Dealer = other.Dealer?.Clone();
+        TrumpCaller = other.TrumpCaller?.Clone();
+        TeamScores = (int[])other.TeamScores.Clone();
+        CurrentRoundTricks = other.CurrentRoundTricks;
+        GoingAlone = other.GoingAlone;
+        AlonePlayer = other.AlonePlayer?.Clone();
+        NextTrickPlayer = other.NextTrickPlayer?.Clone();
+        RestartGame = other.RestartGame;
+        LastCompletedStage = other.LastCompletedStage;
+        CurrentTrickNumber = other.CurrentTrickNumber;
+        TricksWonByPlayers = (int[])other.TricksWonByPlayers.Clone();
+    }
+
+    /// <summary>
     /// Clones the values of this class and creates a new instance.
     /// </summary>
     /// <returns>A new instance of this class with the same values.</returns>
     private GameStateManager Clone()
     {
-        return new GameStateManager()
-        {
-            Players = (IPlayer[])Players!.Clone(),
-            Deck = Deck.Clone(),
-            Kitty = (Card?)Kitty?.Clone(),
-            Trump = Trump,
-            Dealer = Dealer?.Clone(),
-            TrumpCaller = TrumpCaller?.Clone(),
-            TeamScores = (int[])TeamScores.Clone(),
-            CurrentRoundTricks = [.. CurrentRoundTricks],
-            GoingAlone = GoingAlone,
-            AlonePlayer = AlonePlayer?.Clone(),
-            NextTrickPlayer = NextTrickPlayer?.Clone(),
-            RestartGame = RestartGame,
-            LastCompletedStage = LastCompletedStage,
-            CurrentTrickNumber = CurrentTrickNumber,
-            TricksWonByPlayers = (int[])TricksWonByPlayers.Clone(),
-        };
+        var newInstance = new GameStateManager();
+        newInstance.CopyFrom(this);
+        return newInstance;
     }
 }

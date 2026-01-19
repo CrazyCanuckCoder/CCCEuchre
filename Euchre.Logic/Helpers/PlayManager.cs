@@ -9,7 +9,7 @@ namespace Euchre.Logic.Helpers;
 /// </summary>
 public class PlayManager : IPlayManager
 {
-    public PlayManager(GameStateManager gameStateManager, IPlayer player)
+    public PlayManager(IGameStateManager gameStateManager, IPlayer player)
     {
         _gameStateManager = gameStateManager ?? throw new ArgumentNullException(nameof(gameStateManager));
         _player = player;
@@ -18,7 +18,7 @@ public class PlayManager : IPlayManager
     /// <summary>
     /// The game data manager that provides access to the game's state.
     /// </summary>
-    private readonly GameStateManager _gameStateManager;
+    private readonly IGameStateManager _gameStateManager;
 
     /// <summary>
     /// A reference to the player for this play manager.

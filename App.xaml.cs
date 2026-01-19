@@ -1,8 +1,14 @@
-﻿using System.IO;
-using System.Windows;
-using System.Windows.Threading;
+﻿using Euchre.Logic.Helpers;
+using Euchre.Logic.Interfaces;
+using Euchre.UILogic.Classes;
+using Euchre.UILogic.Interfaces;
 using log4net;
 using log4net.Config;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.IO;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace Euchre;
 
@@ -12,12 +18,52 @@ namespace Euchre;
 public partial class App : Application
 {
     private static readonly ILog Log = LogManager.GetLogger(typeof(App));
+    private static IHost? _host;
 
-    protected override void OnStartup(StartupEventArgs e)
+
+    /// <summary>
+    /// Gets services.
+    /// </summary>
+    public static IServiceProvider Services
+    {
+        get { return _host!.Services; }
+    }
+
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
-        // Configure log4net from file if present (safe to call multiple times).
+        SetupLog4Net();
+        AddGlobalExceptionHandlers();
+
+        // Start application services.
+
+        _host = Host.CreateDefaultBuilder()
+            .ConfigureServices((context, services) =>
+            {
+                // Singleton services.
+
+                services.AddSingleton<IGameStateManager, GameStateManager>();
+                services.AddSingleton<IMainWindowController, MainWindowController>();
+                services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
+                services.AddSingleton<MainWindow>();
+            })
+            .Build();
+
+        await _host.StartAsync();
+
+        var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+        mainWindow.Show();
+    }
+
+    /// <summary>
+    /// Configures log4net logging for the application using the 'log4net.config' file if it is present in 
+    /// the application's base directory.
+    /// </summary>
+    private static void SetupLog4Net()
+    {
+        // Configure log4net from file, if present.
+
         try
         {
             var baseDir = AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory();
@@ -35,13 +81,30 @@ public partial class App : Application
         catch (Exception ex)
         {
             // Do not block startup if logging configuration fails.
+
             System.Diagnostics.Debug.WriteLine($"Failed to configure log4net: {ex}");
         }
+    }
 
-        // Global exception handlers
+    /// <summary>
+    /// Set up the exception handlers for unhandled exceptions that may occur in the application.
+    /// </summary>
+    private void AddGlobalExceptionHandlers()
+    {
         DispatcherUnhandledException += App_DispatcherUnhandledException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+    }
+
+    protected override async void OnExit(ExitEventArgs e)
+    {
+        if (_host is not null)
+        {
+            await _host.StopAsync();
+            _host.Dispose();
+        }
+
+        base.OnExit(e);
     }
 
     private void App_DispatcherUnhandledException(object? sender, DispatcherUnhandledExceptionEventArgs e)
