@@ -25,6 +25,7 @@ public partial class PickTrumpSuitWindow : Window
             CheckForStickTheDealer(currentPlayer, dealer);
         }
         SetTrumpButtonsVisibility(allowedSuits);
+        Owner = Application.Current.MainWindow;
         DataContext = this;
     }
 

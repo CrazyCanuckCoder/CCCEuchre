@@ -555,7 +555,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
 
         // Display the winning round message to the user.
 
-        DialogBoxes.CustomInformationDialog(message, null, "End of Round");
+        DialogBoxes.CustomInformationDialog(message, "End of Round");
 
         // The round is over, reset the board for the next round.
 
@@ -581,8 +581,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
              select player.Name)
             .ToList()
             .ToListedString();
-        DialogBoxes.CustomInformationDialog($"Game is over! {gameWinners} are the winners!", null,
-            "Game Over");
+        DialogBoxes.CustomInformationDialog($"Game is over! {gameWinners} are the winners!", "Game Over");
         ContinueMenuVisibility = Visibility.Collapsed;
         ResetGameUI();
     }
@@ -703,7 +702,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
             playerToTakeTricks.IsHuman
             ? "The rest are mine!"
             : $"{playerToTakeTricks.Name} will take the remaining tricks.",
-            null, "Taking Remaining Tricks");
+            "Taking Remaining Tricks");
     }
 
     /// <summary>

@@ -28,13 +28,9 @@ public static class DialogBoxes
     /// <param name="owner">An optional Window that owns the dialog box.</param>
     /// <param name="title">The title text to display on the dialog box.</param>
     /// <returns>True to indicate the user closed the dialog box.</returns>
-    public static bool CustomInformationDialog(string message, Window? owner = null,
-        string title = "Test")
+    public static bool CustomInformationDialog(string message, string title = "Test")
     {
-        InformationWindow informationWindow = new(message, title)
-        {
-            Owner = owner,
-        };
+        InformationWindow informationWindow = new(message, title);
 
         return informationWindow.ShowDialog() == true;
     }

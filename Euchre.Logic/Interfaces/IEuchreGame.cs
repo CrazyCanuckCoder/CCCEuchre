@@ -14,14 +14,17 @@ public interface IEuchreGame
     event EventHandler<DeclareRoundWinningPlayersEventArgs>? DeclareRoundWinningPlayers;
     event EventHandler<DeclareTrickWinnerEventArgs>? DeclareTrickWinner;
     event EventHandler<GameOverEventArgs>? GameOver;
-    event EventHandler<GetPlayersCardsEventArgs>? GetPlayersCards;
     event EventHandler<System.EventArgs>? KittyWasTurnedDown;
     event EventHandler<System.EventArgs>? NoTrumpCalled;
     event EventHandler<PlayerBidEventArgs>? PlayerBidResult;
     event EventHandler<PlayerCanTakeRemainingTricksEventArgs>? PlayerCanTakeRemainingTricks;
-    event EventHandler<PromptToChooseCardsForPlayersEventArgs>? PromptToChooseCardsForPlayers;
     event EventHandler<System.EventArgs>? TrumpCalled;
+
+#if DEBUG
+    event EventHandler<GetPlayersCardsEventArgs>? GetPlayersCards;
+    event EventHandler<PromptToChooseCardsForPlayersEventArgs>? PromptToChooseCardsForPlayers;
     event EventHandler<System.EventArgs>? UpdatePlayersHands;
+#endif
 
     Task PlayGameAsync(CancellationToken externalToken = default);
     void RequestStop();

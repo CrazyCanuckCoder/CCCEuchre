@@ -20,6 +20,7 @@ public partial class ChooseDiscardWindow : Window
             Source = UIHelpers.GenerateCardImageSource(kitty, false, false)
         };
         cardDisplayControl.GetDiscard(cards);
+        Owner = Application.Current.MainWindow;
         DataContext = this;
     }
 

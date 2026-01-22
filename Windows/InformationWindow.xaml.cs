@@ -12,6 +12,7 @@ public partial class InformationWindow : Window
         InitializeComponent();
         DescriptionText = descriptionText;
         TitleText = titleText;
+        Owner = Application.Current.MainWindow;
         DataContext = this;
     }
 
