@@ -32,6 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="About.txt" />
+    <None Remove="HowToPlay.md" />
     <None Remove="images\avatars\avatar1.png" />
     <None Remove="images\avatars\avatar10.png" />
     <None Remove="images\avatars\avatar11.png" />
@@ -252,6 +254,19 @@
     <None Remove="images\suits\Diamonds.png" />
     <None Remove="images\suits\Hearts.png" />
     <None Remove="images\suits\Spades.png" />
+    <None Remove="LICENSE.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="About.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HowToPlay.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -499,6 +514,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Markdown.Xaml" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />

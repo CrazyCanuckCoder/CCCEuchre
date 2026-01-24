@@ -467,7 +467,11 @@ public partial class MainWindow : Window
 
     private void MenuHelpAbout_Click(object sender, RoutedEventArgs e)
     {
-
+        HelpAboutWindow helpAboutWindow = new()
+        {
+            Owner = this
+        };
+        helpAboutWindow.ShowDialog();
     }
 
     #endregion Menu EventHandlers
