@@ -56,6 +56,7 @@ public class EuchreGame : IEuchreGame
         var tempGameManager = GameStateManager.LoadGameData()
                      ?? throw new InvalidGameConditionException("No saved game found.");
         gameStateManager.CopyFrom(tempGameManager);
+        GameStateManager.AddPlayersToGameData(gameStateManager);
         GameInfo = gameStateManager;
 
         // Flag that we are resuming – the UI can react accordingly.
