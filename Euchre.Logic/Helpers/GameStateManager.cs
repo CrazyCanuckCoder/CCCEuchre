@@ -147,6 +147,15 @@ public class GameStateManager : IGameStateManager
     }
 
     /// <summary>
+    /// Adds player data to the specified game state manager.
+    /// </summary>
+    /// <param name="gameStateManager">The game state manager to which player data will be added.</param>
+    public static void AddPlayersToGameData(IGameStateManager gameStateManager)
+    {
+        DataManager.AddPlayersToGameState(gameStateManager);
+    }
+
+    /// <summary>
     /// Deletes any saved game data file.
     /// </summary>
     public static void ClearSavedGameData()
@@ -170,7 +179,10 @@ public class GameStateManager : IGameStateManager
     {
         ArgumentNullException.ThrowIfNull(other, nameof(other));
 
-        Players = (IPlayer[])other.Players!.Clone();
+        if (other.Players != null)
+        {
+            Players = (IPlayer[])other.Players.Clone();
+        }
         Deck = other.Deck.Clone();
         Kitty = (Card?)other.Kitty?.Clone();
         Trump = other.Trump;

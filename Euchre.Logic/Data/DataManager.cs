@@ -19,7 +19,7 @@ public class DataManager : IDataManager
     /// </summary>
     /// <param name="gameStateManager">The object containing the game's state.</param>
     /// <exception cref="ArgumentException"></exception>
-    public static void SaveGameState(GameStateManager gameStateManager)
+    public static void SaveGameState(IGameStateManager gameStateManager)
     {
         lock (_lockObject)
         {
@@ -100,7 +100,7 @@ public class DataManager : IDataManager
     /// </summary>
     /// <returns>An instance of the GameStateManager class based on the game save file.</returns>
     /// <exception cref="FileNotFoundException" />
-    public static GameStateManager LoadGameState()
+    public static IGameStateManager LoadGameState()
     {
         if (!File.Exists(FILE_NAME))
         {
@@ -112,8 +112,6 @@ public class DataManager : IDataManager
         stateDS.ReadXml(FILE_NAME);
         var gameDataRow = stateDS.GameData.First();
 
-        AddPlayers(gameStateManager, stateDS);
-        AddPlayerBasedProperties(gameStateManager, stateDS, gameDataRow);
         AddRemainingProperties(gameStateManager, gameDataRow);
         AddPlayedTricks(gameStateManager, stateDS);
         AddTeamScores(gameStateManager, stateDS);
@@ -122,11 +120,29 @@ public class DataManager : IDataManager
     }
 
     /// <summary>
+    /// Adds the players and their related information to an existing game state manager from the game save 
+    /// file.
+    /// </summary>
+    /// <remarks>
+    /// Assumes the LoadGameState method has already been called to populate the non-player related 
+    /// properties of the game state manager.
+    /// </remarks>
+    /// <param name="gameStateManager">An existing game state manager.</param>
+    public static void AddPlayersToGameState(IGameStateManager gameStateManager)
+    {
+        GameStateDS stateDS = new();
+        stateDS.ReadXml(FILE_NAME);
+        var gameDataRow = stateDS.GameData.First();
+
+        AddPlayers(gameStateManager, stateDS);
+        AddPlayerBasedProperties(gameStateManager, stateDS, gameDataRow);
+    }
+    /// <summary>
     /// Updates the team scores in the game state manager with the scores from the dataset.
     /// </summary>
     /// <param name="gameStateManager">The reference to the game state manager.</param>
     /// <param name="stateDS">The reference to the dataset containing the information to load.</param>
-    private static void AddTeamScores(GameStateManager gameStateManager, GameStateDS stateDS)
+    private static void AddTeamScores(IGameStateManager gameStateManager, GameStateDS stateDS)
     {
         gameStateManager.TeamScores = new int[Constants.NUMBER_OF_TEAMS];
         foreach (var scoreRow in stateDS.TeamScores)
@@ -140,7 +156,7 @@ public class DataManager : IDataManager
     /// </summary>
     /// <param name="gameStateManager">The reference to the game state manager.</param>
     /// <param name="gameDataRow">A reference to the single row in the GameData table.</param>
-    private static void AddRemainingProperties(GameStateManager gameStateManager,
+    private static void AddRemainingProperties(IGameStateManager gameStateManager,
         GameStateDS.GameDataRow gameDataRow)
     {
         gameStateManager.Kitty = new Card((Suit)gameDataRow.KittySuit, (Rank)gameDataRow.KittyRank);
@@ -154,7 +170,7 @@ public class DataManager : IDataManager
     /// </summary>
     /// <param name="gameStateManager">The reference to the game state manager.</param>
     /// <param name="stateDS">The reference to the dataset containing the information to load.</param>
-    private static void AddPlayedTricks(GameStateManager gameStateManager, GameStateDS stateDS)
+    private static void AddPlayedTricks(IGameStateManager gameStateManager, GameStateDS stateDS)
     {
         gameStateManager.ResetTricksWonByPlayers();
         gameStateManager.CurrentRoundTricks = [];
@@ -180,7 +196,7 @@ public class DataManager : IDataManager
     /// <param name="gameStateManager">The reference to the game state manager.</param>
     /// <param name="stateDS">The reference to the dataset containing the information to load.</param>
     /// <param name="gameDataRow">A reference to the single row in the GameData table.</param>
-    private static void AddPlayerBasedProperties(GameStateManager gameStateManager, GameStateDS stateDS,
+    private static void AddPlayerBasedProperties(IGameStateManager gameStateManager, GameStateDS stateDS,
         GameStateDS.GameDataRow gameDataRow)
     {
         if (gameDataRow.DealerID > 0)
@@ -212,7 +228,7 @@ public class DataManager : IDataManager
     /// </summary>
     /// <param name="gameStateManager">The reference to the game state manager.</param>
     /// <param name="stateDS">The reference to the dataset containing the information to load.</param>
-    private static void AddPlayers(GameStateManager gameStateManager, GameStateDS stateDS)
+    private static void AddPlayers(IGameStateManager gameStateManager, GameStateDS stateDS)
     {
         gameStateManager.Players = new IPlayer[Constants.NUMBER_OF_PLAYERS];
         int playerIdx = 0;
@@ -235,7 +251,7 @@ public class DataManager : IDataManager
     /// <param name="stateDS">The database with the player ID.</param>
     /// <param name="playerID">The ID of the player to find.</param>
     /// <returns>A player matching the specified player ID.</returns>
-    private static IPlayer GetPlayerFromPlayerID(GameStateManager gameStateManager, GameStateDS stateDS,
+    private static IPlayer GetPlayerFromPlayerID(IGameStateManager gameStateManager, GameStateDS stateDS,
         int playerID)
     {
         return gameStateManager.Players!
@@ -252,7 +268,7 @@ public class DataManager : IDataManager
     /// <returns>An instance of either the HumanPlayer or AutomatedPlayer class depending on information from 
     /// the data row.</returns>
     private static IPlayer CreatePlayerFromDataRow(GameStateDS.PlayerRow playerRow,
-        GameStateManager gameStateManager)
+        IGameStateManager gameStateManager)
     {
         IPlayer newPlayer;
 
