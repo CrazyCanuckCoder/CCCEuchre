@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>images\icons\Euchre.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -264,6 +265,7 @@
     <Content Include="HowToPlay.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="images\icons\Euchre.ico" />
     <Content Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
