@@ -9,9 +9,9 @@
     Width="400"
     Height="300"
     Background="#FFF7F0"
+    Closing="Window_Closing"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterOwner"
-    Closing="Window_Closing"
     mc:Ignorable="d">
 
     <Grid Margin="20">
@@ -47,53 +47,57 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
-                <Button
+                <ToggleButton
                     x:Name="HeartsButton"
                     Width="100"
                     Height="100"
                     Background="Transparent"
                     BorderThickness="0"
-                    Click="HeartsButton_Click"
+                    Checked="ToggleButton_Checked"
+                    Tag="Hearts"
                     ToolTip="Select Hearts as trump"
                     Visibility="{Binding HeartsVisibility}">
                     <Image Source="/images/suits/Hearts.png" />
-                </Button>
-                <Button
+                </ToggleButton>
+                <ToggleButton
                     x:Name="ClubsButton"
                     Width="100"
                     Height="100"
                     Margin="8,0,0,0"
                     Background="Transparent"
                     BorderThickness="0"
-                    Click="ClubsButton_Click"
+                    Checked="ToggleButton_Checked"
+                    Tag="Clubs"
                     ToolTip="Select Clubs as trump"
                     Visibility="{Binding ClubsVisibility}">
                     <Image Source="/images/suits/Clubs.png" />
-                </Button>
-                <Button
+                </ToggleButton>
+                <ToggleButton
                     x:Name="DiamondsButton"
                     Width="100"
                     Height="100"
                     Margin="8,0,0,0"
                     Background="Transparent"
                     BorderThickness="0"
-                    Click="DiamondsButton_Click"
+                    Checked="ToggleButton_Checked"
+                    Tag="Diamonds"
                     ToolTip="Select Diamonds as trump"
                     Visibility="{Binding DiamondsVisibility}">
                     <Image Source="/images/suits/Diamonds.png" />
-                </Button>
-                <Button
+                </ToggleButton>
+                <ToggleButton
                     x:Name="SpadesButton"
                     Width="100"
                     Height="100"
                     Margin="8,0,0,0"
                     Background="Transparent"
                     BorderThickness="0"
-                    Click="SpadesButton_Click"
+                    Checked="ToggleButton_Checked"
+                    Tag="Spades"
                     ToolTip="Select Spades as trump"
                     Visibility="{Binding SpadesVisibility}">
                     <Image Source="/images/suits/Spades.png" />
-                </Button>
+                </ToggleButton>
             </WrapPanel>
         </Border>
 
@@ -113,13 +117,26 @@
             IsEnabled="{Binding IsGoAloneCheckBoxEnabled}"
             ToolTip="Check to go alone when calling trump" />
 
+        <!--  Submit Button  -->
+
+        <Button
+            x:Name="SubmitButton"
+            Grid.Row="4"
+            Grid.Column="0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Click="SubmitButton_Click"
+            Content="{Binding SubmitButtonText}"
+            FontSize="16"
+            IsEnabled="{Binding IsSubmitButtonEnabled}"
+            Style="{DynamicResource SubmitButtonStyle}" />
+
         <!--  Pass Button  -->
 
         <Button
             x:Name="PassButton"
             Grid.Row="4"
-            Grid.Column="0"
-            Grid.ColumnSpan="5"
+            Grid.Column="4"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Click="PassButton_Click"

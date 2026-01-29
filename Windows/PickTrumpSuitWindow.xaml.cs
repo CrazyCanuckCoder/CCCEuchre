@@ -1,8 +1,10 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
+using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 
 namespace Euchre.Windows;
 
@@ -18,12 +20,14 @@ public partial class PickTrumpSuitWindow : Window
         _playerHand = currentPlayer.Hand;
         if (isKittyRound)
         {
+            Title = "Choose Kitty Suit";
             CheckForCanadianLoner(currentPlayer, dealer);
         }
         else
         {
             CheckForStickTheDealer(currentPlayer, dealer);
         }
+        SetSubmitButtonsCaption(isKittyRound, currentPlayer, dealer);
         SetTrumpButtonsVisibility(allowedSuits);
         Owner = Application.Current.MainWindow;
         DataContext = this;
@@ -32,13 +36,22 @@ public partial class PickTrumpSuitWindow : Window
     /// <summary>
     /// Reference to the cards in the player's hand.
     /// </summary>
-    private List<Card> _playerHand;
+    private readonly List<Card> _playerHand;
 
     /// <summary>
     /// True to indicate that the user cannot pass when they are the dealer and the second bidding round has
     /// not produced a trump suit.
     /// </summary>
     private bool _stickTheDealer;
+
+    #region Dependency Properties
+
+    /// <summary>
+    /// Using a DependencyProperty as the backing store for IsSubmitButtonEnabled.
+    /// </summary>
+    public static readonly DependencyProperty IsSubmitButtonEnabledProperty =
+        DependencyProperty.Register(nameof(IsSubmitButtonEnabled), typeof(bool), typeof(PickTrumpSuitWindow),
+            new PropertyMetadata(true));
 
     /// <summary>
     /// Using a DependencyProperty as the backing store for HeartsVisibility.
@@ -95,6 +108,16 @@ public partial class PickTrumpSuitWindow : Window
     public static readonly DependencyProperty IsPassButtonEnabledProperty =
         DependencyProperty.Register(nameof(IsPassButtonEnabled), typeof(bool), typeof(PickTrumpSuitWindow),
             new PropertyMetadata(true));
+
+    /// <summary>
+    /// Using a DependencyProperty as the backing store for SubmitButtonText.
+    /// </summary>
+    public static readonly DependencyProperty SubmitButtonTextProperty =
+        DependencyProperty.Register(nameof(SubmitButtonText), typeof(string), typeof(PickTrumpSuitWindow),
+            new PropertyMetadata(string.Empty));
+        
+    #endregion Dependency Properties
+
 
     /// <summary>
     /// Shows/hides the button to select hearts as trump.
@@ -168,7 +191,42 @@ public partial class PickTrumpSuitWindow : Window
         set => SetValue(IsPassButtonEnabledProperty, value);
     }
 
+    /// <summary>
+    /// True to indicate the Submit button can be enabled.
+    /// </summary>
+    public bool IsSubmitButtonEnabled
+    {
+        get => (bool)GetValue(IsSubmitButtonEnabledProperty);
+        set => SetValue(IsSubmitButtonEnabledProperty, value);
+    }
 
+    /// <summary>
+    /// The caption to appear on the Submit button.
+    /// </summary>
+    public string SubmitButtonText
+    {
+        get => (string)GetValue(SubmitButtonTextProperty);
+        set => SetValue(SubmitButtonTextProperty, value);
+    }
+
+
+    /// <summary>
+    /// Sets the caption on the submit button based on whether it is the kitty round or not.
+    /// </summary>
+    /// <param name="isKittyRound">True to indicate it is the kitty round.</param>
+    /// <param name="currentPlayer">A reference to the current player.</param>
+    /// <param name="dealer">A reference to the dealer.</param>
+    private void SetSubmitButtonsCaption(bool isKittyRound, IPlayer currentPlayer, IPlayer dealer)
+    {
+        if (isKittyRound)
+        {
+            SubmitButtonText = currentPlayer == dealer ? "Pick It Up" : "Order Up";
+        }
+        else
+        {
+            SubmitButtonText = "Call Trump";
+        }
+    }
 
     /// <summary>
     /// Sets the visibility of each suit if it exists in a list of suits.
@@ -180,6 +238,7 @@ public partial class PickTrumpSuitWindow : Window
         {
             allowedSuits = CheckForSuitExistence(allowedSuits);
         }
+        IsSubmitButtonEnabled = allowedSuits.Count != 0;
         foreach (Suit suit in allowedSuits)
         {
             switch (suit)
@@ -253,38 +312,49 @@ public partial class PickTrumpSuitWindow : Window
         IsPassButtonEnabled = !_stickTheDealer;
     }
 
-    private void HeartsButton_Click(object? sender, RoutedEventArgs e)
+    /// <summary>
+    /// Sets the value for the ChosenSuit property based on which toggle button is checked.
+    /// </summary>
+    /// <param name="toggleButton">The toggle button that was checked by the user.</param>
+    private void SetUpChosenSuit(ToggleButton toggleButton)
     {
-        SelectedSuit = Suit.Hearts;
-        DialogResult = true;
-        Close();
+        if (toggleButton.Tag is string chosenSuit)
+        {
+            SelectedSuit = Enum.Parse<Suit>(chosenSuit);
+        }
     }
 
-    private void DiamondsButton_Click(object? sender, RoutedEventArgs e)
+    private void ToggleButton_Checked(object sender, RoutedEventArgs e)
     {
-        SelectedSuit = Suit.Diamonds;
-        DialogResult = true;
-        Close();
-    }
+        // Uncheck the toggle buttons on the control except for the one just checked by the user.
 
-    private void ClubsButton_Click(object? sender, RoutedEventArgs e)
-    {
-        SelectedSuit = Suit.Clubs;
-        DialogResult = true;
-        Close();
-    }
+        if (sender is ToggleButton currentButton)
+        {
+            this.UncheckOtherToggleButtons(currentButton);
 
-    private void SpadesButton_Click(object? sender, RoutedEventArgs e)
-    {
-        SelectedSuit = Suit.Spades;
-        DialogResult = true;
-        Close();
+            // Set up the selected suit property.
+
+            SetUpChosenSuit(currentButton);
+        }
     }
 
     private void PassButton_Click(object sender, RoutedEventArgs e)
     {
-        DialogResult = true;
+        DialogResult = false;
         Close();
+    }
+
+    private void SubmitButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (SelectedSuit != null)
+        {
+            DialogResult = true;
+            Close();
+        }
+        else
+        {
+            DialogBoxes.ErrorDialog("You must select a suit.", this);
+        }
     }
 
     private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
