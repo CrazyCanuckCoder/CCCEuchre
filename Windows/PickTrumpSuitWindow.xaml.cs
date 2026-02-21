@@ -18,6 +18,7 @@ public partial class PickTrumpSuitWindow : Window
     {
         InitializeComponent();
         _playerHand = currentPlayer.Hand;
+        SetTrumpButtonsVisibility(allowedSuits);
         if (isKittyRound)
         {
             Title = "Choose Kitty Suit";
@@ -28,7 +29,6 @@ public partial class PickTrumpSuitWindow : Window
             CheckForStickTheDealer(currentPlayer, dealer);
         }
         SetSubmitButtonsCaption(isKittyRound, currentPlayer, dealer);
-        SetTrumpButtonsVisibility(allowedSuits);
         Owner = Application.Current.MainWindow;
         DataContext = this;
     }
@@ -239,24 +239,30 @@ public partial class PickTrumpSuitWindow : Window
             allowedSuits = CheckForSuitExistence(allowedSuits);
         }
         IsSubmitButtonEnabled = allowedSuits.Count != 0;
+        IsGoAloneCheckBoxEnabled = allowedSuits.Count != 0;
+        bool selectTrumpButton = allowedSuits.Count == 1;
         foreach (Suit suit in allowedSuits)
         {
             switch (suit)
             {
                 case Suit.Hearts:
                     HeartsVisibility = Visibility.Visible; 
+                    HeartsButton.IsChecked = selectTrumpButton;
                     break;
 
                 case Suit.Diamonds:
                     DiamondsVisibility = Visibility.Visible;
+                    DiamondsButton.IsChecked = selectTrumpButton;
                     break;
 
                 case Suit.Clubs: 
                     ClubsVisibility = Visibility.Visible;
+                    ClubsButton.IsChecked = selectTrumpButton;
                     break;
 
                 case Suit.Spades:
                     SpadesVisibility = Visibility.Visible;
+                    HeartsButton.IsChecked = selectTrumpButton;
                     break;
             }
         }

@@ -82,7 +82,7 @@
                         Background="White"
                         MaximumValue="10"
                         MinimumValue="0"
-                        ProgressBarColour="{x:Static logic:UIConstants.Team1Colour}" />
+                        ProgressBarBackColour="{x:Static logic:UIConstants.Team1Background}" />
                 </Border>
 
                 <!--  Team 2 Score Controls  -->
@@ -106,7 +106,7 @@
                         Background="White"
                         MaximumValue="10"
                         MinimumValue="0"
-                        ProgressBarColour="{x:Static logic:UIConstants.Team2Colour}" />
+                        ProgressBarBackColour="{x:Static logic:UIConstants.Team2Background}" />
                 </Border>
             </Grid>
         </Border>

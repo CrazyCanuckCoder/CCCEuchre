@@ -15,7 +15,17 @@ public static class UIConstants
     public static Color Team1Colour { get; } = Colors.Green;
 
     /// <summary>
+    /// The colour to use for the background of Team 1 controls.
+    /// </summary>
+    public static Brush Team1Background { get; } = new SolidColorBrush(Team1Colour);
+
+    /// <summary>
     /// The colour that represents the players in team 2.
     /// </summary>
     public static Color Team2Colour { get; } = Colors.Red;
+
+    /// <summary>
+    /// The colour to use for the background of Team 1 controls.
+    /// </summary>
+    public static Brush Team2Background { get; } = new SolidColorBrush(Team2Colour);
 }
