@@ -1,4 +1,5 @@
-﻿using CrazyCanuckCoder.Library.WPF;
+﻿using CrazyCanuckCoder.Library.Common;
+using CrazyCanuckCoder.Library.WPF;
 using Euchre.Logic.Components;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
@@ -241,6 +242,7 @@ public partial class MainWindow : Window
             {
                 RemoveHumanPlayerEventHandlers(humanPlayer);
             }
+            e.GameInfo.Reset();
         });
     }
 
@@ -480,13 +482,13 @@ public partial class MainWindow : Window
     {
         try
         {
-            if (DataContext is MainWindowViewModel vm && vm.CurrentGame != null)
+            if (ViewModel.CurrentGame != null)
             {
                 // Detect in-progress: both teams below winning score.
 
-                var game = vm.CurrentGame;
-                bool inProgress = game.GameInfo.TeamScores[0] < WINNING_SCORE
-                                  && game.GameInfo.TeamScores[1] < WINNING_SCORE;
+                var game = ViewModel.CurrentGame;
+                bool inProgress = game.GameInfo.TeamScores[0].IsBetween(1, WINNING_SCORE - 1)
+                                  && game.GameInfo.TeamScores[1].IsBetween(1, WINNING_SCORE - 1);
 
                 if (inProgress)
                 {

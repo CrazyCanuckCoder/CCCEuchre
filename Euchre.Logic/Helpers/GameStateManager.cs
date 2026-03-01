@@ -167,6 +167,28 @@ public class GameStateManager : IGameStateManager
     }
 
     /// <summary>
+    /// Resets the current instance to original values.
+    /// </summary>
+    public void Reset()
+    {
+        Players = [];
+        Deck = new Deck();
+        Kitty = null;
+        Trump = null;
+        Dealer = null;
+        TrumpCaller = null;
+        TeamScores = new int[NUMBER_OF_TEAMS];
+        CurrentRoundTricks = [];
+        GoingAlone = false;
+        AlonePlayer = null;
+        NextTrickPlayer = null;
+        RestartGame = false;
+        LastCompletedStage = RoundStage.None;
+        CurrentTrickNumber = 0;
+        TricksWonByPlayers = new int[NUMBER_OF_PLAYERS]; 
+    }
+
+    /// <summary>
     /// Copies the state from the specified game state manager into the current instance, overwriting all 
     /// relevant properties.
     /// </summary>
