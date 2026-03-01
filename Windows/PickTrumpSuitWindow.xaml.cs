@@ -17,18 +17,7 @@ public partial class PickTrumpSuitWindow : Window
         bool isKittyRound)
     {
         InitializeComponent();
-        _playerHand = currentPlayer.Hand;
-        SetTrumpButtonsVisibility(allowedSuits);
-        if (isKittyRound)
-        {
-            Title = "Choose Kitty Suit";
-            CheckForCanadianLoner(currentPlayer, dealer);
-        }
-        else
-        {
-            CheckForStickTheDealer(currentPlayer, dealer);
-        }
-        SetSubmitButtonsCaption(isKittyRound, currentPlayer, dealer);
+        ConfigWindow(allowedSuits, currentPlayer, dealer, isKittyRound);
         Owner = Application.Current.MainWindow;
         DataContext = this;
     }
@@ -36,7 +25,7 @@ public partial class PickTrumpSuitWindow : Window
     /// <summary>
     /// Reference to the cards in the player's hand.
     /// </summary>
-    private readonly List<Card> _playerHand;
+    private List<Card> _playerHand= [];
 
     /// <summary>
     /// True to indicate that the user cannot pass when they are the dealer and the second bidding round has
@@ -211,6 +200,30 @@ public partial class PickTrumpSuitWindow : Window
 
 
     /// <summary>
+    /// Sets up the properties and some of the controls on the form.
+    /// </summary>
+    /// <param name="allowedSuits">A list of the suits that the user is allowed to pick from.</param>
+    /// <param name="currentPlayer">A reference to the user.</param>
+    /// <param name="dealer">A reference to the player that is the dealer.</param>
+    /// <param name="isKittyRound">True to indicate the current bidding round is the first one.</param>
+    private void ConfigWindow(List<Suit> allowedSuits, IPlayer currentPlayer, IPlayer dealer, 
+        bool isKittyRound)
+    {
+        _playerHand = currentPlayer.Hand;
+        SetTrumpButtonsVisibility(allowedSuits);
+        if (isKittyRound)
+        {
+            Title = "Choose Kitty Suit";
+            CheckForCanadianLoner(currentPlayer, dealer);
+        }
+        else
+        {
+            CheckForStickTheDealer(currentPlayer, dealer);
+        }
+        SetSubmitButtonsCaption(isKittyRound, currentPlayer, dealer);
+    }
+
+    /// <summary>
     /// Sets the caption on the submit button based on whether it is the kitty round or not.
     /// </summary>
     /// <param name="isKittyRound">True to indicate it is the kitty round.</param>
@@ -234,13 +247,21 @@ public partial class PickTrumpSuitWindow : Window
     /// <param name="allowedSuits">The suits to set as visible.</param>
     private void SetTrumpButtonsVisibility(List<Suit> allowedSuits)
     {
+        // Filter the suits if the user must have a natural in their hand.
+
         if (GameSettingsManager.Instance.MustHaveSuitToCall)
         {
             allowedSuits = CheckForSuitExistence(allowedSuits);
         }
+
+        // Set the Submit and Go Alone buttons enabled when there are some suits to select for trump.
+
         IsSubmitButtonEnabled = allowedSuits.Count != 0;
         IsGoAloneCheckBoxEnabled = allowedSuits.Count != 0;
         bool selectTrumpButton = allowedSuits.Count == 1;
+        
+        // Set the available suits' buttons visible.
+
         foreach (Suit suit in allowedSuits)
         {
             switch (suit)

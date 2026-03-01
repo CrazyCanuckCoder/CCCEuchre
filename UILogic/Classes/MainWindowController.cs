@@ -93,7 +93,7 @@ internal class MainWindowController : IMainWindowController
     /// <param name="visibilityAction">The action to use to set the control's visibility.</param>
     public void SetPlayerCardDisplayControlVisibility(int controlIdx, Action<Visibility> visibilityAction)
     {
-        _playerCardDisplayControlsVisibility.Add(controlIdx, visibilityAction);
+        _playerCardDisplayControlsVisibility.TryAdd(controlIdx, visibilityAction);
     }
 
     /// <summary>

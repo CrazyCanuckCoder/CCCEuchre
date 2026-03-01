@@ -6,6 +6,7 @@ using Euchre.Logic.Interfaces;
 using log4net;
 using log4net.Config;
 using System.IO;
+using System.Runtime.CompilerServices;
 using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Components;
@@ -654,15 +655,22 @@ public class EuchreGame : IEuchreGame
     {
         bool canWinRest = false;
 
+        Log.Debug($"Starting...");
+        Log.Debug($"Player: {leadingPlayer.Name} - Player's Hand: {leadingPlayer.Hand.PrettyPrint()}");
+
         // Does the player has all trump left in their hand.
 
         if (CardFinder.CountTrump(leadingPlayer.Hand, GameInfo.Trump!.Value) == leadingPlayer.Hand.Count)
         {
+            Log.Debug("Player only has trump left.");
+
             // Is it all the highest trump?
 
             var highestTrumpCards = CardHelper.CreateHighestTrumpHand(GameInfo.Trump.Value);
             if (CardHelper.CardListsAreEqual(leadingPlayer.Hand, highestTrumpCards.Take(leadingPlayer.Hand.Count).ToList()))
             {
+                Log.Debug($"Player's hand has the highest remaining trump: {highestTrumpCards.Take(leadingPlayer.Hand.Count).ToList().PrettyPrint()}");
+
                 // The rest are mine!
 
                 canWinRest = true;
@@ -679,12 +687,16 @@ public class EuchreGame : IEuchreGame
                                        select card.Value;
                 if (CardHelper.AllCardsAreHigherThanTrumpCard(playedTrumpCards, highestTrumpInHand!))
                 {
+                    Log.Debug($"All cards higher than the player's trump cards have been played.  Player's highest card: {highestTrumpInHand}.  Played cards: {playedTrumpCards.ToList().PrettyPrint()}.");
+
                     // The rest are mine!
 
                     canWinRest = true;
                 }
                 else if (CardHelper.NoMoreTrumpRemaining(GameInfo.CurrentRoundTricks, GameInfo.Trump.Value))
                 {
+                    Log.Debug("There are no more trump remaining, so the player has the rest of the trump.");
+
                     // The rest are mine!
 
                     canWinRest = true;
@@ -693,15 +705,21 @@ public class EuchreGame : IEuchreGame
         }
         else if (CardHelper.PlayerHasTrumpAndAces(leadingPlayer.Hand, GameInfo.Trump!.Value))
         {
+            Log.Debug("Player has trump and aces.");
+
             // Is the trump in the player's hand, the only remaining trump?
 
             if (CardHelper.NoMoreTrumpRemaining(GameInfo.CurrentRoundTricks, GameInfo.Trump.Value))
             {
+                Log.Debug("There are no more trump remaining, so the player has the highest cards remaining.");
+
                 // The rest are mine!
 
                 canWinRest = true;
             }
         }
+
+        Log.Debug($"Returns {canWinRest}.");
 
         return canWinRest;
     }
