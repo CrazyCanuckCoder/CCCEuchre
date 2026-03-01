@@ -185,7 +185,7 @@ public class GameStateManager : IGameStateManager
         RestartGame = false;
         LastCompletedStage = RoundStage.None;
         CurrentTrickNumber = 0;
-        TricksWonByPlayers = [];
+        TricksWonByPlayers = new int[NUMBER_OF_PLAYERS]; 
     }
 
     /// <summary>
