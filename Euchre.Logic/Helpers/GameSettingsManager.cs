@@ -71,6 +71,13 @@ public sealed class GameSettingsManager
     public bool StickTheDealer { get; set; }
 
     /// <summary>
+    /// True to indicate the rule called No Ace, No Face, No Trump is active.  The rule allows a player to 
+    /// declare their hand has no Aces, no cards above the 10 card and contains no trump.  When declared, the
+    /// hand is stopped and then redealt.
+    /// </summary>
+    public bool NoAceNoFaceNoTrumpRule { get; set; }
+
+    /// <summary>
     /// Reads the current XML file and loads the information into the GameDataSet property.
     /// </summary>
     /// <exception cref="FileNotFoundException"></exception>
@@ -86,6 +93,7 @@ public sealed class GameSettingsManager
             CanadianLonerRule = settingsRow.UseCanadianLonerRule;
             MustHaveSuitToCall = settingsRow.MustHaveSuitToCall;
             StickTheDealer = settingsRow.StickTheDealer;
+            NoAceNoFaceNoTrumpRule = settingsRow.UseNoAceNoFaceNoTrumpRule;
         }
         else
         {
@@ -111,6 +119,7 @@ public sealed class GameSettingsManager
         settingsRow.UseCanadianLonerRule = CanadianLonerRule;
         settingsRow.MustHaveSuitToCall = MustHaveSuitToCall;
         settingsRow.StickTheDealer = StickTheDealer;
+        settingsRow.UseNoAceNoFaceNoTrumpRule = NoAceNoFaceNoTrumpRule;
         _settingsDS.AcceptChanges();
         _settingsDS.WriteXml(FILE_NAME);
 

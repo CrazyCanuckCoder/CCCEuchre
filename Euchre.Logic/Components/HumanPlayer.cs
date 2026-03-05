@@ -60,6 +60,11 @@ public class HumanPlayer : Player
     public event EventHandler<System.EventArgs>? UserHandUpdated;
 
     /// <summary>
+    /// Fired to prompt the user to decide whether to invoke the No Ace, No Face, No Trump rule.
+    /// </summary>
+    public event EventHandler<PromptForNoAceNoFaceNoTrumpRuleEventArgs>? PromptForNoAceNoFaceNoTrumpRule;
+
+    /// <summary>
     /// Prompts the user on whether to order up the given card during the bidding phase.
     /// </summary>
     /// <param name="kitty">The card being considered for ordering up.</param>
@@ -157,5 +162,26 @@ public class HumanPlayer : Player
             Hand = [.. Hand],
             IsGoingAlone = IsGoingAlone,
         };
+    }
+
+    /// <summary>
+    /// Checks the player's hand for a lack of Aces, cards above 10, and trump.
+    /// </summary>
+    /// <param name="trump">The current trump suit.</param>
+    /// <returns>Returns true to indicate there are no Aces, cards above 10, or trump in the player's hand.</returns>
+    public override bool HasNoAceNoFaceNoTrump(Suit trump)
+    {
+        bool hasNoAceNoFaceNoTrump = base.HasNoAceNoFaceNoTrump(trump);
+
+        if (hasNoAceNoFaceNoTrump)
+        {
+            // Prompt the user to see if they want to invoke the rule.
+
+            var eventArgs = new PromptForNoAceNoFaceNoTrumpRuleEventArgs();
+            PromptForNoAceNoFaceNoTrumpRule?.Invoke(this, eventArgs);
+            hasNoAceNoFaceNoTrump = eventArgs.InvokeRule;
+        }
+
+        return hasNoAceNoFaceNoTrump;
     }
 }

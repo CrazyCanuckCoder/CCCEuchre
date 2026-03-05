@@ -44,6 +44,7 @@ public interface IMainWindowViewModel
     void EndOfRoundUpdate(List<string> winningPlayers, int points, ScoringReason reasonForPoints);
     void EndOfTrick(IPlayer trickWinningPlayer);
     Card? GetCardFromUser(IPlayer user, Suit? trickSuit, Suit trump);
+    void ShowNoAceNoFaceNoTrump(IPlayer player);
     void Initialize();
     void KittyWasTurnedDown();
     void NoTrumpWasCalled();
@@ -57,5 +58,6 @@ public interface IMainWindowViewModel
     void SetKittyCard(Card kitty);
     void SetupUserInterface();
     void TrumpCalled();
+    bool PromptUserToInvokeNoAceNoFaceNoTrumpRule(HumanPlayer player);
     void UpdatePlayersHandAfterDeal(int indexOfPlayer, int numberOfCardsDealt);
 }

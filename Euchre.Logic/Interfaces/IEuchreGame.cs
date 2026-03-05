@@ -16,6 +16,7 @@ public interface IEuchreGame
     event EventHandler<GameOverEventArgs>? GameOver;
     event EventHandler<System.EventArgs>? KittyWasTurnedDown;
     event EventHandler<System.EventArgs>? NoTrumpCalled;
+    event EventHandler<NoAceNoFaceNoTrumpDeclaredEventArgs>? NoAceNoFaceNoTrumpDeclared;
     event EventHandler<PlayerBidEventArgs>? PlayerBidResult;
     event EventHandler<PlayerCanTakeRemainingTricksEventArgs>? PlayerCanTakeRemainingTricks;
     event EventHandler<System.EventArgs>? TrumpCalled;

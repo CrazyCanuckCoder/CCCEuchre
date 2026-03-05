@@ -139,6 +139,11 @@ public class EuchreGame : IEuchreGame
     public event EventHandler<System.EventArgs>? TrumpCalled;
 
     /// <summary>
+    /// Fired to inform listeners that a player has invoked the No Ace, No Face, No Trump rule.
+    /// </summary>
+    public event EventHandler<NoAceNoFaceNoTrumpDeclaredEventArgs>? NoAceNoFaceNoTrumpDeclared;
+
+    /// <summary>
     /// Fired to inform listeners that all players passed for the second round of bidding.
     /// </summary>
     public event EventHandler<System.EventArgs>? NoTrumpCalled;
@@ -232,7 +237,7 @@ public class EuchreGame : IEuchreGame
                        GameInfo.TeamScores[1] < WINNING_SCORE)
                 {
                     // run a synchronous round on thread pool but observe cancellation
-                    await Task.Run(() => PlayRound(), ct).ConfigureAwait(false);
+                    await Task.Run(() => PlayRound(), ct);
 
                     // small cooperative check point
                     if (ct.IsCancellationRequested) break;
@@ -251,7 +256,7 @@ public class EuchreGame : IEuchreGame
 
         try
         {
-            await _gameLoopTask.ConfigureAwait(false);
+            await _gameLoopTask;
         }
         finally
         {
@@ -441,6 +446,12 @@ public class EuchreGame : IEuchreGame
         {
             Log.Debug(
                 $"Trump chosen in round 1: {GameInfo.Trump}{(GameInfo.GoingAlone ? " Alone" : "")} by {GameInfo.TrumpCaller?.Name}");
+            if (StopIfNoAceNoFaceNoTrump())
+            {
+                AdvanceDealer();
+                Log.Debug("A player declared No Ace, No Face, No Trump, round cancelled.");
+                return false;
+            }
             return TrumpWasCalled();
         }
 
@@ -452,6 +463,12 @@ public class EuchreGame : IEuchreGame
         {
             Log.Debug(
                 $"Trump chosen in round 2: {GameInfo.Trump}{(GameInfo.GoingAlone ? " Alone" : "")} by {GameInfo.TrumpCaller?.Name}");
+            if (StopIfNoAceNoFaceNoTrump())
+            {
+                AdvanceDealer();
+                Log.Debug("A player declared No Ace, No Face, No Trump, round cancelled.");
+                return false;
+            }
             return TrumpWasCalled();
         }
 
@@ -461,6 +478,27 @@ public class EuchreGame : IEuchreGame
         AdvanceDealer();
         Log.Debug("No trump called in either round; advancing dealer.");
         return false;
+    }
+
+    /// <summary>
+    /// Checks each player's hand to see if they meet the conditions for the No Ace, No Face, No Trump rule.
+    /// </summary>
+    /// <returns>Returns true to indicate a player's hand meets the rule's condition.</returns>
+    private bool StopIfNoAceNoFaceNoTrump()
+    {
+        bool forceStop = false;
+
+        foreach (var player in GameInfo.Players!)
+        {
+            forceStop = player.HasNoAceNoFaceNoTrump(GameInfo.Trump!.Value);
+            if (forceStop)
+            {
+                NoAceNoFaceNoTrumpDeclared?.Invoke(this, new NoAceNoFaceNoTrumpDeclaredEventArgs(player));
+                break; 
+            }
+        }
+
+        return forceStop;
     }
 
     /// <summary>

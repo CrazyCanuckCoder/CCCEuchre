@@ -22,4 +22,5 @@ public interface IPlayer
     Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit);
     IPlayer Clone();
     void ReceiveSeveralCards(List<ICard> cards);
+    bool HasNoAceNoFaceNoTrump(Suit trump);
 }

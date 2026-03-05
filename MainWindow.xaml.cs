@@ -76,6 +76,7 @@ public partial class MainWindow : Window
         ViewModel.CurrentGame.KittyWasTurnedDown += CurrentGame_KittyWasTurnedDown;
         ViewModel.CurrentGame.TrumpCalled += CurrentGame_TrumpCalled;
         ViewModel.CurrentGame.NoTrumpCalled += CurrentGame_NoTrumpCalled;
+        ViewModel.CurrentGame.NoAceNoFaceNoTrumpDeclared += CurrentGame_NoAceNoFaceNoTrumpDeclared;
         ViewModel.CurrentGame.DeclareRoundWinningPlayers += CurrentGame_DeclareRoundWinningPlayers;
         ViewModel.CurrentGame.DeclareTrickWinner += CurrentGame_DeclareTrickWinner;
         ViewModel.CurrentGame.GameOver += CurrentGame_GameOver;
@@ -100,6 +101,7 @@ public partial class MainWindow : Window
         humanPlayer.UserHandUpdated += HumanPlayer_UserHandUpdated;
         humanPlayer.PromptForTrumpSuit += HumanPlayer_PromptForTrumpSuit;
         humanPlayer.PromptToOrderUp += HumanPlayer_PromptToOrderUp;
+        humanPlayer.PromptForNoAceNoFaceNoTrumpRule += HumanPlayer_PromptForNoAceNoFaceNoTrumpRule;
     }
 
     /// <summary>
@@ -309,6 +311,14 @@ public partial class MainWindow : Window
         UIHelpers.RunOnUIThread(ViewModel.NoTrumpWasCalled);
     }
 
+    private void CurrentGame_NoAceNoFaceNoTrumpDeclared(object? sender, NoAceNoFaceNoTrumpDeclaredEventArgs e)
+    {
+        UIHelpers.RunOnUIThread(() =>
+        {
+            ViewModel.ShowNoAceNoFaceNoTrump(e.Player);
+        });
+    }
+
     private void CurrentGame_CardPlayedByPlayer(object? sender, CardPlayedByPlayerEventArgs e)
     {
         UIHelpers.RunOnUIThread(() =>
@@ -318,6 +328,17 @@ public partial class MainWindow : Window
     }
 
     // The event handlers for the human player.
+
+    private void HumanPlayer_PromptForNoAceNoFaceNoTrumpRule(object? sender, PromptForNoAceNoFaceNoTrumpRuleEventArgs e)
+    {
+        UIHelpers.RunOnUIThread(() =>
+        {
+            if (sender is HumanPlayer player)
+            {
+                e.InvokeRule = ViewModel.PromptUserToInvokeNoAceNoFaceNoTrumpRule(player);
+            }
+        });
+    }
 
     private void HumanPlayer_PromptToOrderUp(object? sender, PromptToOrderUpEventArgs e)
     {
