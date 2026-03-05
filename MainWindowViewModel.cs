@@ -443,7 +443,12 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
         //}
     }
 
-    public void InformPlayersOfNoAceNoFaceNoTrump(IPlayer player)
+    /// <summary>
+    /// A player has no Aces, no cards above 10, and no trump in their hand.  Let the game know of the 
+    /// condition and end the current round.
+    /// </summary>
+    /// <param name="player">The player with a hand that meets the conditions.</param>
+    public void ShowNoAceNoFaceNoTrump(IPlayer player)
     {
         ForciblyDisplayPlayersHands();
         DisplayPlayerMessage(player, "No Ace, No Face, No Trump!", 2, true);
@@ -652,6 +657,18 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
         Log.Debug($"After prompting user for trump: chosenSuit={chosenSuit}, goAlone={goAlone}");
 
         return chosenSuit;
+    }
+
+    /// <summary>
+    /// Prompts the user to decide if they want to invoke the No, No Face, No Trump rule.  Only called if the
+    /// user's hand meets the conditions for the rule.
+    /// </summary>
+    /// <param name="player">A reference to the user.</param>
+    /// <returns>True if the user wants to invoke the rule.</returns>
+    public bool PromptUserToInvokeNoAceNoFaceNoTrumpRule(HumanPlayer player)
+    {
+        return DialogBoxes.CustomQuestionDialog("Do you want to invoke No Ace, No Face, No Trump?",
+                                                "Rule") == true;
     }
 
     /// <summary>
@@ -1099,12 +1116,5 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
         {
             _mainWindowController.SetupPlayerCards(player);
         }
-    }
-    public bool PromptUserToInvokeNoAceNoFaceNoTrumpRule(HumanPlayer player)
-    {
-        return MessageBox.Show("Do you want to invoke No Ace, No Face, No Trump?", 
-                               "Rule", 
-                               MessageBoxButton.YesNo, 
-                               MessageBoxImage.Question) == MessageBoxResult.Yes;
     }
 }

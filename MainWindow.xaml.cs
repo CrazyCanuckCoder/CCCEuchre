@@ -315,7 +315,7 @@ public partial class MainWindow : Window
     {
         UIHelpers.RunOnUIThread(() =>
         {
-            ViewModel.InformPlayersOfNoAceNoFaceNoTrump(e.Player);
+            ViewModel.ShowNoAceNoFaceNoTrump(e.Player);
         });
     }
 

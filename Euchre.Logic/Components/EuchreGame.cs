@@ -480,13 +480,17 @@ public class EuchreGame : IEuchreGame
         return false;
     }
 
+    /// <summary>
+    /// Checks each player's hand to see if they meet the conditions for the No Ace, No Face, No Trump rule.
+    /// </summary>
+    /// <returns>Returns true to indicate a player's hand meets the rule's condition.</returns>
     private bool StopIfNoAceNoFaceNoTrump()
     {
         bool forceStop = false;
 
-        foreach (var player in GameInfo.Players)
+        foreach (var player in GameInfo.Players!)
         {
-            forceStop = player.HasNoAceNoFaceNoTrump(GameInfo.Trump.Value);
+            forceStop = player.HasNoAceNoFaceNoTrump(GameInfo.Trump!.Value);
             if (forceStop)
             {
                 NoAceNoFaceNoTrumpDeclared?.Invoke(this, new NoAceNoFaceNoTrumpDeclaredEventArgs(player));

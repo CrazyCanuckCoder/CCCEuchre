@@ -1,5 +1,5 @@
 ﻿<Window
-    x:Class="Euchre.Windows.InformationWindow"
+    x:Class="Euchre.Windows.QuestionWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -16,6 +16,7 @@
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -29,6 +30,7 @@
         <Border
             Grid.Row="0"
             Grid.Column="0"
+            Grid.ColumnSpan="2"
             Background="AliceBlue"
             BorderBrush="Black"
             BorderThickness="0.5">
@@ -40,14 +42,24 @@
                 FontSize="14" />
         </Border>
 
-        <!--  Keep Button  -->
+        <!--  Yes Button  -->
 
         <Button
             Grid.Row="2"
             Grid.Column="0"
-            Click="OKButton_Click"
-            Content="_OK"
+            Click="YesButton_Click"
+            Content="_Yes"
             IsDefault="True"
+            Style="{DynamicResource SubmitButtonStyle}" />
+
+        <!--  No Button  -->
+
+        <Button
+            Grid.Row="2"
+            Grid.Column="1"
+            Click="NoButton_Click"
+            Content="_No"
+            IsCancel="True"
             Style="{DynamicResource SubmitButtonStyle}" />
     </Grid>
 </Window>

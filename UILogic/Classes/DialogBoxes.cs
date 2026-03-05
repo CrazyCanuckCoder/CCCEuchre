@@ -36,6 +36,19 @@ public static class DialogBoxes
     }
 
     /// <summary>
+    /// Shows a custom dialog box to ask the user a Yes / No question.
+    /// </summary>
+    /// <param name="question">The question to ask the user.</param>
+    /// <param name="title">The title to display on the dialog box.</param>
+    /// <returns>True to indicate the user responded Yes and false to indicate a No answer.</returns>
+    public static bool CustomQuestionDialog(string question, string title = "Question")
+    {
+        QuestionWindow questionWindow = new(question, title);
+
+        return questionWindow.ShowDialog() == true;
+    }
+
+    /// <summary>
     /// Prompts the user for a yes or no answer to a question.
     /// </summary>
     /// <param name="message">The question to ask the user.</param>
