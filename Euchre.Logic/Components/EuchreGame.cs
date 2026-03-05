@@ -237,7 +237,7 @@ public class EuchreGame : IEuchreGame
                        GameInfo.TeamScores[1] < WINNING_SCORE)
                 {
                     // run a synchronous round on thread pool but observe cancellation
-                    await Task.Run(() => PlayRound(), ct).ConfigureAwait(false);
+                    await Task.Run(() => PlayRound(), ct);
 
                     // small cooperative check point
                     if (ct.IsCancellationRequested) break;
@@ -256,7 +256,7 @@ public class EuchreGame : IEuchreGame
 
         try
         {
-            await _gameLoopTask.ConfigureAwait(false);
+            await _gameLoopTask;
         }
         finally
         {
