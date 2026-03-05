@@ -31,5 +31,6 @@
 		<UseCanadianLonerRule>true</UseCanadianLonerRule>
 		<MustHaveSuitToCall>true</MustHaveSuitToCall>
 		<StickTheDealer>true</StickTheDealer>
+		<UseNoAceNoFaceNoTrumpRule>true</UseNoAceNoFaceNoTrumpRule>
 	</Settings>
 </GameSettingsDS>

@@ -443,6 +443,21 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
         //}
     }
 
+    public void InformPlayersOfNoAceNoFaceNoTrump(IPlayer player)
+    {
+        ForciblyDisplayPlayersHands();
+        DisplayPlayerMessage(player, "No Ace, No Face, No Trump!", 2, true);
+        _mainWindowController.ClearTrumpDisplay();
+        ClearPlayerMessages();
+        _mainWindowController.ResetCardDisplayControlsVisibility();
+        _mainWindowController.ClearPlayersHands();
+        _mainWindowController.ResetPlayerTrumpSuitIcon(CurrentGame!.GameInfo.TrumpCaller!.PlayerIndex);
+        foreach (IPlayer currentPlayer in CurrentGame!.GameInfo.Players!)
+        {
+            SetPlayersPlayedCardDisplayControlVisibility(currentPlayer.PlayerIndex, Visibility.Collapsed);
+        }
+    }
+
     /// <summary>
     /// Let the interface know that trump was not called so the cards will be redealt.
     /// </summary>
@@ -1084,5 +1099,12 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
         {
             _mainWindowController.SetupPlayerCards(player);
         }
+    }
+    public bool PromptUserToInvokeNoAceNoFaceNoTrumpRule(HumanPlayer player)
+    {
+        return MessageBox.Show("Do you want to invoke No Ace, No Face, No Trump?", 
+                               "Rule", 
+                               MessageBoxButton.YesNo, 
+                               MessageBoxImage.Question) == MessageBoxResult.Yes;
     }
 }

@@ -591,6 +591,8 @@ namespace Euchre.Logic.Data {
             
             private global::System.Data.DataColumn columnStickTheDealer;
             
+            private global::System.Data.DataColumn columnUseNoAceNoFaceNoTrumpRule;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public SettingsDataTable() {
@@ -676,6 +678,14 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn UseNoAceNoFaceNoTrumpRuleColumn {
+                get {
+                    return this.columnUseNoAceNoFaceNoTrumpRule;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -711,7 +721,7 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public SettingsRow AddSettingsRow(string SelectedCardBackFile, bool PlayLastCardInHumansHand, bool UseStandardMenu, bool UseCanadianLonerRule, bool MustHaveSuitToCall, bool StickTheDealer) {
+            public SettingsRow AddSettingsRow(string SelectedCardBackFile, bool PlayLastCardInHumansHand, bool UseStandardMenu, bool UseCanadianLonerRule, bool MustHaveSuitToCall, bool StickTheDealer, bool UseNoAceNoFaceNoTrumpRule) {
                 SettingsRow rowSettingsRow = ((SettingsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         SelectedCardBackFile,
@@ -719,7 +729,8 @@ namespace Euchre.Logic.Data {
                         UseStandardMenu,
                         UseCanadianLonerRule,
                         MustHaveSuitToCall,
-                        StickTheDealer};
+                        StickTheDealer,
+                        UseNoAceNoFaceNoTrumpRule};
                 rowSettingsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowSettingsRow);
                 return rowSettingsRow;
@@ -748,6 +759,7 @@ namespace Euchre.Logic.Data {
                 this.columnUseCanadianLonerRule = base.Columns["UseCanadianLonerRule"];
                 this.columnMustHaveSuitToCall = base.Columns["MustHaveSuitToCall"];
                 this.columnStickTheDealer = base.Columns["StickTheDealer"];
+                this.columnUseNoAceNoFaceNoTrumpRule = base.Columns["UseNoAceNoFaceNoTrumpRule"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -765,6 +777,9 @@ namespace Euchre.Logic.Data {
                 base.Columns.Add(this.columnMustHaveSuitToCall);
                 this.columnStickTheDealer = new global::System.Data.DataColumn("StickTheDealer", typeof(bool), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnStickTheDealer);
+                this.columnUseNoAceNoFaceNoTrumpRule = new global::System.Data.DataColumn("UseNoAceNoFaceNoTrumpRule", typeof(bool), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnUseNoAceNoFaceNoTrumpRule);
+                this.columnUseNoAceNoFaceNoTrumpRule.DefaultValue = ((bool)(false));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1074,6 +1089,22 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public bool UseNoAceNoFaceNoTrumpRule {
+                get {
+                    try {
+                        return ((bool)(this[this.tableSettings.UseNoAceNoFaceNoTrumpRuleColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'UseNoAceNoFaceNoTrumpRule\' in table \'Settings\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSettings.UseNoAceNoFaceNoTrumpRuleColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public bool IsSelectedCardBackFileNull() {
                 return this.IsNull(this.tableSettings.SelectedCardBackFileColumn);
             }
@@ -1142,6 +1173,18 @@ namespace Euchre.Logic.Data {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public void SetStickTheDealerNull() {
                 this[this.tableSettings.StickTheDealerColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public bool IsUseNoAceNoFaceNoTrumpRuleNull() {
+                return this.IsNull(this.tableSettings.UseNoAceNoFaceNoTrumpRuleColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public void SetUseNoAceNoFaceNoTrumpRuleNull() {
+                this[this.tableSettings.UseNoAceNoFaceNoTrumpRuleColumn] = global::System.Convert.DBNull;
             }
         }
         

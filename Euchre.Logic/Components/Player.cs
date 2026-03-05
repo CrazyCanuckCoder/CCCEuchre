@@ -170,4 +170,25 @@ public abstract class Player : IPlayer
     /// </summary>
     /// <returns>An IPlayer containing the same properties as this object.</returns>
     public abstract IPlayer Clone();
+
+    /// <summary>
+    /// Checks the player's hand for a lack of Aces, cards above 10, and trump.
+    /// </summary>
+    /// <param name="trump">The current trump suit.</param>
+    /// <returns>Returns true to indicate there are no Aces, cards above 10, or trump in the player's hand.</returns>
+    public virtual bool HasNoAceNoFaceNoTrump(Suit trump)
+    {
+        if (GameSettingsManager.Instance.NoAceNoFaceNoTrumpRule)
+        {
+            int numAces = CardFinder.CountCardsOfRank(Hand, Rank.Ace);
+            int numFaces = CardFinder.CountCardsOfRank(Hand, Rank.King) +
+                           CardFinder.CountCardsOfRank(Hand, Rank.Queen) +
+                           CardFinder.CountCardsOfRank(Hand, Rank.Jack);
+            int numTrump = CardFinder.CountTrump(Hand, trump);
+
+            return numAces + numFaces + numTrump == 0;
+        }
+
+        return false;
+    }
 }
