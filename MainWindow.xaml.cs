@@ -407,14 +407,14 @@ public partial class MainWindow : Window
         if (playerNames != null)
         {
             var playerList = playerNames.ToList();
-            ViewModel.CurrentGame = new EuchreGame(playerList, App.Services.GetService<IGameStateManager>());
+            ViewModel.CurrentGame = new EuchreGame(playerList, App.Services.GetService<IGameStateManager>()!);
             await StartGame();
         }
     }
 
     private async void MenuContinue_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.CurrentGame = new EuchreGame(App.Services.GetService<IGameStateManager>());
+        ViewModel.CurrentGame = new EuchreGame(App.Services.GetService<IGameStateManager>()!);
         await StartGame();
     }
 
