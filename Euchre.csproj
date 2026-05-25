@@ -272,6 +272,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Euchre.Setup\Euchre.Setup.wixproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="Euchre.Logic\Euchre.Logic.csproj" />
   </ItemGroup>
 
@@ -517,8 +521,8 @@
 
   <ItemGroup>
     <PackageReference Include="Markdown.Xaml" Version="1.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 

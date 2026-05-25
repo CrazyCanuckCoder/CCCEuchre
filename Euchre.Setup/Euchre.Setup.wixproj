@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+	<ProductVersion>4.0.3792.256</ProductVersion>
+	<ProjectGuid>a1b2c3d4-e5f6-47a8-9b0c-1d2e3f4a5b6c</ProjectGuid>
+	<SchemaVersion>2.0</SchemaVersion>
+	<OutputName>Euchre</OutputName>
+	<OutputType>Package</OutputType>
+	<WixTargetsPath>$(MSBuildExtensionsPath)\WiX\v4.x\wix.targets</WixTargetsPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+	<OutputPath>bin\Release\</OutputPath>
+	<IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<Compile Include="Product.wxs" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\Euchre\Euchre.csproj" />
+  </ItemGroup>
+
+  <Import Project="$(WixTargetsPath)" />
+
+</Project>

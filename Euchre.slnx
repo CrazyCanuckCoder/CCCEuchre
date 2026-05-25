@@ -3,4 +3,5 @@
   <Project Path="Euchre.csproj" />
   <Project Path="Euchre.Logic/Euchre.Logic.csproj" />
   <Project Path="Euchre.Tests/Euchre.Tests.csproj" />
+    <Project Path="Euchre.Setup/Euchre.Setup.wixproj" />
 </Solution>

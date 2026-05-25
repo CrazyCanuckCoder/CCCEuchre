@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- 
+	This file ensures the main Euchre project builds before the Setup project,
+	so the release binaries are available for the installer to package.
+  -->
+  <PropertyGroup>
+	<!-- Ensure proper build order -->
+	<SetupDependsOn>$(SetupDependsOn);Build</SetupDependsOn>
+  </PropertyGroup>
+</Project>
