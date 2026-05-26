@@ -58,8 +58,8 @@ public partial class App : Application
 
     /// <summary>
     /// Configures log4net logging for the application using the 'log4net.config' file if it is present in 
-    /// the application's base directory. Sets the log file location to the same directory as the game 
-    /// settings file.
+    /// the application's base directory. Programmatically sets the log file path to use the game settings 
+    /// directory.
     /// </summary>
     private static void SetupLog4Net()
     {
@@ -71,12 +71,23 @@ public partial class App : Application
             var configPath = Path.Combine(baseDir, "log4net.config");
             if (File.Exists(configPath))
             {
-                // Set the log file location to the same directory as game settings
-                var logDirectory = GameSettingsManager.Instance.GetSettingsDirectory();
-                log4net.GlobalContext.Properties["LogDirectory"] = logDirectory;
-
                 XmlConfigurator.ConfigureAndWatch(new FileInfo(configPath));
                 Log.Info("log4net configured from file: " + configPath);
+
+                // Get the root logger repository and find the RollingFile appender
+                var repository = LogManager.GetRepository();
+                var appender = repository.GetAppenders()
+                    .OfType<log4net.Appender.RollingFileAppender>()
+                    .FirstOrDefault(a => a.Name == "RollingFile");
+
+                if (appender != null)
+                {
+                    var logDirectory = GameSettingsManager.Instance.GetSettingsDirectory();
+                    var logFilePath = Path.Combine(logDirectory, "euchre.log");
+                    appender.File = logFilePath;
+                    appender.ActivateOptions();
+                    Log.Info($"Log file path updated to: {logFilePath}");
+                }
             }
             else
             {
