@@ -29,9 +29,14 @@ public partial class App : Application
         get { return _host!.Services; }
     }
 
-    protected override async void OnStartup(StartupEventArgs e)
+    protected async override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // Set the log directory environment variable BEFORE setting up log4net
+        // This allows the log4net config to use environment variables for the path
+        var logDirectory = GameSettingsManager.Instance.GetSettingsDirectory();
+        Environment.SetEnvironmentVariable("EUCHRE_LOG_DIR", logDirectory, EnvironmentVariableTarget.Process);
 
         SetupLog4Net();
         AddGlobalExceptionHandlers();
@@ -58,7 +63,7 @@ public partial class App : Application
 
     /// <summary>
     /// Configures log4net logging for the application using the 'log4net.config' file if it is present in 
-    /// the application's base directory.
+    /// the application's base directory. The log file path is set via the EUCHRE_LOG_DIR environment variable.
     /// </summary>
     private static void SetupLog4Net()
     {
@@ -75,7 +80,7 @@ public partial class App : Application
             }
             else
             {
-                Log.Warn("log4net configuration file not found: " + configPath);
+                System.Diagnostics.Debug.WriteLine($"log4net configuration file not found: {configPath}");
             }
         }
         catch (Exception ex)
