@@ -33,6 +33,11 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // Set the log directory environment variable BEFORE setting up log4net
+        // This allows the log4net config to use environment variables for the path
+        var logDirectory = GameSettingsManager.Instance.GetSettingsDirectory();
+        Environment.SetEnvironmentVariable("EUCHRE_LOG_DIR", logDirectory, EnvironmentVariableTarget.Process);
+
         SetupLog4Net();
         AddGlobalExceptionHandlers();
 
@@ -58,8 +63,7 @@ public partial class App : Application
 
     /// <summary>
     /// Configures log4net logging for the application using the 'log4net.config' file if it is present in 
-    /// the application's base directory. Programmatically sets the log file path to use the game settings 
-    /// directory.
+    /// the application's base directory. The log file path is set via the EUCHRE_LOG_DIR environment variable.
     /// </summary>
     private static void SetupLog4Net()
     {
@@ -73,25 +77,10 @@ public partial class App : Application
             {
                 XmlConfigurator.ConfigureAndWatch(new FileInfo(configPath));
                 Log.Info("log4net configured from file: " + configPath);
-
-                // Get the root logger repository and find the RollingFile appender
-                var repository = LogManager.GetRepository();
-                var appender = repository.GetAppenders()
-                    .OfType<log4net.Appender.RollingFileAppender>()
-                    .FirstOrDefault(a => a.Name == "RollingFile");
-
-                if (appender != null)
-                {
-                    var logDirectory = GameSettingsManager.Instance.GetSettingsDirectory();
-                    var logFilePath = Path.Combine(logDirectory, "euchre.log");
-                    appender.File = logFilePath;
-                    appender.ActivateOptions();
-                    Log.Info($"Log file path updated to: {logFilePath}");
-                }
             }
             else
             {
-                Log.Warn("log4net configuration file not found: " + configPath);
+                System.Diagnostics.Debug.WriteLine($"log4net configuration file not found: {configPath}");
             }
         }
         catch (Exception ex)
