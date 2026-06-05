@@ -89,7 +89,7 @@ public class EuchreGame : IEuchreGame
 
         // Add automated players.
 
-        for (int i = 1; i < NUMBER_OF_PLAYERS; i++)
+        for (var i = 1; i < NUMBER_OF_PLAYERS; i++)
         {
             players[i] = new AutomatedPlayer(playerNames[i].PlayerName, i % NUMBER_OF_TEAMS, i, GameInfo,
                 playerNames[i].AvatarNumber);
@@ -419,10 +419,10 @@ public class EuchreGame : IEuchreGame
     /// </summary>
     private void DealToPlayers()
     {
-        for (int round = 0; round < CARDS_PER_PLAYER; round++)
+        for (var round = 0; round < CARDS_PER_PLAYER; round++)
         {
-            int currentPlayerIndex = GetNextPlayer(GameInfo.Dealer!).PlayerIndex;
-            for (int playerCount = 0; playerCount < NUMBER_OF_PLAYERS; playerCount++)
+            var currentPlayerIndex = GetNextPlayer(GameInfo.Dealer!).PlayerIndex;
+            for (var playerCount = 0; playerCount < NUMBER_OF_PLAYERS; playerCount++)
             {
                 GameInfo.Players![currentPlayerIndex].AddCard(GameInfo.Deck.Deal());
                 CardsDealtToPlayer?.Invoke(this,
@@ -486,7 +486,7 @@ public class EuchreGame : IEuchreGame
     /// <returns>Returns true to indicate a player's hand meets the rule's condition.</returns>
     private bool StopIfNoAceNoFaceNoTrump()
     {
-        bool forceStop = false;
+        var forceStop = false;
 
         foreach (var player in GameInfo.Players!)
         {
@@ -529,12 +529,12 @@ public class EuchreGame : IEuchreGame
     private bool BiddingRound(int round, Suit? forcedSuit)
     {
         var player = GameInfo.Dealer!;
-        bool isRound1 = round == 1 && forcedSuit.HasValue;
+        var isRound1 = round == 1 && forcedSuit.HasValue;
 
-        for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
+        for (var i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
             player = GetNextPlayer(player);
-            bool isDealer = player == GameInfo.Dealer;
+            var isDealer = player == GameInfo.Dealer;
 
             if (isRound1)
             {
@@ -636,7 +636,7 @@ public class EuchreGame : IEuchreGame
             GameInfo.NextTrickPlayer = GameInfo.CurrentRoundTricks.Last().GetWinner();
         }
 
-        for (int trickNum = resumeFrom + 1; trickNum <= MAX_NUMBER_OF_TRICKS; trickNum++)
+        for (var trickNum = resumeFrom + 1; trickNum <= MAX_NUMBER_OF_TRICKS; trickNum++)
         {
             if (trickNum < MAX_NUMBER_OF_TRICKS)
             {
@@ -691,7 +691,7 @@ public class EuchreGame : IEuchreGame
     /// <returns>True to indicate the player can win the remaining tricks.</returns>
     private bool PlayerCanWinRemainingTricks(IPlayer leadingPlayer)
     {
-        bool canWinRest = false;
+        var canWinRest = false;
 
         Log.Debug($"Starting...");
         Log.Debug($"Player: {leadingPlayer.Name} - Player's Hand: {leadingPlayer.Hand.PrettyPrint()}");
@@ -749,11 +749,41 @@ public class EuchreGame : IEuchreGame
 
             if (CardHelper.NoMoreTrumpRemaining(GameInfo.CurrentRoundTricks, GameInfo.Trump.Value))
             {
-                Log.Debug("There are no more trump remaining, so the player has the highest cards remaining.");
+                Log.Debug("There are no more trump remaining.");
 
-                // The rest are mine!
+                // Player has trump and aces, and no more trump is in the deck.
+                // To win the rest, player must have all aces of all non-trump suits.
+                // Get all aces that haven't been played yet.
+                var playedAces = (from trick in GameInfo.CurrentRoundTricks
+                                 from card in trick.Cards
+                                 where card.Value.Rank == Rank.Ace && card.Value.EffectiveSuit(GameInfo.Trump.Value) != GameInfo.Trump.Value
+                                 select card.Value).ToList();
 
-                canWinRest = true;
+                var allNonTrumpAces = new List<Card>
+                {
+                    new(Suit.Hearts, Rank.Ace),
+                    new(Suit.Diamonds, Rank.Ace),
+                    new(Suit.Clubs, Rank.Ace),
+                    new(Suit.Spades, Rank.Ace),
+                }.Where(a => a.EffectiveSuit(GameInfo.Trump.Value) != GameInfo.Trump.Value).ToList();
+
+                var remainingNonTrumpAces = allNonTrumpAces.Where(a => !playedAces.Contains(a)).ToList();
+
+                // Check if player has all remaining non-trump aces
+                var hasAllRemainingAces = remainingNonTrumpAces.All(a => leadingPlayer.Hand.Contains(a));
+
+                if (hasAllRemainingAces)
+                {
+                    Log.Debug($"Player has all remaining non-trump aces: {remainingNonTrumpAces.PrettyPrint()}. Player can win the rest.");
+
+                    // The rest are mine!
+
+                    canWinRest = true;
+                }
+                else
+                {
+                    Log.Debug($"Player does not have all remaining non-trump aces. Remaining aces: {remainingNonTrumpAces.PrettyPrint()}. Player's hand: {leadingPlayer.Hand.PrettyPrint()}");
+                }
             }
         }
 
@@ -769,13 +799,13 @@ public class EuchreGame : IEuchreGame
     /// <returns>True to indicate the round can be stopped and false if not.</returns>
     private bool CanEndRound()
     {
-        bool endRound = false;
+        var endRound = false;
 
-        int numBidderTricks = (from player in GameInfo.Players
+        var numBidderTricks = (from player in GameInfo.Players
                                where player.TeamIndex == GameInfo.TrumpCaller!.TeamIndex
                                select GameInfo.TricksWonByPlayers[player.PlayerIndex])
                               .Sum();
-        int numOppositionTricks = (from player in GameInfo.Players
+        var numOppositionTricks = (from player in GameInfo.Players
                                    where player.TeamIndex != GameInfo.TrumpCaller!.TeamIndex
                                    select GameInfo.TricksWonByPlayers[player.PlayerIndex])
                                   .Sum();
@@ -805,7 +835,7 @@ public class EuchreGame : IEuchreGame
     {
         var trick = new Trick(GameInfo.Trump!.Value);
 
-        for (int i = 0; i < NUMBER_OF_PLAYERS; i++)
+        for (var i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
             // Skip partner if going alone.
 
@@ -851,8 +881,8 @@ public class EuchreGame : IEuchreGame
         var tricksByTeam = new Dictionary<int, int>();
         foreach (var player in GameInfo.Players!)
         {
-            int teamIndex = player.TeamIndex;
-            int tricksWon = GameInfo.TricksWonByPlayers[player.PlayerIndex];
+            var teamIndex = player.TeamIndex;
+            var tricksWon = GameInfo.TricksWonByPlayers[player.PlayerIndex];
             if (tricksByTeam.ContainsKey(teamIndex))
             {
                 tricksByTeam[teamIndex] += tricksWon;
@@ -863,15 +893,15 @@ public class EuchreGame : IEuchreGame
             }
         }
 
-        int numTeam0Tricks = tricksByTeam.GetValueOrDefault(0, 0);
-        int numTeam1Tricks = tricksByTeam.GetValueOrDefault(1, 0);
+        var numTeam0Tricks = tricksByTeam.GetValueOrDefault(0, 0);
+        var numTeam1Tricks = tricksByTeam.GetValueOrDefault(1, 0);
 
-        int callerTeamIndex = GameInfo.TrumpCaller?.TeamIndex ?? -1;
-        int numCallerTricks = callerTeamIndex == 0 ? numTeam0Tricks : numTeam1Tricks;
-        int winningTeamIndex = callerTeamIndex;
+        var callerTeamIndex = GameInfo.TrumpCaller?.TeamIndex ?? -1;
+        var numCallerTricks = callerTeamIndex == 0 ? numTeam0Tricks : numTeam1Tricks;
+        var winningTeamIndex = callerTeamIndex;
 
         ScoringReason reasonForPoints = ScoringReason.WonHand;
-        int numPoints = NUM_POINTS_FOR_WIN;
+        var numPoints = NUM_POINTS_FOR_WIN;
 
         if (numCallerTricks >= MIN_NUMBER_TRICKS_TO_SCORE)
         {
@@ -888,7 +918,7 @@ public class EuchreGame : IEuchreGame
         }
         else
         {
-            int opposingTeamIndex = callerTeamIndex ^ 1;
+            var opposingTeamIndex = callerTeamIndex ^ 1;
             numPoints = NUM_POINTS_FOR_EUCHRE;
             GameInfo.TeamScores[opposingTeamIndex] += numPoints;
             winningTeamIndex = opposingTeamIndex;
