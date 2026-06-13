@@ -617,7 +617,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
         Log.Debug("PromptUserToOrderUp: prompting user to order up.");
 
         goAlone = false;
-        bool orderedUp = false;
+        var orderedUp = false;
 
         List<Suit> suits = [kitty.Suit];
         PickTrumpSuitWindow pickTrumpSuitWindow = new(suits, player, CurrentGame!.GameInfo.Dealer!, true);

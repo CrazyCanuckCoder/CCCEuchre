@@ -92,6 +92,13 @@ public partial class PickTrumpSuitWindow : Window
             typeof(PickTrumpSuitWindow), new PropertyMetadata(true));
 
     /// <summary>
+    /// Using a DependencyProperty as the backing store for IsGoUnderButtonEnabled.
+    /// </summary>
+    public static readonly DependencyProperty IsGoUnderButtonEnabledProperty =
+        DependencyProperty.Register(nameof(IsGoUnderButtonEnabled), typeof(bool), 
+            typeof(PickTrumpSuitWindow), new PropertyMetadata(false));
+
+    /// <summary>
     /// Using a DependencyProperty as the backing store for IsPassButtonEnabled.
     /// </summary>
     public static readonly DependencyProperty IsPassButtonEnabledProperty =
@@ -169,6 +176,15 @@ public partial class PickTrumpSuitWindow : Window
     {
         get => (bool)GetValue(IsGoAloneCheckBoxEnabledProperty); 
         set => SetValue(IsGoAloneCheckBoxEnabledProperty, value);
+    }
+
+    /// <summary>
+    /// True to indicate the Go Under button should be enabled.
+    /// </summary>
+    public bool IsGoUnderButtonEnabled
+    {
+        get => (bool)GetValue(IsGoUnderButtonEnabledProperty);
+        set => SetValue(IsGoUnderButtonEnabledProperty, value);
     }
 
     /// <summary>
@@ -258,7 +274,7 @@ public partial class PickTrumpSuitWindow : Window
 
         IsSubmitButtonEnabled = allowedSuits.Count != 0;
         IsGoAloneCheckBoxEnabled = allowedSuits.Count != 0;
-        bool selectTrumpButton = allowedSuits.Count == 1;
+        var selectTrumpButton = allowedSuits.Count == 1;
         
         // Set the available suits' buttons visible.
 
@@ -397,5 +413,10 @@ public partial class PickTrumpSuitWindow : Window
                 e.Cancel = true;
             }
         }
+    }
+
+    private void GoUnderButton_Click(object sender, RoutedEventArgs e)
+    {
+
     }
 }
