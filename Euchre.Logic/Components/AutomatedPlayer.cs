@@ -77,9 +77,9 @@ public class AutomatedPlayer : Player
     /// <param name="isDealer">A boolean value indicating whether the current player is the dealer.</param>
     /// <returns><see langword="true"/> if the player decides to order up the card; otherwise, 
     /// <see langword="false"/>.</returns>
-    public override bool OrderUp(Card kitty, bool isDealer)
+    public override bool OrderUp(Card kitty, bool isDealer, out bool goUnder)
     {
-        bool orderUp = _bidder.DetermineWhetherToOrderUp(kitty, isDealer, out _goAlone);
+        var orderUp = _bidder.DetermineWhetherToOrderUp(kitty, isDealer, out _goAlone);
 
         // Check for the Canadian loner rule.  If ordering up your partner, you have to go alone.
 
@@ -92,6 +92,11 @@ public class AutomatedPlayer : Player
                 orderUp = _goAlone;
             }
         }
+
+        // Check if the player can go under.  The rule must be enabled, the player must not be ordering up,
+        //  and the player's hand must meet the requirements to go under.
+
+        goUnder = GameSettingsManager.Instance.CanGoUnder && !orderUp && CardHelper.CanGoUnder(Hand);
 
         return orderUp;
     }
@@ -141,5 +146,32 @@ public class AutomatedPlayer : Player
             Hand = [.. Hand],
             IsGoingAlone = IsGoingAlone,
         };
+    }
+
+    /// <summary>
+    /// Retrieves a list of cards from the player's hand that are eligible to be placed under the kitty when
+    /// going under.
+    /// </summary>
+    /// <param name="kittyCards">The kitty cards that will be added to the player's hand.</param>
+    /// <returns>A list of cards from the player's hand to be placed into the kitty.</returns>
+    public override List<Card> GetGoUnderCards(List<Card> kittyCards)
+    {
+        // Find the cards that will be exchanged for the kitty cards.
+
+        var discardCards = (  from card in Hand
+                             where card.Rank == Rank.Ten || card.Rank == Rank.Nine
+                            select card)
+                           .Take(3)
+                           .ToList();
+
+        // Remove the found cards from the player's hand.
+
+        Hand.RemoveAll(c => discardCards.Contains(c));
+
+        // Add the kitty cards to the player's hand.
+
+        Hand.AddRange(kittyCards);
+
+        return discardCards;
     }
 }

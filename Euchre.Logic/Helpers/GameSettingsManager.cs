@@ -79,6 +79,12 @@ public sealed class GameSettingsManager
     public bool NoAceNoFaceNoTrumpRule { get; set; } = true;
 
     /// <summary>
+    /// True to indicate the player can choose to go under when ordering up the kitty card, if they have 3 or
+    /// more cards under the rank of Jack.
+    /// </summary>
+    public bool CanGoUnder { get; set; } = false;
+
+    /// <summary>
     /// Reads the current XML file and loads the information into the GameDataSet property.
     /// </summary>
     /// <exception cref="FileNotFoundException"></exception>
@@ -96,6 +102,7 @@ public sealed class GameSettingsManager
             MustHaveSuitToCall = settingsRow.MustHaveSuitToCall;
             StickTheDealer = settingsRow.StickTheDealer;
             NoAceNoFaceNoTrumpRule = settingsRow.UseNoAceNoFaceNoTrumpRule;
+            CanGoUnder = settingsRow.CanGoUnder;
         }
         else
         {
@@ -141,11 +148,12 @@ public sealed class GameSettingsManager
             settingsRow.MustHaveSuitToCall = MustHaveSuitToCall;
             settingsRow.StickTheDealer = StickTheDealer;
             settingsRow.UseNoAceNoFaceNoTrumpRule = NoAceNoFaceNoTrumpRule;
+            settingsRow.CanGoUnder = CanGoUnder;
         }
         else
         {
             _settingsDS.Settings.AddSettingsRow(SelectedCardBack, PlayLastCardInHand, UseStandardMenu, 
-                CanadianLonerRule, MustHaveSuitToCall, StickTheDealer, NoAceNoFaceNoTrumpRule);
+                CanadianLonerRule, MustHaveSuitToCall, StickTheDealer, NoAceNoFaceNoTrumpRule, CanGoUnder);
         }
 
         _settingsDS.AcceptChanges();

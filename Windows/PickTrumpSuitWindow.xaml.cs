@@ -231,6 +231,7 @@ public partial class PickTrumpSuitWindow : Window
         {
             Title = "Choose Kitty Suit";
             CheckForCanadianLoner(currentPlayer, dealer);
+            CheckForGoUnderOption(currentPlayer);
         }
         else
         {
@@ -321,6 +322,20 @@ public partial class PickTrumpSuitWindow : Window
             }
         }
     }
+
+    /// <summary>
+    /// Sets the properties on the form to allow the user to "Go Under" when the option is enabled and the 
+    /// player has the appropriate cards in their hand.
+    /// </summary>
+    /// <param name="currentPlayer">The player whose hand is being checked.</param>
+    private void CheckForGoUnderOption(IPlayer currentPlayer)
+    {
+        if (GameSettingsManager.Instance.CanGoUnder)
+        {
+            IsGoUnderButtonEnabled = CardHelper.CanGoUnder(currentPlayer.Hand);
+        }
+    }
+
 
     /// <summary>
     /// Checks the player's hand for cards that match the suit in a list of suits.

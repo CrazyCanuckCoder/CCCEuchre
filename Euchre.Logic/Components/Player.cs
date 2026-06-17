@@ -151,9 +151,10 @@ public abstract class Player : IPlayer
     /// </summary>
     /// <param name="kitty">The card being considered for ordering up.</param>
     /// <param name="isDealer">A boolean value indicating whether the current player is the dealer.</param>
+    /// <param name="goUnder">A boolean value indicating whether the player chooses to go under.</param>
     /// <returns><see langword="true"/> if the player decides to order up the card; otherwise, 
     /// <see langword="false"/>.</returns>
-    public abstract bool OrderUp(Card kitty, bool isDealer);
+    public abstract bool OrderUp(Card kitty, bool isDealer, out bool goUnder);
 
     /// <summary>
     /// Selects the card to play for the current trick based on the provided game state.
@@ -191,4 +192,12 @@ public abstract class Player : IPlayer
 
         return false;
     }
+
+    /// <summary>
+    /// Retrieves a list of cards from the player's hand that are eligible to be placed under the kitty when
+    /// going under.
+    /// </summary>
+    /// <param name="kittyCards">The kitty cards that will be added to the player's hand.</param>
+    /// <returns>A list of cards from the player's hand to be placed into the kitty.</returns>
+    public abstract List<Card> GetGoUnderCards(List<Card> kittyCards);
 }

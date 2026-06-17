@@ -593,6 +593,8 @@ namespace Euchre.Logic.Data {
             
             private global::System.Data.DataColumn columnUseNoAceNoFaceNoTrumpRule;
             
+            private global::System.Data.DataColumn columnCanGoUnder;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public SettingsDataTable() {
@@ -686,6 +688,14 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn CanGoUnderColumn {
+                get {
+                    return this.columnCanGoUnder;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -721,7 +731,7 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public SettingsRow AddSettingsRow(string SelectedCardBackFile, bool PlayLastCardInHumansHand, bool UseStandardMenu, bool UseCanadianLonerRule, bool MustHaveSuitToCall, bool StickTheDealer, bool UseNoAceNoFaceNoTrumpRule) {
+            public SettingsRow AddSettingsRow(string SelectedCardBackFile, bool PlayLastCardInHumansHand, bool UseStandardMenu, bool UseCanadianLonerRule, bool MustHaveSuitToCall, bool StickTheDealer, bool UseNoAceNoFaceNoTrumpRule, bool CanGoUnder) {
                 SettingsRow rowSettingsRow = ((SettingsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         SelectedCardBackFile,
@@ -730,7 +740,8 @@ namespace Euchre.Logic.Data {
                         UseCanadianLonerRule,
                         MustHaveSuitToCall,
                         StickTheDealer,
-                        UseNoAceNoFaceNoTrumpRule};
+                        UseNoAceNoFaceNoTrumpRule,
+                        CanGoUnder};
                 rowSettingsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowSettingsRow);
                 return rowSettingsRow;
@@ -760,6 +771,7 @@ namespace Euchre.Logic.Data {
                 this.columnMustHaveSuitToCall = base.Columns["MustHaveSuitToCall"];
                 this.columnStickTheDealer = base.Columns["StickTheDealer"];
                 this.columnUseNoAceNoFaceNoTrumpRule = base.Columns["UseNoAceNoFaceNoTrumpRule"];
+                this.columnCanGoUnder = base.Columns["CanGoUnder"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -779,7 +791,10 @@ namespace Euchre.Logic.Data {
                 base.Columns.Add(this.columnStickTheDealer);
                 this.columnUseNoAceNoFaceNoTrumpRule = new global::System.Data.DataColumn("UseNoAceNoFaceNoTrumpRule", typeof(bool), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnUseNoAceNoFaceNoTrumpRule);
+                this.columnCanGoUnder = new global::System.Data.DataColumn("CanGoUnder", typeof(bool), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCanGoUnder);
                 this.columnUseNoAceNoFaceNoTrumpRule.DefaultValue = ((bool)(false));
+                this.columnCanGoUnder.DefaultValue = ((bool)(false));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1105,6 +1120,22 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public bool CanGoUnder {
+                get {
+                    try {
+                        return ((bool)(this[this.tableSettings.CanGoUnderColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'CanGoUnder\' in table \'Settings\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSettings.CanGoUnderColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public bool IsSelectedCardBackFileNull() {
                 return this.IsNull(this.tableSettings.SelectedCardBackFileColumn);
             }
@@ -1185,6 +1216,18 @@ namespace Euchre.Logic.Data {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public void SetUseNoAceNoFaceNoTrumpRuleNull() {
                 this[this.tableSettings.UseNoAceNoFaceNoTrumpRuleColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public bool IsCanGoUnderNull() {
+                return this.IsNull(this.tableSettings.CanGoUnderColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public void SetCanGoUnderNull() {
+                this[this.tableSettings.CanGoUnderColumn] = global::System.Convert.DBNull;
             }
         }
         

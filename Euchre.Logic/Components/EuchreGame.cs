@@ -538,7 +538,7 @@ public class EuchreGame : IEuchreGame
 
             if (isRound1)
             {
-                if (player.OrderUp(GameInfo.Kitty!, isDealer))
+                if (player.OrderUp(GameInfo.Kitty!, isDealer, out var goUnder))
                 {
                     SetGameToPlayersBid(forcedSuit!.Value, player);
 
@@ -563,7 +563,19 @@ public class EuchreGame : IEuchreGame
                 }
                 else
                 {
+                    if (goUnder)
+                    {
+                        var kittyCards = GameInfo.Deck.GetKittyCards();
+                        var goUnderCards = player.GetGoUnderCards(kittyCards);
+                        GameInfo.Deck.SetKittyCards(goUnderCards);
+
+                        Log.Debug($"Player {player.Name} decided to go under. " +
+                            $"Surrendered {goUnderCards.PrettyPrint()} for {kittyCards.PrettyPrint()}.");
+                    }
+
                     // Inform UI that the player is passing.
+                    // TODO: Update the PlayerBidEventArgs to include the goUnder flag so the UI
+                    //       can react accordingly.
 
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, true));
                     Log.Debug($"Player {player.Name} passed on ordering up.");

@@ -69,14 +69,16 @@ public class HumanPlayer : Player
     /// </summary>
     /// <param name="kitty">The card being considered for ordering up.</param>
     /// <param name="isDealer">A boolean value indicating whether the current player is the dealer.</param>
+    /// <param name="goUnder">A boolean value indicating whether the player chooses to go under.</param>
     /// <returns><see langword="true"/> if the player decides to order up the card; otherwise, 
     /// <see langword="false"/>.</returns>
-    public override bool OrderUp(Card kitty, bool isDealer)
+    public override bool OrderUp(Card kitty, bool isDealer, out bool goUnder)
     {
         PromptToOrderUpEventArgs args = new(kitty);
         PromptToOrderUp?.Invoke(this, args);
 
         _goAlone = args.GoAlone;
+        goUnder = args.GoUnder;
 
         return args.OrderedUp;
     }
@@ -184,4 +186,18 @@ public class HumanPlayer : Player
 
         return hasNoAceNoFaceNoTrump;
     }
+
+    /// <summary>
+    /// Retrieves a list of cards from the player's hand that are eligible to be placed under the kitty when
+    /// going under.
+    /// </summary>
+    /// <param name="kittyCards">The kitty cards that will be added to the player's hand.</param>
+    /// <returns>A list of cards from the player's hand to be placed into the kitty.</returns>
+    public override List<Card> GetGoUnderCards(List<Card> kittyCards)
+    {
+        var cardsToSurrender = new List<Card>();
+
+        return cardsToSurrender;
+    }
+
 }

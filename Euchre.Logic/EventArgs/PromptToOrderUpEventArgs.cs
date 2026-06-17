@@ -27,4 +27,9 @@ public class PromptToOrderUpEventArgs : System.EventArgs
     /// Indicates whether the player is going alone.
     /// </summary>
     public bool GoAlone { get; set; } = false;
+
+    /// <summary>
+    /// Indicates whether the player is going under.
+    /// </summary>
+    public bool GoUnder { get; set; } = false;
 }
