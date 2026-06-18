@@ -176,6 +176,11 @@ public class EuchreGame : IEuchreGame
     /// </remarks>
     public event EventHandler<GameOverEventArgs>? GameOver;
 
+    /// <summary>
+    /// Fired to alert the UI that the player's hands need to be updated.
+    /// </summary>
+    public event EventHandler<System.EventArgs>? UpdatePlayersHands;
+
 #if DEBUG
 
     /// <summary>
@@ -188,11 +193,6 @@ public class EuchreGame : IEuchreGame
     /// Fired to get the cards for each player chosen by the user.
     /// </summary>
     public event EventHandler<GetPlayersCardsEventArgs>? GetPlayersCards;
-
-    /// <summary>
-    /// Fired to alert the UI that the player's hands need to be updated.
-    /// </summary>
-    public event EventHandler<System.EventArgs>? UpdatePlayersHands;
 #endif
 
     private CancellationTokenSource? _shutdownCts;
@@ -569,6 +569,8 @@ public class EuchreGame : IEuchreGame
                         var kittyCards = GameInfo.Deck.GetKittyCards();
                         var goUnderCards = player.GetGoUnderCards(kittyCards);
                         GameInfo.Deck.SetKittyCards(goUnderCards);
+
+                        UpdatePlayersHands?.Invoke(this, new());
 
                         Log.Debug($"Player {player.Name} decided to go under. " +
                             $"Surrendered {goUnderCards.PrettyPrint()} for {kittyCards.PrettyPrint()}.");
@@ -1040,6 +1042,7 @@ public class EuchreGame : IEuchreGame
             if (eventArgs.Player1Cards != null)
             {
                 DealChosenCardsToPlayers(eventArgs);
+                GameInfo.Deck.SetKittyCards(eventArgs.RemainingCards);
             }
         }
 

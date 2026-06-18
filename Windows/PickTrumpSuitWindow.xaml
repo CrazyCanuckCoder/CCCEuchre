@@ -130,8 +130,8 @@
             Click="GoUnderButton_Click"
             Content="Go Under"
             FontSize="16"
-            IsEnabled="{Binding IsGoUnderButtonEnabled}"
-            Style="{DynamicResource SubmitButtonStyle}" />
+            Style="{DynamicResource SubmitButtonStyle}"
+            Visibility="{Binding IsGoUnderButtonVisible}" />
 
         <!--  Submit Button  -->
 

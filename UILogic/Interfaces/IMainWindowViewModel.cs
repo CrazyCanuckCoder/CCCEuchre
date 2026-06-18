@@ -53,7 +53,7 @@ public interface IMainWindowViewModel
     void PlayerTakesRemainingTricks(IPlayer playerToTakeTricks);
     Card? PromptUserForDiscard(HumanPlayer player);
     Suit? PromptUserForTrump(Card kitty, HumanPlayer player, out bool goAlone);
-    bool PromptUserToOrderUp(Card kitty, HumanPlayer player, out bool goAlone);
+    bool PromptUserToOrderUp(Card kitty, HumanPlayer player, out bool goAlone, out bool goUnder);
     void RedisplayUserHand(HumanPlayer player);
     void SetKittyCard(Card kitty);
     void SetupUserInterface();

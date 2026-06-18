@@ -94,9 +94,9 @@ public partial class PickTrumpSuitWindow : Window
     /// <summary>
     /// Using a DependencyProperty as the backing store for IsGoUnderButtonEnabled.
     /// </summary>
-    public static readonly DependencyProperty IsGoUnderButtonEnabledProperty =
-        DependencyProperty.Register(nameof(IsGoUnderButtonEnabled), typeof(bool), 
-            typeof(PickTrumpSuitWindow), new PropertyMetadata(false));
+    public static readonly DependencyProperty IsGoUnderButtonVisibleProperty =
+        DependencyProperty.Register(nameof(IsGoUnderButtonVisible), typeof(Visibility), 
+            typeof(PickTrumpSuitWindow), new PropertyMetadata(Visibility.Hidden));
 
     /// <summary>
     /// Using a DependencyProperty as the backing store for IsPassButtonEnabled.
@@ -181,10 +181,10 @@ public partial class PickTrumpSuitWindow : Window
     /// <summary>
     /// True to indicate the Go Under button should be enabled.
     /// </summary>
-    public bool IsGoUnderButtonEnabled
+    public Visibility IsGoUnderButtonVisible
     {
-        get => (bool)GetValue(IsGoUnderButtonEnabledProperty);
-        set => SetValue(IsGoUnderButtonEnabledProperty, value);
+        get => (Visibility)GetValue(IsGoUnderButtonVisibleProperty);
+        set => SetValue(IsGoUnderButtonVisibleProperty, value);
     }
 
     /// <summary>
@@ -213,6 +213,12 @@ public partial class PickTrumpSuitWindow : Window
         get => (string)GetValue(SubmitButtonTextProperty);
         set => SetValue(SubmitButtonTextProperty, value);
     }
+
+    /// <summary>
+    /// True to indicate the user wants to go under and exchange 3 low cards from their hand for the 3 cards 
+    /// in the kitty pile.
+    /// </summary>
+    public bool GoUnder { get; private set; }
 
 
     /// <summary>
@@ -279,7 +285,7 @@ public partial class PickTrumpSuitWindow : Window
         
         // Set the available suits' buttons visible.
 
-        foreach (Suit suit in allowedSuits)
+        foreach (var suit in allowedSuits)
         {
             switch (suit)
             {
@@ -332,7 +338,8 @@ public partial class PickTrumpSuitWindow : Window
     {
         if (GameSettingsManager.Instance.CanGoUnder)
         {
-            IsGoUnderButtonEnabled = CardHelper.CanGoUnder(currentPlayer.Hand);
+            IsGoUnderButtonVisible = 
+                CardHelper.CanGoUnder(currentPlayer.Hand) ? Visibility.Visible : Visibility.Hidden;
         }
     }
 
@@ -347,7 +354,7 @@ public partial class PickTrumpSuitWindow : Window
     {
         List<Suit> newAllowed = [];
 
-        foreach (Suit suit in allowedSuits)
+        foreach (var suit in allowedSuits)
         {
             if (_playerHand.Where(c => c.Suit == suit).Any())
             {
@@ -432,6 +439,8 @@ public partial class PickTrumpSuitWindow : Window
 
     private void GoUnderButton_Click(object sender, RoutedEventArgs e)
     {
-
+        GoUnder = true;
+        DialogResult = false;
+        Close();
     }
 }

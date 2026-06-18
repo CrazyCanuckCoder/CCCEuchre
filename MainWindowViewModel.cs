@@ -613,13 +613,16 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     /// Asks the user if they want to order up the kitty card.
     /// </summary>
     /// <param name="kitty">The card at the top of the kitty pile.</param>
+    /// <param name="player">A reference to the user.</param>
     /// <param name="goAlone">True to indicate the user wants to go alone.</param>
+    /// <param name="goUnder">True to indicate the user wants to go under.</param>
     /// <returns>True to indicate the user ordered up the kitty card.</returns>
-    public bool PromptUserToOrderUp(Card kitty, HumanPlayer player, out bool goAlone)
+    public bool PromptUserToOrderUp(Card kitty, HumanPlayer player, out bool goAlone, out bool goUnder)
     {
         Log.Debug("PromptUserToOrderUp: prompting user to order up.");
 
         goAlone = false;
+        goUnder = false;
         var orderedUp = false;
 
         List<Suit> suits = [kitty.Suit];
@@ -629,8 +632,13 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
             orderedUp = pickTrumpSuitWindow.SelectedSuit != null;
             goAlone = pickTrumpSuitWindow.GoAlone;
         }
+        else
+        {
+            goUnder = pickTrumpSuitWindow.GoUnder;
+        }
 
-        Log.Debug($"After prompting user to orderUp: orderedUp={orderedUp}, goAlone={goAlone}");
+        Log.Debug(
+            $"After prompting user to orderUp: orderedUp={orderedUp}, goAlone={goAlone}, goUnder={goUnder}");
 
         return orderedUp;
     }

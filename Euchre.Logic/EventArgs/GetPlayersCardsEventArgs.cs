@@ -1,8 +1,5 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Euchre.Logic.EventArgs;
 
@@ -32,4 +29,9 @@ public class GetPlayersCardsEventArgs : System.EventArgs
     /// The card to be used as the kitty.
     /// </summary>
     public Card KittyCard { get; set; }
+
+    /// <summary>
+    /// The list of cards not dealt to the players or set as the kitty card.
+    /// </summary>
+    public List<Card> RemainingCards { get; set; }
 }

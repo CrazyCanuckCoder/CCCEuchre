@@ -102,6 +102,11 @@ public partial class ChooseCardsForPlayersWindow : Window
     public ICard KittyCard { get; private set; }
 
     /// <summary>
+    /// Contains the cards left over that were not assigned to a player or as the kitty card.
+    /// </summary>
+    public List<Card> RemainingCards { get; private set; } = [];
+
+    /// <summary>
     /// Initializes the collections of available cards for each suit using a new deck.
     /// </summary>
     private void SetupAvailableCards()
@@ -419,10 +424,35 @@ public partial class ChooseCardsForPlayersWindow : Window
         return allCardsAssigned;
     }
 
+    /// <summary>
+    /// Populates the RemainingCards collection with any cards that were not assigned to a player or as the
+    /// kitty card.
+    /// </summary>
+    private void SetRemainingCards()
+    {
+        if (Hearts.Any())
+        {
+            RemainingCards.AddRange(Hearts.Select(x => x.Card));
+        }
+        if (Spades.Any())
+        {
+            RemainingCards.AddRange(Spades.Select(x => x.Card));
+        }
+        if (Clubs.Any())
+        {
+            RemainingCards.AddRange(Clubs.Select(x => x.Card));
+        }
+        if (Diamonds.Any())
+        {
+            RemainingCards.AddRange(Diamonds.Select(x => x.Card));
+        }
+    }
+
     private void OkButton_Click(object sender, RoutedEventArgs e)
     {
         if (VerifyCardSelection())
         {
+            SetRemainingCards();
             DialogResult = true;
             Close();
         }
