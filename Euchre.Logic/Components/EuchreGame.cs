@@ -545,7 +545,7 @@ public class EuchreGame : IEuchreGame
                     // Inform UI of the order up and if the player is going alone.
 
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, true, GameInfo.Trump,
-                        player.IsGoingAlone, true));
+                        player.IsGoingAlone, true, false));
 
                     // Dealer picks up kitty unless their partner went alone.
 
@@ -558,7 +558,8 @@ public class EuchreGame : IEuchreGame
                     GameInfo.SaveGameData();
 
                     Log.Debug(
-                        $"Player {player.Name} ordered up {forcedSuit} (IsDealer={isDealer}, GoingAlone={player.IsGoingAlone})");
+                        $"Player {player.Name} ordered up {forcedSuit} (IsDealer={isDealer}, " +
+                        $"GoingAlone={player.IsGoingAlone})");
                     return true;
                 }
                 else
@@ -573,11 +574,10 @@ public class EuchreGame : IEuchreGame
                             $"Surrendered {goUnderCards.PrettyPrint()} for {kittyCards.PrettyPrint()}.");
                     }
 
-                    // Inform UI that the player is passing.
-                    // TODO: Update the PlayerBidEventArgs to include the goUnder flag so the UI
-                    //       can react accordingly.
+                    // Inform UI that the player is passing and if they went under.
 
-                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, true));
+                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, true, 
+                        goUnder));
                     Log.Debug($"Player {player.Name} passed on ordering up.");
                 }
             }
@@ -591,19 +591,21 @@ public class EuchreGame : IEuchreGame
                     // Inform UI of the order up and if the player is going alone.
 
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, true, GameInfo.Trump,
-                        player.IsGoingAlone, false));
+                        player.IsGoingAlone, false, false));
 
                     GameInfo.SaveGameData();
 
                     Log.Debug(
-                        $"Player {player.Name} called trump {calledSuit} (IsDealer={isDealer}, GoingAlone={player.IsGoingAlone})");
+                        $"Player {player.Name} called trump {calledSuit} (IsDealer={isDealer}, " +
+                        $"GoingAlone={player.IsGoingAlone})");
                     return true;
                 }
                 else
                 {
                     // Inform UI that the player is passing.
 
-                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, false));
+                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, false, 
+                        false));
                     Log.Debug($"Player {player.Name} passed on calling trump.");
                 }
             }

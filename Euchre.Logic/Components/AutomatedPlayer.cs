@@ -152,17 +152,31 @@ public class AutomatedPlayer : Player
     /// Retrieves a list of cards from the player's hand that are eligible to be placed under the kitty when
     /// going under.
     /// </summary>
+    /// <remarks>Assumes the player has at least 3 cards of rank Nine or Ten. And the list of cards from the
+    /// kitty contains 3 cards.</remarks>
     /// <param name="kittyCards">The kitty cards that will be added to the player's hand.</param>
     /// <returns>A list of cards from the player's hand to be placed into the kitty.</returns>
+    /// <exception cref="InvalidOperationException" />
     public override List<Card> GetGoUnderCards(List<Card> kittyCards)
     {
-        // Find the cards that will be exchanged for the kitty cards.
+        if (kittyCards.Count != 3)
+        {
+            throw new InvalidOperationException("Expected exactly 3 cards from the kitty.");
+        }
+
+        // Find the cards that will be exchanged for the kitty cards, if there are more than 3, take the
+        // first 3.  The player will choose to discard their lowest cards, which are the nines and tens.
 
         var discardCards = (  from card in Hand
                              where card.Rank == Rank.Ten || card.Rank == Rank.Nine
                             select card)
                            .Take(3)
                            .ToList();
+
+        if (discardCards.Count != 3) 
+        {
+            throw new InvalidOperationException("Expected exactly 3 cards to be discarded.");
+        }
 
         // Remove the found cards from the player's hand.
 

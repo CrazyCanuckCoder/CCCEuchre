@@ -409,14 +409,17 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     /// </summary>
     /// <param name="player">The player who passed.</param>
     /// <param name="isKittyRound">True to indicate it is the kitty round.</param>
-    public void PlayerPassed(IPlayer player, bool isKittyRound)
+    /// <param name="wentUnder">True to indicate the player went under.</param>
+    public void PlayerPassed(IPlayer player, bool isKittyRound, bool wentUnder)
     {
-        string message = "Pass";
+        var message = "Pass";
 
         if (isKittyRound && CurrentGame!.GameInfo.Dealer == player)
         {
             message = "Turning down the kitty card.";
         }
+
+        message += wentUnder ? " (Going under)" : "";
 
         Log.Debug($"PlayerPassed: {player.Name} ({message})");
         DisplayPlayerMessage(player, message, 1, false);
@@ -492,7 +495,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
 
         if (isKittyRound)
         {
-            string goingAlone = isGoingAlone ? " and I am going alone" : "";
+            var goingAlone = isGoingAlone ? " and I am going alone" : "";
             message = CurrentGame!.GameInfo.Dealer == player
                 ? $"I am picking up the kitty card{goingAlone}."
                 : $"Pick it up{goingAlone}.";
@@ -571,7 +574,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     {
         Log.Debug("EndOfRoundUpdate: round finished, showing winning round dialog.");
 
-        string message = BuildEndOfRoundMessage(winningPlayers, points, reasonForPoints);
+        var message = BuildEndOfRoundMessage(winningPlayers, points, reasonForPoints);
 
         // Display the winning round message to the user.
 
@@ -594,8 +597,8 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     public void EndOfGameUpdate(IGameStateManager gameInfo)
     {
         Log.Info("EndOfGameUpdate: game finished, showing winner dialog.");
-        int winningTeamIndex = gameInfo.TeamScores[0] > gameInfo.TeamScores[1] ? 0 : 1;
-        string gameWinners =
+        var winningTeamIndex = gameInfo.TeamScores[0] > gameInfo.TeamScores[1] ? 0 : 1;
+        var gameWinners =
             (from player in CurrentGame!.GameInfo.Players!
              where player.TeamIndex == winningTeamIndex
              select player.Name)
@@ -1082,7 +1085,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     private string BuildEndOfRoundMessage(List<string> winningPlayers, int points,
         ScoringReason reasonForPoints)
     {
-        string message = string.Empty;
+        var message = string.Empty;
 
         switch (reasonForPoints)
         {

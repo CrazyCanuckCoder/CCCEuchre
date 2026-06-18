@@ -219,7 +219,7 @@ public partial class MainWindow : Window
         {
             if (!e.MadeTrump)
             {
-                ViewModel.PlayerPassed(e.Player, e.IsKittyRound);
+                ViewModel.PlayerPassed(e.Player, e.IsKittyRound, e.WentUnder);
             }
             else
             {
