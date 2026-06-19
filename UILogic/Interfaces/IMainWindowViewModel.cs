@@ -49,15 +49,16 @@ public interface IMainWindowViewModel
     void KittyWasTurnedDown();
     void NoTrumpWasCalled();
     void PlayerMadeTrump(IPlayer player, Suit? trump, bool isGoingAlone, bool isKittyRound);
-    void PlayerPassed(IPlayer player, bool isKittyRound);
+    void PlayerPassed(IPlayer player, bool isKittyRound, bool wentUnder);
     void PlayerTakesRemainingTricks(IPlayer playerToTakeTricks);
     Card? PromptUserForDiscard(HumanPlayer player);
     Suit? PromptUserForTrump(Card kitty, HumanPlayer player, out bool goAlone);
-    bool PromptUserToOrderUp(Card kitty, HumanPlayer player, out bool goAlone);
+    bool PromptUserToOrderUp(Card kitty, HumanPlayer player, out bool goAlone, out bool goUnder);
     void RedisplayUserHand(HumanPlayer player);
     void SetKittyCard(Card kitty);
     void SetupUserInterface();
     void TrumpCalled();
     bool PromptUserToInvokeNoAceNoFaceNoTrumpRule(HumanPlayer player);
     void UpdatePlayersHandAfterDeal(int indexOfPlayer, int numberOfCardsDealt);
+    List<Card> PromptUserForGoUnderCards(HumanPlayer player);
 }

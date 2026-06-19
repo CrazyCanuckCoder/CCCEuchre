@@ -82,11 +82,11 @@ public partial class MainWindow : Window
         ViewModel.CurrentGame.GameOver += CurrentGame_GameOver;
         ViewModel.CurrentGame.PlayerBidResult += CurrentGame_PlayerBidResult;
         ViewModel.CurrentGame.PlayerCanTakeRemainingTricks += CurrentGame_PlayerCanTakeRemainingTricks;
+        ViewModel.CurrentGame.UpdatePlayersHands += CurrentGame_UpdatePlayersHands;
 
 #if DEBUG
         ViewModel.CurrentGame.PromptToChooseCardsForPlayers += CurrentGame_PromptToChooseCardsForPlayers;
         ViewModel.CurrentGame.GetPlayersCards += CurrentGame_GetPlayersCards;
-        ViewModel.CurrentGame.UpdatePlayersHands += CurrentGame_UpdatePlayersHands;
 #endif
     }
 
@@ -102,6 +102,7 @@ public partial class MainWindow : Window
         humanPlayer.PromptForTrumpSuit += HumanPlayer_PromptForTrumpSuit;
         humanPlayer.PromptToOrderUp += HumanPlayer_PromptToOrderUp;
         humanPlayer.PromptForNoAceNoFaceNoTrumpRule += HumanPlayer_PromptForNoAceNoFaceNoTrumpRule;
+        humanPlayer.PromptForGoUnderCards += HumanPlayer_PromptForGoUnderCards;
     }
 
     /// <summary>
@@ -164,6 +165,17 @@ public partial class MainWindow : Window
         return null;
     }
 
+    private void CurrentGame_UpdatePlayersHands(object? sender, EventArgs e)
+    {
+        UIHelpers.RunOnUIThread(() =>
+        {
+            for (var playersIndex = 0; playersIndex < Constants.NUMBER_OF_PLAYERS; playersIndex++)
+            {
+                ViewModel.UpdatePlayersHandAfterDeal(playersIndex, 0);
+            }
+        });
+    }
+
 
     #region EventHandlers
 
@@ -196,17 +208,7 @@ public partial class MainWindow : Window
                 e.Player3Cards = chooseCardsForPlayers.Player3Cards;
                 e.Player4Cards = chooseCardsForPlayers.Player4Cards;
                 e.KittyCard = (Card)chooseCardsForPlayers.KittyCard;
-            }
-        });
-    }
-
-    private void CurrentGame_UpdatePlayersHands(object? sender, EventArgs e)
-    {
-        UIHelpers.RunOnUIThread(() =>
-        {
-            for (int playersIndex = 0; playersIndex < Constants.NUMBER_OF_PLAYERS; playersIndex++)
-            {
-                ViewModel.UpdatePlayersHandAfterDeal(playersIndex, 0);
+                e.RemainingCards = chooseCardsForPlayers.RemainingCards;
             }
         });
     }
@@ -219,7 +221,7 @@ public partial class MainWindow : Window
         {
             if (!e.MadeTrump)
             {
-                ViewModel.PlayerPassed(e.Player, e.IsKittyRound);
+                ViewModel.PlayerPassed(e.Player, e.IsKittyRound, e.WentUnder);
             }
             else
             {
@@ -329,7 +331,20 @@ public partial class MainWindow : Window
 
     // The event handlers for the human player.
 
-    private void HumanPlayer_PromptForNoAceNoFaceNoTrumpRule(object? sender, PromptForNoAceNoFaceNoTrumpRuleEventArgs e)
+
+    private void HumanPlayer_PromptForGoUnderCards(object? sender, PromptForGoUnderCardsEventArgs e)
+    {
+        UIHelpers.RunOnUIThread(() =>
+        {
+            if (sender is HumanPlayer player)
+            {
+                e.DiscardCards = ViewModel.PromptUserForGoUnderCards(player);
+            }
+        });
+    }
+
+    private void HumanPlayer_PromptForNoAceNoFaceNoTrumpRule(object? sender, 
+        PromptForNoAceNoFaceNoTrumpRuleEventArgs e)
     {
         UIHelpers.RunOnUIThread(() =>
         {
@@ -346,8 +361,10 @@ public partial class MainWindow : Window
         {
             if (sender is HumanPlayer player)
             {
-                e.OrderedUp = ViewModel.PromptUserToOrderUp(e.Kitty, player, out bool goAlone);
+                e.OrderedUp = ViewModel.PromptUserToOrderUp(e.Kitty, player, out var goAlone, 
+                    out var goUnder);
                 e.GoAlone = goAlone;
+                e.GoUnder = goUnder;
             }
         });
     }
@@ -358,7 +375,7 @@ public partial class MainWindow : Window
         {
             if (sender is HumanPlayer player)
             {
-                e.TrumpSuit = ViewModel.PromptUserForTrump(e.Kitty, player, out bool goAlone);
+                e.TrumpSuit = ViewModel.PromptUserForTrump(e.Kitty, player, out var goAlone);
                 e.GoAlone = goAlone;
             }
         });
@@ -440,7 +457,7 @@ public partial class MainWindow : Window
         };
         if (pickTrump.ShowDialog() == true)
         {
-            string message = "Selected to pass.";
+            var message = "Selected to pass.";
             if (pickTrump.SelectedSuit != null)
             {
                 message = $"Selected {pickTrump.SelectedSuit}" + $"{(pickTrump.GoAlone ? " alone" : "")}.";
@@ -508,7 +525,7 @@ public partial class MainWindow : Window
                 // Detect in-progress: both teams below winning score.
 
                 var game = ViewModel.CurrentGame;
-                bool inProgress = game.GameInfo.TeamScores[0].IsBetween(1, WINNING_SCORE - 1)
+                var inProgress = game.GameInfo.TeamScores[0].IsBetween(1, WINNING_SCORE - 1)
                                   && game.GameInfo.TeamScores[1].IsBetween(1, WINNING_SCORE - 1);
 
                 if (inProgress)

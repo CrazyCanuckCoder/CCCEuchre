@@ -409,14 +409,17 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     /// </summary>
     /// <param name="player">The player who passed.</param>
     /// <param name="isKittyRound">True to indicate it is the kitty round.</param>
-    public void PlayerPassed(IPlayer player, bool isKittyRound)
+    /// <param name="wentUnder">True to indicate the player went under.</param>
+    public void PlayerPassed(IPlayer player, bool isKittyRound, bool wentUnder)
     {
-        string message = "Pass";
+        var message = "Pass";
 
         if (isKittyRound && CurrentGame!.GameInfo.Dealer == player)
         {
             message = "Turning down the kitty card.";
         }
+
+        message += wentUnder ? " (Going under)" : "";
 
         Log.Debug($"PlayerPassed: {player.Name} ({message})");
         DisplayPlayerMessage(player, message, 1, false);
@@ -492,7 +495,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
 
         if (isKittyRound)
         {
-            string goingAlone = isGoingAlone ? " and I am going alone" : "";
+            var goingAlone = isGoingAlone ? " and I am going alone" : "";
             message = CurrentGame!.GameInfo.Dealer == player
                 ? $"I am picking up the kitty card{goingAlone}."
                 : $"Pick it up{goingAlone}.";
@@ -571,7 +574,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     {
         Log.Debug("EndOfRoundUpdate: round finished, showing winning round dialog.");
 
-        string message = BuildEndOfRoundMessage(winningPlayers, points, reasonForPoints);
+        var message = BuildEndOfRoundMessage(winningPlayers, points, reasonForPoints);
 
         // Display the winning round message to the user.
 
@@ -594,8 +597,8 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     public void EndOfGameUpdate(IGameStateManager gameInfo)
     {
         Log.Info("EndOfGameUpdate: game finished, showing winner dialog.");
-        int winningTeamIndex = gameInfo.TeamScores[0] > gameInfo.TeamScores[1] ? 0 : 1;
-        string gameWinners =
+        var winningTeamIndex = gameInfo.TeamScores[0] > gameInfo.TeamScores[1] ? 0 : 1;
+        var gameWinners =
             (from player in CurrentGame!.GameInfo.Players!
              where player.TeamIndex == winningTeamIndex
              select player.Name)
@@ -610,14 +613,17 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     /// Asks the user if they want to order up the kitty card.
     /// </summary>
     /// <param name="kitty">The card at the top of the kitty pile.</param>
+    /// <param name="player">A reference to the user.</param>
     /// <param name="goAlone">True to indicate the user wants to go alone.</param>
+    /// <param name="goUnder">True to indicate the user wants to go under.</param>
     /// <returns>True to indicate the user ordered up the kitty card.</returns>
-    public bool PromptUserToOrderUp(Card kitty, HumanPlayer player, out bool goAlone)
+    public bool PromptUserToOrderUp(Card kitty, HumanPlayer player, out bool goAlone, out bool goUnder)
     {
         Log.Debug("PromptUserToOrderUp: prompting user to order up.");
 
         goAlone = false;
-        bool orderedUp = false;
+        goUnder = false;
+        var orderedUp = false;
 
         List<Suit> suits = [kitty.Suit];
         PickTrumpSuitWindow pickTrumpSuitWindow = new(suits, player, CurrentGame!.GameInfo.Dealer!, true);
@@ -626,8 +632,13 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
             orderedUp = pickTrumpSuitWindow.SelectedSuit != null;
             goAlone = pickTrumpSuitWindow.GoAlone;
         }
+        else
+        {
+            goUnder = pickTrumpSuitWindow.GoUnder;
+        }
 
-        Log.Debug($"After prompting user to orderUp: orderedUp={orderedUp}, goAlone={goAlone}");
+        Log.Debug(
+            $"After prompting user to orderUp: orderedUp={orderedUp}, goAlone={goAlone}, goUnder={goUnder}");
 
         return orderedUp;
     }
@@ -692,6 +703,32 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
 
         return discard;
     }
+
+    /// <summary>
+    /// Ask the user which cards to go under with when they have more than 3 eligible cards.
+    /// </summary>
+    /// <param name="player">The player who is being prompted.</param>
+    /// <returns>The list of cards the user wants to go under with.</returns>
+    public List<Card> PromptUserForGoUnderCards(HumanPlayer player)
+    {
+        Log.Debug("PromptUserForGoUnderCards: prompting user to select cards to go under.");
+
+        var goUnderCards = new List<Card>();
+
+        ChooseThreeCardsToDiscardWindow goUnderWindow = new(player.Hand);
+        if (goUnderWindow.ShowDialog() == true)
+        {
+            goUnderCards = goUnderWindow.DiscardedCards ?? [];
+        }
+        else
+        {
+            Log.Debug("User chose to go under but did not select cards, going under with first 3 cards.");
+            goUnderCards = [.. player.Hand.Where(c => c.Rank == Rank.Nine || c.Rank == Rank.Ten).Take(3)];
+        }
+
+        return goUnderCards;
+    }
+
 
     /// <summary>
     /// Redisplays the hand of a human player to make sure the cards are sorted correctly.
@@ -1082,7 +1119,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     private string BuildEndOfRoundMessage(List<string> winningPlayers, int points,
         ScoringReason reasonForPoints)
     {
-        string message = string.Empty;
+        var message = string.Empty;
 
         switch (reasonForPoints)
         {

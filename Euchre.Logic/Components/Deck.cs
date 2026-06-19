@@ -59,7 +59,7 @@ public class Deck : IDeck
     {
         // Create a new shuffle value for every card in the deck.
 
-        foreach (Card card in Cards)
+        foreach (var card in Cards)
         {
             card.ShuffleValue = _randomizer.Next(MAX_RANDOM_VALUE);
         }
@@ -77,9 +77,7 @@ public class Deck : IDeck
     /// <exception cref="EmptyDeckException" />
     public Card Deal()
     {
-        if (_cardStack.Count == 0) throw new EmptyDeckException();
-
-        return _cardStack.Pop();
+        return _cardStack.Count == 0 ? throw new EmptyDeckException() : _cardStack.Pop();
     }
 
     /// <summary>
@@ -92,5 +90,46 @@ public class Deck : IDeck
         {
             Cards = [.. Cards],
         };
+    }
+
+    /// <summary>
+    /// Retrieves the three cards that are currently remaining in the "kitty".
+    /// </summary>
+    /// <returns>A list of the three cards in the kitty.</returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    internal List<Card> GetKittyCards()
+    {
+        if (_cardStack.Count != 3)
+        {
+            throw new InvalidOperationException("Invalid number of cards in the deck to retrieve the kitty.");
+        }
+
+        var kittyCards = new List<Card>();
+
+        for (var numCards = 0; numCards < 3; numCards++)
+        {
+            kittyCards.Add(_cardStack.Pop());
+        }
+
+        return kittyCards;
+    }
+
+    /// <summary>
+    /// Sets the three cards in the "kitty" to the provided list of cards.
+    /// </summary>
+    /// <param name="kittyCards">The list of three cards to set as the kitty.</param>
+    /// <exception cref="InvalidOperationException"></exception>
+    internal void SetKittyCards(List<Card> kittyCards)
+    {
+        if (kittyCards.Count != 3)
+        {
+            throw new InvalidOperationException("Invalid number of cards provided to set the kitty.");
+        }
+        if (_cardStack.Count != 0)
+        {
+            throw new InvalidOperationException("Deck is not empty for accepting kitty cards.");
+        }
+
+        _cardStack = new Stack<Card>(kittyCards);
     }
 }

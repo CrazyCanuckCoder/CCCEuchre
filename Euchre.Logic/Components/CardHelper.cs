@@ -5,7 +5,7 @@ namespace Euchre.Logic.Components;
 /// <summary>
 /// Provides helper methods for cards and their suits.
 /// </summary>
-internal class CardHelper
+public class CardHelper
 {
     /// <summary>
     /// Returns the suit of the left bower given the trump suit.
@@ -50,7 +50,7 @@ internal class CardHelper
     /// <returns>True when the cards are in sequential order.</returns>
     public static bool TrumpCardsAreSequential(List<Card> cards, Suit trump)
     {
-        bool areSequential = false;
+        bool areSequential;
 
         switch (cards.First())
         {
@@ -101,14 +101,14 @@ internal class CardHelper
     public static bool AllCardsAreHigherThanTrumpCard(IEnumerable<Card> playedTrumpCards, 
         Card highestTrumpInHand)
     {
-        bool anyLowerTrumpFound = false;
+        var anyLowerTrumpFound = false;
 
         if (!highestTrumpInHand.IsRightBower(highestTrumpInHand.Suit))
         {
             var highTrumpCards = CreateHighestTrumpHand(highestTrumpInHand.Suit);
             if (highTrumpCards.Contains(highestTrumpInHand))
             {
-                int indexOfHighestInHand = highTrumpCards.IndexOf(highestTrumpInHand);
+                var indexOfHighestInHand = highTrumpCards.IndexOf(highestTrumpInHand);
                 var remainingHighTrumpCards = highTrumpCards[..(indexOfHighestInHand + 1)];
                 foreach (var playedCard in playedTrumpCards)
                 {
@@ -141,8 +141,8 @@ internal class CardHelper
     /// <returns>True when the hand contains only trump and aces.</returns>
     public static bool PlayerHasTrumpAndAces(List<Card> cards, Suit trump)
     {
-        int numTrump = cards.Count(c => c.EffectiveSuit(trump) == trump);
-        int numAces = cards.Count(c => c.Rank == Rank.Ace);
+        var numTrump = cards.Count(c => c.EffectiveSuit(trump) == trump);
+        var numAces = cards.Count(c => c.Rank == Rank.Ace);
 
         return (numTrump + numAces) == cards.Count;
     }
@@ -154,11 +154,11 @@ internal class CardHelper
     /// <returns>True if the cards are sequential in rank.</returns>
     private static bool CheckTrumpSequenceFromAce(List<Card> cards)
     {
-        int previousRankValue = (int)Rank.Ace;
+        var previousRankValue = (int)Rank.Ace;
 
-        for (int idx = 1; idx < cards.Count; idx++)
+        for (var idx = 1; idx < cards.Count; idx++)
         {
-            int currentRankValue = (int)cards[idx].Rank;
+            var currentRankValue = (int)cards[idx].Rank;
             if (currentRankValue != previousRankValue - 1)
             {
                 return false;
@@ -177,7 +177,7 @@ internal class CardHelper
     /// <returns>True if both lists contain the same cards and have the same number of elements.</returns>
     public static bool CardListsAreEqual(List<Card> firstList, List<Card> secondList)
     {
-        bool areEqual = firstList.Count == secondList.Count;
+        var areEqual = firstList.Count == secondList.Count;
 
         if (areEqual)
         {
@@ -192,5 +192,18 @@ internal class CardHelper
         }
 
         return areEqual;
+    }
+
+    /// <summary>
+    /// Determines if the player's hand contains at least three cards that are either nines or tens.
+    /// </summary>
+    /// <param name="playerHand">The player's hand.</param>
+    /// <returns>True to indicate there are at least three nines or tens in the hand.</returns>
+    public static bool CanGoUnder(List<Card> playerHand)
+    {
+        return (  from card in playerHand
+                 where card.Rank == Rank.Ten || card.Rank == Rank.Nine
+                select card)
+               .Count() > 2;
     }
 }

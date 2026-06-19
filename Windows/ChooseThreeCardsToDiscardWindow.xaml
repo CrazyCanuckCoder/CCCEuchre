@@ -1,0 +1,75 @@
+<Window
+    x:Class="Euchre.Windows.ChooseThreeCardsToDiscardWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:UserControls="clr-namespace:Euchre.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Euchre.Windows"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Choose Cards to Discard"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="45" />
+        </Grid.RowDefinitions>
+
+        <!--  Cards to Keep  -->
+        
+        <Border
+            Grid.Row="0"
+            Grid.Column="0"
+            Background="AliceBlue"
+            BorderBrush="Black"
+            BorderThickness="0.5">
+            <StackPanel>
+                <Label HorizontalAlignment="Center" FontSize="16">Cards to Keep</Label>
+                <UserControls:CardDisplayUserControl
+                    x:Name="KeepCardDisplay"
+                    Height="160"
+                    Margin="20,10"
+                    HorizontalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+        <!--  Cards to Discard  -->
+        
+        <Border
+            Grid.Row="0"
+            Grid.Column="2"
+            Background="AliceBlue"
+            BorderBrush="Black"
+            BorderThickness="0.5">
+            <StackPanel>
+                <Label HorizontalAlignment="Center" FontSize="16">Cards to Discard</Label>
+                <UserControls:CardDisplayUserControl
+                    x:Name="DiscardCardDisplay"
+                    Height="160"
+                    Margin="20,10"
+                    HorizontalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+        <!--  Confirm Button  -->
+        <Button
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Click="ButtonConfirm_Click"
+            Content="_Confirm"
+            IsDefault="True"
+            Style="{DynamicResource SubmitButtonStyle}" />
+    </Grid>
+</Window>

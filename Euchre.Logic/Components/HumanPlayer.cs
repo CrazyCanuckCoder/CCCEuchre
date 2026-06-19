@@ -65,18 +65,26 @@ public class HumanPlayer : Player
     public event EventHandler<PromptForNoAceNoFaceNoTrumpRuleEventArgs>? PromptForNoAceNoFaceNoTrumpRule;
 
     /// <summary>
+    /// Fired to prompt the user to select 3 cards from their hand to place under the kitty in exchange for 
+    /// the 3 cards in the kitty when going under.
+    /// </summary>
+    public event EventHandler<PromptForGoUnderCardsEventArgs>? PromptForGoUnderCards;
+
+    /// <summary>
     /// Prompts the user on whether to order up the given card during the bidding phase.
     /// </summary>
     /// <param name="kitty">The card being considered for ordering up.</param>
     /// <param name="isDealer">A boolean value indicating whether the current player is the dealer.</param>
+    /// <param name="goUnder">A boolean value indicating whether the player chooses to go under.</param>
     /// <returns><see langword="true"/> if the player decides to order up the card; otherwise, 
     /// <see langword="false"/>.</returns>
-    public override bool OrderUp(Card kitty, bool isDealer)
+    public override bool OrderUp(Card kitty, bool isDealer, out bool goUnder)
     {
         PromptToOrderUpEventArgs args = new(kitty);
         PromptToOrderUp?.Invoke(this, args);
 
         _goAlone = args.GoAlone;
+        goUnder = args.GoUnder;
 
         return args.OrderedUp;
     }
@@ -171,7 +179,7 @@ public class HumanPlayer : Player
     /// <returns>Returns true to indicate there are no Aces, cards above 10, or trump in the player's hand.</returns>
     public override bool HasNoAceNoFaceNoTrump(Suit trump)
     {
-        bool hasNoAceNoFaceNoTrump = base.HasNoAceNoFaceNoTrump(trump);
+        var hasNoAceNoFaceNoTrump = base.HasNoAceNoFaceNoTrump(trump);
 
         if (hasNoAceNoFaceNoTrump)
         {
@@ -183,5 +191,50 @@ public class HumanPlayer : Player
         }
 
         return hasNoAceNoFaceNoTrump;
+    }
+
+    /// <summary>
+    /// Retrieves a list of cards from the player's hand that are eligible to be placed under the kitty when
+    /// going under.
+    /// </summary>
+    /// <param name="kittyCards">The kitty cards that will be added to the player's hand.</param>
+    /// <returns>A list of cards from the player's hand to be placed into the kitty.</returns>
+    public override List<Card> GetGoUnderCards(List<Card> kittyCards)
+    {
+        if (kittyCards.Count != 3)
+        {
+            throw new InvalidOperationException("Expected exactly 3 cards from the kitty.");
+        }
+
+        // Check if there are only 3 cards to discard, and if so, return those cards without prompting the
+        // user.
+
+        var discardCards = (  from card in Hand
+                             where card.Rank == Rank.Ten || card.Rank == Rank.Nine
+                            select card)
+                           .ToList();
+        if (discardCards.Count > 3)
+        {
+            // Get which cards to discard from the user.
+
+            var args = new PromptForGoUnderCardsEventArgs();
+            PromptForGoUnderCards?.Invoke(this, args);
+            discardCards = args.DiscardCards;
+        }
+
+        if (discardCards.Count != 3)
+        {
+            throw new InvalidOperationException("Expected exactly 3 cards to be discarded.");
+        }
+
+        // Remove the found cards from the player's hand.
+
+        Hand.RemoveAll(c => discardCards.Contains(c));
+
+        // Add the kitty cards to the player's hand.
+
+        Hand.AddRange(kittyCards);
+
+        return discardCards;
     }
 }

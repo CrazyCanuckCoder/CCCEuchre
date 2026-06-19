@@ -176,6 +176,11 @@ public class EuchreGame : IEuchreGame
     /// </remarks>
     public event EventHandler<GameOverEventArgs>? GameOver;
 
+    /// <summary>
+    /// Fired to alert the UI that the player's hands need to be updated.
+    /// </summary>
+    public event EventHandler<System.EventArgs>? UpdatePlayersHands;
+
 #if DEBUG
 
     /// <summary>
@@ -188,11 +193,6 @@ public class EuchreGame : IEuchreGame
     /// Fired to get the cards for each player chosen by the user.
     /// </summary>
     public event EventHandler<GetPlayersCardsEventArgs>? GetPlayersCards;
-
-    /// <summary>
-    /// Fired to alert the UI that the player's hands need to be updated.
-    /// </summary>
-    public event EventHandler<System.EventArgs>? UpdatePlayersHands;
 #endif
 
     private CancellationTokenSource? _shutdownCts;
@@ -538,14 +538,14 @@ public class EuchreGame : IEuchreGame
 
             if (isRound1)
             {
-                if (player.OrderUp(GameInfo.Kitty!, isDealer))
+                if (player.OrderUp(GameInfo.Kitty!, isDealer, out var goUnder))
                 {
                     SetGameToPlayersBid(forcedSuit!.Value, player);
 
                     // Inform UI of the order up and if the player is going alone.
 
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, true, GameInfo.Trump,
-                        player.IsGoingAlone, true));
+                        player.IsGoingAlone, true, false));
 
                     // Dealer picks up kitty unless their partner went alone.
 
@@ -558,14 +558,28 @@ public class EuchreGame : IEuchreGame
                     GameInfo.SaveGameData();
 
                     Log.Debug(
-                        $"Player {player.Name} ordered up {forcedSuit} (IsDealer={isDealer}, GoingAlone={player.IsGoingAlone})");
+                        $"Player {player.Name} ordered up {forcedSuit} (IsDealer={isDealer}, " +
+                        $"GoingAlone={player.IsGoingAlone})");
                     return true;
                 }
                 else
                 {
-                    // Inform UI that the player is passing.
+                    if (goUnder)
+                    {
+                        var kittyCards = GameInfo.Deck.GetKittyCards();
+                        var goUnderCards = player.GetGoUnderCards(kittyCards);
+                        GameInfo.Deck.SetKittyCards(goUnderCards);
 
-                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, true));
+                        UpdatePlayersHands?.Invoke(this, new());
+
+                        Log.Debug($"Player {player.Name} decided to go under. " +
+                            $"Surrendered {goUnderCards.PrettyPrint()} for {kittyCards.PrettyPrint()}.");
+                    }
+
+                    // Inform UI that the player is passing and if they went under.
+
+                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, true, 
+                        goUnder));
                     Log.Debug($"Player {player.Name} passed on ordering up.");
                 }
             }
@@ -579,19 +593,21 @@ public class EuchreGame : IEuchreGame
                     // Inform UI of the order up and if the player is going alone.
 
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, true, GameInfo.Trump,
-                        player.IsGoingAlone, false));
+                        player.IsGoingAlone, false, false));
 
                     GameInfo.SaveGameData();
 
                     Log.Debug(
-                        $"Player {player.Name} called trump {calledSuit} (IsDealer={isDealer}, GoingAlone={player.IsGoingAlone})");
+                        $"Player {player.Name} called trump {calledSuit} (IsDealer={isDealer}, " +
+                        $"GoingAlone={player.IsGoingAlone})");
                     return true;
                 }
                 else
                 {
                     // Inform UI that the player is passing.
 
-                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, false));
+                    PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, false, null, false, false, 
+                        false));
                     Log.Debug($"Player {player.Name} passed on calling trump.");
                 }
             }
@@ -1026,6 +1042,7 @@ public class EuchreGame : IEuchreGame
             if (eventArgs.Player1Cards != null)
             {
                 DealChosenCardsToPlayers(eventArgs);
+                GameInfo.Deck.SetKittyCards(eventArgs.RemainingCards);
             }
         }
 
