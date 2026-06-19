@@ -20,11 +20,11 @@ public interface IEuchreGame
     event EventHandler<PlayerBidEventArgs>? PlayerBidResult;
     event EventHandler<PlayerCanTakeRemainingTricksEventArgs>? PlayerCanTakeRemainingTricks;
     event EventHandler<System.EventArgs>? TrumpCalled;
+    event EventHandler<System.EventArgs>? UpdatePlayersHands;
 
 #if DEBUG
     event EventHandler<GetPlayersCardsEventArgs>? GetPlayersCards;
     event EventHandler<PromptToChooseCardsForPlayersEventArgs>? PromptToChooseCardsForPlayers;
-    event EventHandler<System.EventArgs>? UpdatePlayersHands;
 #endif
 
     Task PlayGameAsync(CancellationToken externalToken = default);

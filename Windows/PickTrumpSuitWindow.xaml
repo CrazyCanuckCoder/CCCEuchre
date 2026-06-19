@@ -127,9 +127,12 @@
             Grid.Column="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
+            Background="#0066CC"
             Click="GoUnderButton_Click"
             Content="Go Under"
             FontSize="16"
+            FontWeight="SemiBold"
+            Foreground="White"
             Style="{DynamicResource SubmitButtonStyle}"
             Visibility="{Binding IsGoUnderButtonVisible}" />
 

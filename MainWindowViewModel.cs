@@ -705,6 +705,32 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     }
 
     /// <summary>
+    /// Ask the user which cards to go under with when they have more than 3 eligible cards.
+    /// </summary>
+    /// <param name="player">The player who is being prompted.</param>
+    /// <returns>The list of cards the user wants to go under with.</returns>
+    public List<Card> PromptUserForGoUnderCards(HumanPlayer player)
+    {
+        Log.Debug("PromptUserForGoUnderCards: prompting user to select cards to go under.");
+
+        var goUnderCards = new List<Card>();
+
+        ChooseThreeCardsToDiscardWindow goUnderWindow = new(player.Hand);
+        if (goUnderWindow.ShowDialog() == true)
+        {
+            goUnderCards = goUnderWindow.DiscardedCards ?? [];
+        }
+        else
+        {
+            Log.Debug("User chose to go under but did not select cards, going under with first 3 cards.");
+            goUnderCards = [.. player.Hand.Where(c => c.Rank == Rank.Nine || c.Rank == Rank.Ten).Take(3)];
+        }
+
+        return goUnderCards;
+    }
+
+
+    /// <summary>
     /// Redisplays the hand of a human player to make sure the cards are sorted correctly.
     /// </summary>
     /// <param name="player">The reference to the player.</param>

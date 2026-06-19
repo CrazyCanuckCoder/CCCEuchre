@@ -102,6 +102,7 @@ public partial class MainWindow : Window
         humanPlayer.PromptForTrumpSuit += HumanPlayer_PromptForTrumpSuit;
         humanPlayer.PromptToOrderUp += HumanPlayer_PromptToOrderUp;
         humanPlayer.PromptForNoAceNoFaceNoTrumpRule += HumanPlayer_PromptForNoAceNoFaceNoTrumpRule;
+        humanPlayer.PromptForGoUnderCards += HumanPlayer_PromptForGoUnderCards;
     }
 
     /// <summary>
@@ -329,6 +330,18 @@ public partial class MainWindow : Window
     }
 
     // The event handlers for the human player.
+
+
+    private void HumanPlayer_PromptForGoUnderCards(object? sender, PromptForGoUnderCardsEventArgs e)
+    {
+        UIHelpers.RunOnUIThread(() =>
+        {
+            if (sender is HumanPlayer player)
+            {
+                e.DiscardCards = ViewModel.PromptUserForGoUnderCards(player);
+            }
+        });
+    }
 
     private void HumanPlayer_PromptForNoAceNoFaceNoTrumpRule(object? sender, 
         PromptForNoAceNoFaceNoTrumpRuleEventArgs e)

@@ -60,4 +60,5 @@ public interface IMainWindowViewModel
     void TrumpCalled();
     bool PromptUserToInvokeNoAceNoFaceNoTrumpRule(HumanPlayer player);
     void UpdatePlayersHandAfterDeal(int indexOfPlayer, int numberOfCardsDealt);
+    List<Card> PromptUserForGoUnderCards(HumanPlayer player);
 }
