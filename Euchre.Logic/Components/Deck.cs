@@ -106,7 +106,7 @@ public class Deck : IDeck
 
         var kittyCards = new List<Card>();
 
-        foreach (var numCards in Enumerable.Range(0, 3))
+        for (var numCards = 0; numCards < 3; numCards++)
         {
             kittyCards.Add(_cardStack.Pop());
         }
