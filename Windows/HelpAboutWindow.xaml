@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Euchre.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:md="clr-namespace:Markdown.Xaml;assembly=Markdown.Xaml"
+    xmlns:md="clr-namespace:MarkdownWPF;assembly=MarkdownWPF"
     Title="About Euchre"
     Width="550"
     Height="550"
@@ -14,25 +14,6 @@
     ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
-
-    <Window.Resources>
-
-        <md:Markdown
-            x:Key="Markdown"
-            DocumentStyle="{StaticResource DocumentStyle}"
-            Heading1Style="{StaticResource H1Style}"
-            Heading2Style="{StaticResource H2Style}"
-            Heading3Style="{StaticResource H3Style}"
-            Heading4Style="{StaticResource H4Style}"
-            ImageStyle="{StaticResource ImageStyle}"
-            LinkStyle="{StaticResource LinkStyle}"
-            SeparatorStyle="{StaticResource SeparatorStyle}" />
-
-        <md:TextToFlowDocumentConverter x:Key="TextToFlowDocumentConverter" Markdown="{StaticResource Markdown}" />
-
-    </Window.Resources>
-
-
 
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
@@ -67,23 +48,12 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBox
-                        x:Name="editSource"
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        IsReadOnly="True"
-                        Text="{Binding HowToPlayText}"
-                        Visibility="Collapsed" />
-
                     <Border
                         Grid.Row="0"
                         Grid.Column="0"
                         Background="White"
                         BorderThickness="0">
-                        <FlowDocumentScrollViewer
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Document="{Binding ElementName=editSource, Path=Text, Converter={StaticResource TextToFlowDocumentConverter}}" />
+                        <md:MarkdownViewer Markdown="{Binding HowToPlayText}" />
                     </Border>
                 </Grid>
             </TabItem>

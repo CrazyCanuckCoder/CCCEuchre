@@ -524,7 +524,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Markdown.Xaml" Version="1.0.0" />
+    <PackageReference Include="MarkdownWPF" Version="1.1.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
