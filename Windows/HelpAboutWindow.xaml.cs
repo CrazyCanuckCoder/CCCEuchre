@@ -16,23 +16,21 @@ public partial class HelpAboutWindow : Window
     }
 
     /// <summary>
-    /// Using a DependencyProperty as the backing store for AboutText.  This enables animation, styling, 
-    /// binding, etc...
+    /// Using a DependencyProperty as the backing store for AboutText.
     /// </summary>
     public static readonly DependencyProperty AboutTextProperty =
         DependencyProperty.Register(nameof(AboutText), typeof(string), typeof(HelpAboutWindow),
             new PropertyMetadata(string.Empty));
 
     /// <summary>
-    /// Using a DependencyProperty as the backing store for LicenseText.  This enables animation, styling, 
-    /// binding, etc...
+    /// Using a DependencyProperty as the backing store for LicenseText.
     /// </summary>
     public static readonly DependencyProperty LicenseTextProperty =
         DependencyProperty.Register(nameof(LicenseText), typeof(string), typeof(HelpAboutWindow),
             new PropertyMetadata(string.Empty));
 
     /// <summary>
-    /// Using a DependencyProperty as the backing store for HowToPlayText.  This enables animation, styling, binding, etc...
+    /// Using a DependencyProperty as the backing store for HowToPlayText.
     /// </summary>
     public static readonly DependencyProperty HowToPlayTextProperty =
         DependencyProperty.Register(nameof(HowToPlayText), typeof(string), typeof(HelpAboutWindow),
@@ -40,7 +38,7 @@ public partial class HelpAboutWindow : Window
 
 
     /// <summary>
-    /// Contains the text about the Solo application.
+    /// Contains the text about the Euchre application.
     /// </summary>
     public string AboutText
     {
@@ -49,7 +47,7 @@ public partial class HelpAboutWindow : Window
     }
 
     /// <summary>
-    /// Contains the information about Solo's license.
+    /// Contains the information about Euchre's license.
     /// </summary>
     public string LicenseText
     {
@@ -67,7 +65,7 @@ public partial class HelpAboutWindow : Window
     }
 
     /// <summary>
-    /// Retrieves the text for the AboutText and LicenseText properties from their files.
+    /// Retrieves the text for the AboutText, LicenseText, and HowToPlayText properties from their files.
     /// </summary>
     private void LoadTextFiles()
     {

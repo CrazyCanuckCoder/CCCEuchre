@@ -248,9 +248,6 @@
     <None Remove="images\icons\Settings-01-16.png" />
     <None Remove="images\icons\Settings-01-32.png" />
     <None Remove="images\icons\Settings-01-64.png" />
-    <None Remove="images\icons\Solo Original.pdn" />
-    <None Remove="images\icons\Solo.ico" />
-    <None Remove="images\icons\Solo.png" />
     <None Remove="images\icons\trick won indicator.png" />
     <None Remove="images\suits\Clubs.png" />
     <None Remove="images\suits\Diamonds.png" />
@@ -513,9 +510,6 @@
     <Resource Include="images\icons\Settings-01-16.png" />
     <Resource Include="images\icons\Settings-01-32.png" />
     <Resource Include="images\icons\Settings-01-64.png" />
-    <Resource Include="images\icons\Solo Original.pdn" />
-    <Resource Include="images\icons\Solo.ico" />
-    <Resource Include="images\icons\Solo.png" />
     <Resource Include="images\icons\trick won indicator.png" />
     <Resource Include="images\suits\Clubs.png" />
     <Resource Include="images\suits\Diamonds.png" />

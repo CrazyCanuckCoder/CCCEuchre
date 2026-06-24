@@ -9,7 +9,7 @@ namespace Euchre.UILogic.Classes;
 /// <remarks>
 /// Usage:
 /// 
-///     xmlns:Logic="clr-namespace:Solo.WinUI.Logic.Classes"
+///     xmlns:Logic="clr-namespace:Euchre.UILogic.Classes"
 ///         
 ///     <MenuItem Header="_Test" x:Name="menuTest" Visibility="{x:Static Logic:DebugVisibility.DebugOnly}">
 ///     
@@ -22,9 +22,9 @@ public static class DebugVisibility
     public static Visibility DebugOnly
     {
 #if DEBUG
-        get { return Visibility.Visible; }
+        get => Visibility.Visible;
 #else
-        get { return Visibility.Collapsed; }
+        get => Visibility.Collapsed;
 #endif
     }
 
@@ -34,9 +34,9 @@ public static class DebugVisibility
     public static Visibility ReleaseOnly
     {
 #if DEBUG
-        get { return Visibility.Collapsed; }
+        get => Visibility.Collapsed;
 #else
-        get { return Visibility.Visible; }
+        get => Visibility.Visible;
 #endif
     }
 }
