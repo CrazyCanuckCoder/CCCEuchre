@@ -34,7 +34,6 @@
 
   <ItemGroup>
     <None Remove="About.md" />
-    <None Remove="About.txt" />
     <None Remove="COMPLETION_CHECKLIST.md" />
     <None Remove="HowToPlay.md" />
     <None Remove="images\avatars\avatar1.png" />
@@ -265,9 +264,6 @@
 
   <ItemGroup>
     <Content Include="About.md">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="About.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="HowToPlay.md">
