@@ -7,8 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:md="clr-namespace:MarkdownWPF;assembly=MarkdownWPF"
     Title="About Euchre"
-    Width="550"
-    Height="550"
+    Width="900"
+    Height="800"
     Background="AliceBlue"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
@@ -33,9 +33,7 @@
             Grid.Column="0"
             Background="#FFF7F0">
             <TabItem Header="_About">
-                <ScrollViewer>
-                    <TextBlock Margin="5" Text="{Binding AboutText}" />
-                </ScrollViewer>
+                <md:MarkdownViewer Markdown="{Binding AboutText}" />
             </TabItem>
             <TabItem Header="_License">
                 <ScrollViewer>
@@ -43,19 +41,9 @@
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="_How To Play">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <Border
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Background="White"
-                        BorderThickness="0">
-                        <md:MarkdownViewer Markdown="{Binding HowToPlayText}" />
-                    </Border>
-                </Grid>
+                <Border Background="White" BorderThickness="0">
+                    <md:MarkdownViewer Markdown="{Binding HowToPlayText}" />
+                </Border>
             </TabItem>
         </TabControl>
 

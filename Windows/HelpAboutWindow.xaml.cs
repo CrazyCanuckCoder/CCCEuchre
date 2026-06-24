@@ -71,7 +71,7 @@ public partial class HelpAboutWindow : Window
     /// </summary>
     private void LoadTextFiles()
     {
-        AboutText = File.ReadAllText("About.txt");
+        AboutText = File.ReadAllText("About.md");
         LicenseText = File.ReadAllText("License.txt");
         HowToPlayText = File.ReadAllText("HowToPlay.md");
     }
