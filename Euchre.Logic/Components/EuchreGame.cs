@@ -736,8 +736,8 @@ public class EuchreGame : IEuchreGame
                 var highestTrumpInHand = CardFinder.GetHighestTrumpCard(leadingPlayer.Hand,
                     GameInfo.Trump.Value);
                 var playedTrumpCards = from trick in GameInfo.CurrentRoundTricks
-                                       from card in trick.Cards
-                                       where card.Value.EffectiveSuit(GameInfo.Trump.Value) == GameInfo.Trump.Value
+                                         from card in trick.Cards
+                                        where card.Value.EffectiveSuit(GameInfo.Trump.Value) == GameInfo.Trump.Value
                                        select card.Value;
                 if (CardHelper.AllCardsAreHigherThanTrumpCard(playedTrumpCards, highestTrumpInHand!))
                 {
