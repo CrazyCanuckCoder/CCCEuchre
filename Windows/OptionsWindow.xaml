@@ -8,12 +8,19 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Options"
     Width="640"
-    Height="800"
+    Height="625"
     Background="AliceBlue"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
+
+    <Window.Resources>
+        <Style x:Key="CheckboxStyle" TargetType="CheckBox">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+    </Window.Resources>
 
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
@@ -24,103 +31,152 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
             <RowDefinition />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
             <RowDefinition Height="20" />
             <RowDefinition Height="45" />
         </Grid.RowDefinitions>
 
-        <!--  The label above the card back selection control.  -->
-
-        <Label
+        <TabControl
             Grid.Row="0"
             Grid.Column="0"
-            Content="Choose the design to use for the card backs:" />
+            Grid.ColumnSpan="4">
 
-        <!--  The user control with the card back images.  -->
+            <!--  Card Backs Tab  -->
 
-        <UserControls:CardBackSelectionUserControl
-            x:Name="cardBackSelectionUserControl"
-            Grid.Row="1"
-            Grid.Column="0"
-            Grid.ColumnSpan="4"
-            Background="#FFF7F0" />
+            <TabItem Header="Card Backs">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-        <!--  The check box for selecting whether to use the standard main menu or the icon based one.  -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
 
-        <CheckBox
-            Grid.Row="2"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="_Use the standard main menu. (Requires restart.)"
-            IsChecked="{Binding GameSettings.UseStandardMenu}" />
+                    <!--  The label above the card back selection control.  -->
 
-        <!--  The check box for selecting whether to play the last card in the human's hand automatically.  -->
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Content="Choose the design to use for the card backs:" />
 
-        <CheckBox
-            Grid.Row="3"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="_Automatically play the last card in your hand."
-            IsChecked="{Binding GameSettings.PlayLastCardInHand}" />
+                    <!--  The user control with the card back images.  -->
 
-        <!--  The check box for the Canadian Lone rule.  -->
+                    <UserControls:CardBackSelectionUserControl
+                        x:Name="cardBackSelectionUserControl"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="4"
+                        Background="#FFF7F0" />
+                </Grid>
+            </TabItem>
 
-        <CheckBox
-            Grid.Row="4"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="_Force partner to go alone when ordering up their partner."
-            IsChecked="{Binding GameSettings.CanadianLonerRule}" />
+            <!--  Game Options Tab  -->
 
-        <!--  The check box for the must have suit rule.  -->
+            <TabItem Header="Game Options">
+                <Grid Margin="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
 
-        <CheckBox
-            Grid.Row="5"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            VerticalAlignment="Center"
-            Content="_Player must have a card in their hand of any suit they want to call trump."
-            IsChecked="{Binding GameSettings.MustHaveSuitToCall}" />
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="40" />
+                    </Grid.RowDefinitions>
 
-        <!--  The check box for the stick the dealer rule.  -->
+                    <!--
+                        The check box for selecting whether to use the standard main menu or the icon
+                        based one.
+                    -->
 
-        <CheckBox
-            Grid.Row="6"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="_Stick the dealer, forcing them to make trump."
-            IsChecked="{Binding GameSettings.StickTheDealer}" />
+                    <CheckBox
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Content="_Use the standard main menu. (Requires restart.)"
+                        IsChecked="{Binding GameSettings.UseStandardMenu}"
+                        Style="{StaticResource CheckboxStyle}" />
 
-        <!--  The check box for the stick the dealer rule.  -->
+                    <!--
+                        The check box for selecting whether to play the last card in the human's hand
+                        automatically.
+                    -->
 
-        <CheckBox
-            Grid.Row="7"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="A_llow players to declare No Ace, No Face, No Trump."
-            IsChecked="{Binding GameSettings.NoAceNoFaceNoTrumpRule}" />
+                    <CheckBox
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Content="_Automatically play the last card in your hand."
+                        IsChecked="{Binding GameSettings.PlayLastCardInHand}"
+                        Style="{StaticResource CheckboxStyle}" />
 
-        <!--  The check box for the go under rule.  -->
+                    <!--  The check box for the Canadian Lone rule.  -->
 
-        <CheckBox
-            Grid.Row="8"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="Allow players to Go Under - swap 3 low cards for the kitty cards."
-            IsChecked="{Binding GameSettings.CanGoUnder}" />
+                    <CheckBox
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Content="_Force partner to go alone when ordering up their partner."
+                        IsChecked="{Binding GameSettings.CanadianLonerRule}"
+                        Style="{StaticResource CheckboxStyle}" />
+
+                    <!--  The check box for the must have suit rule.  -->
+
+                    <CheckBox
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        VerticalAlignment="Center"
+                        Content="_Player must have a card in their hand of any suit they want to call trump."
+                        IsChecked="{Binding GameSettings.MustHaveSuitToCall}"
+                        Style="{StaticResource CheckboxStyle}" />
+
+                    <!--  The check box for the stick the dealer rule.  -->
+
+                    <CheckBox
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Content="_Stick the dealer, forcing them to make trump."
+                        IsChecked="{Binding GameSettings.StickTheDealer}"
+                        Style="{StaticResource CheckboxStyle}" />
+
+                    <!--  The check box for the stick the dealer rule.  -->
+
+                    <CheckBox
+                        Grid.Row="5"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Content="A_llow players to declare No Ace, No Face, No Trump."
+                        IsChecked="{Binding GameSettings.NoAceNoFaceNoTrumpRule}"
+                        Style="{StaticResource CheckboxStyle}" />
+
+                    <!--  The check box for the go under rule.  -->
+
+                    <CheckBox
+                        Grid.Row="6"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Content="Allow players to Go Under - swap 3 low cards for the kitty cards."
+                        IsChecked="{Binding GameSettings.CanGoUnder}"
+                        Style="{StaticResource CheckboxStyle}" />
+                </Grid>
+            </TabItem>
+        </TabControl>
 
         <!--  The save button.  -->
 
         <Button
-            Grid.Row="10"
+            Grid.Row="2"
             Grid.Column="1"
             Click="SaveButton_Click"
             Content="_Save"
@@ -130,7 +186,7 @@
         <!--  The cancel button.  -->
 
         <Button
-            Grid.Row="10"
+            Grid.Row="2"
             Grid.Column="3"
             Click="CancelButton_Click"
             Content="_Cancel"
