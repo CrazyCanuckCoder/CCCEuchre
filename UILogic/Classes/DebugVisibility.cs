@@ -19,24 +19,18 @@ public static class DebugVisibility
     /// <summary>
     /// For controls to be shown in the Debug version only.
     /// </summary>
-    public static Visibility DebugOnly
-    {
 #if DEBUG
-        get => Visibility.Visible;
+    public static Visibility DebugOnly => Visibility.Visible;
 #else
-        get => Visibility.Collapsed;
+    public static Visibility DebugOnly => Visibility.Collapsed;
 #endif
-    }
 
     /// <summary>
     /// For controls to be shown in the Release version only.
     /// </summary>
-    public static Visibility ReleaseOnly
-    {
 #if DEBUG
-        get => Visibility.Collapsed;
+    public static Visibility ReleaseOnly => Visibility.Collapsed;
 #else
-        get => Visibility.Visible;
+    public static Visibility ReleaseOnly => Visibility.Visible;
 #endif
-    }
 }

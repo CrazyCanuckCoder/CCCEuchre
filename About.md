@@ -29,6 +29,8 @@ https://flaticons.net/custom.php?i=4Dh7F5rZzpiDIoInIN0ho6gOWfA
 Menu icons from flaticons.net.\
 https://flaticons.net
 
+## Open Source Libraries
+
 This application uses the following open source libraries:
 
 **log4net by The Apache Software Foundation**\
