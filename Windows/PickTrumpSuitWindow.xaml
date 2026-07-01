@@ -10,6 +10,7 @@
     Height="355"
     Background="#FFF7F0"
     Closing="Window_Closing"
+    FontSize="{DynamicResource GlobalFontSize}"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
@@ -114,7 +115,6 @@
             VerticalAlignment="Center"
             VerticalContentAlignment="Center"
             Content="Go Alone"
-            FontSize="16"
             IsChecked="{Binding GoAlone, Mode=TwoWay}"
             IsEnabled="{Binding IsGoAloneCheckBoxEnabled}"
             ToolTip="Check to go alone when calling trump" />
@@ -130,7 +130,6 @@
             Background="#0066CC"
             Click="GoUnderButton_Click"
             Content="Go Under"
-            FontSize="16"
             FontWeight="SemiBold"
             Foreground="White"
             Style="{DynamicResource SubmitButtonStyle}"
@@ -146,7 +145,6 @@
             VerticalAlignment="Center"
             Click="SubmitButton_Click"
             Content="{Binding SubmitButtonText}"
-            FontSize="16"
             IsEnabled="{Binding IsSubmitButtonEnabled}"
             Style="{DynamicResource SubmitButtonStyle}" />
 
@@ -160,7 +158,6 @@
             VerticalAlignment="Center"
             Click="PassButton_Click"
             Content="Pass"
-            FontSize="16"
             IsEnabled="{Binding IsPassButtonEnabled}"
             Style="{DynamicResource SubmitButtonStyle}" />
     </Grid>

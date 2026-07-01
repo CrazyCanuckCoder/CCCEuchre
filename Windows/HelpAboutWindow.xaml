@@ -10,6 +10,7 @@
     Width="900"
     Height="800"
     Background="AliceBlue"
+    FontSize="{DynamicResource GlobalFontSize}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"

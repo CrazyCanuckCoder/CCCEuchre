@@ -12,6 +12,7 @@
     Height="950"
     MinWidth="1240"
     MinHeight="950"
+    FontSize="{DynamicResource GlobalFontSize}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
@@ -392,7 +393,6 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="{Binding Player3Text}"
                             TextAlignment="Center"
                             TextWrapping="Wrap" />
@@ -437,7 +437,6 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="{Binding Player2Text}"
                             TextAlignment="Center"
                             TextWrapping="Wrap" />
@@ -481,7 +480,6 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="{Binding Player4Text}"
                             TextAlignment="Center"
                             TextWrapping="Wrap" />
@@ -530,7 +528,6 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="{Binding Player1Text}"
                             TextAlignment="Center"
                             TextWrapping="Wrap" />
@@ -551,7 +548,6 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="14"
                             Text="{Binding GameInformation, UpdateSourceTrigger=PropertyChanged}"
                             TextAlignment="Center"
                             TextWrapping="Wrap" />

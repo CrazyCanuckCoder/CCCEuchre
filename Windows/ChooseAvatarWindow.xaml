@@ -8,6 +8,7 @@
     Title="Choose Your Avatar"
     Width="905"
     Height="525"
+    FontSize="{DynamicResource GlobalFontSize}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"

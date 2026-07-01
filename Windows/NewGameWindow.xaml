@@ -9,6 +9,7 @@
     Title="New Game"
     Width="450"
     Height="775"
+    FontSize="{DynamicResource GlobalFontSize}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"
@@ -59,15 +60,13 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     VerticalAlignment="Center"
-                    Content="Enter your name:"
-                    FontSize="14" />
+                    Content="Enter your name:" />
                 <TextBox
                     Grid.Row="2"
                     Grid.Column="1"
                     Margin="5,10,5,0"
                     Padding="5"
                     VerticalContentAlignment="Center"
-                    FontSize="14"
                     Text="{Binding PlayerName, Mode=TwoWay}" />
                 <Button
                     Grid.Row="1"
@@ -132,8 +131,7 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             VerticalAlignment="Center"
-                            Content="Player 2:"
-                            FontSize="14" />
+                            Content="Player 2:" />
                         <ComboBox
                             x:Name="comboBoxPlayer2"
                             Grid.Row="2"
@@ -142,7 +140,6 @@
                             VerticalContentAlignment="Center"
                             BorderThickness="0"
                             DisplayMemberPath="PlayerName"
-                            FontSize="14"
                             ItemsSource="{Binding AvailablePlayerAvatars}"
                             SelectedItem="{Binding SelectedPlayerAvatars[0]}" />
                         <UserControls:AvatarUserControl
@@ -177,8 +174,7 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             VerticalAlignment="Center"
-                            Content="Player 3:"
-                            FontSize="14" />
+                            Content="Player 3:" />
                         <ComboBox
                             x:Name="comboBoxPlayer3"
                             Grid.Row="2"
@@ -187,7 +183,6 @@
                             VerticalContentAlignment="Center"
                             BorderThickness="0"
                             DisplayMemberPath="PlayerName"
-                            FontSize="14"
                             ItemsSource="{Binding AvailablePlayerAvatars, RelativeSource={RelativeSource AncestorType=Window}}"
                             SelectedItem="{Binding SelectedPlayerAvatars[1]}" />
                         <UserControls:AvatarUserControl
@@ -222,8 +217,7 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             VerticalAlignment="Center"
-                            Content="Player 4:"
-                            FontSize="14" />
+                            Content="Player 4:" />
                         <ComboBox
                             x:Name="comboBoxPlayer4"
                             Grid.Row="2"
@@ -232,7 +226,6 @@
                             VerticalContentAlignment="Center"
                             BorderThickness="0"
                             DisplayMemberPath="PlayerName"
-                            FontSize="14"
                             ItemsSource="{Binding AvailablePlayerAvatars, RelativeSource={RelativeSource AncestorType=Window}}"
                             SelectedItem="{Binding SelectedPlayerAvatars[2]}" />
                         <UserControls:AvatarUserControl
@@ -251,10 +244,10 @@
         <Button
             Grid.Row="6"
             Grid.Column="1"
+            HorizontalAlignment="Left"
             Click="ButtonStartGame_Click"
             Content="_Start Game"
             IsDefault="True"
-            HorizontalAlignment="Left"
             Style="{DynamicResource SubmitButtonStyle}" />
 
         <!--  Cancel Button  -->
@@ -262,10 +255,10 @@
         <Button
             Grid.Row="6"
             Grid.Column="1"
+            HorizontalAlignment="Right"
             Click="ButtonCancel_Click"
             Content="_Cancel"
             IsCancel="True"
-            HorizontalAlignment="Right"
             Style="{DynamicResource SubmitButtonStyle}" />
     </Grid>
 </Window>

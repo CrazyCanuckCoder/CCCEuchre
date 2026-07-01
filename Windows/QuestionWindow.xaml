@@ -8,6 +8,7 @@
     Title="{Binding TitleText}"
     Width="500"
     Height="250"
+    FontSize="{DynamicResource GlobalFontSize}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"
@@ -38,8 +39,7 @@
                 Margin="10"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                Content="{Binding DescriptionText}"
-                FontSize="14" />
+                Content="{Binding DescriptionText}" />
         </Border>
 
         <!--  Yes Button  -->

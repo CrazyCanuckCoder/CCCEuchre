@@ -8,6 +8,7 @@
     Title="Select Cards For Each Player"
     Width="1250"
     Height="800"
+    FontSize="{DynamicResource GlobalFontSize}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"
@@ -37,7 +38,7 @@
             Background="#FFF7F0"
             BorderBrush="Black"
             BorderThickness="0.5">
-            <Label Content="Available Cards" FontSize="14" />
+            <Label Content="Available Cards" />
         </Border>
         <Border
             Grid.Row="1"
@@ -69,8 +70,7 @@
                 <Label
                     Grid.Row="1"
                     Grid.Column="1"
-                    Content="Clubs"
-                    FontSize="14" />
+                    Content="Clubs" />
                 <Border
                     Grid.Row="2"
                     Grid.Column="1"
@@ -105,8 +105,7 @@
                 <Label
                     Grid.Row="3"
                     Grid.Column="1"
-                    Content="Hearts"
-                    FontSize="14" />
+                    Content="Hearts" />
                 <Border
                     Grid.Row="4"
                     Grid.Column="1"
@@ -141,8 +140,7 @@
                 <Label
                     Grid.Row="5"
                     Grid.Column="1"
-                    Content="Spades"
-                    FontSize="14" />
+                    Content="Spades" />
                 <Border
                     Grid.Row="6"
                     Grid.Column="1"
@@ -177,8 +175,7 @@
                 <Label
                     Grid.Row="7"
                     Grid.Column="1"
-                    Content="Diamonds"
-                    FontSize="14" />
+                    Content="Diamonds" />
                 <Border
                     Grid.Row="8"
                     Grid.Column="1"
@@ -218,7 +215,7 @@
             Background="#FFF7F0"
             BorderBrush="Black"
             BorderThickness="0.5">
-            <Label Content="Players' Hands" FontSize="14" />
+            <Label Content="Players' Hands" />
         </Border>
         <Border
             Grid.Row="1"
@@ -250,8 +247,7 @@
                 <Label
                     Grid.Row="1"
                     Grid.Column="1"
-                    Content="Player 1 (Human)"
-                    FontSize="14" />
+                    Content="Player 1 (Human)" />
                 <Border
                     Grid.Row="2"
                     Grid.Column="1"
@@ -288,8 +284,7 @@
                 <Label
                     Grid.Row="3"
                     Grid.Column="1"
-                    Content="Player 2"
-                    FontSize="14" />
+                    Content="Player 2" />
                 <Border
                     Grid.Row="4"
                     Grid.Column="1"
@@ -326,8 +321,7 @@
                 <Label
                     Grid.Row="5"
                     Grid.Column="1"
-                    Content="Player 3"
-                    FontSize="14" />
+                    Content="Player 3" />
                 <Border
                     Grid.Row="6"
                     Grid.Column="1"
@@ -364,8 +358,7 @@
                 <Label
                     Grid.Row="7"
                     Grid.Column="1"
-                    Content="Player 4"
-                    FontSize="14" />
+                    Content="Player 4" />
                 <Border
                     Grid.Row="8"
                     Grid.Column="1"
@@ -407,7 +400,7 @@
             Background="#FFF7F0"
             BorderBrush="Black"
             BorderThickness="0.5">
-            <Label Content="Kitty" FontSize="14" />
+            <Label Content="Kitty" />
         </Border>
         <Border
             Grid.Row="1"
@@ -439,8 +432,7 @@
                 <Label
                     Grid.Row="1"
                     Grid.Column="1"
-                    Content="Kitty Card"
-                    FontSize="14" />
+                    Content="Kitty Card" />
                 <Border
                     Grid.Row="2"
                     Grid.Column="1"
@@ -481,7 +473,7 @@
         <Button
             Grid.Row="3"
             Grid.Column="0"
-            Width="150"
+            Width="200"
             HorizontalAlignment="Left"
             Click="RandomlyDealButton_Click"
             Content="Deal Remaining Cards"

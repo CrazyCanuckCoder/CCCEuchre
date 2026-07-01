@@ -10,6 +10,7 @@
     Width="640"
     Height="625"
     Background="AliceBlue"
+    FontSize="{DynamicResource GlobalFontSize}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"
@@ -17,7 +18,6 @@
 
     <Window.Resources>
         <Style x:Key="CheckboxStyle" TargetType="CheckBox">
-            <Setter Property="FontSize" Value="15" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
     </Window.Resources>

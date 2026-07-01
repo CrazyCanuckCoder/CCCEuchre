@@ -29,6 +29,19 @@ public partial class App : Application
         get { return _host!.Services; }
     }
 
+    // Source - https://stackoverflow.com/a/65626626
+    // Posted by Mr. Squirrel.Downy
+    // Retrieved 2026-07-01, License - CC BY-SA 4.0
+    /// <summary>
+    /// Gets or sets the global font size for the application, which can be used for scaling UI elements.
+    /// </summary>
+    public static double GlobalFontSize
+    {
+        get => (double)Current.Resources["GlobalFontSize"];
+        set => Current.Resources["GlobalFontSize"] = value;
+    }
+
+
     protected async override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
