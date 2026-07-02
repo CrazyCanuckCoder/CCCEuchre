@@ -8,6 +8,7 @@
     MinWidth="230"
     d:DesignHeight="291"
     d:DesignWidth="281"
+    FontSize="{DynamicResource GlobalFontSize}"
     mc:Ignorable="d">
 
     <Border
@@ -46,7 +47,6 @@
                     Padding="5,2,2,2"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
-                    FontSize="16"
                     Text="{Binding BidInfo, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                     TextTrimming="CharacterEllipsis"
                     TextWrapping="Wrap" />
@@ -57,8 +57,7 @@
             <Label
                 Grid.Row="2"
                 Grid.Column="0"
-                Content="Teams"
-                FontSize="16" />
+                Content="Teams" />
 
             <!--  Team 1 List  -->
 
@@ -73,6 +72,7 @@
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
                         <Setter Property="Focusable" Value="False" />
+                        <Setter Property="Padding" Value="0" />
                     </Style>
                 </ListBox.ItemContainerStyle>
 
@@ -80,9 +80,9 @@
                     <DataTemplate>
                         <Label
                             Height="26"
+                            Padding="5,0,0,0"
                             VerticalContentAlignment="Center"
-                            Content="{Binding Name}"
-                            FontSize="13" />
+                            Content="{Binding Name}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
@@ -108,6 +108,7 @@
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
                         <Setter Property="Focusable" Value="False" />
+                        <Setter Property="Padding" Value="0" />
                     </Style>
                 </ListBox.ItemContainerStyle>
 
@@ -115,9 +116,9 @@
                     <DataTemplate>
                         <Label
                             Height="26"
+                            Padding="5,0,0,0"
                             VerticalContentAlignment="Center"
-                            Content="{Binding Name}"
-                            FontSize="13" />
+                            Content="{Binding Name}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

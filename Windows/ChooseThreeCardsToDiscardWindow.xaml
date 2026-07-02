@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:Euchre.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Choose Cards to Discard"
+    FontSize="{DynamicResource GlobalFontSize}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
@@ -27,7 +28,7 @@
         </Grid.RowDefinitions>
 
         <!--  Cards to Keep  -->
-        
+
         <Border
             Grid.Row="0"
             Grid.Column="0"
@@ -35,7 +36,7 @@
             BorderBrush="Black"
             BorderThickness="0.5">
             <StackPanel>
-                <Label HorizontalAlignment="Center" FontSize="16">Cards to Keep</Label>
+				<Label HorizontalAlignment="Center" >Cards to Keep</Label>
                 <UserControls:CardDisplayUserControl
                     x:Name="KeepCardDisplay"
                     Height="160"
@@ -45,7 +46,7 @@
         </Border>
 
         <!--  Cards to Discard  -->
-        
+
         <Border
             Grid.Row="0"
             Grid.Column="2"
@@ -53,7 +54,7 @@
             BorderBrush="Black"
             BorderThickness="0.5">
             <StackPanel>
-                <Label HorizontalAlignment="Center" FontSize="16">Cards to Discard</Label>
+                <Label HorizontalAlignment="Center" >Cards to Discard</Label>
                 <UserControls:CardDisplayUserControl
                     x:Name="DiscardCardDisplay"
                     Height="160"

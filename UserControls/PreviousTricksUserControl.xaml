@@ -8,6 +8,7 @@
     MinWidth="230"
     d:DesignHeight="265"
     d:DesignWidth="290"
+    FontSize="{DynamicResource GlobalFontSize}"
     mc:Ignorable="d">
 
     <!--  A Style to set the height and width of the card images.  -->
@@ -43,8 +44,7 @@
             <TextBlock
                 Margin="5,0"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontSize="16">
+                VerticalAlignment="Center">
                 Played Tricks
             </TextBlock>
         </Border>

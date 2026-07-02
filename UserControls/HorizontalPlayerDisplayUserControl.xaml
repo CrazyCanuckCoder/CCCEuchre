@@ -8,6 +8,7 @@
     d:DesignHeight="120"
     d:DesignWidth="710"
     Background="#FFF7F0"
+    FontSize="{DynamicResource GlobalFontSize}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -47,7 +48,6 @@
                 VerticalAlignment="Center"
                 BorderThickness="1"
                 Content="{Binding ActivePlayer.Player.Name, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
-                FontSize="16"
                 Style="{DynamicResource TextLabel}" />
 
             <!--  Dealer Indicator Image  -->

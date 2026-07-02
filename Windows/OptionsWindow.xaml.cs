@@ -23,6 +23,18 @@ public partial class OptionsWindow : Window
             new PropertyMetadata(null));
 
     /// <summary>
+    /// Using a DependencyProperty as the backing store for PossibleFontSizes.
+    /// </summary>
+    public static readonly DependencyProperty PossibleFontSizesProperty =
+        DependencyProperty.Register(nameof(PossibleFontSizes), typeof(Dictionary<string, int>),
+            typeof(OptionsWindow), new PropertyMetadata(new Dictionary<string, int>()
+    {
+        { "Small", 11 },
+        { "Medium", 15 },
+        { "Large", 18 },
+    }));
+
+    /// <summary>
     /// A data bindable instance of the GameSettingsManager class.
     /// </summary>
     public GameSettingsManager GameSettings
@@ -30,6 +42,17 @@ public partial class OptionsWindow : Window
         get => (GameSettingsManager)GetValue(GameSettingsProperty); 
         set => SetValue(GameSettingsProperty, value);
     }
+
+    /// <summary>
+    /// Gets a dictionary of possible font sizes that can be used in the application, mapping descriptive 
+    /// names to their corresponding point sizes.
+    /// </summary>
+    public Dictionary<string, int> PossibleFontSizes
+    {
+        get => (Dictionary<string, int>)GetValue(PossibleFontSizesProperty);
+        set => SetValue(PossibleFontSizesProperty, value);
+    }
+
 
 
 

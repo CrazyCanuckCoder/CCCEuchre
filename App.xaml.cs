@@ -29,6 +29,26 @@ public partial class App : Application
         get { return _host!.Services; }
     }
 
+    // Source - https://stackoverflow.com/a/65626626
+    // Posted by Mr. Squirrel.Downy
+    // Retrieved 2026-07-01, License - CC BY-SA 4.0
+    /// <summary>
+    /// Gets or sets the global font size for the application, which can be used for scaling UI elements.
+    /// </summary>
+    public static double GlobalFontSize
+    {
+        get => (double)Current.Resources["GlobalFontSize"];
+        set => Current.Resources["GlobalFontSize"] = value;
+    }
+
+    private static Dictionary<string, int> PossibleFontSizes = new()
+    {
+        { "Small", 11 },
+        { "Medium", 15 },
+        { "Large", 18 },
+    };
+
+
     protected async override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -54,6 +74,12 @@ public partial class App : Application
                 services.AddSingleton<MainWindow>();
             })
             .Build();
+
+        // Set the global font size based on the user's settings.
+
+        GlobalFontSize = PossibleFontSizes[GameSettingsManager.Instance.FontSize];
+
+        // Start the host asynchronously to ensure all services are initialized before showing the main window.
 
         await _host.StartAsync();
 

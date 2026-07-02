@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="250"
     d:DesignWidth="230"
+    FontSize="{DynamicResource GlobalFontSize}"
     mc:Ignorable="d">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -35,7 +36,6 @@
                 Margin="5,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                FontSize="16"
                 Text="Current Scores" />
         </Border>
 
@@ -70,8 +70,7 @@
                     VerticalContentAlignment="Center"
                     BorderBrush="Black"
                     BorderThickness="1"
-                    Content="{Binding Team1Names}"
-                    FontSize="16" />
+                    Content="{Binding Team1Names}" />
                 <Border
                     Grid.Row="1"
                     Grid.Column="0"
@@ -94,8 +93,7 @@
                     VerticalContentAlignment="Center"
                     BorderBrush="Black"
                     BorderThickness="1"
-                    Content="{Binding Team2Names}"
-                    FontSize="16" />
+                    Content="{Binding Team2Names}" />
                 <Border
                     Grid.Row="4"
                     Grid.Column="0"

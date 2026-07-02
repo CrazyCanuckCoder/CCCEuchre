@@ -595,6 +595,8 @@ namespace Euchre.Logic.Data {
             
             private global::System.Data.DataColumn columnCanGoUnder;
             
+            private global::System.Data.DataColumn columnFontSize;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public SettingsDataTable() {
@@ -696,6 +698,14 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public global::System.Data.DataColumn FontSizeColumn {
+                get {
+                    return this.columnFontSize;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -731,7 +741,7 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
-            public SettingsRow AddSettingsRow(string SelectedCardBackFile, bool PlayLastCardInHumansHand, bool UseStandardMenu, bool UseCanadianLonerRule, bool MustHaveSuitToCall, bool StickTheDealer, bool UseNoAceNoFaceNoTrumpRule, bool CanGoUnder) {
+            public SettingsRow AddSettingsRow(string SelectedCardBackFile, bool PlayLastCardInHumansHand, bool UseStandardMenu, bool UseCanadianLonerRule, bool MustHaveSuitToCall, bool StickTheDealer, bool UseNoAceNoFaceNoTrumpRule, bool CanGoUnder, string FontSize) {
                 SettingsRow rowSettingsRow = ((SettingsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         SelectedCardBackFile,
@@ -741,7 +751,8 @@ namespace Euchre.Logic.Data {
                         MustHaveSuitToCall,
                         StickTheDealer,
                         UseNoAceNoFaceNoTrumpRule,
-                        CanGoUnder};
+                        CanGoUnder,
+                        FontSize};
                 rowSettingsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowSettingsRow);
                 return rowSettingsRow;
@@ -772,6 +783,7 @@ namespace Euchre.Logic.Data {
                 this.columnStickTheDealer = base.Columns["StickTheDealer"];
                 this.columnUseNoAceNoFaceNoTrumpRule = base.Columns["UseNoAceNoFaceNoTrumpRule"];
                 this.columnCanGoUnder = base.Columns["CanGoUnder"];
+                this.columnFontSize = base.Columns["FontSize"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -793,8 +805,11 @@ namespace Euchre.Logic.Data {
                 base.Columns.Add(this.columnUseNoAceNoFaceNoTrumpRule);
                 this.columnCanGoUnder = new global::System.Data.DataColumn("CanGoUnder", typeof(bool), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnCanGoUnder);
+                this.columnFontSize = new global::System.Data.DataColumn("FontSize", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnFontSize);
                 this.columnUseNoAceNoFaceNoTrumpRule.DefaultValue = ((bool)(false));
                 this.columnCanGoUnder.DefaultValue = ((bool)(false));
+                this.columnFontSize.DefaultValue = ((string)("Medium"));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1136,6 +1151,22 @@ namespace Euchre.Logic.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public string FontSize {
+                get {
+                    try {
+                        return ((string)(this[this.tableSettings.FontSizeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'FontSize\' in table \'Settings\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSettings.FontSizeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public bool IsSelectedCardBackFileNull() {
                 return this.IsNull(this.tableSettings.SelectedCardBackFileColumn);
             }
@@ -1228,6 +1259,18 @@ namespace Euchre.Logic.Data {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
             public void SetCanGoUnderNull() {
                 this[this.tableSettings.CanGoUnderColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public bool IsFontSizeNull() {
+                return this.IsNull(this.tableSettings.FontSizeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
+            public void SetFontSizeNull() {
+                this[this.tableSettings.FontSizeColumn] = global::System.Convert.DBNull;
             }
         }
         
