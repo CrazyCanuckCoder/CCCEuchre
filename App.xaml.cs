@@ -41,6 +41,13 @@ public partial class App : Application
         set => Current.Resources["GlobalFontSize"] = value;
     }
 
+    private static Dictionary<string, int> PossibleFontSizes = new()
+    {
+        { "Small", 11 },
+        { "Medium", 15 },
+        { "Large", 18 },
+    };
+
 
     protected async override void OnStartup(StartupEventArgs e)
     {
@@ -67,6 +74,12 @@ public partial class App : Application
                 services.AddSingleton<MainWindow>();
             })
             .Build();
+
+        // Set the global font size based on the user's settings.
+
+        GlobalFontSize = PossibleFontSizes[GameSettingsManager.Instance.FontSize];
+
+        // Start the host asynchronously to ensure all services are initialized before showing the main window.
 
         await _host.StartAsync();
 

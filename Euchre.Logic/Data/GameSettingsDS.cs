@@ -1,1 +1,1 @@
-﻿namespace Euchre.Logic.Data;
+﻿

@@ -2,6 +2,7 @@
     x:Class="Euchre.Windows.OptionsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:UILogic="clr-namespace:Euchre.UILogic.Classes"
     xmlns:UserControls="clr-namespace:Euchre.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Euchre.Windows"
@@ -20,6 +21,8 @@
         <Style x:Key="CheckboxStyle" TargetType="CheckBox">
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
+        <UILogic:FontSizeToBooleanConverter x:Key="FontSizeToBooleanConverter" />
+        <UILogic:DictionaryValueConverter x:Key="DictionaryValueConverter" />
     </Window.Resources>
 
     <Grid Margin="20">
@@ -91,6 +94,7 @@
                         <RowDefinition Height="40" />
                         <RowDefinition Height="40" />
                         <RowDefinition Height="40" />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <!--
@@ -169,6 +173,63 @@
                         Content="Allow players to Go Under - swap 3 low cards for the kitty cards."
                         IsChecked="{Binding GameSettings.CanGoUnder}"
                         Style="{StaticResource CheckboxStyle}" />
+
+                    <Grid Grid.Row="7" Grid.Column="0">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition />
+                            <RowDefinition Height="30" />
+                        </Grid.RowDefinitions>
+
+                        <!--  The label above the font size selection control.  -->
+                        
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Content="Application Font Size" />
+                        
+                        <!--  The list of font size options.  -->
+                        
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Padding="20,0,20,0"
+                            BorderBrush="Black"
+                            BorderThickness="1">
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                                <RadioButton
+                                    VerticalContentAlignment="Center"
+                                    Content="Small"
+                                    FontSize="{Binding PossibleFontSizes, Converter={StaticResource DictionaryValueConverter}, ConverterParameter=Small}"
+                                    GroupName="FontSize"
+                                    IsChecked="{Binding GameSettings.FontSize, Converter={StaticResource FontSizeToBooleanConverter}, ConverterParameter=Small}" />
+                                <RadioButton
+                                    VerticalContentAlignment="Center"
+                                    Content="Medium"
+                                    FontSize="{Binding PossibleFontSizes, Converter={StaticResource DictionaryValueConverter}, ConverterParameter=Medium}"
+                                    GroupName="FontSize"
+                                    IsChecked="{Binding GameSettings.FontSize, Converter={StaticResource FontSizeToBooleanConverter}, ConverterParameter=Medium}" />
+                                <RadioButton
+                                    VerticalContentAlignment="Center"
+                                    Content="Large"
+                                    FontSize="{Binding PossibleFontSizes, Converter={StaticResource DictionaryValueConverter}, ConverterParameter=Large}"
+                                    GroupName="FontSize"
+                                    IsChecked="{Binding GameSettings.FontSize, Converter={StaticResource FontSizeToBooleanConverter}, ConverterParameter=Large}" />
+                            </StackPanel>
+                        </Border>
+                        
+                        <!--  The label indicating that a restart is required.  -->
+                        <Label
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Content="(Restart required.)" />
+                    </Grid>
                 </Grid>
             </TabItem>
         </TabControl>

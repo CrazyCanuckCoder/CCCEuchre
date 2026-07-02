@@ -85,6 +85,12 @@ public sealed class GameSettingsManager
     public bool CanGoUnder { get; set; } = false;
 
     /// <summary>
+    /// Gets or sets the font size for the application.  This is used to scale the UI elements in the 
+    /// application.
+    /// </summary>
+    public string FontSize { get; set; } = "Medium";
+
+    /// <summary>
     /// Reads the current XML file and loads the information into the GameDataSet property.
     /// </summary>
     /// <exception cref="FileNotFoundException"></exception>
@@ -103,6 +109,7 @@ public sealed class GameSettingsManager
             StickTheDealer = settingsRow.StickTheDealer;
             NoAceNoFaceNoTrumpRule = settingsRow.UseNoAceNoFaceNoTrumpRule;
             CanGoUnder = settingsRow.CanGoUnder;
+            FontSize = settingsRow.FontSize;
         }
         else
         {
@@ -149,11 +156,13 @@ public sealed class GameSettingsManager
             settingsRow.StickTheDealer = StickTheDealer;
             settingsRow.UseNoAceNoFaceNoTrumpRule = NoAceNoFaceNoTrumpRule;
             settingsRow.CanGoUnder = CanGoUnder;
+            settingsRow.FontSize = FontSize;
         }
         else
         {
             _settingsDS.Settings.AddSettingsRow(SelectedCardBack, PlayLastCardInHand, UseStandardMenu, 
-                CanadianLonerRule, MustHaveSuitToCall, StickTheDealer, NoAceNoFaceNoTrumpRule, CanGoUnder);
+                CanadianLonerRule, MustHaveSuitToCall, StickTheDealer, NoAceNoFaceNoTrumpRule, CanGoUnder,
+                FontSize);
         }
 
         _settingsDS.AcceptChanges();
