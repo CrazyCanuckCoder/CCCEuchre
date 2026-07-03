@@ -68,10 +68,10 @@ public partial class CardBackSelectionUserControl : UserControl
         if (resources != null)
         {
             List<string> cardBackList = [];
-            string folderName = "images/cardbacks/";
+            var folderName = "images/cardbacks/";
             foreach (var res in resources)
             {
-                string? resourceName = ((DictionaryEntry)res).Key.ToString();
+                var resourceName = ((DictionaryEntry)res).Key.ToString();
                 if (resourceName != null && resourceName.StartsWith(folderName) &&
                     !resourceName.Contains("rotated") &&
                     !resourceName.Contains("disabled"))

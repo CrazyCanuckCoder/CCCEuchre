@@ -113,7 +113,7 @@ public class GameStateManager : IGameStateManager
     /// </summary>
     public void ResetTricksWonByPlayers()
     {
-        for (int index = 0; index < NUMBER_OF_PLAYERS; index++)
+        for (var index = 0; index < NUMBER_OF_PLAYERS; index++)
         {
             TricksWonByPlayers[index] = 0;
         }

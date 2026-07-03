@@ -47,7 +47,7 @@ public class PlayerTests
     [Test]
     public void AddCard_ShouldThrowException_WhenExceedingMaxHandSize()
     {
-        for (int rank = (int)Rank.Nine; rank < (int)Rank.Ace; rank++)
+        for (var rank = (int)Rank.Nine; rank < (int)Rank.Ace; rank++)
         {
             _player?.AddCard(new Card(Suit.Hearts, (Rank)rank));
         }

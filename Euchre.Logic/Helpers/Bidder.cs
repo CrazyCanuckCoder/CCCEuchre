@@ -108,7 +108,7 @@ public class Bidder : IBidder
     /// <returns>True to indicate the user should call the specified suit as trump.</returns>
     private bool ShouldCallSuit(List<Card> cards, Suit suit, out bool goAlone)
     {
-        bool callSuit = false;
+        var callSuit = false;
 
         var numBowers = CardFinder.CountBowers(cards, suit);
         var numAces = CardFinder.CountNonTrumpCardsOfRank(cards, Rank.Ace, suit);

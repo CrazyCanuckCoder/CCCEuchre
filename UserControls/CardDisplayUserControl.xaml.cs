@@ -78,7 +78,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
 
             // Load each card in order.
 
-            for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
+            for (var cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
             {
                 // Determine the margin to use for the current card.
 
@@ -175,11 +175,11 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
             //  current group of cards. 
 
             Suit previousSuit = Cards.First().Suit;
-            bool isTrump = Cards.First().IsTrump(trumpSuit);
+            var isTrump = Cards.First().IsTrump(trumpSuit);
 
             // Load each card in order.
 
-            for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
+            for (var cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
             {
                 // Load the image for the card, checking for whether or not it should be disabled.
 
@@ -298,7 +298,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
 
             // Load each card in order.
 
-            for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
+            for (var cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
             {
                 // Determine the margin to use for the current card.
 
@@ -362,7 +362,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
     {
         // Load each card back for the specified number of cards.
 
-        for (int cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
+        for (var cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
         {
             // Add the image to the collection of images and set it visible.
 
@@ -385,7 +385,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
 
         // Load each card back for the specified number of cards.
 
-        for (int cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
+        for (var cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
         {
             // Add the image to the collection of images and set it visible.
 
@@ -423,11 +423,11 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
             //  current group of cards. 
 
             Suit previousSuit = Cards.First().Suit;
-            bool isTrump = Cards.First().IsTrump(trumpSuit);
+            var isTrump = Cards.First().IsTrump(trumpSuit);
 
             // Load each card in order.
 
-            for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
+            for (var cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
             {
                 // Load the image for the card.
 

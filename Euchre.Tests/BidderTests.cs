@@ -119,7 +119,7 @@ public class BidderTests
         var player = new AutomatedPlayer("TestPlayer", 0, 0, new GameStateManager(), 1);
         player.ReceiveSeveralCards(playerHand);
         var bidder = new Bidder(player);
-        bool result = bidder.DetermineWhetherToOrderUp(kitty, isDealer, out bool goAlone);
+        var result = bidder.DetermineWhetherToOrderUp(kitty, isDealer, out var goAlone);
 
         using (Assert.EnterMultipleScope())
         {

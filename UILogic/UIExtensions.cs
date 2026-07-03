@@ -19,8 +19,8 @@ public static class UIExtensions
     {
         if (parent != null)
         {
-            int childCount = VisualTreeHelper.GetChildrenCount(parent);
-            for (int childIdx = 0; childIdx < childCount; childIdx++)
+            var childCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (var childIdx = 0; childIdx < childCount; childIdx++)
             {
                 // Retrieve child visual at specified index value.
 

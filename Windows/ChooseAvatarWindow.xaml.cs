@@ -40,7 +40,7 @@ public partial class ChooseAvatarWindow : Window
     {
         // Load each avatar in order.
 
-        for (int avatarNumber = 1; avatarNumber <= UIConstants.MaximumNumberOfAvatars; avatarNumber++)
+        for (var avatarNumber = 1; avatarNumber <= UIConstants.MaximumNumberOfAvatars; avatarNumber++)
         {
             // Add the image to the collection of images.
 

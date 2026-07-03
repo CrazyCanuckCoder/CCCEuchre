@@ -48,7 +48,7 @@ public class BoolToContentConverter : IValueConverter
     /// <returns>The TrueContent, FalseContent, or the NullContent based on the specified value.</returns>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        bool? boolValue = value as bool?;
+        var boolValue = value as bool?;
         return boolValue.HasValue ?
              boolValue.Value ? TrueContent : FalseContent :
              NullContent;

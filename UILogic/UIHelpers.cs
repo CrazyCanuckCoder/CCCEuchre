@@ -78,7 +78,7 @@ internal static class UIHelpers
     /// <returns>A BitmapImage containing the specified card.</returns>
     public static BitmapImage GenerateCardImageSource(Card card, bool isRotated, bool isDisabled)
     {
-        string cardFilename = card.ToString().ToLower() + ".png";
+        var cardFilename = card.ToString().ToLower() + ".png";
         if (isRotated)
         {
             cardFilename = cardFilename.Insert(cardFilename.LastIndexOf('.'), " rotated");
@@ -87,7 +87,7 @@ internal static class UIHelpers
         {
             cardFilename = cardFilename.Insert(cardFilename.LastIndexOf('.'), " disabled");
         }
-        string cardUri = $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}";
+        var cardUri = $"pack://application:,,,/Euchre;component/images/cards/{cardFilename}";
 
         return GenerateImageSource(cardUri);
     }
@@ -99,7 +99,7 @@ internal static class UIHelpers
     /// <returns>A BitmapImage containing the specified suit image.</returns>
     public static BitmapImage GenerateSuitImageSource(Suit suit)
     {
-        string uriSource = "pack://application:,,,/Euchre;component/images/suits/";
+        var uriSource = "pack://application:,,,/Euchre;component/images/suits/";
         switch (suit)
         {
             case Suit.Clubs:
@@ -129,7 +129,7 @@ internal static class UIHelpers
     /// <returns>A BitmapImage containing the specified card back.</returns>
     public static BitmapImage GenerateCardBackImageSource(bool isRotated, bool isDisabled)
     {
-        string cardFilename = GameSettingsManager.Instance.SelectedCardBack;
+        var cardFilename = GameSettingsManager.Instance.SelectedCardBack;
 
         if (isRotated)
         {
@@ -139,7 +139,7 @@ internal static class UIHelpers
         {
             cardFilename = cardFilename.Insert(cardFilename.LastIndexOf('.'), " disabled");
         }
-        string cardbackUri = $"pack://application:,,,/Euchre;component/images/cardbacks/{cardFilename}";
+        var cardbackUri = $"pack://application:,,,/Euchre;component/images/cardbacks/{cardFilename}";
 
         return GenerateImageSource(cardbackUri);
     }
@@ -151,7 +151,7 @@ internal static class UIHelpers
     /// <returns>A BitmapImage containing the specified avatar.</returns>
     public static BitmapImage GenerateAvatarImageSource(int avatarNumber)
     {
-        string filename = $"avatar{avatarNumber}.png";
+        var filename = $"avatar{avatarNumber}.png";
         return GenerateImageSource($"pack://application:,,,/Euchre;component/images/avatars/{filename}");
     }
 }

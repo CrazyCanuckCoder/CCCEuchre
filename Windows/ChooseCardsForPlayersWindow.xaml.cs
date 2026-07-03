@@ -405,7 +405,7 @@ public partial class ChooseCardsForPlayersWindow : Window
     /// <returns>True if all cards have been assigned correctly.</returns>
     private bool VerifyCardSelection()
     {
-        bool allCardsAssigned = Player1Cards.Count == Constants.CARDS_PER_PLAYER &&
+        var allCardsAssigned = Player1Cards.Count == Constants.CARDS_PER_PLAYER &&
                                 Player2Cards.Count == Constants.CARDS_PER_PLAYER &&
                                 Player3Cards.Count == Constants.CARDS_PER_PLAYER &&
                                 Player4Cards.Count == Constants.CARDS_PER_PLAYER;

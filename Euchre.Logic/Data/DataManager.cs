@@ -38,7 +38,7 @@ public class DataManager : IDataManager
 
             foreach (var player in gameStateManager.Players)
             {
-                int playerID = stateDS.Player.AddPlayerRow(player.Name, player.IsHuman, player.TeamIndex,
+                var playerID = stateDS.Player.AddPlayerRow(player.Name, player.IsHuman, player.TeamIndex,
                     player.PlayerIndex, player.IsGoingAlone, player.AvatarNumber).PlayerID;
                 foreach (var card in player.Hand)
                 {
@@ -50,10 +50,10 @@ public class DataManager : IDataManager
 
             foreach (var trick in gameStateManager.CurrentRoundTricks)
             {
-                int trickID = stateDS.Trick.AddTrickRow((int)trick.LeadSuit, (int)trick.Trump).TrickID;
+                var trickID = stateDS.Trick.AddTrickRow((int)trick.LeadSuit, (int)trick.Trump).TrickID;
                 foreach (var playerCard in trick.Cards)
                 {
-                    int playerID = stateDS.Player.Where(p => p.Name == playerCard.Key.Name).First().PlayerID;
+                    var playerID = stateDS.Player.Where(p => p.Name == playerCard.Key.Name).First().PlayerID;
                     stateDS.TrickCards.AddTrickCardsRow(trickID, playerID, (int)playerCard.Value.Suit,
                         (int)playerCard.Value.Rank);
                 }
@@ -61,7 +61,7 @@ public class DataManager : IDataManager
 
             // Add the team scores to the dataset.
 
-            for (int idx = 0; idx < gameStateManager.TeamScores.Length; idx++)
+            for (var idx = 0; idx < gameStateManager.TeamScores.Length; idx++)
             {
                 stateDS.TeamScores.AddTeamScoresRow(idx, gameStateManager.TeamScores[idx]);
             }
@@ -231,7 +231,7 @@ public class DataManager : IDataManager
     private static void AddPlayers(IGameStateManager gameStateManager, GameStateDS stateDS)
     {
         gameStateManager.Players = new IPlayer[Constants.NUMBER_OF_PLAYERS];
-        int playerIdx = 0;
+        var playerIdx = 0;
         foreach (var playerRow in stateDS.Player)
         {
             gameStateManager.Players[playerIdx] = CreatePlayerFromDataRow(playerRow, gameStateManager);

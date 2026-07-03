@@ -171,7 +171,7 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl, IBasePlay
     /// </summary>
     private void ResetIconVisibility()
     {
-        for (int index = 0; index < TrickIconsVisibility.Count; index++)
+        for (var index = 0; index < TrickIconsVisibility.Count; index++)
         {
             TrickIconsVisibility[index] = Visibility.Hidden;
         }
@@ -185,7 +185,7 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl, IBasePlay
     {
         if (numberOfTricks <= Constants.MAX_NUMBER_OF_TRICKS)
         {
-            for (int count = 1; count <= numberOfTricks; count++)
+            for (var count = 1; count <= numberOfTricks; count++)
             {
                 TrickIconsVisibility[count - 1] = Visibility.Visible;
             }

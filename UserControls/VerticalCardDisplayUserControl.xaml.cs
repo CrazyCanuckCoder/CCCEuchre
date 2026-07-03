@@ -66,7 +66,7 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
         {
             // Load each card in order.
 
-            for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
+            for (var cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
             {
                 // Add the image to the collection of images.
 
@@ -124,7 +124,7 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
     {
         // Load each card back for the specified number cards.
 
-        for (int cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
+        for (var cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
         {
             // Add the image to the collection of images and set it visible.
 
@@ -147,7 +147,7 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
 
         // Load each card back for the specified number cards.
 
-        for (int cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
+        for (var cardIndex = 0; cardIndex < numberOfCards; cardIndex++)
         {
             // Add the image to the collection of images and set it visible.
 
@@ -179,7 +179,7 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
         {
             // Load each card in order.
 
-            for (int cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
+            for (var cardIndex = 0; cardIndex < Cards.Count; cardIndex++)
             {
                 // Add the image to the collection of images.
 

@@ -153,7 +153,7 @@ internal class MainWindowController : IMainWindowController
     /// </summary>
     public void ResetCardDisplayControlsVisibility()
     {
-        for (int playerIndex = 0; playerIndex < Constants.NUMBER_OF_PLAYERS; playerIndex++)
+        for (var playerIndex = 0; playerIndex < Constants.NUMBER_OF_PLAYERS; playerIndex++)
         {
             if (_playerCardDisplayControlsVisibility.TryGetValue(playerIndex, out Action<Visibility>? value))
             {
@@ -168,7 +168,7 @@ internal class MainWindowController : IMainWindowController
     /// </summary>
     public void ClearPlayedCards()
     {
-        for (int index = 0; index < _playerPlayedCardsDisplayControls.Count; index++)
+        for (var index = 0; index < _playerPlayedCardsDisplayControls.Count; index++)
         {
             _playerPlayedCardsDisplayControls[index].ClearCards();
         }
@@ -315,7 +315,7 @@ internal class MainWindowController : IMainWindowController
     /// </summary>
     public void ResetTrickCounters()
     {
-        for (int playerIndex = 0; playerIndex < Constants.NUMBER_OF_PLAYERS; playerIndex++)
+        for (var playerIndex = 0; playerIndex < Constants.NUMBER_OF_PLAYERS; playerIndex++)
         {
             _playerDisplayControls[playerIndex].UpdateNumberOfTricks(0);
         }
@@ -459,7 +459,7 @@ internal class MainWindowController : IMainWindowController
     /// </summary>
     private void SetupPlayerDisplayControls()
     {
-        for (int playerIndex = 0; playerIndex < Constants.NUMBER_OF_PLAYERS; playerIndex++)
+        for (var playerIndex = 0; playerIndex < Constants.NUMBER_OF_PLAYERS; playerIndex++)
         {
             _playerDisplayControls[playerIndex].SetActivePlayer(_gameStateManager.Players![playerIndex],
                 _gameStateManager.Players[playerIndex].AvatarNumber);

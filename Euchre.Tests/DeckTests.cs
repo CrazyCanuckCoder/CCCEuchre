@@ -82,7 +82,7 @@ public class DeckTests
         _deck!.Shuffle();
         
         var dealtCards = new List<Card>();
-        for (int i = 0; i < 24; i++)
+        for (var i = 0; i < 24; i++)
         {
             dealtCards.Add(_deck.Deal() ?? throw new EmptyDeckException());
         }

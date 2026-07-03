@@ -153,7 +153,7 @@ public partial class NewGameWindow : Window
     /// <returns>True to indicate the required information has been entered.</returns>
     private bool UserEnteredAllInformation()
     {
-        string message = string.Empty;
+        var message = string.Empty;
 
         if (PlayerName == string.Empty)
         {

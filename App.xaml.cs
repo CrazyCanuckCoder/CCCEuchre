@@ -24,10 +24,7 @@ public partial class App : Application
     /// <summary>
     /// Gets services.
     /// </summary>
-    public static IServiceProvider Services
-    {
-        get { return _host!.Services; }
-    }
+    public static IServiceProvider Services => _host!.Services;
 
     // Source - https://stackoverflow.com/a/65626626
     // Posted by Mr. Squirrel.Downy
@@ -41,7 +38,11 @@ public partial class App : Application
         set => Current.Resources["GlobalFontSize"] = value;
     }
 
-    private static Dictionary<string, int> PossibleFontSizes = new()
+    /// <summary>
+    /// A dictionary mapping font size names to their corresponding numeric values, used for setting the 
+    /// global font size in the application.
+    /// </summary>
+    private static readonly Dictionary<string, int> PossibleFontSizes = new()
     {
         { "Small", 11 },
         { "Medium", 15 },
@@ -127,7 +128,7 @@ public partial class App : Application
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
     }
 
-    protected override async void OnExit(ExitEventArgs e)
+    protected async override void OnExit(ExitEventArgs e)
     {
         if (_host is not null)
         {

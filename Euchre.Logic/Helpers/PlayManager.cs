@@ -122,7 +122,7 @@ public class PlayManager : IPlayManager
         {
             // See if trump has been led in the current round.
 
-            bool hasTrumpBeenLed = _gameStateManager.CurrentRoundTricks
+            var hasTrumpBeenLed = _gameStateManager.CurrentRoundTricks
                                           .Any(t => t.Cards.First().Value.EffectiveSuit(trump) == trump);
             if (!hasTrumpBeenLed)
             {
@@ -200,8 +200,8 @@ public class PlayManager : IPlayManager
         //   has off suit.
 
         (IPlayer winningPlayer, ICard highestTrickCard) = trick.GetHighestCardInTrick();
-        bool hasTrump = CardFinder.HasTrump(_player.Hand, trump);
-        bool hasOffSuit = CardFinder.HasOffSuit(_player.Hand, trump);
+        var hasTrump = CardFinder.HasTrump(_player.Hand, trump);
+        var hasOffSuit = CardFinder.HasOffSuit(_player.Hand, trump);
 
         // If the lead suit is trump, determine which trump card to play.
 
@@ -266,7 +266,7 @@ public class PlayManager : IPlayManager
             //   If so, play the highest card of the lead suit. If not, play the lowest card of the lead suit.
 
             Card playersHighestCard = CardFinder.GetHighestCardOfSuit(_player.Hand, leadSuit, trump)!;
-            bool hasHigherLeadSuitCard = playersHighestCard.GetTrickValue(trump, leadSuit) > 
+            var hasHigherLeadSuitCard = playersHighestCard.GetTrickValue(trump, leadSuit) > 
                 highestTrickCard.GetTrickValue(trump, leadSuit);
             cardToPlay = hasHigherLeadSuitCard
                 ? playersHighestCard
@@ -383,7 +383,7 @@ public class PlayManager : IPlayManager
     {
         Card? cardToPlay;
 
-        bool canBeatOpponentCard =
+        var canBeatOpponentCard =
             CardFinder.GetHighestTrumpCard(_player.Hand, trump)!.GetTrickValue(trump, trump) >
             opponentsCard.GetTrickValue(trump, trump);
 

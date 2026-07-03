@@ -181,11 +181,11 @@ public abstract class Player : IPlayer
     {
         if (GameSettingsManager.Instance.NoAceNoFaceNoTrumpRule)
         {
-            int numAces = CardFinder.CountCardsOfRank(Hand, Rank.Ace);
-            int numFaces = CardFinder.CountCardsOfRank(Hand, Rank.King) +
+            var numAces = CardFinder.CountCardsOfRank(Hand, Rank.Ace);
+            var numFaces = CardFinder.CountCardsOfRank(Hand, Rank.King) +
                            CardFinder.CountCardsOfRank(Hand, Rank.Queen) +
                            CardFinder.CountCardsOfRank(Hand, Rank.Jack);
-            int numTrump = CardFinder.CountTrump(Hand, trump);
+            var numTrump = CardFinder.CountTrump(Hand, trump);
 
             return numAces + numFaces + numTrump == 0;
         }
