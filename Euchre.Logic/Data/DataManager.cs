@@ -12,7 +12,7 @@ public class DataManager : IDataManager
     /// The name of the file where game data is saved and loaded from.
     /// </summary>
     internal const string FILE_NAME = "GameData.xml";
-    private static readonly object _lockObject = new();
+    private static readonly Lock _lockObject = new();
 
     /// <summary>
     /// Saves the information in the provided game state manager to an XML file.

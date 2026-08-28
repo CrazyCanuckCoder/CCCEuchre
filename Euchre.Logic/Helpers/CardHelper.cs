@@ -1,6 +1,6 @@
-﻿using Euchre.Logic.Helpers;
+﻿using Euchre.Logic.Components;
 
-namespace Euchre.Logic.Components;
+namespace Euchre.Logic.Helpers;
 
 /// <summary>
 /// Provides helper methods for cards and their suits.

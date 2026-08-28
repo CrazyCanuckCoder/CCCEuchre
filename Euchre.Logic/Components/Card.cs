@@ -1,3 +1,4 @@
+using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using static Euchre.Logic.Helpers.Constants;
 

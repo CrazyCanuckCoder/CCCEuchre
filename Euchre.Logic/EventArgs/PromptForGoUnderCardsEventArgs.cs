@@ -1,4 +1,6 @@
-﻿namespace Euchre.Logic.Components;
+﻿using Euchre.Logic.Components;
+
+namespace Euchre.Logic.EventArgs;
 
 public class PromptForGoUnderCardsEventArgs : System.EventArgs
 {
