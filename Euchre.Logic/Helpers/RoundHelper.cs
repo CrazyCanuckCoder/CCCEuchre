@@ -1,8 +1,5 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Euchre.Logic.Helpers;
 
@@ -11,6 +8,13 @@ namespace Euchre.Logic.Helpers;
 /// </summary>
 public class RoundHelper
 {
+    /// <summary>
+    /// Determines if the leading player can win all of the remaining tricks in the round based on their hand 
+    /// and the hands of the other players.
+    /// </summary>
+    /// <param name="leadingPlayer">The player that is going to lead a card in the current round.</param>
+    /// <param name="gameStateManager">The game state manager.</param>
+    /// <returns>True if the leading player can win all remaining tricks; otherwise, false.</returns>
     public static bool PlayerCanWinRemainingTricks(IPlayer leadingPlayer, IGameStateManager gameStateManager)
     {
         bool canWinRest = true;
@@ -26,7 +30,8 @@ public class RoundHelper
             }
         }
 
-        // Check if a lone hand is being played and remove the lone player's partner from consideration.
+        // Check if a lone hand is being played and remove the lone player's partner from consideration since
+        //  they are sitting out the round.
 
         if (gameStateManager.GoingAlone && gameStateManager.AlonePlayer != null)
         {
@@ -36,24 +41,56 @@ public class RoundHelper
 
         // Check each card in the player's hand to see if it can win against the remaining players' hands.
 
+        foreach (var card in leadingPlayer.Hand)
+        {
+            // Is the card a trump card?
+
+            if (card.EffectiveSuit(gameStateManager.Trump!.Value) == gameStateManager.Trump.Value)
+            {
+                // Check if any of the remaining players have a higher trump card.
+
+                foreach (var playerHand in playersHands.Values)
+                {
+                    if (CardHelper.CardListHasHigherTrumpThanCard(playerHand, card, 
+                        gameStateManager.Trump.Value))
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                // Since the card is not a trump card, check if any of the other players could beat it - 
+                //   either with a higher card of the same suit or with a trump card.
+
+                foreach (var playerHand in playersHands.Values)
+                {
+                    if (CardHelper.CardListCanDefeatCard(playerHand, card, gameStateManager.Trump.Value))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
         return canWinRest;
     }
 
     /// <summary>
-    /// Gets the index of the partner of the player who is going alone.
+    /// Gets the index of the partner of a specified player.
     /// </summary>
-    /// <param name="alonePlayer">The player who is going alone.</param>
+    /// <param name="player">The specified player to find use to find their partner.</param>
     /// <param name="players">The list of all players.</param>
     /// <returns>The index of the partner player.</returns>
-    private static int GetPlayersPartnerIndex(IPlayer alonePlayer, IPlayer[] players)
+    private static int GetPlayersPartnerIndex(IPlayer player, IPlayer[] players)
     {
         var partnerIndex = 0;
 
-        foreach (var player in players)
+        foreach (var gamePlayer in players)
         {
-            if (player.TeamIndex == alonePlayer.TeamIndex && player.PlayerIndex != alonePlayer.PlayerIndex)
+            if (gamePlayer.TeamIndex == player.TeamIndex && gamePlayer.PlayerIndex != player.PlayerIndex)
             {
-                partnerIndex = player.PlayerIndex;
+                partnerIndex = gamePlayer.PlayerIndex;
                 break;
             }
         }
