@@ -656,7 +656,7 @@ public class EuchreGame : IEuchreGame
         {
             if (trickNum < MAX_NUMBER_OF_TRICKS)
             {
-                if (PlayerCanWinRemainingTricks(GameInfo.NextTrickPlayer!))
+                if (RoundHelper.PlayerCanWinRemainingTricks(GameInfo.NextTrickPlayer!, GameInfo))
                 {
                     GameInfo.TricksWonByPlayers[GameInfo.NextTrickPlayer.PlayerIndex] +=
                         MAX_NUMBER_OF_TRICKS - (trickNum - 1);
@@ -698,114 +698,6 @@ public class EuchreGame : IEuchreGame
         GameInfo.CurrentTrickNumber = 0;
         GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
         GameInfo.SaveGameData();
-    }
-
-    /// <summary>
-    /// Determines if the specified player can win all the remaining tricks in the round based on their hand.
-    /// </summary>
-    /// <param name="leadingPlayer">The current player with the lead.</param>
-    /// <returns>True to indicate the player can win the remaining tricks.</returns>
-    private bool PlayerCanWinRemainingTricks(IPlayer leadingPlayer)
-    {
-        var canWinRest = false;
-
-        Log.Debug($"Starting...");
-        Log.Debug($"Player: {leadingPlayer.Name} - Player's Hand: {leadingPlayer.Hand.PrettyPrint()}");
-
-        // Does the player has all trump left in their hand.
-
-        if (CardFinder.CountTrump(leadingPlayer.Hand, GameInfo.Trump!.Value) == leadingPlayer.Hand.Count)
-        {
-            Log.Debug("Player only has trump left.");
-
-            // Is it all the highest trump?
-
-            var highestTrumpCards = CardHelper.CreateHighestTrumpHand(GameInfo.Trump.Value);
-            if (CardHelper.CardListsAreEqual(leadingPlayer.Hand, highestTrumpCards.Take(leadingPlayer.Hand.Count).ToList()))
-            {
-                Log.Debug($"Player's hand has the highest remaining trump: {highestTrumpCards.Take(leadingPlayer.Hand.Count).ToList().PrettyPrint()}");
-
-                // The rest are mine!
-
-                canWinRest = true;
-            }
-            else if (CardHelper.TrumpCardsAreSequential(leadingPlayer.Hand, GameInfo.Trump.Value))
-            {
-                // Has all the trump higher than the trump in their hand been played?
-
-                var highestTrumpInHand = CardFinder.GetHighestTrumpCard(leadingPlayer.Hand,
-                    GameInfo.Trump.Value);
-                var playedTrumpCards = from trick in GameInfo.CurrentRoundTricks
-                                         from card in trick.Cards
-                                        where card.Value.EffectiveSuit(GameInfo.Trump.Value) == GameInfo.Trump.Value
-                                       select card.Value;
-                if (CardHelper.AllCardsAreHigherThanTrumpCard(playedTrumpCards, highestTrumpInHand!))
-                {
-                    Log.Debug($"All cards higher than the player's trump cards have been played.  Player's highest card: {highestTrumpInHand}.  Played cards: {playedTrumpCards.ToList().PrettyPrint()}.");
-
-                    // The rest are mine!
-
-                    canWinRest = true;
-                }
-                else if (CardHelper.NoMoreTrumpRemaining(GameInfo.CurrentRoundTricks, GameInfo.Trump.Value))
-                {
-                    Log.Debug("There are no more trump remaining, so the player has the rest of the trump.");
-
-                    // The rest are mine!
-
-                    canWinRest = true;
-                }
-            }
-        }
-        else if (CardHelper.PlayerHasTrumpAndAces(leadingPlayer.Hand, GameInfo.Trump!.Value))
-        {
-            Log.Debug("Player has trump and aces.");
-
-            // Is the trump in the player's hand, the only remaining trump?
-
-            if (CardHelper.NoMoreTrumpRemaining(GameInfo.CurrentRoundTricks, GameInfo.Trump.Value))
-            {
-                Log.Debug("There are no more trump remaining.");
-
-                // Player has trump and aces, and no more trump is in the deck.
-                // To win the rest, player must have all aces of all non-trump suits.
-                // Get all aces that haven't been played yet.
-                var playedAces = (from trick in GameInfo.CurrentRoundTricks
-                                 from card in trick.Cards
-                                 where card.Value.Rank == Rank.Ace && card.Value.EffectiveSuit(GameInfo.Trump.Value) != GameInfo.Trump.Value
-                                 select card.Value).ToList();
-
-                var allNonTrumpAces = new List<Card>
-                {
-                    new(Suit.Hearts, Rank.Ace),
-                    new(Suit.Diamonds, Rank.Ace),
-                    new(Suit.Clubs, Rank.Ace),
-                    new(Suit.Spades, Rank.Ace),
-                }.Where(a => a.EffectiveSuit(GameInfo.Trump.Value) != GameInfo.Trump.Value).ToList();
-
-                var remainingNonTrumpAces = allNonTrumpAces.Where(a => !playedAces.Contains(a)).ToList();
-
-                // Check if player has all remaining non-trump aces
-                var hasAllRemainingAces = remainingNonTrumpAces.All(a => leadingPlayer.Hand.Contains(a));
-
-                if (hasAllRemainingAces)
-                {
-                    Log.Debug($"Player has all remaining non-trump aces: {remainingNonTrumpAces.PrettyPrint()}. Player can win the rest.");
-
-                    // The rest are mine!
-
-                    canWinRest = true;
-                }
-                else
-                {
-                    Log.Debug($"Player does not have all remaining non-trump aces. Remaining aces: {remainingNonTrumpAces.PrettyPrint()}. Player's hand: {leadingPlayer.Hand.PrettyPrint()}");
-                }
-            }
-        }
-
-        Log.Debug($"Returns {canWinRest}.");
-
-        return canWinRest;
     }
 
     /// <summary>

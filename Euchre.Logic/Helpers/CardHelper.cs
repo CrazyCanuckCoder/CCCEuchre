@@ -206,4 +206,58 @@ public class CardHelper
                 select card)
                .Count() > 2;
     }
+
+    /// <summary>
+    /// Determines if the provided list of cards contains a trump card that is higher than the specified card.
+    /// </summary>
+    /// <param name="cards">The list of cards to check.</param>
+    /// <param name="cardToCompare">The card to compare against.</param>
+    /// <param name="trump">The trump suit.</param>
+    /// <returns>True if the list contains a higher trump card; otherwise, false.</returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static bool CardListHasHigherTrumpThanCard(List<Card> cards, Card cardToCompare, Suit trump)
+    {
+        var hasHigherTrump = false;
+
+        if (cardToCompare.EffectiveSuit(trump) != trump)
+        {
+            throw new ArgumentException("The card to compare must be a trump card.");
+        }
+
+        if (CardFinder.HasTrump(cards, trump))
+        {
+            var highestTrumpInHand = CardFinder.GetHighestTrumpCard(cards, trump);
+            hasHigherTrump = 
+                highestTrumpInHand!.GetTrickValue(trump, trump) > cardToCompare.GetTrickValue(trump, trump);
+        }
+
+        return hasHigherTrump;
+    }
+
+    /// <summary>
+    /// Determines if the provided list of cards contains a card that can defeat the specified card, 
+    /// including any trump cards.
+    /// </summary>
+    /// <param name="playerHand">The list of cards to check.</param>
+    /// <param name="card">The card to compare against.</param>
+    /// <param name="trump">The trump suit.</param>
+    /// <returns>True if the list contains a card that can defeat the specified card; otherwise, false.</returns>
+    public static bool CardListCanDefeatCard(List<Card> playerHand, Card card, Suit trump)
+    {
+        bool hasHigherCard;
+
+        // Does the card list contain a card of the same suit that is higher than the card to compare?
+
+        if (CardFinder.HasACardOfSuit(playerHand, card.Suit, trump))
+        {
+            var highestCardOfSuit = CardFinder.GetHighestCardOfSuit(playerHand, card.Suit, trump);
+            hasHigherCard = highestCardOfSuit!.Rank > card.Rank;
+        }
+        else
+        {
+            hasHigherCard = CardFinder.HasTrump(playerHand, trump);
+        }
+
+        return hasHigherCard;
+    }
 }
