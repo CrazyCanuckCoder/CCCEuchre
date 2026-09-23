@@ -25,5 +25,6 @@ public interface IGameStateManager
     void ResetTricksWonByPlayers();
     void SaveGameData();
     void Reset();
+    void ResetRound();
     void CopyFrom(IGameStateManager other);
 }

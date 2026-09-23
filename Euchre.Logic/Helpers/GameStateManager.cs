@@ -2,6 +2,7 @@
 using Euchre.Logic.Data;
 using Euchre.Logic.Enums;
 using Euchre.Logic.Interfaces;
+using log4net;
 using System.IO;
 using static Euchre.Logic.Helpers.Constants;
 
@@ -186,6 +187,30 @@ public class GameStateManager : IGameStateManager
         LastCompletedStage = RoundStage.None;
         CurrentTrickNumber = 0;
         TricksWonByPlayers = new int[NUMBER_OF_PLAYERS]; 
+    }
+
+    /// <summary>
+    /// Resets the game state to prepare for a new round.
+    /// </summary>
+    /// <remarks>Call this method at the start of each round to clear round-specific data and initialize the
+    /// game for continued play. This method resets trick history, trump information, and other round-related
+    /// properties. It also updates the game checkpoint and persists the current game state.</remarks>
+    public void ResetRound()
+    {
+        // Reset for new round.
+
+        CurrentRoundTricks.Clear();
+        Trump = null;
+        TrumpCaller = null;
+        GoingAlone = false;
+        AlonePlayer = null;
+        Kitty = null;
+
+        // Reset checkpoint for a brand-new round.
+
+        ResetRoundCheckpoint();
+        ResetTricksWonByPlayers();
+        SaveGameData();
     }
 
     /// <summary>

@@ -6,7 +6,6 @@ using Euchre.Logic.Interfaces;
 using log4net;
 using log4net.Config;
 using System.IO;
-using System.Runtime.CompilerServices;
 using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Components;
@@ -298,7 +297,7 @@ public class EuchreGame : IEuchreGame
             // Fresh round – run everything from the top.
 
             case RoundStage.None:
-                ResetRound();
+                GameInfo.ResetRound();
 #if DEBUG
                 if (!CardsChosenForUsers())
                 {
@@ -351,32 +350,6 @@ public class EuchreGame : IEuchreGame
                 Log.Error("Unknown round checkpoint.");
                 throw new InvalidGameConditionException("Unknown round checkpoint.");
         }
-    }
-
-    /// <summary>
-    /// Resets the game state to prepare for a new round.
-    /// </summary>
-    /// <remarks>Call this method at the start of each round to clear round-specific data and initialize the
-    /// game for continued play. This method resets trick history, trump information, and other round-related
-    /// properties. It also updates the game checkpoint and persists the current game state.</remarks>
-    private void ResetRound()
-    {
-        Log.Debug("ResetRound: clearing round state.");
-
-        // Reset for new round.
-
-        GameInfo.CurrentRoundTricks.Clear();
-        GameInfo.Trump = null;
-        GameInfo.TrumpCaller = null;
-        GameInfo.GoingAlone = false;
-        GameInfo.AlonePlayer = null;
-        GameInfo.Kitty = null;
-
-        // Reset checkpoint for a brand-new round.
-
-        GameInfo.ResetRoundCheckpoint();
-        GameInfo.ResetTricksWonByPlayers();
-        GameInfo.SaveGameData();
     }
 
     /// <summary>
@@ -446,13 +419,7 @@ public class EuchreGame : IEuchreGame
         {
             Log.Debug(
                 $"Trump chosen in round 1: {GameInfo.Trump}{(GameInfo.GoingAlone ? " Alone" : "")} by {GameInfo.TrumpCaller?.Name}");
-            if (StopIfNoAceNoFaceNoTrump())
-            {
-                AdvanceDealer();
-                Log.Debug("A player declared No Ace, No Face, No Trump, round cancelled.");
-                return false;
-            }
-            return TrumpWasCalled();
+            return !StopIfNoAceNoFaceNoTrump() && TrumpWasCalled();
         }
 
         KittyWasTurnedDown?.Invoke(this, new System.EventArgs());
@@ -463,13 +430,7 @@ public class EuchreGame : IEuchreGame
         {
             Log.Debug(
                 $"Trump chosen in round 2: {GameInfo.Trump}{(GameInfo.GoingAlone ? " Alone" : "")} by {GameInfo.TrumpCaller?.Name}");
-            if (StopIfNoAceNoFaceNoTrump())
-            {
-                AdvanceDealer();
-                Log.Debug("A player declared No Ace, No Face, No Trump, round cancelled.");
-                return false;
-            }
-            return TrumpWasCalled();
+            return !StopIfNoAceNoFaceNoTrump() && TrumpWasCalled();
         }
 
         // Nobody called trump – round ends, dealer advances.
@@ -494,6 +455,8 @@ public class EuchreGame : IEuchreGame
             if (forceStop)
             {
                 NoAceNoFaceNoTrumpDeclared?.Invoke(this, new NoAceNoFaceNoTrumpDeclaredEventArgs(player));
+                AdvanceDealer();
+                Log.Debug("A player declared No Ace, No Face, No Trump, round cancelled.");
                 break; 
             }
         }
