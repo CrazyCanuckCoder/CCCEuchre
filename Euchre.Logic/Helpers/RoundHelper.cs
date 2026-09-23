@@ -19,6 +19,21 @@ public class RoundHelper
     {
         bool canWinRest = true;
 
+        // Verify inputs.
+
+        ArgumentNullException.ThrowIfNull(leadingPlayer);
+        ArgumentNullException.ThrowIfNull(gameStateManager);
+
+        if (leadingPlayer.Hand.Count == 0)
+        {
+            throw new ArgumentException("Leading player has no cards in hand.");
+        }
+
+        if (gameStateManager.Players == null || gameStateManager.Players.Length < 2)
+        {
+            throw new ArgumentException("Game state manager has insufficient players.");
+        }
+
         // Determine which players are participating in the round.
 
         Dictionary<int, List<Card>> playersHands = [];

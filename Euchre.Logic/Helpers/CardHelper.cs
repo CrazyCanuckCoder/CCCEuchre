@@ -227,10 +227,8 @@ public class CardHelper
         if (CardFinder.HasTrump(cards, trump))
         {
             var highestTrumpInHand = CardFinder.GetHighestTrumpCard(cards, trump);
-            if (highestTrumpInHand!.Rank > cardToCompare.Rank)
-            {
-                hasHigherTrump = true;
-            }
+            hasHigherTrump = 
+                highestTrumpInHand!.GetTrickValue(trump, trump) > cardToCompare.GetTrickValue(trump, trump);
         }
 
         return hasHigherTrump;
