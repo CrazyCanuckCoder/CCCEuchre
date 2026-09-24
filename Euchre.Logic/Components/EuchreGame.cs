@@ -503,7 +503,8 @@ public class EuchreGame : IEuchreGame
             {
                 if (player.OrderUp(GameInfo.Kitty!, isDealer, out var goUnder))
                 {
-                    SetGameToPlayersBid(forcedSuit!.Value, player);
+                    Log.Debug($"SetGameToPlayersBid: {forcedSuit!.Value} by {player.Name} (GoingAlone={player.IsGoingAlone})");
+                    GameInfo.SetGameToPlayersBid(forcedSuit!.Value, player);
 
                     // Inform UI of the order up and if the player is going alone.
 
@@ -551,7 +552,8 @@ public class EuchreGame : IEuchreGame
                 var calledSuit = player.CallTrump(GameInfo.Kitty!, isDealer);
                 if (calledSuit.HasValue)
                 {
-                    SetGameToPlayersBid(calledSuit.Value, player);
+                    Log.Debug($"SetGameToPlayersBid: {calledSuit.Value} by {player.Name} (GoingAlone={player.IsGoingAlone})");
+                    GameInfo.SetGameToPlayersBid(calledSuit.Value, player);
 
                     // Inform UI of the order up and if the player is going alone.
 
@@ -580,21 +582,6 @@ public class EuchreGame : IEuchreGame
     }
 
     /// <summary>
-    /// Sets the current game's trump suit and updates game state based on the specified player's bid.
-    /// </summary>
-    /// <param name="bidSuit">The suit selected as the trump for the current game.</param>
-    /// <param name="player">The player who made the bid. The player's properties determine whether they are
-    /// going alone and update related game state.</param>
-    private void SetGameToPlayersBid(Suit bidSuit, IPlayer player)
-    {
-        Log.Debug($"SetGameToPlayersBid: {bidSuit} by {player.Name} (GoingAlone={player.IsGoingAlone})");
-        GameInfo.Trump = bidSuit;
-        GameInfo.TrumpCaller = player;
-        GameInfo.GoingAlone = player.IsGoingAlone;
-        GameInfo.AlonePlayer = player.IsGoingAlone ? player : null;
-    }
-
-    /// <summary>
     /// Plays all tricks for the current round.
     /// </summary>
     /// <param name="resumeFrom">
@@ -604,16 +591,12 @@ public class EuchreGame : IEuchreGame
     {
         Log.Debug($"PlayTricksForRound starting (resumeFrom={resumeFrom}).");
 
-        // Determine who leads the first trick.
+        // Determine who leads the first trick.  If we are resuming, fast-forward the trick counter and
+        //   the leader.
 
-        GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.Dealer!);
-
-        // If we are resuming, fast-forward the trick counter and the leader.
-
-        if (resumeFrom > 0)
-        {
-            GameInfo.NextTrickPlayer = GameInfo.CurrentRoundTricks.Last().GetWinner();
-        }
+        GameInfo.NextTrickPlayer = resumeFrom > 0 
+            ? GameInfo.CurrentRoundTricks.Last().GetWinner() 
+            : GetNextPlayer(GameInfo.Dealer!);
 
         for (var trickNum = resumeFrom + 1; trickNum <= MAX_NUMBER_OF_TRICKS; trickNum++)
         {
@@ -633,18 +616,11 @@ public class EuchreGame : IEuchreGame
 
             Log.Debug($"Starting Trick {trickNum}.");
             var trick = PlayTrick();
-            GameInfo.CurrentRoundTricks.Add(trick);
-            GameInfo.NextTrickPlayer = trick.GetWinner();
-            GameInfo.TricksWonByPlayers[GameInfo.NextTrickPlayer.PlayerIndex]++;
+            GameInfo.SaveTrickResult(trickNum, trick);
             DeclareTrickWinner?.Invoke(this, new DeclareTrickWinnerEventArgs(GameInfo.NextTrickPlayer));
 
             Log.Debug(
                 $"Trick {trickNum} won by {GameInfo.NextTrickPlayer.Name} (Team {GameInfo.NextTrickPlayer.TeamIndex}).");
-
-            // Update checkpoint after each trick – this allows us to resume mid-round.
-
-            GameInfo.CurrentTrickNumber = trickNum; // remember where we stopped
-            GameInfo.SaveGameData();
 
             // Check if the bidding team has the minimum they need to win and can't get anymore points.
             //  Or if the opposition team has enough tricks to end the round.
@@ -672,12 +648,12 @@ public class EuchreGame : IEuchreGame
     {
         var endRound = false;
 
-        var numBidderTricks = (from player in GameInfo.Players
-                               where player.TeamIndex == GameInfo.TrumpCaller!.TeamIndex
+        var numBidderTricks = (  from player in GameInfo.Players
+                                where player.TeamIndex == GameInfo.TrumpCaller!.TeamIndex
                                select GameInfo.TricksWonByPlayers[player.PlayerIndex])
                               .Sum();
-        var numOppositionTricks = (from player in GameInfo.Players
-                                   where player.TeamIndex != GameInfo.TrumpCaller!.TeamIndex
+        var numOppositionTricks = (  from player in GameInfo.Players
+                                    where player.TeamIndex != GameInfo.TrumpCaller!.TeamIndex
                                    select GameInfo.TricksWonByPlayers[player.PlayerIndex])
                                   .Sum();
         if (numBidderTricks == MIN_NUMBER_TRICKS_TO_SCORE)

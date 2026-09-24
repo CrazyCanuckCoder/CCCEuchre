@@ -214,6 +214,38 @@ public class GameStateManager : IGameStateManager
     }
 
     /// <summary>
+    /// Sets the current game's trump suit and updates game state based on the specified player's bid.
+    /// </summary>
+    /// <param name="bidSuit">The suit selected as the trump for the current game.</param>
+    /// <param name="player">The player who made the bid. The player's properties determine whether they are
+    /// going alone and update related game state.</param>
+    public void SetGameToPlayersBid(Suit bidSuit, IPlayer player)
+    {
+        Trump = bidSuit;
+        TrumpCaller = player;
+        GoingAlone = player.IsGoingAlone;
+        AlonePlayer = player.IsGoingAlone ? player : null;
+    }
+
+    /// <summary>
+    /// Saves the result of a completed trick, updating the game state with the winner and incrementing the
+    /// trick count for the winning player.
+    /// </summary>
+    /// <param name="trickNum">The number of the trick being saved.</param>
+    /// <param name="trick">The completed trick.</param>
+    public void SaveTrickResult(int trickNum, Trick trick)
+    {
+        CurrentRoundTricks.Add(trick);
+        NextTrickPlayer = trick.GetWinner();
+        TricksWonByPlayers[NextTrickPlayer.PlayerIndex]++;
+
+        // Update checkpoint after each trick – this allows us to resume mid-round.
+
+        CurrentTrickNumber = trickNum; // remember where we stopped
+        SaveGameData();
+    }
+
+    /// <summary>
     /// Copies the state from the specified game state manager into the current instance, overwriting all 
     /// relevant properties.
     /// </summary>

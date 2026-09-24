@@ -26,5 +26,7 @@ public interface IGameStateManager
     void SaveGameData();
     void Reset();
     void ResetRound();
+    void SetGameToPlayersBid(Suit bidSuit, IPlayer player);
+    void SaveTrickResult(int trickNum, Trick trick);
     void CopyFrom(IGameStateManager other);
 }
