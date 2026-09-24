@@ -451,12 +451,12 @@ public class EuchreGame : IEuchreGame
 
         foreach (var player in GameInfo.Players!)
         {
-            forceStop = player.HasNoAceNoFaceNoTrump(GameInfo.Trump!.Value);
-            if (forceStop)
+            if (player.HasNoAceNoFaceNoTrump(GameInfo.Trump!.Value))
             {
                 NoAceNoFaceNoTrumpDeclared?.Invoke(this, new NoAceNoFaceNoTrumpDeclaredEventArgs(player));
                 AdvanceDealer();
                 Log.Debug("A player declared No Ace, No Face, No Trump, round cancelled.");
+                forceStop = true;
                 break; 
             }
         }
@@ -481,18 +481,18 @@ public class EuchreGame : IEuchreGame
     /// based on the current round and bidding rules.
     /// </summary>
     /// <remarks>This method iterates through all players in turn order, starting with the player to the left
-    /// of the dealer. In the first round, players may order up the forced suit; in the second round, players
+    /// of the dealer. In the first round, players may order up the kitty suit; in the second round, players
     /// may call a trump suit. If a player makes a successful bid, the game state is updated accordingly and 
     /// the method returns immediately. If no player bids, the method returns false.</remarks>
     /// <param name="round">The current bidding round. Use 1 for the first round (order up phase) and 2 for 
     /// the second round (call trump phase).</param>
-    /// <param name="forcedSuit">The suit of the Kitty that must be ordered up during the first round, or 
+    /// <param name="kittySuit">The suit of the Kitty that must be ordered up during the first round, or 
     /// null to indicate the bidding is in the second round where any suit can be called.</param>
     /// <returns>true if a player successfully orders up or calls trump during the round; otherwise, false.</returns>
-    private bool BiddingRound(int round, Suit? forcedSuit)
+    private bool BiddingRound(int round, Suit? kittySuit)
     {
         var player = GameInfo.Dealer!;
-        var isRound1 = round == 1 && forcedSuit.HasValue;
+        var isRound1 = round == 1 && kittySuit.HasValue;
 
         for (var i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
@@ -503,8 +503,8 @@ public class EuchreGame : IEuchreGame
             {
                 if (player.OrderUp(GameInfo.Kitty!, isDealer, out var goUnder))
                 {
-                    Log.Debug($"SetGameToPlayersBid: {forcedSuit!.Value} by {player.Name} (GoingAlone={player.IsGoingAlone})");
-                    GameInfo.SetGameToPlayersBid(forcedSuit!.Value, player);
+                    Log.Debug($"SetGameToPlayersBid: {kittySuit!.Value} by {player.Name} (GoingAlone={player.IsGoingAlone})");
+                    GameInfo.SetGameToPlayersBid(kittySuit!.Value, player);
 
                     // Inform UI of the order up and if the player is going alone.
 
@@ -522,7 +522,7 @@ public class EuchreGame : IEuchreGame
                     GameInfo.SaveGameData();
 
                     Log.Debug(
-                        $"Player {player.Name} ordered up {forcedSuit} (IsDealer={isDealer}, " +
+                        $"Player {player.Name} ordered up {kittySuit} (IsDealer={isDealer}, " +
                         $"GoingAlone={player.IsGoingAlone})");
                     return true;
                 }
