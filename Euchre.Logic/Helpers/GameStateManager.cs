@@ -2,6 +2,7 @@
 using Euchre.Logic.Data;
 using Euchre.Logic.Enums;
 using Euchre.Logic.Interfaces;
+using log4net;
 using System.IO;
 using static Euchre.Logic.Helpers.Constants;
 
@@ -186,6 +187,62 @@ public class GameStateManager : IGameStateManager
         LastCompletedStage = RoundStage.None;
         CurrentTrickNumber = 0;
         TricksWonByPlayers = new int[NUMBER_OF_PLAYERS]; 
+    }
+
+    /// <summary>
+    /// Resets the game state to prepare for a new round.
+    /// </summary>
+    /// <remarks>Call this method at the start of each round to clear round-specific data and initialize the
+    /// game for continued play. This method resets trick history, trump information, and other round-related
+    /// properties. It also updates the game checkpoint and persists the current game state.</remarks>
+    public void ResetRound()
+    {
+        // Reset for new round.
+
+        CurrentRoundTricks.Clear();
+        Trump = null;
+        TrumpCaller = null;
+        GoingAlone = false;
+        AlonePlayer = null;
+        Kitty = null;
+
+        // Reset checkpoint for a brand-new round.
+
+        ResetRoundCheckpoint();
+        ResetTricksWonByPlayers();
+        SaveGameData();
+    }
+
+    /// <summary>
+    /// Sets the current game's trump suit and updates game state based on the specified player's bid.
+    /// </summary>
+    /// <param name="bidSuit">The suit selected as the trump for the current game.</param>
+    /// <param name="player">The player who made the bid. The player's properties determine whether they are
+    /// going alone and update related game state.</param>
+    public void SetGameToPlayersBid(Suit bidSuit, IPlayer player)
+    {
+        Trump = bidSuit;
+        TrumpCaller = player;
+        GoingAlone = player.IsGoingAlone;
+        AlonePlayer = player.IsGoingAlone ? player : null;
+    }
+
+    /// <summary>
+    /// Saves the result of a completed trick, updating the game state with the winner and incrementing the
+    /// trick count for the winning player.
+    /// </summary>
+    /// <param name="trickNum">The number of the trick being saved.</param>
+    /// <param name="trick">The completed trick.</param>
+    public void SaveTrickResult(int trickNum, Trick trick)
+    {
+        CurrentRoundTricks.Add(trick);
+        NextTrickPlayer = trick.GetWinner();
+        TricksWonByPlayers[NextTrickPlayer.PlayerIndex]++;
+
+        // Update checkpoint after each trick – this allows us to resume mid-round.
+
+        CurrentTrickNumber = trickNum; // remember where we stopped
+        SaveGameData();
     }
 
     /// <summary>

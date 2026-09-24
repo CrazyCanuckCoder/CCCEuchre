@@ -6,7 +6,6 @@ using Euchre.Logic.Interfaces;
 using log4net;
 using log4net.Config;
 using System.IO;
-using System.Runtime.CompilerServices;
 using static Euchre.Logic.Helpers.Constants;
 
 namespace Euchre.Logic.Components;
@@ -298,7 +297,7 @@ public class EuchreGame : IEuchreGame
             // Fresh round – run everything from the top.
 
             case RoundStage.None:
-                ResetRound();
+                GameInfo.ResetRound();
 #if DEBUG
                 if (!CardsChosenForUsers())
                 {
@@ -351,32 +350,6 @@ public class EuchreGame : IEuchreGame
                 Log.Error("Unknown round checkpoint.");
                 throw new InvalidGameConditionException("Unknown round checkpoint.");
         }
-    }
-
-    /// <summary>
-    /// Resets the game state to prepare for a new round.
-    /// </summary>
-    /// <remarks>Call this method at the start of each round to clear round-specific data and initialize the
-    /// game for continued play. This method resets trick history, trump information, and other round-related
-    /// properties. It also updates the game checkpoint and persists the current game state.</remarks>
-    private void ResetRound()
-    {
-        Log.Debug("ResetRound: clearing round state.");
-
-        // Reset for new round.
-
-        GameInfo.CurrentRoundTricks.Clear();
-        GameInfo.Trump = null;
-        GameInfo.TrumpCaller = null;
-        GameInfo.GoingAlone = false;
-        GameInfo.AlonePlayer = null;
-        GameInfo.Kitty = null;
-
-        // Reset checkpoint for a brand-new round.
-
-        GameInfo.ResetRoundCheckpoint();
-        GameInfo.ResetTricksWonByPlayers();
-        GameInfo.SaveGameData();
     }
 
     /// <summary>
@@ -446,13 +419,7 @@ public class EuchreGame : IEuchreGame
         {
             Log.Debug(
                 $"Trump chosen in round 1: {GameInfo.Trump}{(GameInfo.GoingAlone ? " Alone" : "")} by {GameInfo.TrumpCaller?.Name}");
-            if (StopIfNoAceNoFaceNoTrump())
-            {
-                AdvanceDealer();
-                Log.Debug("A player declared No Ace, No Face, No Trump, round cancelled.");
-                return false;
-            }
-            return TrumpWasCalled();
+            return !StopIfNoAceNoFaceNoTrump() && TrumpWasCalled();
         }
 
         KittyWasTurnedDown?.Invoke(this, new System.EventArgs());
@@ -463,13 +430,7 @@ public class EuchreGame : IEuchreGame
         {
             Log.Debug(
                 $"Trump chosen in round 2: {GameInfo.Trump}{(GameInfo.GoingAlone ? " Alone" : "")} by {GameInfo.TrumpCaller?.Name}");
-            if (StopIfNoAceNoFaceNoTrump())
-            {
-                AdvanceDealer();
-                Log.Debug("A player declared No Ace, No Face, No Trump, round cancelled.");
-                return false;
-            }
-            return TrumpWasCalled();
+            return !StopIfNoAceNoFaceNoTrump() && TrumpWasCalled();
         }
 
         // Nobody called trump – round ends, dealer advances.
@@ -490,10 +451,12 @@ public class EuchreGame : IEuchreGame
 
         foreach (var player in GameInfo.Players!)
         {
-            forceStop = player.HasNoAceNoFaceNoTrump(GameInfo.Trump!.Value);
-            if (forceStop)
+            if (player.HasNoAceNoFaceNoTrump(GameInfo.Trump!.Value))
             {
                 NoAceNoFaceNoTrumpDeclared?.Invoke(this, new NoAceNoFaceNoTrumpDeclaredEventArgs(player));
+                AdvanceDealer();
+                Log.Debug("A player declared No Ace, No Face, No Trump, round cancelled.");
+                forceStop = true;
                 break; 
             }
         }
@@ -518,18 +481,18 @@ public class EuchreGame : IEuchreGame
     /// based on the current round and bidding rules.
     /// </summary>
     /// <remarks>This method iterates through all players in turn order, starting with the player to the left
-    /// of the dealer. In the first round, players may order up the forced suit; in the second round, players
+    /// of the dealer. In the first round, players may order up the kitty suit; in the second round, players
     /// may call a trump suit. If a player makes a successful bid, the game state is updated accordingly and 
     /// the method returns immediately. If no player bids, the method returns false.</remarks>
     /// <param name="round">The current bidding round. Use 1 for the first round (order up phase) and 2 for 
     /// the second round (call trump phase).</param>
-    /// <param name="forcedSuit">The suit of the Kitty that must be ordered up during the first round, or 
+    /// <param name="kittySuit">The suit of the Kitty that must be ordered up during the first round, or 
     /// null to indicate the bidding is in the second round where any suit can be called.</param>
     /// <returns>true if a player successfully orders up or calls trump during the round; otherwise, false.</returns>
-    private bool BiddingRound(int round, Suit? forcedSuit)
+    private bool BiddingRound(int round, Suit? kittySuit)
     {
         var player = GameInfo.Dealer!;
-        var isRound1 = round == 1 && forcedSuit.HasValue;
+        var isRound1 = round == 1 && kittySuit.HasValue;
 
         for (var i = 0; i < NUMBER_OF_PLAYERS; i++)
         {
@@ -540,7 +503,8 @@ public class EuchreGame : IEuchreGame
             {
                 if (player.OrderUp(GameInfo.Kitty!, isDealer, out var goUnder))
                 {
-                    SetGameToPlayersBid(forcedSuit!.Value, player);
+                    Log.Debug($"SetGameToPlayersBid: {kittySuit!.Value} by {player.Name} (GoingAlone={player.IsGoingAlone})");
+                    GameInfo.SetGameToPlayersBid(kittySuit!.Value, player);
 
                     // Inform UI of the order up and if the player is going alone.
 
@@ -558,7 +522,7 @@ public class EuchreGame : IEuchreGame
                     GameInfo.SaveGameData();
 
                     Log.Debug(
-                        $"Player {player.Name} ordered up {forcedSuit} (IsDealer={isDealer}, " +
+                        $"Player {player.Name} ordered up {kittySuit} (IsDealer={isDealer}, " +
                         $"GoingAlone={player.IsGoingAlone})");
                     return true;
                 }
@@ -588,7 +552,8 @@ public class EuchreGame : IEuchreGame
                 var calledSuit = player.CallTrump(GameInfo.Kitty!, isDealer);
                 if (calledSuit.HasValue)
                 {
-                    SetGameToPlayersBid(calledSuit.Value, player);
+                    Log.Debug($"SetGameToPlayersBid: {calledSuit.Value} by {player.Name} (GoingAlone={player.IsGoingAlone})");
+                    GameInfo.SetGameToPlayersBid(calledSuit.Value, player);
 
                     // Inform UI of the order up and if the player is going alone.
 
@@ -617,21 +582,6 @@ public class EuchreGame : IEuchreGame
     }
 
     /// <summary>
-    /// Sets the current game's trump suit and updates game state based on the specified player's bid.
-    /// </summary>
-    /// <param name="bidSuit">The suit selected as the trump for the current game.</param>
-    /// <param name="player">The player who made the bid. The player's properties determine whether they are
-    /// going alone and update related game state.</param>
-    private void SetGameToPlayersBid(Suit bidSuit, IPlayer player)
-    {
-        Log.Debug($"SetGameToPlayersBid: {bidSuit} by {player.Name} (GoingAlone={player.IsGoingAlone})");
-        GameInfo.Trump = bidSuit;
-        GameInfo.TrumpCaller = player;
-        GameInfo.GoingAlone = player.IsGoingAlone;
-        GameInfo.AlonePlayer = player.IsGoingAlone ? player : null;
-    }
-
-    /// <summary>
     /// Plays all tricks for the current round.
     /// </summary>
     /// <param name="resumeFrom">
@@ -641,16 +591,12 @@ public class EuchreGame : IEuchreGame
     {
         Log.Debug($"PlayTricksForRound starting (resumeFrom={resumeFrom}).");
 
-        // Determine who leads the first trick.
+        // Determine who leads the first trick.  If we are resuming, fast-forward the trick counter and
+        //   the leader.
 
-        GameInfo.NextTrickPlayer = GetNextPlayer(GameInfo.Dealer!);
-
-        // If we are resuming, fast-forward the trick counter and the leader.
-
-        if (resumeFrom > 0)
-        {
-            GameInfo.NextTrickPlayer = GameInfo.CurrentRoundTricks.Last().GetWinner();
-        }
+        GameInfo.NextTrickPlayer = resumeFrom > 0 
+            ? GameInfo.CurrentRoundTricks.Last().GetWinner() 
+            : GetNextPlayer(GameInfo.Dealer!);
 
         for (var trickNum = resumeFrom + 1; trickNum <= MAX_NUMBER_OF_TRICKS; trickNum++)
         {
@@ -670,18 +616,11 @@ public class EuchreGame : IEuchreGame
 
             Log.Debug($"Starting Trick {trickNum}.");
             var trick = PlayTrick();
-            GameInfo.CurrentRoundTricks.Add(trick);
-            GameInfo.NextTrickPlayer = trick.GetWinner();
-            GameInfo.TricksWonByPlayers[GameInfo.NextTrickPlayer.PlayerIndex]++;
+            GameInfo.SaveTrickResult(trickNum, trick);
             DeclareTrickWinner?.Invoke(this, new DeclareTrickWinnerEventArgs(GameInfo.NextTrickPlayer));
 
             Log.Debug(
                 $"Trick {trickNum} won by {GameInfo.NextTrickPlayer.Name} (Team {GameInfo.NextTrickPlayer.TeamIndex}).");
-
-            // Update checkpoint after each trick – this allows us to resume mid-round.
-
-            GameInfo.CurrentTrickNumber = trickNum; // remember where we stopped
-            GameInfo.SaveGameData();
 
             // Check if the bidding team has the minimum they need to win and can't get anymore points.
             //  Or if the opposition team has enough tricks to end the round.
@@ -709,12 +648,12 @@ public class EuchreGame : IEuchreGame
     {
         var endRound = false;
 
-        var numBidderTricks = (from player in GameInfo.Players
-                               where player.TeamIndex == GameInfo.TrumpCaller!.TeamIndex
+        var numBidderTricks = (  from player in GameInfo.Players
+                                where player.TeamIndex == GameInfo.TrumpCaller!.TeamIndex
                                select GameInfo.TricksWonByPlayers[player.PlayerIndex])
                               .Sum();
-        var numOppositionTricks = (from player in GameInfo.Players
-                                   where player.TeamIndex != GameInfo.TrumpCaller!.TeamIndex
+        var numOppositionTricks = (  from player in GameInfo.Players
+                                    where player.TeamIndex != GameInfo.TrumpCaller!.TeamIndex
                                    select GameInfo.TricksWonByPlayers[player.PlayerIndex])
                                   .Sum();
         if (numBidderTricks == MIN_NUMBER_TRICKS_TO_SCORE)
