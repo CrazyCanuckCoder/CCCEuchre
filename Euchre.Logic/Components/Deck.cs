@@ -84,7 +84,7 @@ public class Deck : IDeck
     /// Creates a copy of the Deck.
     /// </summary>
     /// <returns>A Deck with the same properties as this Deck.</returns>
-    internal Deck Clone()
+    public Deck Clone()
     {
         return new Deck()
         {
@@ -97,7 +97,7 @@ public class Deck : IDeck
     /// </summary>
     /// <returns>A list of the three cards in the kitty.</returns>
     /// <exception cref="InvalidOperationException"></exception>
-    internal List<Card> GetKittyCards()
+    public List<Card> GetKittyCards()
     {
         if (_cardStack.Count != 3)
         {
@@ -119,7 +119,7 @@ public class Deck : IDeck
     /// </summary>
     /// <param name="kittyCards">The list of three cards to set as the kitty.</param>
     /// <exception cref="InvalidOperationException"></exception>
-    internal void SetKittyCards(List<Card> kittyCards)
+    public void SetKittyCards(List<Card> kittyCards)
     {
         if (kittyCards.Count != 3)
         {
