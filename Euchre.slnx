@@ -1,7 +1,17 @@
 <Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM" />
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
   <Project Path="Euchre.Console/Euchre.Console.csproj" />
   <Project Path="Euchre.csproj" />
   <Project Path="Euchre.Logic/Euchre.Logic.csproj" />
+  <Project Path="Euchre.Setup/Euchre.Setup.wixproj" />
   <Project Path="Euchre.Tests/Euchre.Tests.csproj" />
-    <Project Path="Euchre.Setup/Euchre.Setup.wixproj" />
+  <Project Path="Euchre.WAP/Euchre.WAP.wapproj" Type="c7167f0d-bc9f-4e6e-afe1-012c56b48db5" Id="b75615c1-1e82-4045-b212-f463d8ba84c3">
+    <Deploy />
+  </Project>
 </Solution>
