@@ -15,13 +15,13 @@ public class EuchreGameTests
 {
     private List<AutomatedPlayerAvatar> MakeAvatars()
     {
-        return new List<AutomatedPlayerAvatar>
-        {
+        return
+        [
             new() { PlayerName = "Human", AvatarNumber = 1 },
             new() { PlayerName = "AI1", AvatarNumber = 2 },
             new() { PlayerName = "AI2", AvatarNumber = 3 },
             new() { PlayerName = "AI3", AvatarNumber = 4 },
-        };
+        ];
     }
 
     [Test]
@@ -41,11 +41,14 @@ public class EuchreGameTests
 
         var game = new EuchreGame(avatars, gsm);
 
-        Assert.That(game.GameInfo.Players, Is.Not.Null);
-        Assert.That(game.GameInfo.Dealer, Is.Not.Null);
-        Assert.That(game.GameInfo.Players![0].GetType(), Is.EqualTo(typeof(HumanPlayer)));
-        Assert.That(game.GameInfo.Players[1].GetType(), Is.EqualTo(typeof(AutomatedPlayer)));
-        Assert.That(game.GameInfo.Dealer, Is.SameAs(game.GameInfo.Players[0]));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(game.GameInfo.Players, Is.Not.Null);
+            Assert.That(game.GameInfo.Dealer, Is.Not.Null);
+            Assert.That(game.GameInfo.Players![0].GetType(), Is.EqualTo(typeof(HumanPlayer)));
+            Assert.That(game.GameInfo.Players[1].GetType(), Is.EqualTo(typeof(AutomatedPlayer)));
+            Assert.That(game.GameInfo.Dealer, Is.SameAs(game.GameInfo.Players[0]));
+        }
     }
 
     [Test]
@@ -57,10 +60,13 @@ public class EuchreGameTests
 
         var mi = typeof(EuchreGame).GetMethod("SetKittyCard", BindingFlags.Instance | BindingFlags.NonPublic)!;
         var card = new Card(Suit.Hearts, Rank.Ace);
-        mi.Invoke(game, new object[] { card });
+        mi.Invoke(game, [card]);
 
-        Assert.That(game.GameInfo.Kitty, Is.EqualTo(card));
-        Assert.That(evtRaised, Is.True);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(game.GameInfo.Kitty, Is.EqualTo(card));
+            Assert.That(evtRaised, Is.True);
+        }
     }
 
     [Test]
@@ -70,10 +76,10 @@ public class EuchreGameTests
         var players = game.GameInfo.Players!;
         var mi = typeof(EuchreGame).GetMethod("GetNextPlayer", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
-        var next = (IPlayer)mi.Invoke(game, new object[] { players[0] })!;
+        var next = (IPlayer)mi.Invoke(game, [players[0]])!;
         Assert.That(next, Is.SameAs(players[1]));
 
-        var lastNext = (IPlayer)mi.Invoke(game, new object[] { players[3] })!;
+        var lastNext = (IPlayer)mi.Invoke(game, [players[3]])!;
         Assert.That(lastNext, Is.SameAs(players[0]));
     }
 
@@ -86,9 +92,12 @@ public class EuchreGameTests
 
         mi.Invoke(game, null);
 
-        Assert.That(game.GameInfo.Dealer, Is.Not.Null);
-        Assert.That(game.GameInfo.Dealer, Is.Not.SameAs(oldDealer));
-        Assert.That(game.GameInfo.LastCompletedStage, Is.EqualTo(RoundStage.None));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(game.GameInfo.Dealer, Is.Not.Null);
+            Assert.That(game.GameInfo.Dealer, Is.Not.SameAs(oldDealer));
+            Assert.That(game.GameInfo.LastCompletedStage, Is.EqualTo(RoundStage.None));
+        }
     }
 
     [Test]
@@ -99,10 +108,10 @@ public class EuchreGameTests
         var mi = typeof(EuchreGame).GetMethod("IsPartner", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
         // players 0 and 2 are team 0 in initialization
-        var res = (bool)mi.Invoke(game, new object[] { players[0], players[2] })!;
+        var res = (bool)mi.Invoke(game, [players[0], players[2]])!;
         Assert.That(res, Is.True);
 
-        var res2 = (bool)mi.Invoke(game, new object[] { players[0], players[1] })!;
+        var res2 = (bool)mi.Invoke(game, [players[0], players[1]])!;
         Assert.That(res2, Is.False);
     }
 
@@ -119,9 +128,12 @@ public class EuchreGameTests
         var mi = typeof(EuchreGame).GetMethod("TrumpWasCalled", BindingFlags.Instance | BindingFlags.NonPublic)!;
         var ret = (bool)mi.Invoke(game, null)!;
 
-        Assert.That(ret, Is.True);
-        Assert.That(game.GameInfo.LastCompletedStage, Is.EqualTo(RoundStage.TrumpChosen));
-        Assert.That(called, Is.True);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(ret, Is.True);
+            Assert.That(game.GameInfo.LastCompletedStage, Is.EqualTo(RoundStage.TrumpChosen));
+            Assert.That(called, Is.True);
+        }
     }
 
     [Test]
@@ -147,15 +159,19 @@ public class EuchreGameTests
         var mi = typeof(EuchreGame).GetMethod("StopIfNoAceNoFaceNoTrump", BindingFlags.Instance | BindingFlags.NonPublic)!;
         var result = (bool)mi.Invoke(game, null)!;
 
-        Assert.That(result, Is.True);
-        Assert.That(declared, Is.True);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.True);
+            Assert.That(declared, Is.True);
+        }
     }
 
     [Test]
     public void BiddingRound_Round2_CallTrump_UpdatesGameInfo()
     {
-        var gsm = new GameStateManager();
-        var game = new EuchreGame(MakeAvatars(), gsm);
+        var gsm = new Mock<IGameStateManager>();
+        gsm.Setup(g => g.SaveGameData()).Verifiable();
+        var game = new EuchreGame(MakeAvatars(), gsm.Object);
 
         // replace players with mocks to control CallTrump behavior
         var mocks = new Mock<IPlayer>[4];
@@ -171,16 +187,20 @@ public class EuchreGameTests
         // make player 2 call trump
         mocks[2].Setup(m => m.CallTrump(It.IsAny<Card>(), It.IsAny<bool>())).Returns(Suit.Diamonds);
 
-        game.GameInfo.Players = new IPlayer[] { mocks[0].Object, mocks[1].Object, mocks[2].Object, mocks[3].Object };
+        game.GameInfo.Players = [mocks[0].Object, mocks[1].Object, mocks[2].Object, mocks[3].Object];
         game.GameInfo.Dealer = mocks[0].Object;
         game.GameInfo.Kitty = new Card(Suit.Clubs, Rank.Nine);
 
         var mi = typeof(EuchreGame).GetMethod("BiddingRound", BindingFlags.Instance | BindingFlags.NonPublic)!;
-        var ret = (bool)mi.Invoke(game, new object[] { 2, null })!;
+        var ret = (bool)mi.Invoke(game, [2, null])!;
 
-        Assert.That(ret, Is.True);
-        Assert.That(game.GameInfo.Trump, Is.EqualTo(Suit.Diamonds));
-        Assert.That(game.GameInfo.TrumpCaller, Is.SameAs(mocks[2].Object));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(ret, Is.True);
+            Assert.That(game.GameInfo.Trump, Is.EqualTo(Suit.Diamonds));
+            Assert.That(game.GameInfo.TrumpCaller, Is.SameAs(mocks[2].Object));
+            gsm.Verify();
+        }
     }
 
     [Test]
@@ -191,13 +211,13 @@ public class EuchreGameTests
         game.GameInfo.TrumpCaller = game.GameInfo.Players![0];
 
         // Setup tricks won such that bidderTricks == MIN_NUMBER_TRICKS_TO_SCORE and opposition >0 -> true
-        game.GameInfo.TricksWonByPlayers = new int[] { 3, 0, 0, 0 };
+        game.GameInfo.TricksWonByPlayers = [3, 0, 0, 0];
         var mi = typeof(EuchreGame).GetMethod("CanEndRound", BindingFlags.Instance | BindingFlags.NonPublic)!;
         var res = (bool)mi.Invoke(game, null)!;
         Assert.That(res, Is.False);
 
         // Now set opposition to MIN_NUMBER_TRICKS_TO_SCORE and bidder less -> true via else branch
-        game.GameInfo.TricksWonByPlayers = new int[] { 0, 3, 0, 0 };
+        game.GameInfo.TricksWonByPlayers = [0, 3, 0, 0];
         game.GameInfo.TrumpCaller = game.GameInfo.Players[1];
         var res2 = (bool)mi.Invoke(game, null)!;
         Assert.That(res2, Is.False);
@@ -223,7 +243,7 @@ public class EuchreGameTests
                 .Returns((int idx) => { var c = hand[idx]; hand.RemoveAt(idx); return c; });
         }
 
-        game.GameInfo.Players = new IPlayer[] { mocks[0].Object, mocks[1].Object, mocks[2].Object, mocks[3].Object };
+        game.GameInfo.Players = [mocks[0].Object, mocks[1].Object, mocks[2].Object, mocks[3].Object];
         game.GameInfo.Trump = Suit.Clubs;
         game.GameInfo.NextTrickPlayer = game.GameInfo.Players[0];
 
@@ -233,8 +253,11 @@ public class EuchreGameTests
         var mi = typeof(EuchreGame).GetMethod("PlayTrick", BindingFlags.Instance | BindingFlags.NonPublic)!;
         var trick = (Trick)mi.Invoke(game, null)!;
 
-        Assert.That(trick.Cards.Count, Is.EqualTo(4));
-        Assert.That(playedCount, Is.EqualTo(4));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(trick.Cards.Count, Is.EqualTo(4));
+            Assert.That(playedCount, Is.EqualTo(4));
+        }
     }
 
     [Test]
@@ -243,8 +266,8 @@ public class EuchreGameTests
         var game = new EuchreGame(MakeAvatars(), new GameStateManager());
         // configure players and tricks won such that caller team gets points
         game.GameInfo.Players = game.GameInfo.Players!;
-        game.GameInfo.TrumpCaller = game.GameInfo.Players[0];
-        game.GameInfo.TricksWonByPlayers = new int[] { 3, 0, 0, 0 };
+        game.GameInfo.TrumpCaller = game.GameInfo.Players![0];
+        game.GameInfo.TricksWonByPlayers = [3, 0, 0, 0];
 
         DeclareRoundWinningPlayersEventArgs? args = null;
         game.DeclareRoundWinningPlayers += (_, e) => args = e;
@@ -252,7 +275,10 @@ public class EuchreGameTests
         var mi = typeof(EuchreGame).GetMethod("ScoreRound", BindingFlags.Instance | BindingFlags.NonPublic)!;
         mi.Invoke(game, null);
 
-        Assert.That(args, Is.Not.Null);
-        Assert.That(game.GameInfo.LastCompletedStage, Is.EqualTo(RoundStage.Scored));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(args, Is.Not.Null);
+            Assert.That(game.GameInfo.LastCompletedStage, Is.EqualTo(RoundStage.Scored));
+        }
     }
 }
