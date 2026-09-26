@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic.Components;
+using Euchre.Logic.Data;
 using Euchre.Logic.Exceptions;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
@@ -13,7 +14,7 @@ public class PlayerTests
     [SetUp]
     public void Setup()
     {
-        _player = new AutomatedPlayer("TestPlayer", 0, 0, new GameStateManager(), 0);
+        _player = new AutomatedPlayer("TestPlayer", 0, 0, new GameStateManager(new DataManager()), 0);
     }
 
     [TearDown]
@@ -77,12 +78,12 @@ public class PlayerTests
         _player?.AddCard(card);
         
         var playedCard = _player?.PlayCard(0);
-        
-        Assert.Multiple(() =>
+
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(playedCard, Is.EqualTo(card), "Played card should match the one added.");
             Assert.That(_player?.Hand.Count, Is.EqualTo(0), "Hand should be empty after playing the card.");
-        });
+        }
     }
     
     // Behaviour: Playing a card with an invalid index should throw an exception.
@@ -90,13 +91,13 @@ public class PlayerTests
     [Test]
     public void PlayCard_ShouldThrowException_WhenIndexIsInvalid()
     {
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => _player?.PlayCard(-1), 
                 "Index cannot be negative.");
             Assert.Throws<ArgumentOutOfRangeException>(() => _player?.PlayCard(0), 
                 "Index is out of range for the hand.");
-        });
+        }
     }
 
     // Behaviour: Receiving several cards adds all cards to the hand.
@@ -112,8 +113,11 @@ public class PlayerTests
 
         _player?.ReceiveSeveralCards(cards);
 
-        Assert.That(_player?.Hand.Count, Is.EqualTo(3));
-        Assert.That(_player?.Hand.Contains(new Card(Suit.Clubs, Rank.Nine)), Is.True);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_player?.Hand.Count, Is.EqualTo(3));
+            Assert.That(_player?.Hand.Contains(new Card(Suit.Clubs, Rank.Nine)), Is.True);
+        }
     }
 
     // Behaviour: Receiving several cards where duplicates exist throws an exception.
@@ -135,8 +139,11 @@ public class PlayerTests
 
         _player?.SortPlayerCards(Suit.Clubs);
 
-        Assert.That(_player?.Hand.Count, Is.EqualTo(2));
-        Assert.That(_player?.Hand[0].EffectiveSuit(Suit.Clubs), Is.EqualTo(Suit.Clubs));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_player?.Hand.Count, Is.EqualTo(2));
+            Assert.That(_player?.Hand[0].EffectiveSuit(Suit.Clubs), Is.EqualTo(Suit.Clubs));
+        }
     }
 
     // Behaviour: HasNoAceNoFaceNoTrump returns true when rule enabled and hand contains no ace, face or trump.

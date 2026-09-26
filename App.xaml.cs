@@ -1,4 +1,5 @@
-﻿using Euchre.Logic.Helpers;
+﻿using Euchre.Logic.Data;
+using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 using Euchre.UILogic.Classes;
 using Euchre.UILogic.Interfaces;
@@ -69,6 +70,7 @@ public partial class App : Application
             {
                 // Singleton services.
 
+                services.AddSingleton<IDataManager, DataManager>();
                 services.AddSingleton<IGameStateManager, GameStateManager>();
                 services.AddSingleton<IMainWindowController, MainWindowController>();
                 services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();

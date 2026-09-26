@@ -7,12 +7,30 @@ using Euchre.Logic.Interfaces;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Enums;
 using Euchre.Logic.Exceptions;
+using Euchre.Logic.Data;
 
 namespace Euchre.Tests;
 
 [TestFixture]
 public class EuchreGameTests
 {
+    private DataManager _dataManager;
+    private GameStateManager _gsm;
+
+    [SetUp]
+    public void Setup()
+    {
+        _dataManager = new DataManager();
+        _gsm = new GameStateManager(_dataManager);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _dataManager = null!;
+        _gsm = null!;
+    }
+
     private List<AutomatedPlayerAvatar> MakeAvatars()
     {
         return
@@ -28,18 +46,16 @@ public class EuchreGameTests
     public void Constructor_Throws_WhenInvalidNumberOfPlayers()
     {
         var avatars = new List<AutomatedPlayerAvatar> { new() { PlayerName = "OnlyOne" } };
-        var gsm = new GameStateManager();
 
-        Assert.Throws<InvalidNumberOfPlayersException>(() => new EuchreGame(avatars, gsm));
+        Assert.Throws<InvalidNumberOfPlayersException>(() => new EuchreGame(avatars, _gsm, _dataManager));
     }
 
     [Test]
     public void Constructor_NewGame_InitializesPlayersAndDealer()
     {
         var avatars = MakeAvatars();
-        var gsm = new GameStateManager();
 
-        var game = new EuchreGame(avatars, gsm);
+        var game = new EuchreGame(avatars, _gsm, _dataManager);
 
         using (Assert.EnterMultipleScope())
         {
@@ -54,7 +70,7 @@ public class EuchreGameTests
     [Test]
     public void SetKittyCard_SetsKitty_And_RaisesEvent()
     {
-        var game = new EuchreGame(MakeAvatars(), new GameStateManager());
+        var game = new EuchreGame(MakeAvatars(), _gsm, _dataManager);
         var evtRaised = false;
         game.DeclareKittyCard += (_, e) => evtRaised = true;
 
@@ -72,7 +88,7 @@ public class EuchreGameTests
     [Test]
     public void GetNextPlayer_WrapsAround()
     {
-        var game = new EuchreGame(MakeAvatars(), new GameStateManager());
+        var game = new EuchreGame(MakeAvatars(), _gsm, _dataManager);
         var players = game.GameInfo.Players!;
         var mi = typeof(EuchreGame).GetMethod("GetNextPlayer", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
@@ -86,7 +102,7 @@ public class EuchreGameTests
     [Test]
     public void AdvanceDealer_UpdatesDealer_And_ResetsStage()
     {
-        var game = new EuchreGame(MakeAvatars(), new GameStateManager());
+        var game = new EuchreGame(MakeAvatars(), _gsm, _dataManager);
         var oldDealer = game.GameInfo.Dealer!;
         var mi = typeof(EuchreGame).GetMethod("AdvanceDealer", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
@@ -103,7 +119,7 @@ public class EuchreGameTests
     [Test]
     public void IsPartner_ReturnsTrueForTeamMates()
     {
-        var game = new EuchreGame(MakeAvatars(), new GameStateManager());
+        var game = new EuchreGame(MakeAvatars(), _gsm, _dataManager);
         var players = game.GameInfo.Players!;
         var mi = typeof(EuchreGame).GetMethod("IsPartner", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
@@ -118,7 +134,7 @@ public class EuchreGameTests
     [Test]
     public void TrumpWasCalled_SetsStage_And_RaisesEvent()
     {
-        var game = new EuchreGame(MakeAvatars(), new GameStateManager());
+        var game = new EuchreGame(MakeAvatars(), _gsm, _dataManager);
         var called = false;
         game.TrumpCalled += (_, __) => called = true;
 
@@ -139,7 +155,7 @@ public class EuchreGameTests
     [Test]
     public void StopIfNoAceNoFaceNoTrump_Declares_And_AdvancesDealer()
     {
-        var game = new EuchreGame(MakeAvatars(), new GameStateManager());
+        var game = new EuchreGame(MakeAvatars(), _gsm, _dataManager);
         // choose a trump that players do not have
         game.GameInfo.Trump = Suit.Spades;
 
@@ -169,9 +185,7 @@ public class EuchreGameTests
     [Test]
     public void BiddingRound_Round2_CallTrump_UpdatesGameInfo()
     {
-        var gsm = new Mock<IGameStateManager>();
-        gsm.Setup(g => g.SaveGameData()).Verifiable();
-        var game = new EuchreGame(MakeAvatars(), gsm.Object);
+        var game = new EuchreGame(MakeAvatars(), _gsm, _dataManager);
 
         // replace players with mocks to control CallTrump behavior
         var mocks = new Mock<IPlayer>[4];
@@ -199,14 +213,13 @@ public class EuchreGameTests
             Assert.That(ret, Is.True);
             Assert.That(game.GameInfo.Trump, Is.EqualTo(Suit.Diamonds));
             Assert.That(game.GameInfo.TrumpCaller, Is.SameAs(mocks[2].Object));
-            gsm.Verify();
         }
     }
 
     [Test]
     public void CanEndRound_Behaviour_CoversBothBranches()
     {
-        var game = new EuchreGame(MakeAvatars(), new GameStateManager());
+        var game = new EuchreGame(MakeAvatars(), _gsm, _dataManager);
         // configure trump caller
         game.GameInfo.TrumpCaller = game.GameInfo.Players![0];
 
@@ -226,7 +239,7 @@ public class EuchreGameTests
     [Test]
     public void PlayTrick_PlaysAllCards_And_RaisesEvents()
     {
-        var game = new EuchreGame(MakeAvatars(), new GameStateManager());
+        var game = new EuchreGame(MakeAvatars(), _gsm, _dataManager);
         // create four mock players with real backing hands
         var mocks = new Mock<IPlayer>[4];
         for (int i = 0; i < 4; i++)
@@ -263,7 +276,7 @@ public class EuchreGameTests
     [Test]
     public void ScoreRound_AwardsPoints_And_RaisesEvent()
     {
-        var game = new EuchreGame(MakeAvatars(), new GameStateManager());
+        var game = new EuchreGame(MakeAvatars(), _gsm, _dataManager);
         // configure players and tricks won such that caller team gets points
         game.GameInfo.Players = game.GameInfo.Players!;
         game.GameInfo.TrumpCaller = game.GameInfo.Players![0];

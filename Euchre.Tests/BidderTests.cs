@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic.Components;
+using Euchre.Logic.Data;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
 
@@ -116,7 +117,7 @@ public class BidderTests
     public void GivenPlayingConditions_DetermineWhetherToOrderUp_ShouldReturnCorrectResult(
         List<ICard> playerHand, Card kitty, bool isDealer, bool expectedGoAlone, bool expectedResult)
     {
-        var player = new AutomatedPlayer("TestPlayer", 0, 0, new GameStateManager(), 1);
+        var player = new AutomatedPlayer("TestPlayer", 0, 0, new GameStateManager(new DataManager()), 1);
         player.ReceiveSeveralCards(playerHand);
         var bidder = new Bidder(player);
         var result = bidder.DetermineWhetherToOrderUp(kitty, isDealer, out var goAlone);

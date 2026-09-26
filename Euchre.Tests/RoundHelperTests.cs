@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic.Components;
+using Euchre.Logic.Data;
 using Euchre.Logic.Helpers;
 
 namespace Euchre.Tests;
@@ -9,7 +10,7 @@ public class RoundHelperTests
     private static GameStateManager CreateGameStateWithPlayers(out AutomatedPlayer leadingPlayer,
         out AutomatedPlayer p1, out AutomatedPlayer p2, out AutomatedPlayer p3)
     {
-        var gsm = new GameStateManager();
+        var gsm = new GameStateManager(new DataManager());
 
         leadingPlayer = new AutomatedPlayer("Lead", 0, 0, gsm, 1);
         p1 = new AutomatedPlayer("P1", 1, 1, gsm, 2);

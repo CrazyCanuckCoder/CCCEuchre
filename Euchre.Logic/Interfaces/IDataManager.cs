@@ -2,9 +2,9 @@
 
 namespace Euchre.Logic.Interfaces;
 
-internal interface IDataManager
+public interface IDataManager
 {
-    static abstract IGameStateManager LoadGameState();
-    static abstract void AddPlayersToGameState(IGameStateManager gameStateManager);
-    static abstract void SaveGameState(IGameStateManager gameStateManager);
+    IGameStateManager LoadGameState();
+    void AddPlayersToGameState(IGameStateManager gameStateManager);
+    void SaveGameState(IGameStateManager gameStateManager);
 }

@@ -1,5 +1,6 @@
 ﻿using Euchre.Logic.Components;
 using Euchre.Logic.Enums;
+using Euchre.Logic.Helpers;
 
 namespace Euchre.Logic.Interfaces;
 
@@ -23,10 +24,10 @@ public interface IGameStateManager
 
     void ResetRoundCheckpoint();
     void ResetTricksWonByPlayers();
-    void SaveGameData();
     void Reset();
     void ResetRound();
     void SetGameToPlayersBid(Suit bidSuit, IPlayer player);
     void SaveTrickResult(int trickNum, Trick trick);
     void CopyFrom(IGameStateManager other);
+    GameStateManager Clone();
 }

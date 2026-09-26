@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic.Components;
+using Euchre.Logic.Data;
 using Euchre.Logic.Helpers;
 
 namespace Euchre.Console;
@@ -11,7 +12,7 @@ public class Program
         {
             // If so, load the saved game.
 
-            var game = new EuchreGame(new GameStateManager());
+            var game = new EuchreGame(new GameStateManager(new DataManager()), new DataManager());
             await game.PlayGameAsync();
         }
         else
@@ -23,7 +24,7 @@ public class Program
                     new AutomatedPlayerAvatar() { PlayerName = "Charlie", AvatarNumber = 0 },
                     new AutomatedPlayerAvatar() { PlayerName = "Diana",   AvatarNumber = 0 }
                 ];
-            var game = new EuchreGame(playerNames, new GameStateManager());
+            var game = new EuchreGame(playerNames, new GameStateManager(new DataManager()), new DataManager());
             await game.PlayGameAsync();
         }
     }
