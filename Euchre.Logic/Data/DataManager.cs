@@ -12,14 +12,14 @@ public class DataManager : IDataManager
     /// The name of the file where game data is saved and loaded from.
     /// </summary>
     internal const string FILE_NAME = "GameData.xml";
-    private static readonly Lock _lockObject = new();
+    private readonly Lock _lockObject = new();
 
     /// <summary>
     /// Saves the information in the provided game state manager to an XML file.
     /// </summary>
     /// <param name="gameStateManager">The object containing the game's state.</param>
     /// <exception cref="ArgumentException"></exception>
-    public static void SaveGameState(IGameStateManager gameStateManager)
+    public void SaveGameState(IGameStateManager gameStateManager)
     {
         lock (_lockObject)
         {
@@ -100,14 +100,14 @@ public class DataManager : IDataManager
     /// </summary>
     /// <returns>An instance of the GameStateManager class based on the game save file.</returns>
     /// <exception cref="FileNotFoundException" />
-    public static IGameStateManager LoadGameState()
+    public IGameStateManager LoadGameState()
     {
         if (!File.Exists(FILE_NAME))
         {
             throw new FileNotFoundException("The game data file was not found.", FILE_NAME);
         }
 
-        GameStateManager gameStateManager = new();
+        GameStateManager gameStateManager = new(this);
         GameStateDS stateDS = new();
         stateDS.ReadXml(FILE_NAME);
         var gameDataRow = stateDS.GameData.First();
@@ -128,7 +128,7 @@ public class DataManager : IDataManager
     /// properties of the game state manager.
     /// </remarks>
     /// <param name="gameStateManager">An existing game state manager.</param>
-    public static void AddPlayersToGameState(IGameStateManager gameStateManager)
+    public void AddPlayersToGameState(IGameStateManager gameStateManager)
     {
         GameStateDS stateDS = new();
         stateDS.ReadXml(FILE_NAME);

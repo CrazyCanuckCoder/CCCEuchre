@@ -13,12 +13,18 @@ namespace Euchre.Logic.Helpers;
 /// </summary>
 public class GameStateManager : IGameStateManager
 {
-    public GameStateManager()
+    public GameStateManager(IDataManager dataManager)
     {
         Deck = new Deck();
         TeamScores = new int[NUMBER_OF_TEAMS];
         CurrentRoundTricks = [];
+        _dataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
     }
+
+    /// <summary>
+    /// The data manager used to load and save game state information.
+    /// </summary>
+    private readonly IDataManager _dataManager;
 
     /// <summary>
     /// The list of players in the game. The first two players are on one team, and the last two players are 
@@ -121,39 +127,12 @@ public class GameStateManager : IGameStateManager
     }
 
     /// <summary>
-    /// Saves the current game data to a file.
-    /// </summary>
-    public void SaveGameData()
-    {
-        GameStateManager gsManagerClone = Clone();
-        DataManager.SaveGameState(gsManagerClone);
-    }
-
-    /// <summary>
     /// Returns true if saved game data exists; otherwise, false.
     /// </summary>
     /// <returns>A boolean indicating whether saved game data exists.</returns>
     public static bool DataExists()
     {
         return File.Exists(DataManager.FILE_NAME);
-    }
-
-    /// <summary>
-    /// Loads the game data from a file.
-    /// </summary>
-    /// <returns>An instance of this class with the loaded data.</returns>
-    public static IGameStateManager LoadGameData()
-    {
-        return DataManager.LoadGameState();
-    }
-
-    /// <summary>
-    /// Adds player data to the specified game state manager.
-    /// </summary>
-    /// <param name="gameStateManager">The game state manager to which player data will be added.</param>
-    public static void AddPlayersToGameData(IGameStateManager gameStateManager)
-    {
-        DataManager.AddPlayersToGameState(gameStateManager);
     }
 
     /// <summary>
@@ -210,7 +189,7 @@ public class GameStateManager : IGameStateManager
 
         ResetRoundCheckpoint();
         ResetTricksWonByPlayers();
-        SaveGameData();
+        _dataManager.SaveGameState(Clone());
     }
 
     /// <summary>
@@ -242,7 +221,7 @@ public class GameStateManager : IGameStateManager
         // Update checkpoint after each trick – this allows us to resume mid-round.
 
         CurrentTrickNumber = trickNum; // remember where we stopped
-        SaveGameData();
+        _dataManager.SaveGameState(Clone());
     }
 
     /// <summary>
@@ -282,9 +261,9 @@ public class GameStateManager : IGameStateManager
     /// Clones the values of this class and creates a new instance.
     /// </summary>
     /// <returns>A new instance of this class with the same values.</returns>
-    private GameStateManager Clone()
+    public GameStateManager Clone()
     {
-        var newInstance = new GameStateManager();
+        var newInstance = new GameStateManager(_dataManager);
         newInstance.CopyFrom(this);
         return newInstance;
     }

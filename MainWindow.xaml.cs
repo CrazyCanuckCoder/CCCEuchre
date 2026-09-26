@@ -1,6 +1,7 @@
 ﻿using CrazyCanuckCoder.Library.Common;
 using CrazyCanuckCoder.Library.WPF;
 using Euchre.Logic.Components;
+using Euchre.Logic.Data;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Helpers;
 using Euchre.Logic.Interfaces;
@@ -424,14 +425,16 @@ public partial class MainWindow : Window
         if (playerNames != null)
         {
             var playerList = playerNames.ToList();
-            ViewModel.CurrentGame = new EuchreGame(playerList, App.Services.GetService<IGameStateManager>()!);
+            ViewModel.CurrentGame = new EuchreGame(playerList, App.Services.GetService<IGameStateManager>()!, 
+                App.Services.GetService<IDataManager>()!);
             await StartGame();
         }
     }
 
     private async void MenuContinue_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.CurrentGame = new EuchreGame(App.Services.GetService<IGameStateManager>()!);
+        ViewModel.CurrentGame = new EuchreGame(App.Services.GetService<IGameStateManager>()!, 
+            App.Services.GetService<IDataManager>()!);
         await StartGame();
     }
 
@@ -450,7 +453,8 @@ public partial class MainWindow : Window
         ];
         PickTrumpSuitWindow pickTrump = new(trumpSuits,
                                         new HumanPlayer("human", 0, 0, 0),
-                                        new AutomatedPlayer("auto", 0, 0, new GameStateManager(), 0),
+                                        new AutomatedPlayer("auto", 0, 0, 
+                                        new GameStateManager(new DataManager()), 0),
                                         false)
         {
             Owner = this,
@@ -563,7 +567,11 @@ public partial class MainWindow : Window
 
                         try
                         {
-                            game?.GameInfo.SaveGameData(); // ensure last state persisted
+                            if (game != null && game.GameInfo != null)
+                            {
+                                // ensure last state persisted
+                                new DataManager().SaveGameState(game.GameInfo.Clone());
+                            }
                         }
                         catch
                         {

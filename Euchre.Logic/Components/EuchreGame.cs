@@ -1,3 +1,4 @@
+using Euchre.Logic.Data;
 using Euchre.Logic.Enums;
 using Euchre.Logic.EventArgs;
 using Euchre.Logic.Exceptions;
@@ -47,16 +48,17 @@ public class EuchreGame : IEuchreGame
     /// <summary>
     /// Use this constructor when loading a saved game.
     /// </summary>
-    public EuchreGame(IGameStateManager gameStateManager)
+    public EuchreGame(IGameStateManager gameStateManager, IDataManager dataManager)
     {
         Log.Debug("Initializing EuchreGame from saved game.");
 
         // Load persisted state.
 
-        var tempGameManager = GameStateManager.LoadGameData()
+        _dataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
+        var tempGameManager = _dataManager.LoadGameState()
                      ?? throw new InvalidGameConditionException("No saved game found.");
         gameStateManager.CopyFrom(tempGameManager);
-        GameStateManager.AddPlayersToGameData(gameStateManager);
+        _dataManager.AddPlayersToGameState(gameStateManager);
         GameInfo = gameStateManager;
 
         // Flag that we are resuming – the UI can react accordingly.
@@ -69,10 +71,12 @@ public class EuchreGame : IEuchreGame
     /// </summary>
     /// <param name="playerNames">The list of names for the players where the first name is a human.</param>
     /// <exception cref="InvalidNumberOfPlayersException" />
-    public EuchreGame(List<AutomatedPlayerAvatar> playerNames, IGameStateManager gameStateManager)
+    public EuchreGame(List<AutomatedPlayerAvatar> playerNames, IGameStateManager gameStateManager, 
+        IDataManager dataManager)
     {
         Log.Debug("Initializing EuchreGame for a new game.");
 
+        _dataManager = dataManager ?? throw new ArgumentNullException(nameof(_dataManager));
         if (playerNames.Count != NUMBER_OF_PLAYERS)
         {
             Log.Error("Invalid number of player names provided to constructor.");
@@ -96,7 +100,7 @@ public class EuchreGame : IEuchreGame
 
         GameInfo.Players = players;
         GameInfo.Dealer = players[0];
-        GameInfo.SaveGameData();
+        _dataManager.SaveGameState(GameInfo.Clone());
 
         Log.Debug("New game initialized and saved initial state.");
     }
@@ -194,8 +198,21 @@ public class EuchreGame : IEuchreGame
     public event EventHandler<GetPlayersCardsEventArgs>? GetPlayersCards;
 #endif
 
+    /// <summary>
+    /// Cancellation token source used to signal the game loop to stop gracefully.
+    /// </summary>
     private CancellationTokenSource? _shutdownCts;
+
+    /// <summary>
+    /// The task representing the running game loop, allowing for cooperative cancellation and awaiting 
+    /// its completion.
+    /// </summary>
     private Task? _gameLoopTask;
+
+    /// <summary>
+    /// The data manager responsible for saving and loading game state, ensuring persistence across sessions.
+    /// </summary>
+    private IDataManager _dataManager;
 
     /// <summary>
     /// Request cooperative shutdown of the running game loop.
@@ -262,7 +279,7 @@ public class EuchreGame : IEuchreGame
             // ensure state saved on graceful stop
             try
             {
-                GameInfo.SaveGameData();
+                _dataManager.SaveGameState(GameInfo.Clone());
                 Log.Debug("Game state saved after PlayGameAsync exit.");
             }
             catch (Exception ex)
@@ -384,7 +401,7 @@ public class EuchreGame : IEuchreGame
         // Record that dealing is done.
 
         GameInfo.LastCompletedStage = RoundStage.CardsDealt;
-        GameInfo.SaveGameData();
+        _dataManager.SaveGameState(GameInfo.Clone());
     }
 
     /// <summary>
@@ -472,7 +489,7 @@ public class EuchreGame : IEuchreGame
     {
         TrumpCalled?.Invoke(this, new System.EventArgs());
         GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
-        GameInfo.SaveGameData();
+        _dataManager.SaveGameState(GameInfo.Clone());
         return true;
     }
 
@@ -519,7 +536,7 @@ public class EuchreGame : IEuchreGame
                     {
                         GameInfo.Dealer!.DiscardForKitty(GameInfo.Kitty!);
                     }
-                    GameInfo.SaveGameData();
+                    _dataManager.SaveGameState(GameInfo.Clone());
 
                     Log.Debug(
                         $"Player {player.Name} ordered up {kittySuit} (IsDealer={isDealer}, " +
@@ -560,7 +577,7 @@ public class EuchreGame : IEuchreGame
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, true, GameInfo.Trump,
                         player.IsGoingAlone, false, false));
 
-                    GameInfo.SaveGameData();
+                    _dataManager.SaveGameState(GameInfo.Clone());
 
                     Log.Debug(
                         $"Player {player.Name} called trump {calledSuit} (IsDealer={isDealer}, " +
@@ -636,7 +653,7 @@ public class EuchreGame : IEuchreGame
 
         GameInfo.CurrentTrickNumber = 0;
         GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
-        GameInfo.SaveGameData();
+        _dataManager.SaveGameState(GameInfo.Clone());
     }
 
     /// <summary>
@@ -787,7 +804,7 @@ public class EuchreGame : IEuchreGame
         // Record that scoring is done.
 
         GameInfo.LastCompletedStage = RoundStage.Scored;
-        GameInfo.SaveGameData();
+        _dataManager.SaveGameState(GameInfo.Clone());
     }
 
     /// <summary>
@@ -838,7 +855,7 @@ public class EuchreGame : IEuchreGame
     {
         GameInfo.Dealer = GetNextPlayer(GameInfo.Dealer!);
         GameInfo.LastCompletedStage = RoundStage.None; // ready for next round
-        GameInfo.SaveGameData();
+        _dataManager.SaveGameState(GameInfo.Clone());
 
         Log.Debug($"AdvanceDealer: new dealer is {GameInfo.Dealer.Name} (index {GameInfo.Dealer.PlayerIndex}).");
     }
@@ -906,7 +923,7 @@ public class EuchreGame : IEuchreGame
         SetKittyCard(eventArgs.KittyCard);
 
         GameInfo.LastCompletedStage = RoundStage.CardsDealt;
-        GameInfo.SaveGameData();
+        _dataManager.SaveGameState(GameInfo.Clone());
     }
 #endif
 }

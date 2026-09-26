@@ -1,4 +1,5 @@
 ﻿using Euchre.Logic.Components;
+using Euchre.Logic.Data;
 using Euchre.Logic.Exceptions;
 using Euchre.Logic.Helpers;
 
@@ -13,7 +14,7 @@ public class PlayManagerTests
     [SetUp]
     public void Setup()
     {
-        _gameState = new GameStateManager();
+        _gameState = new GameStateManager(new DataManager());
 
         // Create four automated players. Team 0: players 0 and 2. Team 1: players 1 and 3.
         _players[0] = new AutomatedPlayer("P0", 0, 0, _gameState, 1);
