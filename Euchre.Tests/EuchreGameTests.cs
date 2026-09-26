@@ -185,7 +185,10 @@ public class EuchreGameTests
     [Test]
     public void BiddingRound_Round2_CallTrump_UpdatesGameInfo()
     {
-        var game = new EuchreGame(MakeAvatars(), _gsm, _dataManager);
+        var dmMock = new Mock<IDataManager>();
+        dmMock.Setup(m => m.SaveGameState(It.IsAny<IGameStateManager>()));
+        var gameStateManager = new GameStateManager(dmMock.Object);
+        var game = new EuchreGame(MakeAvatars(), gameStateManager, dmMock.Object);
 
         // replace players with mocks to control CallTrump behavior
         var mocks = new Mock<IPlayer>[4];
