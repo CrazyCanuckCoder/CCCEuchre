@@ -32,11 +32,16 @@ public class DataManager : IDataManager
                 throw new ArgumentException("No players exist in the game state manager.");
             }
 
+            // Clone the game state manager to ensure that the saved data is not affected by any changes made
+            //  to the original object after saving.
+
+            var clonedGameStateManager = gameStateManager.Clone();
+
             GameStateDS stateDS = new();
 
             // Add the players and their hands to the dataset.
 
-            foreach (var player in gameStateManager.Players)
+            foreach (var player in clonedGameStateManager.Players!)
             {
                 var playerID = stateDS.Player.AddPlayerRow(player.Name, player.IsHuman, player.TeamIndex,
                     player.PlayerIndex, player.IsGoingAlone, player.AvatarNumber).PlayerID;
@@ -48,7 +53,7 @@ public class DataManager : IDataManager
 
             // Save the trick information to the dataset.
 
-            foreach (var trick in gameStateManager.CurrentRoundTricks)
+            foreach (var trick in clonedGameStateManager.CurrentRoundTricks)
             {
                 var trickID = stateDS.Trick.AddTrickRow((int)trick.LeadSuit, (int)trick.Trump).TrickID;
                 foreach (var playerCard in trick.Cards)
@@ -61,27 +66,27 @@ public class DataManager : IDataManager
 
             // Add the team scores to the dataset.
 
-            for (var idx = 0; idx < gameStateManager.TeamScores.Length; idx++)
+            for (var idx = 0; idx < clonedGameStateManager.TeamScores.Length; idx++)
             {
-                stateDS.TeamScores.AddTeamScoresRow(idx, gameStateManager.TeamScores[idx]);
+                stateDS.TeamScores.AddTeamScoresRow(idx, clonedGameStateManager.TeamScores[idx]);
             }
 
             // Add the remaining game state information to the dataset.
 
             stateDS.GameData.AddGameDataRow(
-                gameStateManager.Kitty is null ? 0 : (int)gameStateManager.Kitty.Suit,
-                gameStateManager.Kitty is null ? 0 : (int)gameStateManager.Kitty.Rank,
-                gameStateManager.Trump is null ? 0 : (int)gameStateManager.Trump,
-                gameStateManager.Dealer is null ? 0 :
-                    stateDS.Player.First(p => p.Name == gameStateManager.Dealer.Name).PlayerID,
-                gameStateManager.TrumpCaller is null ? 0 :
-                    stateDS.Player.First(p => p.Name == gameStateManager.TrumpCaller.Name).PlayerID,
-                gameStateManager.AlonePlayer is null ? 0 :
-                    stateDS.Player.First(p => p.Name == gameStateManager.AlonePlayer.Name).PlayerID,
-                gameStateManager.NextTrickPlayer is null ? 0 :
-                    stateDS.Player.First(p => p.Name == gameStateManager.NextTrickPlayer.Name).PlayerID,
-                (int)gameStateManager.LastCompletedStage,
-                gameStateManager.CurrentTrickNumber);
+                clonedGameStateManager.Kitty is null ? 0 : (int)clonedGameStateManager.Kitty.Suit,
+                clonedGameStateManager.Kitty is null ? 0 : (int)clonedGameStateManager.Kitty.Rank,
+                clonedGameStateManager.Trump is null ? 0 : (int)clonedGameStateManager.Trump,
+                clonedGameStateManager.Dealer is null ? 0 :
+                    stateDS.Player.First(p => p.Name == clonedGameStateManager.Dealer.Name).PlayerID,
+                clonedGameStateManager.TrumpCaller is null ? 0 :
+                    stateDS.Player.First(p => p.Name == clonedGameStateManager.TrumpCaller.Name).PlayerID,
+                clonedGameStateManager.AlonePlayer is null ? 0 :
+                    stateDS.Player.First(p => p.Name == clonedGameStateManager.AlonePlayer.Name).PlayerID,
+                clonedGameStateManager.NextTrickPlayer is null ? 0 :
+                    stateDS.Player.First(p => p.Name == clonedGameStateManager.NextTrickPlayer.Name).PlayerID,
+                (int)clonedGameStateManager.LastCompletedStage,
+                clonedGameStateManager.CurrentTrickNumber);
 
             // Save the dataset to the file.
 

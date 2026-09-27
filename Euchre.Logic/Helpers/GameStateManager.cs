@@ -189,7 +189,7 @@ public class GameStateManager : IGameStateManager
 
         ResetRoundCheckpoint();
         ResetTricksWonByPlayers();
-        _dataManager.SaveGameState(Clone());
+        _dataManager.SaveGameState(this);
     }
 
     /// <summary>
@@ -221,7 +221,7 @@ public class GameStateManager : IGameStateManager
         // Update checkpoint after each trick – this allows us to resume mid-round.
 
         CurrentTrickNumber = trickNum; // remember where we stopped
-        _dataManager.SaveGameState(Clone());
+        _dataManager.SaveGameState(this);
     }
 
     /// <summary>

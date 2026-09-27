@@ -570,7 +570,7 @@ public partial class MainWindow : Window
                             if (game != null && game.GameInfo != null)
                             {
                                 // ensure last state persisted
-                                new DataManager().SaveGameState(game.GameInfo.Clone());
+                                new DataManager().SaveGameState(game.GameInfo);
                             }
                         }
                         catch

@@ -76,7 +76,7 @@ public class EuchreGame : IEuchreGame
     {
         Log.Debug("Initializing EuchreGame for a new game.");
 
-        _dataManager = dataManager ?? throw new ArgumentNullException(nameof(_dataManager));
+        _dataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
         if (playerNames.Count != NUMBER_OF_PLAYERS)
         {
             Log.Error("Invalid number of player names provided to constructor.");
@@ -100,7 +100,7 @@ public class EuchreGame : IEuchreGame
 
         GameInfo.Players = players;
         GameInfo.Dealer = players[0];
-        _dataManager.SaveGameState(GameInfo.Clone());
+        _dataManager.SaveGameState(GameInfo);
 
         Log.Debug("New game initialized and saved initial state.");
     }
@@ -279,7 +279,7 @@ public class EuchreGame : IEuchreGame
             // ensure state saved on graceful stop
             try
             {
-                _dataManager.SaveGameState(GameInfo.Clone());
+                _dataManager.SaveGameState(GameInfo);
                 Log.Debug("Game state saved after PlayGameAsync exit.");
             }
             catch (Exception ex)
@@ -401,7 +401,7 @@ public class EuchreGame : IEuchreGame
         // Record that dealing is done.
 
         GameInfo.LastCompletedStage = RoundStage.CardsDealt;
-        _dataManager.SaveGameState(GameInfo.Clone());
+        _dataManager.SaveGameState(GameInfo);
     }
 
     /// <summary>
@@ -489,7 +489,7 @@ public class EuchreGame : IEuchreGame
     {
         TrumpCalled?.Invoke(this, new System.EventArgs());
         GameInfo.LastCompletedStage = RoundStage.TrumpChosen;
-        _dataManager.SaveGameState(GameInfo.Clone());
+        _dataManager.SaveGameState(GameInfo);
         return true;
     }
 
@@ -536,7 +536,7 @@ public class EuchreGame : IEuchreGame
                     {
                         GameInfo.Dealer!.DiscardForKitty(GameInfo.Kitty!);
                     }
-                    _dataManager.SaveGameState(GameInfo.Clone());
+                    _dataManager.SaveGameState(GameInfo);
 
                     Log.Debug(
                         $"Player {player.Name} ordered up {kittySuit} (IsDealer={isDealer}, " +
@@ -577,7 +577,7 @@ public class EuchreGame : IEuchreGame
                     PlayerBidResult?.Invoke(this, new PlayerBidEventArgs(player, true, GameInfo.Trump,
                         player.IsGoingAlone, false, false));
 
-                    _dataManager.SaveGameState(GameInfo.Clone());
+                    _dataManager.SaveGameState(GameInfo);
 
                     Log.Debug(
                         $"Player {player.Name} called trump {calledSuit} (IsDealer={isDealer}, " +
@@ -653,7 +653,7 @@ public class EuchreGame : IEuchreGame
 
         GameInfo.CurrentTrickNumber = 0;
         GameInfo.LastCompletedStage = RoundStage.TricksPlayed;
-        _dataManager.SaveGameState(GameInfo.Clone());
+        _dataManager.SaveGameState(GameInfo);
     }
 
     /// <summary>
@@ -804,7 +804,7 @@ public class EuchreGame : IEuchreGame
         // Record that scoring is done.
 
         GameInfo.LastCompletedStage = RoundStage.Scored;
-        _dataManager.SaveGameState(GameInfo.Clone());
+        _dataManager.SaveGameState(GameInfo);
     }
 
     /// <summary>
@@ -855,7 +855,7 @@ public class EuchreGame : IEuchreGame
     {
         GameInfo.Dealer = GetNextPlayer(GameInfo.Dealer!);
         GameInfo.LastCompletedStage = RoundStage.None; // ready for next round
-        _dataManager.SaveGameState(GameInfo.Clone());
+        _dataManager.SaveGameState(GameInfo);
 
         Log.Debug($"AdvanceDealer: new dealer is {GameInfo.Dealer.Name} (index {GameInfo.Dealer.PlayerIndex}).");
     }
@@ -923,7 +923,7 @@ public class EuchreGame : IEuchreGame
         SetKittyCard(eventArgs.KittyCard);
 
         GameInfo.LastCompletedStage = RoundStage.CardsDealt;
-        _dataManager.SaveGameState(GameInfo.Clone());
+        _dataManager.SaveGameState(GameInfo);
     }
 #endif
 }
