@@ -306,7 +306,7 @@ public partial class PickTrumpSuitWindow : Window
 
                 case Suit.Spades:
                     SpadesVisibility = Visibility.Visible;
-                    HeartsButton.IsChecked = selectTrumpButton;
+                    SpadesButton.IsChecked = selectTrumpButton;
                     break;
             }
         }
