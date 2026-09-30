@@ -34,6 +34,11 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     /// </summary>
     private IMainWindowController _mainWindowController;
 
+    /// <summary>
+    /// True to indicate the cards have already been displayed to the players.
+    /// </summary>
+    private bool _cardsAlreadyDisplayed = false;
+
     #endregion Fields
 
     #region Properties
@@ -502,7 +507,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
         }
         else
         {
-            message = $"{trump!.Value} {(isGoingAlone ? " alone" : "")}";
+            message = $"{trump!.Value}{(isGoingAlone ? " alone" : "")}";
         }
 
         DisplayPlayerMessage(player, message, 2, false);
@@ -574,6 +579,11 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     {
         Log.Debug("EndOfRoundUpdate: round finished, showing winning round dialog.");
 
+        if (!_cardsAlreadyDisplayed)
+        {
+            ForciblyDisplayPlayersHands();
+        }
+
         var message = BuildEndOfRoundMessage(winningPlayers, points, reasonForPoints);
 
         // Display the winning round message to the user.
@@ -582,6 +592,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
 
         // The round is over, reset the board for the next round.
 
+        _cardsAlreadyDisplayed = false;
         _mainWindowController.ResetCardDisplayControlsVisibility();
         _mainWindowController.ClearPlayersHands();
         _mainWindowController.UpdateGameScores();
@@ -1149,6 +1160,10 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     /// </summary>
     private void ForciblyDisplayPlayersHands()
     {
+        // Prevent the cards from being displayed multiple times in a row, which can happen when a player
+        //   takes the remaining tricks.
+
+        _cardsAlreadyDisplayed = true;
         foreach (IPlayer player in CurrentGame!.GameInfo.Players!)
         {
             _mainWindowController.SetupPlayerCards(player);
