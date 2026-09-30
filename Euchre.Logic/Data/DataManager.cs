@@ -58,7 +58,7 @@ public class DataManager : IDataManager
                 var trickID = stateDS.Trick.AddTrickRow((int)trick.LeadSuit, (int)trick.Trump).TrickID;
                 foreach (var playerCard in trick.Cards)
                 {
-                    var playerID = stateDS.Player.Where(p => p.Name == playerCard.Key.Name).First().PlayerID;
+                    var playerID = stateDS.Player.First(p => p.Name == playerCard.Key.Name).PlayerID;
                     stateDS.TrickCards.AddTrickCardsRow(trickID, playerID, (int)playerCard.Value.Suit,
                         (int)playerCard.Value.Rank);
                 }
