@@ -14,22 +14,30 @@
     <Compile Remove="Docs\**" />
     <Compile Remove="Euchre.Console\**" />
     <Compile Remove="Euchre.Logic\**" />
+    <Compile Remove="Euchre.Setup\**" />
     <Compile Remove="Euchre.Tests\**" />
+    <Compile Remove="Euchre.WAP\**" />
     <EmbeddedResource Remove=".github\**" />
     <EmbeddedResource Remove="Docs\**" />
     <EmbeddedResource Remove="Euchre.Console\**" />
     <EmbeddedResource Remove="Euchre.Logic\**" />
+    <EmbeddedResource Remove="Euchre.Setup\**" />
     <EmbeddedResource Remove="Euchre.Tests\**" />
+    <EmbeddedResource Remove="Euchre.WAP\**" />
     <None Remove=".github\**" />
     <None Remove="Docs\**" />
     <None Remove="Euchre.Console\**" />
     <None Remove="Euchre.Logic\**" />
+    <None Remove="Euchre.Setup\**" />
     <None Remove="Euchre.Tests\**" />
+    <None Remove="Euchre.WAP\**" />
     <Page Remove=".github\**" />
     <Page Remove="Docs\**" />
     <Page Remove="Euchre.Console\**" />
     <Page Remove="Euchre.Logic\**" />
+    <Page Remove="Euchre.Setup\**" />
     <Page Remove="Euchre.Tests\**" />
+    <Page Remove="Euchre.WAP\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -270,10 +278,6 @@
     <Content Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Euchre.Setup\Euchre.Setup.wixproj" />
   </ItemGroup>
 
   <ItemGroup>

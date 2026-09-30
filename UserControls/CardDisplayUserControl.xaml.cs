@@ -5,12 +5,10 @@ using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using Euchre.UILogic.Interfaces;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace Euchre.UserControls;
 /// <summary>
@@ -65,12 +63,12 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
                  select currentCard)
                 .ToList();
 
-        // Create a different Margin value for a card that separates the group.
-
-        Thickness inGroupMargin = new(-25, 0, 0, 0);
-
         if (Cards.Count > 0)
         {
+            // Create a different Margin value for a card that separates the group.
+
+            Thickness inGroupMargin = new(-25, 0, 0, 0);
+
             // Group the cards by suit. Setup up a previous suit to see if the current card belongs in the
             //  current group of cards. 
 
@@ -152,24 +150,23 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
                  select currentCard)
                 .ToList();
 
-        // Determine if any of the suits in the hand need to be disabled.
-
-        List<Suit> disabledSuits = [];
-        if (allowSelection && !trickSuitIsTrump && trickSuit != null &&
-            Cards.HasAnyOfSuit(trickSuit.Value, trumpSuit))
-        {
-            disabledSuits = (  from Suit suitType in Enum.GetValues(typeof(Suit))
-                              where suitType != trickSuit
-                             select suitType)
-                            .ToList();
-        }
-
-        // Create a different Margin value for a card that separates the group.
-
-        Thickness inGroupMargin = new(-25, 0, 0, 0);
-
         if (Cards.Count > 0)
         {
+            // Determine if any of the suits in the hand need to be disabled.
+
+            List<Suit> disabledSuits = [];
+            if (allowSelection && !trickSuitIsTrump && trickSuit != null &&
+                Cards.HasAnyOfSuit(trickSuit.Value, trumpSuit))
+            {
+                disabledSuits = (  from Suit suitType in Enum.GetValues(typeof(Suit))
+                                  where suitType != trickSuit
+                                 select suitType)
+                                .ToList();
+            }
+
+            // Create a different Margin value for a card that separates the group.
+
+            Thickness inGroupMargin = new(-25, 0, 0, 0);
 
             // Group the cards by suit. Setup up a previous suit to see if the current card belongs in the
             //  current group of cards. 
