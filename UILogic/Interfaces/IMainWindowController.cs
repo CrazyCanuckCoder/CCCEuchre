@@ -31,6 +31,7 @@ public interface IMainWindowController
     void SetPlayerTrumpSuitIcon(int playerIndex, Suit trump);
     void SetupPlayerCards(IPlayer player);
     void UpdateGameScores();
+    void UpdatePlayedCardsByTrickStatus();
     void UpdatePlayersNumberOfTricksWon(int playerIndex);
     void UpdatePlayersTrickCounters();
 }

@@ -392,6 +392,22 @@ internal class MainWindowController : IMainWindowController
         }
     }
 
+    public void UpdatePlayedCardsByTrickStatus()
+    {
+        var currentTrick = _gameStateManager.CurrentRoundTricks.Last();
+        if (currentTrick.Cards.Count > 1)
+        {
+            var winningCard = currentTrick.GetCurrentLeadingCard();
+            foreach (var card in currentTrick.Cards)
+            {
+                if (card.Value != winningCard)
+                {
+                    _playerPlayedCardsDisplayControls[card.Key.PlayerIndex].DisplayTrickLosingCard();
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// Adds the players names to the correct teams on the current round information user control.
     /// </summary>
