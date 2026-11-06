@@ -548,6 +548,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
         SetPlayersPlayedCardDisplayControlVisibility(player.PlayerIndex, Visibility.Visible);
         var cardPlayedClone = cardPlayed.Clone();
         _mainWindowController.DisplayPlayedCard(player.PlayerIndex, cardPlayedClone);
+        _mainWindowController.UpdatePlayedCardsByTrickStatus();
 
         PauseGame(2);
     }
