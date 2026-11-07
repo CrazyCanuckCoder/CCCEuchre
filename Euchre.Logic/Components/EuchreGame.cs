@@ -723,7 +723,7 @@ public class EuchreGame : IEuchreGame
 
             trick.AddCard(GameInfo.NextTrickPlayer, playedCard);
             CardPlayedByPlayer?.Invoke(this,
-                new CardPlayedByPlayerEventArgs(GameInfo.NextTrickPlayer, playedCard));
+                new CardPlayedByPlayerEventArgs(GameInfo.NextTrickPlayer, playedCard, trick));
 
             Log.Debug($"{GameInfo.NextTrickPlayer.Name} played {playedCard} (TrickLead={leadSuit}).");
 

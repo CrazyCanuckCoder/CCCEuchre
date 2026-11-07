@@ -530,7 +530,8 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     /// </summary>
     /// <param name="player">The player that played the card.</param>
     /// <param name="cardPlayed">The card played by the player.</param>
-    public void DisplayCardPlayedByPlayer(IPlayer player, ICard cardPlayed)
+    /// <param name="currentTrick">The current trick being played.</param>
+    public void DisplayCardPlayedByPlayer(IPlayer player, ICard cardPlayed, Trick currentTrick)
     {
         Log.Debug($"DisplayCardPlayedByPlayer: {player.Name} played {cardPlayed}");
         if (player is HumanPlayer)
@@ -548,6 +549,7 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
         SetPlayersPlayedCardDisplayControlVisibility(player.PlayerIndex, Visibility.Visible);
         var cardPlayedClone = cardPlayed.Clone();
         _mainWindowController.DisplayPlayedCard(player.PlayerIndex, cardPlayedClone);
+        _mainWindowController.UpdatePlayedCardsByTrickStatus(currentTrick);
 
         PauseGame(2);
     }

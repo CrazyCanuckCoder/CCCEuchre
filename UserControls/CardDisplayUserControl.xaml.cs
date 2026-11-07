@@ -246,6 +246,22 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
     }
 
     /// <summary>
+    /// Displays the card as a losing card on the control.  This is used to let the players know that the
+    /// card cannot win the current trick.
+    /// </summary>
+    public void DisplayTrickLosingCard()
+    {
+        if (Cards.Count == 1)
+        {
+            var currentCard = CardImages.First();
+            ClearCards();
+            var source = UIHelpers.GenerateCardImageSource(currentCard.Card!, false, true);
+            currentCard.ImageData.Source = source;
+            CardImages.Add(currentCard);
+        }
+    }
+
+    /// <summary>
     /// Waits for the user to select a card.
     /// </summary>
     /// <param name="disabledSuits">A list of the suits that the user cannot select a card from.</param>

@@ -197,4 +197,9 @@ public partial class VerticalCardDisplayUserControl : UserControl, IBaseCardDisp
             }
         }
     }
+
+    public void DisplayTrickLosingCard()
+    {
+        throw new NotImplementedException();
+    }
 }

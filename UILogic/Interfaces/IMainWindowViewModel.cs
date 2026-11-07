@@ -39,7 +39,7 @@ public interface IMainWindowViewModel
 
     void DealCardsToPlayer(int indexOfPlayer, int numberOfCardsDealt);
     void DeclareDealer(IPlayer dealer);
-    void DisplayCardPlayedByPlayer(IPlayer player, ICard cardPlayed);
+    void DisplayCardPlayedByPlayer(IPlayer player, ICard cardPlayed, Trick currentTrick);
     void EndOfGameUpdate(IGameStateManager gameInfo);
     void EndOfRoundUpdate(List<string> winningPlayers, int points, ScoringReason reasonForPoints);
     void EndOfTrick(IPlayer trickWinningPlayer);

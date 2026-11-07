@@ -5,6 +5,7 @@ namespace Euchre.UILogic.Interfaces;
 public interface IBaseCardDisplay
 {
     void ClearCards();
+    void DisplayTrickLosingCard();
     void RemoveCard();
     void SetupCards(List<Card> cards);
     void SetupCards(List<Card> cards, Suit trumpSuit);

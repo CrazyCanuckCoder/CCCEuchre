@@ -393,6 +393,26 @@ internal class MainWindowController : IMainWindowController
     }
 
     /// <summary>
+    /// Updates the display of the cards played by each player based on the current trick's status. If a
+    /// player has played a card that is not the winning card, it will be displayed as a losing card.
+    /// </summary>
+    /// <param name="currentTrick">The current trick being played.</param>
+    public void UpdatePlayedCardsByTrickStatus(Trick currentTrick)
+    {
+        if (currentTrick.Cards.Count > 1)
+        {
+            var winningCard = currentTrick.GetCurrentLeadingCard();
+            foreach (var card in currentTrick.Cards)
+            {
+                if (card.Value != winningCard)
+                {
+                    _playerPlayedCardsDisplayControls[card.Key.PlayerIndex].DisplayTrickLosingCard();
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Adds the players names to the correct teams on the current round information user control.
     /// </summary>
     private void SetupCurrentRoundInfoControl()
