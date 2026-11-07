@@ -326,7 +326,7 @@ public partial class MainWindow : Window
     {
         UIHelpers.RunOnUIThread(() =>
         {
-            ViewModel.DisplayCardPlayedByPlayer(e.Player, e.CardPlayed);
+            ViewModel.DisplayCardPlayedByPlayer(e.Player, e.CardPlayed, e.CurrentTrick);
         });
     }
 

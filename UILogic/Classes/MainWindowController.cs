@@ -396,9 +396,9 @@ internal class MainWindowController : IMainWindowController
     /// Updates the display of the cards played by each player based on the current trick's status. If a
     /// player has played a card that is not the winning card, it will be displayed as a losing card.
     /// </summary>
-    public void UpdatePlayedCardsByTrickStatus()
+    /// <param name="currentTrick">The current trick being played.</param>
+    public void UpdatePlayedCardsByTrickStatus(Trick currentTrick)
     {
-        var currentTrick = _gameStateManager.CurrentRoundTricks.Last();
         if (currentTrick.Cards.Count > 1)
         {
             var winningCard = currentTrick.GetCurrentLeadingCard();
