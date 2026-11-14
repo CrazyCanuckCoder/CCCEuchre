@@ -20,13 +20,12 @@ namespace Euchre.UserControls;
 public partial class HorizontalPlayerDisplayUserControl : UserControl, IBasePlayerDisplay
 {
     private static readonly TimeSpan CardSelectionDuration = TimeSpan.FromSeconds(30);
-    private readonly DispatcherTimer _cardSelectionTimer = new() { Interval = TimeSpan.FromMilliseconds(100) };
     private readonly Stopwatch _cardSelectionStopwatch = new();
+    private bool _cardSelectionTimedOut;
 
     public HorizontalPlayerDisplayUserControl()
     {
         InitializeComponent();
-        _cardSelectionTimer.Tick += CardSelectionTimer_Tick;
         TricksColour = new SolidColorBrush(UIConstants.Team1Colour);
         SuitImage = new Image();
         DataContext = this;
@@ -121,28 +120,31 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl, IBasePlay
     public void StartCardSelectionTimer()
     {
         _cardSelectionStopwatch.Restart();
+        _cardSelectionTimedOut = false;
         CardSelectionTimer.Visibility = Visibility.Visible;
         UpdateCardSelectionTimer(CardSelectionDuration);
-        _cardSelectionTimer.Start();
     }
 
     public void StopCardSelectionTimer()
     {
-        _cardSelectionTimer.Stop();
         _cardSelectionStopwatch.Reset();
         CardSelectionTimer.Visibility = Visibility.Collapsed;
         TimerProgressArc.Data = Geometry.Empty;
         TimerCountText.Text = CardSelectionDuration.TotalSeconds.ToString(CultureInfo.InvariantCulture);
     }
 
-    private void CardSelectionTimer_Tick(object? sender, EventArgs e)
+    public void UpdateCardSelectionTimer()
     {
         var remaining = CardSelectionDuration - _cardSelectionStopwatch.Elapsed;
         if (remaining <= TimeSpan.Zero)
         {
-            _cardSelectionTimer.Stop();
             UpdateCardSelectionTimer(TimeSpan.Zero);
-            CardSelectionTimedOut?.Invoke(this, EventArgs.Empty);
+            if (!_cardSelectionTimedOut)
+            {
+                _cardSelectionTimedOut = true;
+                CardSelectionTimedOut?.Invoke(this, EventArgs.Empty);
+            }
+
             return;
         }
 

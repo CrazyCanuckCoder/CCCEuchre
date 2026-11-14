@@ -367,6 +367,7 @@ internal class MainWindowController : IMainWindowController
             throw new InvalidOperationException("The human player's card-selection controls are unavailable.");
         }
 
+        var leadSuit = trick.Cards.Count > 0 ? trick.LeadSuit : (Suit?)null;
         var wasPlayedAutomatically = false;
         void SelectCardWhenTimerExpires(object? sender, EventArgs e)
         {
@@ -382,7 +383,7 @@ internal class MainWindowController : IMainWindowController
                 automatedPlayer.AddCard(card);
             }
 
-            var cardToPlay = automatedPlayer.SelectCardToPlay(trick, trick.Trump, trick.LeadSuit);
+            var cardToPlay = automatedPlayer.SelectCardToPlay(trick, trick.Trump, leadSuit);
             playerControl.SetChosenCard(cardToPlay);
             wasPlayedAutomatically = true;
         }
@@ -391,7 +392,8 @@ internal class MainWindowController : IMainWindowController
         try
         {
             playerDisplay.StartCardSelectionTimer();
-            playerControl.GetCardFromUser(user.Hand, trick.LeadSuit, trick.LeadSuit == trick.Trump, trick.Trump);
+            playerControl.GetCardFromUser(user.Hand, leadSuit, leadSuit == trick.Trump, trick.Trump,
+                playerDisplay.UpdateCardSelectionTimer);
             chosenCard = playerControl.ChosenCard;
         }
         finally

@@ -265,9 +265,12 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
     /// Waits for the user to select a card.
     /// </summary>
     /// <param name="disabledSuits">A list of the suits that the user cannot select a card from.</param>
+    /// <param name="updateTimer">Updates the card selection timer and applies its timeout action.</param>
     public void GetCardFromUser(List<Card> cards, Suit? trickSuit, bool trickSuitIsTrump,
-        Suit trumpSuit)
+        Suit trumpSuit, Action updateTimer)
     {
+        ArgumentNullException.ThrowIfNull(updateTimer);
+
         // Send a copy of the current cards to the method override so the cards aren't erased.
 
         SetupCards(cards.ToArray().ToList(), trickSuit, trickSuitIsTrump, trumpSuit, true);
@@ -281,6 +284,7 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
         {
             while (ChosenCard == null)
             {
+                updateTimer();
                 UIHelpers.AllowUIToUpdate();
             }
         }
