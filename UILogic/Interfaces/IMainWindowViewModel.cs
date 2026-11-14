@@ -43,7 +43,7 @@ public interface IMainWindowViewModel
     void EndOfGameUpdate(IGameStateManager gameInfo);
     void EndOfRoundUpdate(List<string> winningPlayers, int points, ScoringReason reasonForPoints);
     void EndOfTrick(IPlayer trickWinningPlayer);
-    Card? GetCardFromUser(IPlayer user, Suit? trickSuit, Suit trump);
+    Card? GetCardFromUser(IPlayer user, Trick trick);
     void ShowNoAceNoFaceNoTrump(IPlayer player);
     void Initialize();
     void KittyWasTurnedDown();

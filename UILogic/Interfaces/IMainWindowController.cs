@@ -18,7 +18,7 @@ public interface IMainWindowController
     void DisplayKittyCard(Card kitty);
     void DisplayPlayedCard(int playerIndex, ICard cardPlayed);
     void DisplayTrump(Suit trump);
-    Card? GetCardFromUser(IPlayer user, Suit? trickSuit);
+    Card? GetCardFromUser(IPlayer user, Trick trick, out bool playedAutomatically);
     void Initialize();
     void RemovePlayerCard(IPlayer player);
     void ResetCardDisplayControlsVisibility();

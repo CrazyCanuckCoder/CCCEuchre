@@ -350,24 +350,57 @@ internal class MainWindowController : IMainWindowController
     }
 
     /// <summary>
-    /// Gets the card from a human player.
+    /// Gets the card from a human player, selecting one automatically if the timer expires.
     /// </summary>
     /// <param name="user">The human player to obtain the card from.</param>
-    /// <param name="trickSuit">The suit lead in the current trick.</param>
+    /// <param name="trick">The current trick being played.</param>
+    /// <param name="playedAutomatically">True if the card was selected after the timer expired.</param>
     /// <returns>The card chosen by the player.</returns>
-    public Card? GetCardFromUser(IPlayer user, Suit? trickSuit)
+    public Card? GetCardFromUser(IPlayer user, Trick trick, out bool playedAutomatically)
     {
+        playedAutomatically = false;
         Card? chosenCard = null;
 
-        // Get the card from the user.
-
-        if (_playerCardDisplayControls[user.PlayerIndex] is CardDisplayUserControl playerControl)
+        if (_playerCardDisplayControls[user.PlayerIndex] is not CardDisplayUserControl playerControl ||
+            _playerDisplayControls[user.PlayerIndex] is not HorizontalPlayerDisplayUserControl playerDisplay)
         {
-            playerControl.GetCardFromUser(user.Hand, trickSuit, trickSuit! == _gameStateManager.Trump!.Value,
-                _gameStateManager.Trump.Value);
-            chosenCard = playerControl.ChosenCard;
+            throw new InvalidOperationException("The human player's card-selection controls are unavailable.");
         }
 
+        var wasPlayedAutomatically = false;
+        void SelectCardWhenTimerExpires(object? sender, EventArgs e)
+        {
+            if (playerControl.ChosenCard != null)
+            {
+                return;
+            }
+
+            var automatedPlayer = new AutomatedPlayer(user.Name, user.TeamIndex, user.PlayerIndex,
+                _gameStateManager, user.AvatarNumber);
+            foreach (var card in user.Hand)
+            {
+                automatedPlayer.AddCard(card);
+            }
+
+            var cardToPlay = automatedPlayer.SelectCardToPlay(trick, trick.Trump, trick.LeadSuit);
+            playerControl.SetChosenCard(cardToPlay);
+            wasPlayedAutomatically = true;
+        }
+
+        playerDisplay.CardSelectionTimedOut += SelectCardWhenTimerExpires;
+        try
+        {
+            playerDisplay.StartCardSelectionTimer();
+            playerControl.GetCardFromUser(user.Hand, trick.LeadSuit, trick.LeadSuit == trick.Trump, trick.Trump);
+            chosenCard = playerControl.ChosenCard;
+        }
+        finally
+        {
+            playerDisplay.StopCardSelectionTimer();
+            playerDisplay.CardSelectionTimedOut -= SelectCardWhenTimerExpires;
+        }
+
+        playedAutomatically = wasPlayedAutomatically;
         return chosenCard;
     }
 

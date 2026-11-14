@@ -279,13 +279,22 @@ public partial class CardDisplayUserControl : UserControl, IBaseCardDisplay
         }
         else
         {
-            // TODO: Add a time limit to this loop.  Create a mechanism to prompt the user to continue.
-
             while (ChosenCard == null)
             {
                 UIHelpers.AllowUIToUpdate();
             }
         }
+    }
+
+    public void SetChosenCard(Card card)
+    {
+        ArgumentNullException.ThrowIfNull(card);
+        if (!CardImages.Any(cardDisplay => Equals(cardDisplay.Card, card) && cardDisplay.IsEnabled))
+        {
+            throw new InvalidOperationException("The selected card is not playable from the displayed hand.");
+        }
+
+        ChosenCard = card;
     }
 
     /// <summary>

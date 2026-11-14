@@ -756,10 +756,9 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
     /// Gets the card to play from the user.
     /// </summary>
     /// <param name="user">The player that is the user.</param>
-    /// <param name="trickSuit">The suit first lead in the trick.</param>
-    /// <param name="trump">The suit that is trump for the current round.</param>
+    /// <param name="trick">The current trick being played.</param>
     /// <returns>The card the user wants to play.</returns>
-    public Card? GetCardFromUser(IPlayer user, Suit? trickSuit, Suit trump)
+    public Card? GetCardFromUser(IPlayer user, Trick trick)
     {
         Log.Debug("GetCardFromUser: prompting user to play a card.");
 
@@ -767,7 +766,13 @@ public class MainWindowViewModel : DependencyObject, IMainWindowViewModel
 
         DisplayPlayerMessage(user, "It's your turn.", 2, true);
 
-        return _mainWindowController.GetCardFromUser(user, trickSuit);
+        var playedCard = _mainWindowController.GetCardFromUser(user, trick, out var playedAutomatically);
+        if (playedAutomatically && playedCard != null)
+        {
+            DisplayPlayerMessage(user, $"Time ran out. {playedCard} was played for you.", 2, true);
+        }
+
+        return playedCard;
     }
 
     /// <summary>

@@ -90,6 +90,20 @@ public class PlayManagerTests
         Assert.That(result, Is.EqualTo(new Card(Suit.Spades, Rank.King)));
     }
 
+    [Test]
+    public void DetermineCardToPlay_Leading_AutomatedProxyForCaller_LeadsAsCaller()
+    {
+        _gameState.Trump = Suit.Hearts;
+        _gameState.TrumpCaller = new HumanPlayer("human", 0, 0, 0);
+        var automatedProxy = new AutomatedPlayer("human", 0, 0, _gameState, 0);
+        automatedProxy.AddCard(new Card(Suit.Clubs, Rank.Ace));
+        automatedProxy.AddCard(new Card(Suit.Hearts, Rank.King));
+
+        var result = automatedProxy.SelectCardToPlay(new Trick(Suit.Hearts), Suit.Hearts, null);
+
+        Assert.That(result, Is.EqualTo(new Card(Suit.Hearts, Rank.King)));
+    }
+
     private void SetTrumpCallerAndGoingAlone(AutomatedPlayer caller)
     {
         _gameState.TrumpCaller = caller;

@@ -7,13 +7,21 @@ public class PromptForCardToPlayEventArgs : System.EventArgs
     /// <summary>
     /// Initializes a new instance of the <see cref="PromptForCardToPlayEventArgs"/> class.
     /// </summary>
-    /// <param name="hand">The player's hand from which to choose a card to play.</param>
-    public PromptForCardToPlayEventArgs(Suit trump, Suit? leadSuit)
+    /// <param name="trump">The suit designated as trump for the current trick.</param>
+    /// <param name="leadSuit">The suit that was led in the current trick, if any.</param>
+    /// <param name="trick">The current trick.</param>
+    public PromptForCardToPlayEventArgs(Suit trump, Suit? leadSuit, Trick trick)
     {
         PlayedCard = null;
         Trump = trump;
         LeadSuit = leadSuit;
+        Trick = trick;
     }
+
+    /// <summary>
+    /// The current trick, including the cards already played.
+    /// </summary>
+    public Trick Trick { get; }
 
     /// <summary>
     /// The suit designated as trump for the current trick.

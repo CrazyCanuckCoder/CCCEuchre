@@ -5,9 +5,12 @@ using Euchre.UILogic;
 using Euchre.UILogic.Classes;
 using Euchre.UILogic.Interfaces;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Euchre.UserControls;
 
@@ -16,9 +19,14 @@ namespace Euchre.UserControls;
 /// </summary>
 public partial class HorizontalPlayerDisplayUserControl : UserControl, IBasePlayerDisplay
 {
+    private static readonly TimeSpan CardSelectionDuration = TimeSpan.FromSeconds(30);
+    private readonly DispatcherTimer _cardSelectionTimer = new() { Interval = TimeSpan.FromMilliseconds(100) };
+    private readonly Stopwatch _cardSelectionStopwatch = new();
+
     public HorizontalPlayerDisplayUserControl()
     {
         InitializeComponent();
+        _cardSelectionTimer.Tick += CardSelectionTimer_Tick;
         TricksColour = new SolidColorBrush(UIConstants.Team1Colour);
         SuitImage = new Image();
         DataContext = this;
@@ -107,6 +115,62 @@ public partial class HorizontalPlayerDisplayUserControl : UserControl, IBasePlay
     /// The colour to use for the number of trick won by the player.
     /// </summary>
     public Brush TricksColour { get; }
+
+    public event EventHandler? CardSelectionTimedOut;
+
+    public void StartCardSelectionTimer()
+    {
+        _cardSelectionStopwatch.Restart();
+        CardSelectionTimer.Visibility = Visibility.Visible;
+        UpdateCardSelectionTimer(CardSelectionDuration);
+        _cardSelectionTimer.Start();
+    }
+
+    public void StopCardSelectionTimer()
+    {
+        _cardSelectionTimer.Stop();
+        _cardSelectionStopwatch.Reset();
+        CardSelectionTimer.Visibility = Visibility.Collapsed;
+        TimerProgressArc.Data = Geometry.Empty;
+        TimerCountText.Text = CardSelectionDuration.TotalSeconds.ToString(CultureInfo.InvariantCulture);
+    }
+
+    private void CardSelectionTimer_Tick(object? sender, EventArgs e)
+    {
+        var remaining = CardSelectionDuration - _cardSelectionStopwatch.Elapsed;
+        if (remaining <= TimeSpan.Zero)
+        {
+            _cardSelectionTimer.Stop();
+            UpdateCardSelectionTimer(TimeSpan.Zero);
+            CardSelectionTimedOut?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
+        UpdateCardSelectionTimer(remaining);
+    }
+
+    private void UpdateCardSelectionTimer(TimeSpan remaining)
+    {
+        TimerCountText.Text = Math.Ceiling(remaining.TotalSeconds).ToString(CultureInfo.InvariantCulture);
+        var progress = Math.Clamp(remaining.TotalSeconds / CardSelectionDuration.TotalSeconds, 0, 1);
+        if (progress <= 0)
+        {
+            TimerProgressArc.Data = Geometry.Empty;
+            return;
+        }
+
+        const double center = 24;
+        const double radius = 20;
+        var sweepAngle = Math.Min(359.99, progress * 360);
+        var radians = sweepAngle * Math.PI / 180;
+        var endPoint = new Point(center + radius * Math.Sin(radians), center - radius * Math.Cos(radians));
+        var figure = new PathFigure { StartPoint = new Point(center, center - radius) };
+        figure.Segments.Add(new ArcSegment(endPoint, new Size(radius, radius), 0, sweepAngle > 180,
+            SweepDirection.Clockwise, true));
+        var geometry = new PathGeometry();
+        geometry.Figures.Add(figure);
+        TimerProgressArc.Data = geometry;
+    }
 
     /// <summary>
     /// Sets the player information to display on the control.

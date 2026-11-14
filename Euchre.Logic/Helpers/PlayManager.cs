@@ -76,7 +76,7 @@ public class PlayManager : IPlayManager
     {
         Card? cardToLead;
 
-        if (_player == _gameStateManager.TrumpCaller)
+        if (_gameStateManager.TrumpCaller?.PlayerIndex == _player.PlayerIndex)
         {
             cardToLead = DetermineCardToLeadWhenTrumpCaller(trump);
         }
@@ -361,7 +361,8 @@ public class PlayManager : IPlayManager
 
             // Check if the specified player is the leader and if the lead card's effective suit is trump.
 
-            if (leadCard.Key == player && leadCard.Value.EffectiveSuit(trick.Trump) == trick.Trump)
+            if (leadCard.Key.PlayerIndex == player.PlayerIndex &&
+                leadCard.Value.EffectiveSuit(trick.Trump) == trick.Trump)
             {
                 return true;
             }

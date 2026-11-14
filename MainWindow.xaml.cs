@@ -410,7 +410,7 @@ public partial class MainWindow : Window
         {
             if (sender is HumanPlayer player)
             {
-                e.PlayedCard = ViewModel.GetCardFromUser(player, e.LeadSuit, e.Trump);
+                e.PlayedCard = ViewModel.GetCardFromUser(player, e.Trick);
             }
         });
     }

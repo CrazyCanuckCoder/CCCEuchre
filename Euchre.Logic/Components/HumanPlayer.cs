@@ -143,7 +143,7 @@ public class HumanPlayer : Player
     /// <exception cref="MissingCardException"></exception>
     public override Card SelectCardToPlay(Trick trick, Suit trump, Suit? leadSuit)
     {
-        PromptForCardToPlayEventArgs args = new(trump, leadSuit);
+        PromptForCardToPlayEventArgs args = new(trump, leadSuit, trick);
         PromptForCardToPlay?.Invoke(this, args);
 
         if (args.PlayedCard == null)
